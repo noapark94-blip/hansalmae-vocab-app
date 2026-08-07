@@ -7331,6 +7331,7 @@
     function showAccountInformation_() {
       hideAllStudentMainScreens_();
       setStudentMenuActive_('account');
+      document.getElementById('accountScreen').classList.remove('hidden');
 
       const student = currentStudent || {};
       document.getElementById('accountStudent').textContent =
@@ -11649,7 +11650,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=54', {
+          .register('./service-worker.js?v=55', {
             updateViaCache: 'none'
           })
           .then(function (registration) {

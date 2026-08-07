@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v5-account-screen';
+const CACHE_NAME = 'hansalmae-supabase-v6-account-screen-visible';
 
 const REQUIRED_ASSETS = [
   './',
