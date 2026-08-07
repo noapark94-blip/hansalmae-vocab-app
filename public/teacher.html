@@ -1,0 +1,2517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>한살매 선생님 시험 관리</title>
+  <meta name="description" content="한살매입시전문학원 선생님용 단어시험 출제 및 학생 응시 현황 관리">
+  <link rel="canonical" href="https://noapark94-blip.github.io/hansalmae-vocab/teacher.html">
+
+  <!-- 카카오톡·문자·SNS 링크 미리보기 -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="한살매입시전문학원">
+  <meta property="og:title" content="한살매 선생님 시험 관리">
+  <meta property="og:description" content="한살매입시전문학원 선생님용 단어시험 출제 및 학생 응시 현황 관리">
+  <meta property="og:image" content="https://noapark94-blip.github.io/hansalmae-vocab/icon-512.png">
+  <meta property="og:image:secure_url" content="https://noapark94-blip.github.io/hansalmae-vocab/icon-512.png">
+  <meta property="og:image:alt" content="한살매 로고">
+  <meta property="og:url" content="https://noapark94-blip.github.io/hansalmae-vocab/teacher.html">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="한살매 선생님 시험 관리">
+  <meta name="twitter:description" content="한살매입시전문학원 선생님용 단어시험 출제 및 학생 응시 현황 관리">
+  <meta name="twitter:image" content="https://noapark94-blip.github.io/hansalmae-vocab/icon-512.png">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#8f145f" />
+  <!-- teacher retake inline menu v3 -->
+<style>
+    :root {
+      --primary: #6f4cff;
+      --primary-dark: #5634e8;
+      --primary-soft: #f0ecff;
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --text: #232330;
+      --muted: #77778a;
+      --line: #e8e7ef;
+      --success: #16885f;
+      --warning: #bd7613;
+      --danger: #d84646;
+      --shadow: 0 12px 34px rgba(43, 35, 91, 0.09);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top right, rgba(111, 76, 255, 0.11), transparent 31rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans KR", sans-serif;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    button { cursor: pointer; }
+
+    .app {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 30px 0 70px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), #9a77ff);
+      box-shadow: 0 9px 24px rgba(111, 76, 255, 0.27);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 31px);
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,.8);
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+    }
+
+    .tab-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 15px;
+      border-radius: 11px;
+      font-weight: 800;
+    }
+
+    .tab-btn.active {
+      color: white;
+      background: var(--primary);
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(320px, .82fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(232, 231, 239, 0.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .card + .card { margin-top: 20px; }
+
+    .card-title {
+      margin: 0 0 18px;
+      font-size: 18px;
+      letter-spacing: -0.025em;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 4px 0 12px;
+      font-weight: 900;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--danger);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      border-radius: 13px;
+      padding: 12px 13px;
+      outline: none;
+      transition: .18s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(111, 76, 255, .11);
+    }
+
+    textarea {
+      min-height: 180px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .row.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .choice {
+      position: relative;
+    }
+
+    .choice input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .choice span {
+      min-height: 50px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      color: var(--muted);
+      font-weight: 850;
+      padding: 8px;
+      transition: .18s ease;
+    }
+
+    .choice input:checked + span {
+      color: var(--primary);
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: inset 0 0 0 1px var(--primary);
+    }
+
+    .help {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .hidden { display: none !important; }
+
+    .switches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 7px 0 20px;
+    }
+
+    .switch-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    .switch-item input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .student-toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+
+    .student-actions {
+      display: flex;
+      gap: 7px;
+    }
+
+    .small-btn {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      padding: 9px 11px;
+      border-radius: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .student-list {
+      max-height: 430px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 8px;
+    }
+
+    .student-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .student-item:hover { background: var(--primary-soft); }
+
+    .student-item input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .student-meta {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .student-name {
+      font-weight: 850;
+    }
+
+    .student-sub {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .primary-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #8f69ff);
+      padding: 14px 18px;
+      font-weight: 900;
+      box-shadow: 0 10px 22px rgba(111, 76, 255, .23);
+    }
+
+    .primary-btn:disabled {
+      cursor: not-allowed;
+      opacity: .58;
+      box-shadow: none;
+    }
+
+    .outline-btn {
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      background: white;
+      border-radius: 11px;
+      padding: 9px 12px;
+      font-weight: 850;
+    }
+
+    .danger-btn {
+      border: 0;
+      color: white;
+      background: var(--danger);
+      border-radius: 11px;
+      padding: 9px 12px;
+      font-weight: 850;
+    }
+
+    .empty {
+      padding: 42px 15px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .exam-list {
+      display: grid;
+      gap: 13px;
+    }
+
+    .exam-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      padding: 17px;
+    }
+
+    .exam-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .exam-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .exam-id {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      word-break: break-all;
+    }
+
+    .status-pill {
+      white-space: nowrap;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      background: #eaf8f2;
+      color: var(--success);
+    }
+
+    .exam-info {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      margin: 15px 0;
+    }
+
+    .info-box {
+      background: #f8f8fc;
+      border-radius: 11px;
+      padding: 10px;
+    }
+
+    .info-label {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 13px;
+      font-weight: 850;
+      word-break: break-word;
+    }
+
+
+    .retake-menu-wrap {
+      display: contents;
+    }
+
+    .retake-menu-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: auto;
+      margin: 0;
+    }
+
+    .retake-menu-button::after {
+      content: '▾';
+      font-size: 11px;
+      transition: transform .18s ease;
+    }
+
+    .retake-menu-wrap.open .retake-menu-button::after {
+      transform: rotate(180deg);
+    }
+
+    .retake-dropdown {
+      display: none;
+      flex: 0 0 100%;
+      width: 100%;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+      margin-top: 2px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff7fb;
+      box-shadow: inset 0 0 0 1px rgba(148, 26, 101, .03);
+    }
+
+    .retake-menu-wrap.open .retake-dropdown {
+      display: grid;
+    }
+
+    .retake-dropdown button {
+      width: 100%;
+      margin: 0;
+      padding: 11px 9px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 850;
+      text-align: center;
+      box-shadow: none;
+    }
+
+    .retake-dropdown button:hover:not(:disabled) {
+      border-color: var(--hsm-300);
+      background: #f8eaf2;
+      color: var(--primary);
+    }
+
+    @media (max-width: 600px) {
+      .retake-dropdown {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .exam-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cancelled-pill {
+      background: #f3f0f5;
+      color: #7b6f82;
+    }
+
+    .exam-card.cancelled {
+      opacity: .76;
+      background: #faf9fb;
+    }
+
+    .word-detail-list {
+      display: grid;
+      gap: 10px;
+      max-height: 56vh;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .word-detail-item {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 12px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fafafe;
+    }
+
+    .word-detail-number {
+      color: var(--muted);
+      font-weight: 850;
+    }
+
+    .word-detail-english {
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .word-detail-meaning {
+      color: #393747;
+    }
+
+    .word-detail-example {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .cancel-btn:disabled,
+    .reminder-btn:disabled {
+      cursor: not-allowed;
+      opacity: .5;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      background: rgba(25, 22, 45, .34);
+      backdrop-filter: blur(3px);
+      z-index: 1000;
+    }
+
+    .loading-overlay.show { display: grid; }
+
+    .loading-box {
+      background: white;
+      border-radius: 18px;
+      padding: 24px 28px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      font-weight: 850;
+    }
+
+    .spinner {
+      width: 34px;
+      height: 34px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      border: 4px solid var(--primary-soft);
+      border-top-color: var(--primary);
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translate(-50%, 25px);
+      max-width: min(520px, calc(100% - 30px));
+      padding: 13px 18px;
+      border-radius: 13px;
+      color: white;
+      background: #292735;
+      font-weight: 800;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+      z-index: 1200;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--danger); }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(20, 18, 36, .46);
+      z-index: 1100;
+    }
+
+    .modal-backdrop.show { display: flex; }
+
+    .modal {
+      width: min(760px, 100%);
+      max-height: 88vh;
+      overflow: auto;
+      background: white;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .close-btn {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 50%;
+      background: #f0eff5;
+      font-size: 21px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .summary-item {
+      border-radius: 13px;
+      background: #f8f8fc;
+      padding: 13px;
+      text-align: center;
+    }
+
+    .summary-number {
+      font-size: 22px;
+      font-weight: 950;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .status-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .status-table th,
+    .status-table td {
+      padding: 11px 9px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .status-table th {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 850px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .tabs { width: 100%; }
+      .tab-btn { flex: 1; }
+
+      .grid { grid-template-columns: 1fr; }
+      .row, .row.three { grid-template-columns: 1fr; }
+      .choice-grid { grid-template-columns: 1fr; }
+      .exam-info { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  
+    /* =========================================================
+       학생용 앱과 통일한 한살매 프리미엄 테마
+       ========================================================= */
+    :root {
+      --primary: #8f145f;
+      --primary-dark: #541038;
+      --primary-soft: #f7e9f0;
+      --bg: #f7eef3;
+      --card: #ffffff;
+      --text: #251b22;
+      --muted: #806c77;
+      --line: #ead6e1;
+      --success: #2f9c67;
+      --warning: #d39b34;
+      --danger: #d54f72;
+      --shadow: 0 18px 45px rgba(79, 18, 55, 0.13);
+      --radius: 24px;
+      --hsm-900: #4d1237;
+      --hsm-800: #651446;
+      --hsm-700: #7d1655;
+      --hsm-600: #941a65;
+      --hsm-500: #ac347b;
+      --hsm-300: #d998ba;
+      --hsm-200: #ebc7d9;
+      --hsm-100: #f7e9f0;
+      --hsm-050: #fff8fb;
+    }
+
+    html {
+      background: #f7eef3;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 15% 0%, rgba(216, 151, 186, 0.28), transparent 34%),
+        radial-gradient(circle at 92% 8%, rgba(172, 52, 123, 0.12), transparent 30%),
+        linear-gradient(180deg, #fffafd 0%, #f7eef3 50%, #f2e8ee 100%);
+      color: var(--text);
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 28px));
+      padding-top: 22px;
+    }
+
+    .topbar {
+      position: static;
+      top: auto;
+      z-index: 50;
+      padding: 15px 18px;
+      border: 1px solid rgba(148, 26, 101, 0.10);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 8px 20px rgba(79, 18, 55, 0.08);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand-mark {
+      width: 52px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 9px 22px rgba(79, 18, 55, 0.16);
+    }
+
+    h1 {
+      color: var(--hsm-900);
+      font-weight: 900;
+      letter-spacing: -1.2px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .tabs {
+      background: linear-gradient(180deg, #fffafd, #f8eaf1);
+      border: 1px solid var(--hsm-200);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    .tab-btn {
+      color: var(--hsm-700);
+    }
+
+    .tab-btn:hover {
+      background: #f1dce7;
+      color: var(--hsm-900);
+    }
+
+    .tab-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--hsm-800), var(--hsm-500));
+      box-shadow: 0 7px 16px rgba(125, 22, 85, 0.20);
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(148, 26, 101, 0.09);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--hsm-800), var(--hsm-500), var(--hsm-300));
+    }
+
+    .card-title,
+    .section-title,
+    .exam-title,
+    .modal h2 {
+      color: var(--hsm-900);
+    }
+
+    input,
+    select,
+    textarea {
+      min-height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fffdfE;
+      color: var(--text);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    input:hover,
+    select:hover,
+    textarea:hover {
+      border-color: var(--hsm-300);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--hsm-600);
+      box-shadow: 0 0 0 4px rgba(148, 26, 101, 0.12);
+    }
+
+    .choice span {
+      border-color: var(--line);
+      background: linear-gradient(180deg, #ffffff, #fffafd);
+      color: var(--muted);
+      box-shadow: 0 5px 14px rgba(79, 18, 55, 0.04);
+    }
+
+    .choice span:hover {
+      border-color: var(--hsm-300);
+      background: var(--hsm-050);
+    }
+
+    .choice input:checked + span {
+      border-color: var(--hsm-500);
+      background: linear-gradient(180deg, #fff6fb, #f2dce8);
+      color: var(--hsm-800);
+      box-shadow: 0 0 0 3px rgba(148, 26, 101, 0.09);
+    }
+
+    .primary-btn,
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--hsm-800), var(--hsm-500));
+    }
+
+    .primary-btn {
+      border-radius: 16px;
+      box-shadow: 0 10px 22px rgba(125, 22, 85, 0.22);
+    }
+
+    .primary-btn:hover {
+      background: linear-gradient(135deg, var(--hsm-900), var(--hsm-600));
+      box-shadow: 0 13px 26px rgba(125, 22, 85, 0.27);
+      transform: translateY(-1px);
+    }
+
+    .outline-btn,
+    .small-btn,
+    .close-btn {
+      border-color: var(--hsm-200);
+      background: linear-gradient(180deg, #fff8fb, #f5e6ee);
+      color: var(--hsm-700);
+    }
+
+    .outline-btn:hover,
+    .small-btn:hover,
+    .close-btn:hover {
+      border-color: var(--hsm-300);
+      background: #f1dce7;
+      color: var(--hsm-900);
+    }
+
+    .danger-btn {
+      background: linear-gradient(135deg, #a9365b, #d54f72);
+      box-shadow: 0 8px 18px rgba(170, 54, 91, 0.16);
+    }
+
+    .danger-btn:hover {
+      background: linear-gradient(135deg, #8f294a, #bd3f63);
+    }
+
+    .count-badge,
+    .status-pill {
+      border: 1px solid var(--hsm-200);
+      background: #f7e9f0;
+      color: var(--hsm-700);
+    }
+
+    .student-item,
+    .exam-card,
+    .info-box,
+    .summary-item,
+    .status-table-wrap,
+    .word-detail-item {
+      border-color: var(--line);
+      background: linear-gradient(180deg, #ffffff, #fffafd);
+      box-shadow: 0 6px 16px rgba(79, 18, 55, 0.045);
+    }
+
+    .student-item:hover,
+    .exam-card:hover {
+      border-color: var(--hsm-300);
+      background: #fff8fb;
+    }
+
+    .loading-overlay {
+      background: rgba(77, 18, 55, 0.24);
+      backdrop-filter: blur(5px);
+    }
+
+    .loading-box,
+    .modal {
+      border: 1px solid rgba(148, 26, 101, 0.10);
+      background: rgba(255,255,255,.97);
+      box-shadow: 0 24px 60px rgba(79, 18, 55, 0.20);
+    }
+
+    .spinner {
+      border-color: rgba(148, 26, 101, 0.17);
+      border-top-color: var(--hsm-600);
+    }
+
+    .toast.success {
+      background: #2f9c67;
+    }
+
+    .toast.error {
+      background: #b93d62;
+    }
+
+    @media (max-width: 850px) {
+      .topbar {
+        position: static;
+        top: auto;
+      }
+    }
+
+    .modal-head {
+      position: relative;
+    }
+
+    .modal-head .close-btn {
+      position: relative;
+      z-index: 5;
+      flex: 0 0 auto;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+
+    .status-bulk-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 14px 0 18px;
+    }
+
+    .status-bulk-actions button {
+      width: auto;
+      margin: 0;
+    }
+
+    .mini-action-btn {
+      width: auto;
+      min-width: 68px;
+      margin: 0;
+      padding: 8px 11px;
+      border-radius: 10px;
+      border: 1px solid #8f145f;
+      background: #fff7fb;
+      color: #8f145f;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: none;
+      white-space: nowrap;
+    }
+
+    .mini-action-btn:hover:not(:disabled) {
+      background: #8f145f;
+      color: #ffffff;
+    }
+
+    .mini-action-btn:disabled {
+      border-color: #ddd4d9;
+      background: #f4f1f3;
+      color: #9a9096;
+      cursor: default;
+    }
+
+  
+    .hsm-teacher-student-name, .hsm-status-student { display:inline-flex; align-items:center; gap:7px; }
+    .hsm-teacher-emblem { width:30px; height:30px; object-fit:contain; border-radius:50%; flex:none; }
+
+
+    /* 마감 종료 및 재응시 상태 */
+    .deadline-pill {
+      border-color: #e7c97d;
+      background: #fff7df;
+      color: #986511;
+    }
+
+    .status-deadline {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 9px;
+      border: 1px solid #edcf87;
+      border-radius: 999px;
+      background: #fff8e6;
+      color: #93620f;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .status-retake {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 9px;
+      border: 1px solid #d9a8c3;
+      border-radius: 999px;
+      background: #fff1f8;
+      color: #8f145f;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+</style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="./icon-512.png" alt="한살매 로고">
+        <div>
+          <h1>선생님 시험 관리</h1>
+          <p class="subtitle">단어시험을 만들고 학생별 응시 현황을 확인합니다.</p>
+        </div>
+      </div>
+
+      <button id="teacherLogoutBtn" class="ghost-btn" type="button" style="width:auto;margin:0 0 10px auto;display:block;">
+        로그아웃
+      </button>
+
+      <nav class="tabs" aria-label="관리 메뉴">
+        <button class="tab-btn active" data-tab="createPanel">시험 만들기</button>
+        <button class="tab-btn" data-tab="listPanel">시험 목록</button>
+      </nav>
+    </header>
+
+    <section id="createPanel" class="panel active">
+      <form id="examForm">
+        <div class="grid">
+          <div>
+            <article class="card">
+              <h2 class="card-title">1. 기본 설정</h2>
+
+              <div class="field">
+                <label for="title" class="required">시험 제목</label>
+                <input id="title" type="text" maxlength="80"
+                  placeholder="예: 중2 7월 4주차 단어시험" required />
+              </div>
+
+              <div class="field">
+                <label class="required">출제 방식</label>
+                <div id="sourceTypeChoices" class="choice-grid">
+                  <label class="choice">
+                    <input type="radio" name="sourceType" value="DB" checked />
+                    <span>DB에서 출제</span>
+                  </label>
+                  <label class="choice">
+                    <input type="radio" name="sourceType" value="직접입력" />
+                    <span>직접 단어 입력</span>
+                  </label>
+                  <label class="choice">
+                    <input type="radio" name="sourceType" value="혼합" />
+                    <span>DB + 직접 입력</span>
+                  </label>
+                </div>
+              </div>
+
+              <div id="dbSection">
+                <div class="row three">
+                  <div class="field">
+                    <label for="dbName" class="required">단어 DB</label>
+                    <select id="dbName"></select>
+                  </div>
+                  <div class="field">
+                    <label for="startDay" class="required">시작 Day</label>
+                    <input id="startDay" type="number" min="1" value="1" />
+                  </div>
+                  <div class="field">
+                    <label for="endDay" class="required">마지막 Day</label>
+                    <input id="endDay" type="number" min="1" value="1" />
+                  </div>
+                </div>
+              </div>
+
+              <div id="directSection" class="hidden">
+                <div class="field">
+                  <label for="directWordsText" class="required">직접 입력 단어</label>
+                  <textarea id="directWordsText"
+                    placeholder="apple	사과
+benefit	이익
+protect	보호하다"></textarea>
+                  <div class="help">
+                    한 줄에 한 단어씩 입력하세요. 영어와 뜻은 탭, 쉼표 또는 | 기호로 구분할 수 있습니다.
+                    예문과 해석까지 넣으려면 영어 | 뜻 | 예문 | 해석 순서로 입력하세요.
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="field">
+                  <label for="questionCount" class="required">문제 수</label>
+                  <input id="questionCount" type="number" min="1" value="30" />
+                </div>
+                <div class="field">
+                  <label for="questionMode" class="required">문제 유형</label>
+                  <select id="questionMode"></select>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <h2 class="card-title">2. 시험 일정 및 조건</h2>
+
+              <div class="row">
+                <div class="field">
+                  <label for="startAt">시작 일시</label>
+                  <input id="startAt" type="datetime-local" />
+                </div>
+                <div class="field">
+                  <label for="deadlineAt">마감 일시</label>
+                  <input id="deadlineAt" type="datetime-local" />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="field">
+                  <label for="passingScore">기준 점수</label>
+                  <input id="passingScore" type="number" min="0" max="100" value="80" />
+                </div>
+                <div class="field">
+                  <label for="creator">생성자</label>
+                  <input id="creator" type="text" value="관리자" />
+                </div>
+              </div>
+
+              <div class="switches">
+                <label class="switch-item">
+                  <input id="allowRetake" type="checkbox" checked />
+                  재시험 허용
+                </label>
+                <label class="switch-item">
+                  <input id="givePoint" type="checkbox" checked />
+                  포인트 지급
+                </label>
+              </div>
+            </article>
+          </div>
+
+          <aside>
+            <article class="card">
+              <div class="section-title">
+                <span>3. 시험 대상</span>
+                <span id="selectedCount" class="count-badge">0명 선택</span>
+              </div>
+
+              <div class="field">
+                <label for="targetType">대상 선택 방식</label>
+                <select id="targetType">
+                  <option value="학생선택">학생 직접 선택</option>
+                  <option value="학년">학년 전체</option>
+                  <option value="전체">전체 학생</option>
+                </select>
+              </div>
+
+              <div id="gradeSection" class="field hidden">
+                <label for="targetGrade">대상 학년</label>
+                <select id="targetGrade"></select>
+              </div>
+
+              <div id="studentSelectSection">
+                <div class="student-toolbar">
+                  <input id="studentSearch" type="search"
+                    placeholder="학생 이름 또는 아이디 검색" />
+                  <div class="student-actions">
+                    <button type="button" id="selectAllBtn" class="small-btn">전체 선택</button>
+                    <button type="button" id="clearAllBtn" class="small-btn">해제</button>
+                  </div>
+                </div>
+                <div id="studentList" class="student-list">
+                  <div class="empty">학생 정보를 불러오는 중입니다.</div>
+                </div>
+              </div>
+
+              <button id="createBtn" class="primary-btn" type="submit">
+                시험 생성하기
+              </button>
+            </article>
+          </aside>
+        </div>
+      </form>
+    </section>
+
+    <section id="listPanel" class="panel">
+      <article class="card">
+        <div class="section-title">
+          <h2 class="card-title" style="margin:0;">생성한 시험</h2>
+          <button id="refreshExamsBtn" type="button" class="outline-btn">새로고침</button>
+        </div>
+        <div id="examList" class="exam-list">
+          <div class="empty">시험 목록을 불러오는 중입니다.</div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <div id="loadingText">처리 중입니다.</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <div id="statusModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>학생 응시 현황</h2>
+        <button id="closeModalBtn" class="close-btn" type="button" onclick="closeStatusModal()" aria-label="닫기">×</button>
+      </div>
+
+      <div id="statusSummary" class="summary-grid"></div>
+
+      <div style="overflow:auto;">
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>학생</th>
+              <th>아이디</th>
+              <th>학년</th>
+              <th>상태</th>
+              <th>응시 회차</th>
+              <th>최근 점수</th>
+              <th>최고점</th>
+              <th>정답/문제</th>
+              <th>완료 일시</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="statusTableBody"></tbody>
+        </table>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:18px;">
+        <button
+          id="statusExitBtn"
+          class="outline-btn"
+          type="button"
+          onclick="closeStatusModal()"
+        >나가기</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="detailModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="detailModalTitle">시험 내용</h2>
+        <button id="closeDetailModalBtn" class="close-btn" type="button">×</button>
+      </div>
+      <div id="detailMeta" class="summary-grid"></div>
+      <div id="detailWordList" class="word-detail-list"></div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script>
+    const API_URL =
+      window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
+    const TEACHER_ADMIN_TOKEN = sessionStorage.getItem('hansalmaeTeacherToken') || '';
+    if (!TEACHER_ADMIN_TOKEN) { window.location.href = './index.html'; }
+
+    let setupData = {
+      dbSheets: [],
+      students: [],
+      questionModes: []
+    };
+
+    let currentStatusExamId = '';
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    async function init() {
+      bindEvents();
+      setDefaultDates();
+
+      try {
+        setLoading(true, '기본 정보를 불러오는 중입니다.');
+        const result = await apiCall('teacherGetSetupData');
+        setupData = result;
+        renderSetupData();
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function bindEvents() {
+      $$('.tab-btn').forEach((button) => {
+        button.addEventListener('click', () => openTab(button.dataset.tab));
+      });
+
+      $$('input[name="sourceType"]').forEach((radio) => {
+        radio.addEventListener('change', updateSourceSections);
+      });
+
+      $('#targetType').addEventListener('change', updateTargetSections);
+      $('#targetGrade').addEventListener('change', updateSelectedCount);
+      $('#studentSearch').addEventListener('input', renderStudents);
+      $('#selectAllBtn').addEventListener('click', selectAllVisibleStudents);
+      $('#clearAllBtn').addEventListener('click', clearAllStudents);
+      $('#examForm').addEventListener('submit', createExam);
+      $('#refreshExamsBtn').addEventListener('click', loadExamList);
+      $('#teacherLogoutBtn').addEventListener('click', teacherLogout);
+      const remindIncompleteBtn = $('#remindIncompleteBtn');
+      if (remindIncompleteBtn) {
+        remindIncompleteBtn.addEventListener('click', () => {
+          if (currentStatusExamId) sendReminder(currentStatusExamId, true);
+        });
+      }
+
+      const closeModalBtn = $('#closeModalBtn');
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeStatusModal);
+      }
+
+      const statusExitBtn = $('#statusExitBtn');
+      if (statusExitBtn) {
+        statusExitBtn.addEventListener('click', closeStatusModal);
+      }
+
+      const closeDetailModalBtn = $('#closeDetailModalBtn');
+      if (closeDetailModalBtn) {
+        closeDetailModalBtn.addEventListener('click', closeDetailModal);
+      }
+
+      $('#detailModal').addEventListener('click', (event) => {
+        if (event.target.id === 'detailModal') closeDetailModal();
+      });
+
+      $('#statusModal').addEventListener('click', (event) => {
+        if (event.target.id === 'statusModal') closeStatusModal();
+      });
+    }
+
+    const teacherApiInflight = new Map();
+    const teacherApiCache = new Map();
+    const TEACHER_API_TIMEOUT_MS = 30000;
+
+    const TEACHER_API_CACHE_TTL = {
+      teacherGetSetupData: 5 * 60 * 1000,
+      teacherListExams: 20 * 1000,
+      teacherGetExamDetails: 30 * 1000,
+      teacherGetExamStatus: 10 * 1000
+    };
+
+    function teacherApiKey(functionName, args) {
+      let serialized = '';
+
+      try {
+        serialized = JSON.stringify(args || []);
+      } catch (_error) {
+        serialized = String(args || '');
+      }
+
+      return functionName + '|' + serialized;
+    }
+
+    function clearTeacherReadCache() {
+      teacherApiCache.clear();
+    }
+
+    async function apiCall(functionName, ...args) {
+      args = [TEACHER_ADMIN_TOKEN].concat(args || []);
+      const key = teacherApiKey(functionName, args);
+      const ttl = TEACHER_API_CACHE_TTL[functionName] || 0;
+      const cached = teacherApiCache.get(key);
+
+      if (
+        ttl > 0 &&
+        cached &&
+        Date.now() - cached.savedAt < ttl
+      ) {
+        return cached.value;
+      }
+
+      if (teacherApiInflight.has(key)) {
+        return teacherApiInflight.get(key);
+      }
+
+      const controller =
+        typeof AbortController !== 'undefined'
+          ? new AbortController()
+          : null;
+
+      const timeoutId = window.setTimeout(() => {
+        if (controller) {
+          controller.abort();
+        }
+      }, TEACHER_API_TIMEOUT_MS);
+
+      const request = fetch(API_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          action: 'call',
+          functionName,
+          args
+        }),
+        signal: controller ? controller.signal : undefined
+      })
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error(
+              '서버 연결에 실패했습니다. HTTP ' +
+              response.status
+            );
+          }
+
+          const text = await response.text();
+          let envelope;
+
+          try {
+            envelope = JSON.parse(text);
+          } catch (_error) {
+            throw new Error(
+              '서버 응답을 읽을 수 없습니다.'
+            );
+          }
+
+          if (!envelope.success) {
+            throw new Error(
+              envelope.message ||
+              '서버 요청에 실패했습니다.'
+            );
+          }
+
+          const result = envelope.result;
+
+          if (ttl > 0) {
+            teacherApiCache.set(key, {
+              savedAt: Date.now(),
+              value: result
+            });
+          } else {
+            clearTeacherReadCache();
+          }
+
+          return result;
+        })
+        .catch((error) => {
+          if (error && error.name === 'AbortError') {
+            throw new Error(
+              '서버 응답이 너무 늦습니다. 잠시 후 다시 시도해주세요.'
+            );
+          }
+
+          throw error;
+        })
+        .finally(() => {
+          window.clearTimeout(timeoutId);
+          teacherApiInflight.delete(key);
+        });
+
+      teacherApiInflight.set(key, request);
+      return request;
+    }
+
+    function renderSetupData() {
+      $('#dbName').innerHTML = setupData.dbSheets
+        .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+        .join('');
+
+      $('#questionMode').innerHTML = setupData.questionModes
+        .map((mode) =>
+          `<option value="${escapeHtml(mode.value)}">${escapeHtml(mode.label)}</option>`)
+        .join('');
+
+      const grades = [...new Set(
+        setupData.students.map((student) => student.grade).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, 'ko', { numeric: true }));
+
+      $('#targetGrade').innerHTML = grades.length
+        ? grades.map((grade) =>
+            `<option value="${escapeHtml(grade)}">${escapeHtml(grade)}</option>`)
+          .join('')
+        : '<option value="">학년 정보 없음</option>';
+
+      renderStudents();
+      updateSourceSections();
+      updateTargetSections();
+    }
+
+    function renderStudents() {
+      const keyword = $('#studentSearch').value.trim().toLowerCase();
+
+      const filtered = setupData.students.filter((student) => {
+        const searchable =
+          `${student.studentName} ${student.studentId} ${student.grade}`.toLowerCase();
+        return !keyword || searchable.includes(keyword);
+      });
+
+      if (!filtered.length) {
+        $('#studentList').innerHTML =
+          '<div class="empty">조건에 맞는 학생이 없습니다.</div>';
+        updateSelectedCount();
+        return;
+      }
+
+      const previouslySelected = new Set(
+        $$('.student-check:checked').map((input) => input.value)
+      );
+
+      $('#studentList').innerHTML = filtered.map((student) => `
+        <label class="student-item">
+          <input
+            class="student-check"
+            type="checkbox"
+            value="${escapeHtml(student.studentId)}"
+            ${previouslySelected.has(student.studentId) ? 'checked' : ''}
+          />
+          <div class="student-meta">
+            <div class="student-name hsm-teacher-student-name">
+              ${student.equippedEmblem && student.equippedEmblem.imagePath
+                ? `<img class="hsm-teacher-emblem" src="${escapeHtml(student.equippedEmblem.imagePath)}" alt="">`
+                : ''}
+              ${escapeHtml(student.studentName)}
+            </div>
+            <div class="student-sub">
+              ${escapeHtml(student.grade || '학년 미입력')} ·
+              ${escapeHtml(student.studentId)}
+            </div>
+          </div>
+        </label>
+      `).join('');
+
+      $$('.student-check').forEach((checkbox) => {
+        checkbox.addEventListener('change', updateSelectedCount);
+      });
+
+      updateSelectedCount();
+    }
+
+    function updateSourceSections() {
+      const sourceType =
+        $('input[name="sourceType"]:checked')?.value || 'DB';
+
+      const useDb = sourceType === 'DB' || sourceType === '혼합';
+      const useDirect = sourceType === '직접입력' || sourceType === '혼합';
+
+      $('#dbSection').classList.toggle('hidden', !useDb);
+      $('#directSection').classList.toggle('hidden', !useDirect);
+    }
+
+    function updateTargetSections() {
+      const targetType = $('#targetType').value;
+
+      $('#gradeSection').classList.toggle('hidden', targetType !== '학년');
+      $('#studentSelectSection').classList.toggle(
+        'hidden',
+        targetType !== '학생선택'
+      );
+
+      updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+      const targetType = $('#targetType').value;
+      let count = 0;
+
+      if (targetType === '전체') {
+        count = setupData.students.length;
+      } else if (targetType === '학년') {
+        const grade = $('#targetGrade').value;
+        count = setupData.students.filter(
+          (student) => String(student.grade) === String(grade)
+        ).length;
+      } else {
+        count = $$('.student-check:checked').length;
+      }
+
+      $('#selectedCount').textContent = `${count}명 선택`;
+    }
+
+    function selectAllVisibleStudents() {
+      $$('.student-check').forEach((checkbox) => {
+        checkbox.checked = true;
+      });
+      updateSelectedCount();
+    }
+
+    function clearAllStudents() {
+      $$('.student-check').forEach((checkbox) => {
+        checkbox.checked = false;
+      });
+      updateSelectedCount();
+    }
+
+    function getPayload() {
+      const sourceType =
+        $('input[name="sourceType"]:checked')?.value || 'DB';
+      const targetType = $('#targetType').value;
+
+      return {
+        title: $('#title').value.trim(),
+        sourceType,
+        dbName:
+          sourceType === '직접입력'
+            ? ''
+            : $('#dbName').value,
+        startDay:
+          sourceType === '직접입력'
+            ? ''
+            : Number($('#startDay').value),
+        endDay:
+          sourceType === '직접입력'
+            ? ''
+            : Number($('#endDay').value),
+        directWordsText:
+          sourceType === 'DB'
+            ? ''
+            : $('#directWordsText').value.trim(),
+        questionCount: Number($('#questionCount').value),
+        questionMode: $('#questionMode').value,
+        targetType,
+        targetGrade:
+          targetType === '학년'
+            ? $('#targetGrade').value
+            : '',
+        targetStudentIds:
+          targetType === '학생선택'
+            ? $$('.student-check:checked').map((input) => input.value)
+            : [],
+        startAt: $('#startAt').value,
+        deadlineAt: $('#deadlineAt').value,
+        passingScore: Number($('#passingScore').value),
+        allowRetake: $('#allowRetake').checked,
+        givePoint: $('#givePoint').checked,
+        creator: $('#creator').value.trim() || '관리자'
+      };
+    }
+
+    function validatePayload(payload) {
+      if (!payload.title) {
+        throw new Error('시험 제목을 입력해 주세요.');
+      }
+
+      if (
+        (payload.sourceType === 'DB' || payload.sourceType === '혼합') &&
+        (!payload.dbName || !payload.startDay || !payload.endDay)
+      ) {
+        throw new Error('DB와 Day 범위를 확인해 주세요.');
+      }
+
+      if (
+        payload.startDay &&
+        payload.endDay &&
+        Number(payload.startDay) > Number(payload.endDay)
+      ) {
+        throw new Error('시작 Day는 마지막 Day보다 클 수 없습니다.');
+      }
+
+      if (
+        (payload.sourceType === '직접입력' || payload.sourceType === '혼합') &&
+        !payload.directWordsText
+      ) {
+        throw new Error('직접 입력 단어를 입력해 주세요.');
+      }
+
+      if (!payload.questionCount || payload.questionCount < 1) {
+        throw new Error('문제 수를 1개 이상 입력해 주세요.');
+      }
+
+      if (
+        payload.targetType === '학생선택' &&
+        payload.targetStudentIds.length === 0
+      ) {
+        throw new Error('시험 대상 학생을 선택해 주세요.');
+      }
+
+      if (payload.targetType === '학년' && !payload.targetGrade) {
+        throw new Error('대상 학년을 선택해 주세요.');
+      }
+
+      if (
+        payload.startAt &&
+        payload.deadlineAt &&
+        new Date(payload.startAt) >= new Date(payload.deadlineAt)
+      ) {
+        throw new Error('마감 일시는 시작 일시보다 뒤여야 합니다.');
+      }
+    }
+
+    async function createExam(event) {
+      event.preventDefault();
+
+      try {
+        const payload = getPayload();
+        validatePayload(payload);
+
+        const ok = window.confirm(
+          `${payload.title}\n\n선택한 내용으로 시험을 생성할까요?`
+        );
+        if (!ok) return;
+
+        setLoading(true, '시험을 생성하는 중입니다.');
+        $('#createBtn').disabled = true;
+
+        const result = await apiCall('teacherCreateExam', payload);
+
+        showToast(
+          `${result.message} 대상 ${result.targetCount}명, 문제 ${result.questionCount}개`,
+          'success'
+        );
+
+        resetFormAfterCreate();
+        await loadExamList();
+        openTab('listPanel');
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        $('#createBtn').disabled = false;
+        setLoading(false);
+      }
+    }
+
+    function resetFormAfterCreate() {
+      $('#title').value = '';
+      $('#directWordsText').value = '';
+      clearAllStudents();
+    }
+
+    async function loadExamList() {
+      try {
+        setLoading(true, '시험 목록을 불러오는 중입니다.');
+        const result = await apiCall('teacherListExams');
+        renderExamList(result.exams || []);
+      } catch (error) {
+        $('#examList').innerHTML =
+          `<div class="empty">${escapeHtml(error.message)}</div>`;
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderExamList(exams) {
+      if (!exams.length) {
+        $('#examList').innerHTML =
+          '<div class="empty">아직 생성된 시험이 없습니다.</div>';
+        return;
+      }
+
+      $('#examList').innerHTML = exams.map((exam) => {
+        const examId = String(exam['시험ID'] || '');
+        const title = String(exam['시험제목'] || '제목 없음');
+        const status = String(exam['상태'] || '공개');
+        const cancelled = status === '취소';
+        const deadlineDate = exam['마감일시']
+          ? new Date(exam['마감일시'])
+          : null;
+        const deadlineEnded =
+          !cancelled &&
+          deadlineDate &&
+          !Number.isNaN(deadlineDate.getTime()) &&
+          Date.now() > deadlineDate.getTime();
+        const displayStatus = cancelled
+          ? '취소'
+          : (deadlineEnded ? '마감 종료' : status);
+
+        return `
+          <article class="exam-card ${cancelled ? 'cancelled' : ''}">
+            <div class="exam-head">
+              <div>
+                <h3 class="exam-title">${escapeHtml(title)}</h3>
+                <div class="exam-id">${escapeHtml(examId)}</div>
+              </div>
+              <span class="status-pill ${cancelled ? 'cancelled-pill' : (deadlineEnded ? 'deadline-pill' : '')}">
+                ${escapeHtml(displayStatus)}
+              </span>
+            </div>
+
+            <div class="exam-info">
+              <div class="info-box">
+                <div class="info-label">출제 방식</div>
+                <div class="info-value">${escapeHtml(exam['출제방식'] || '-')}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">문제 수</div>
+                <div class="info-value">${escapeHtml(exam['문제수'] || 0)}개</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">기준 점수</div>
+                <div class="info-value">${escapeHtml(exam['기준점수'] || 80)}점</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">마감</div>
+                <div class="info-value">${escapeHtml(formatDate(exam['마감일시']))}</div>
+              </div>
+            </div>
+
+            <div class="exam-actions">
+              <button type="button" class="outline-btn detail-btn"
+                data-exam-id="${escapeHtml(examId)}">시험 내용</button>
+              <button type="button" class="outline-btn status-btn"
+                data-exam-id="${escapeHtml(examId)}">응시 현황</button>
+              <button type="button" class="danger-btn reminder-btn"
+                data-exam-id="${escapeHtml(examId)}"
+                ${cancelled ? 'disabled' : ''}>미완료 알림</button>
+
+              <div class="retake-menu-wrap">
+                <button type="button"
+                  class="outline-btn retake-menu-button"
+                  data-exam-id="${escapeHtml(examId)}"
+                  data-title="${escapeHtml(title)}"
+                  ${cancelled ? 'disabled' : ''}>
+                  재응시
+                </button>
+
+                <div class="retake-dropdown">
+                  <button type="button"
+                    class="retake-all-list-btn"
+                    data-exam-id="${escapeHtml(examId)}"
+                    data-title="${escapeHtml(title)}">
+                    전체 재응시
+                  </button>
+
+                  <button type="button"
+                    class="retake-below70-list-btn"
+                    data-exam-id="${escapeHtml(examId)}"
+                    data-title="${escapeHtml(title)}">
+                    70점 미만 재응시
+                  </button>
+
+                  <button type="button"
+                    class="retake-select-list-btn"
+                    data-exam-id="${escapeHtml(examId)}">
+                    학생 선택 재응시
+                  </button>
+                </div>
+              </div>
+
+              <button type="button" class="danger-btn cancel-btn"
+                data-exam-id="${escapeHtml(examId)}"
+                data-title="${escapeHtml(title)}"
+                ${cancelled ? 'disabled' : ''}>
+                ${cancelled ? '취소됨' : '출제 취소'}
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      $$('.detail-btn').forEach((button) => {
+        button.addEventListener('click', () =>
+          showExamDetails(button.dataset.examId)
+        );
+      });
+
+      $$('.status-btn').forEach((button) => {
+        button.addEventListener('click', () =>
+          showExamStatus(button.dataset.examId)
+        );
+      });
+
+      $$('.reminder-btn').forEach((button) => {
+        button.addEventListener('click', () =>
+          sendReminder(button.dataset.examId)
+        );
+      });
+
+      $$('.retake-menu-wrap').forEach((wrap) => {
+        wrap.addEventListener('click', (event) => {
+          event.stopPropagation();
+        });
+      });
+
+      $$('.retake-menu-button').forEach((button) => {
+        button.addEventListener('click', (event) => {
+          event.stopPropagation();
+
+          const wrap = button.closest('.retake-menu-wrap');
+          const willOpen = !wrap.classList.contains('open');
+
+          closeAllRetakeMenus();
+
+          if (willOpen) {
+            wrap.classList.add('open');
+          }
+        });
+      });
+
+      $$('.retake-all-list-btn').forEach((button) => {
+        button.addEventListener('click', async (event) => {
+          event.stopPropagation();
+          closeAllRetakeMenus();
+          await requestRetakeAllFromList(
+            button.dataset.examId,
+            button.dataset.title
+          );
+        });
+      });
+
+      $$('.retake-below70-list-btn').forEach((button) => {
+        button.addEventListener('click', async (event) => {
+          event.stopPropagation();
+          closeAllRetakeMenus();
+          await requestRetakeBelow70FromList(
+            button.dataset.examId,
+            button.dataset.title
+          );
+        });
+      });
+
+      $$('.retake-select-list-btn').forEach((button) => {
+        button.addEventListener('click', async (event) => {
+          event.stopPropagation();
+          closeAllRetakeMenus();
+          await showExamStatus(button.dataset.examId);
+        });
+      });
+
+      $$('.cancel-btn').forEach((button) => {
+        button.addEventListener('click', () =>
+          cancelExam(button.dataset.examId, button.dataset.title)
+        );
+      });
+    }
+
+
+    function closeAllRetakeMenus() {
+      $$('.retake-menu-wrap.open').forEach((wrap) => {
+        wrap.classList.remove('open');
+      });
+    }
+
+    async function requestRetakeAllFromList(examId, title) {
+      const ok = window.confirm(
+        `'${title || '선택한 시험'}' 대상 학생 전체에게 재응시 알림을 보낼까요?\n\n` +
+        '기존 최고점과 응시 기록은 유지되며, 요청 후 72시간 동안 응시할 수 있습니다.'
+      );
+
+      if (!ok) return;
+
+      try {
+        setLoading(true, '전체 재응시를 설정하는 중입니다.');
+
+        const result = await apiCall(
+          'teacherRequestRetakeAll',
+          examId
+        );
+
+        showToast(result.message, 'success');
+        await loadExamList();
+
+      } catch (error) {
+        showToast(error.message, 'error');
+
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function requestRetakeBelow70FromList(examId, title) {
+      const ok = window.confirm(
+        `'${title || '선택한 시험'}'에서 최고점이 70점 미만인 학생에게\n` +
+        '재응시 알림을 보낼까요?\n\n' +
+        '70점 이상 학생과 미응시 학생은 제외됩니다.'
+      );
+
+      if (!ok) return;
+
+      try {
+        setLoading(true, '70점 미만 학생을 처리하는 중입니다.');
+
+        const result = await apiCall(
+          'teacherRequestRetakeBelowScore',
+          examId,
+          70
+        );
+
+        showToast(result.message, 'success');
+        await loadExamList();
+
+      } catch (error) {
+        showToast(error.message, 'error');
+
+      } finally {
+        setLoading(false);
+      }
+    }
+
+
+    async function showExamDetails(examId) {
+      try {
+        setLoading(true, '시험 내용을 불러오는 중입니다.');
+        const result = await apiCall('teacherGetExamDetails', examId);
+        renderExamDetails(result);
+        $('#detailModal').classList.add('show');
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderExamDetails(result) {
+      const exam = result.exam || {};
+      const words = result.words || [];
+
+      $('#detailModalTitle').textContent =
+        String(exam['시험제목'] || '시험 내용');
+
+      const dayText =
+        exam['시작Day'] || exam['마지막Day']
+          ? `${exam['시작Day'] || '-'} ~ ${exam['마지막Day'] || '-'}`
+          : '-';
+
+      const summaries = [
+        ['출제 방식', exam['출제방식'] || '-'],
+        ['DB', exam['DB명'] || '-'],
+        ['Day', dayText],
+        ['등록 단어', `${words.length}개`]
+      ];
+
+      $('#detailMeta').innerHTML = summaries.map(([label, value]) => `
+        <div class="summary-item">
+          <div class="summary-number" style="font-size:16px;">
+            ${escapeHtml(value)}
+          </div>
+          <div class="summary-label">${escapeHtml(label)}</div>
+        </div>
+      `).join('');
+
+      $('#detailWordList').innerHTML = words.length
+        ? words.map((word, index) => `
+            <div class="word-detail-item">
+              <div class="word-detail-number">${index + 1}</div>
+              <div>
+                <div class="word-detail-english">
+                  ${escapeHtml(word['영어'] || '-')}
+                </div>
+                <div class="word-detail-meaning">
+                  ${escapeHtml(word['뜻'] || '-')}
+                </div>
+                ${word['예문'] ? `
+                  <div class="word-detail-example">
+                    ${escapeHtml(word['예문'])}
+                    ${word['해석'] ? `<br>${escapeHtml(word['해석'])}` : ''}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          `).join('')
+        : '<div class="empty">등록된 시험 단어가 없습니다.</div>';
+    }
+
+    async function cancelExam(examId, title) {
+      const ok = window.confirm(
+        `"${title || '이 시험'}"의 출제를 취소하시겠습니까?\n\n` +
+        '학생 시험 목록과 읽지 않은 알림에서 즉시 사라집니다.\n' +
+        '이미 제출된 시험 결과는 보존됩니다.'
+      );
+
+      if (!ok) return;
+
+      try {
+        setLoading(true, '시험 출제를 취소하는 중입니다.');
+        const result = await apiCall('teacherCancelExam', examId);
+        showToast(result.message, 'success');
+        await loadExamList();
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function showExamStatus(examId) {
+      currentStatusExamId = String(examId || '');
+
+      try {
+        setLoading(true, '응시 현황을 불러오는 중입니다.');
+        const result = await apiCall('teacherGetExamStatus', examId);
+        renderStatusModal(result);
+        $('#statusModal').classList.add('show');
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function renderStatusModal(result) {
+      const summaries = [
+        ['전체', result.totalCount || 0],
+        ['완료', result.completedCount || 0],
+        ['시험 중', result.inProgressCount || 0],
+        [
+          result.examDeadlineEnded ? '마감 미응시' : '미응시',
+          result.examDeadlineEnded
+            ? (result.deadlineMissedCount || 0)
+            : (result.notStartedCount || 0)
+        ]
+      ];
+
+      $('#statusSummary').innerHTML = summaries.map(([label, value]) => `
+        <div class="summary-item">
+          <div class="summary-number">${escapeHtml(value)}</div>
+          <div class="summary-label">${escapeHtml(label)}</div>
+        </div>
+      `).join('');
+
+      const students = result.students || [];
+
+      $('#statusTableBody').innerHTML = students.length
+        ? students.map((student) => {
+            const latestScore =
+              student['최근점수'] === '' || student['최근점수'] == null
+                ? '-'
+                : `${student['최근점수']}점`;
+
+            const bestScore =
+              student['최고점'] === '' || student['최고점'] == null
+                ? '-'
+                : `${student['최고점']}점`;
+
+            const correctText =
+              student['문제수'] === '' || student['문제수'] == null
+                ? '-'
+                : `${student['정답수'] || 0}/${student['문제수'] || 0}`;
+
+            return `
+              <tr>
+                <td><strong class="hsm-status-student">${student['장착엠블럼'] && student['장착엠블럼'].imagePath ? `<img class="hsm-teacher-emblem" src="${escapeHtml(student['장착엠블럼'].imagePath)}" alt="">` : ''}${escapeHtml(student['학생이름'] || '-')}</strong></td>
+                <td>${escapeHtml(student['학생ID'] || '-')}</td>
+                <td>${escapeHtml(student['학년'] || '미입력')}</td>
+                <td>
+                  ${
+                    student['마감종료']
+                      ? `<span class="status-deadline">${escapeHtml(student['표시상태'] || '미응시 · 마감 종료')}</span>`
+                      : student['재응시가능']
+                        ? `<span class="status-retake">재응시 대기</span>`
+                        : escapeHtml(student['표시상태'] || student['응시상태'] || '미응시')
+                  }
+                </td>
+                <td>${escapeHtml(student['응시회차'] || 0)}회</td>
+                <td>${escapeHtml(latestScore)}</td>
+                <td>${escapeHtml(bestScore)}</td>
+                <td>${escapeHtml(correctText)}</td>
+                <td>${escapeHtml(formatDateTime(student['완료일시']))}</td>
+                <td>
+                  ${
+                    student['응시상태'] === '완료' || student['마감종료']
+                      ? `<button type="button"
+                           class="mini-action-btn student-retake-btn"
+                           data-student-id="${escapeHtml(student['학생ID'] || '')}"
+                           data-student-name="${escapeHtml(student['학생이름'] || '')}">
+                           ${student['마감종료'] ? '재오픈' : '재응시'}
+                         </button>`
+                      : `<button type="button"
+                           class="mini-action-btn student-reminder-btn"
+                           data-student-id="${escapeHtml(student['학생ID'] || '')}"
+                           disabled>
+                           ${student['재응시가능']
+                             ? '재응시 대기'
+                             : (student['응시상태'] === '시험중' ? '시험 중' : '미응시')}
+                         </button>`
+                  }
+                </td>
+              </tr>
+            `;
+          }).join('')
+        : '<tr><td colspan="10" style="text-align:center;color:#77778a;">대상 학생이 없습니다.</td></tr>';
+
+      $$('.student-retake-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+          requestRetakeStudent(
+            button.dataset.studentId,
+            button.dataset.studentName
+          );
+        });
+      });
+    }
+
+    async function requestRetakeStudent(studentId, studentName) {
+      if (!currentStatusExamId || !studentId) return;
+
+      const ok = window.confirm(
+        `${studentName || '선택한 학생'}에게 재응시 알림을 보낼까요?\n\n` +
+        '기존 최고점과 응시 기록은 유지됩니다.'
+      );
+
+      if (!ok) return;
+
+      try {
+        setLoading(true, '재응시 알림을 보내는 중입니다.');
+        const result = await apiCall(
+          'teacherRequestRetakeStudent',
+          currentStatusExamId,
+          studentId
+        );
+        showToast(result.message, 'success');
+        await showExamStatus(currentStatusExamId);
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function requestRetakeAll() {
+      if (!currentStatusExamId) return;
+
+      const ok = window.confirm(
+        '시험 대상 학생 전체에게 재응시 알림을 보낼까요?\n\n' +
+        '기존 최고점과 응시 기록은 유지됩니다.'
+      );
+
+      if (!ok) return;
+
+      try {
+        setLoading(true, '전체 재응시를 설정하는 중입니다.');
+        const result = await apiCall(
+          'teacherRequestRetakeAll',
+          currentStatusExamId
+        );
+        showToast(result.message, 'success');
+        await showExamStatus(currentStatusExamId);
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function requestRetakeBelow70() {
+      if (!currentStatusExamId) return;
+
+      const ok = window.confirm(
+        '최고점이 70점 미만인 학생에게 재응시 알림을 보낼까요?\n\n' +
+        '70점 이상 학생과 미응시 학생은 제외됩니다.'
+      );
+
+      if (!ok) return;
+
+      try {
+        setLoading(true, '70점 미만 학생을 처리하는 중입니다.');
+        const result = await apiCall(
+          'teacherRequestRetakeBelowScore',
+          currentStatusExamId,
+          70
+        );
+        showToast(result.message, 'success');
+        await showExamStatus(currentStatusExamId);
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function sendReminder(examId, skipConfirm = false) {
+      if (!skipConfirm) {
+        const ok = window.confirm(
+          '완료하지 않은 학생에게 앱 내부 알림을 다시 보낼까요?'
+        );
+        if (!ok) return;
+      }
+
+      try {
+        setLoading(true, '알림을 생성하는 중입니다.');
+        const result = await apiCall('teacherSendReminder', examId);
+        showToast(result.message, 'success');
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function formatDateTime(value) {
+      if (!value) return '-';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+
+      return date.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function teacherLogout() {
+      const ok = window.confirm('선생님 페이지에서 로그아웃할까요?');
+      if (!ok) return;
+
+      try {
+        sessionStorage.clear();
+        localStorage.removeItem('teacherAuthenticated');
+        localStorage.removeItem('adminAuthenticated');
+      } catch (ignore) {}
+
+      window.location.href = './index.html';
+    }
+
+
+    function openTab(panelId) {
+      $$('.tab-btn').forEach((button) => {
+        button.classList.toggle('active', button.dataset.tab === panelId);
+      });
+
+      $$('.panel').forEach((panel) => {
+        panel.classList.toggle('active', panel.id === panelId);
+      });
+
+      if (panelId === 'listPanel') {
+        loadExamList();
+      }
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        if ($('#statusModal')?.classList.contains('show')) {
+          closeStatusModal();
+        }
+        if ($('#detailModal')?.classList.contains('show')) {
+          closeDetailModal();
+        }
+      }
+    });
+
+    function closeStatusModal() {
+      $('#statusModal').classList.remove('show');
+      currentStatusExamId = '';
+    }
+
+    function closeDetailModal() {
+      $('#detailModal').classList.remove('show');
+    }
+
+    function setDefaultDates() {
+      const now = new Date();
+      const deadline = new Date(now);
+      deadline.setDate(deadline.getDate() + 1);
+      deadline.setHours(22, 0, 0, 0);
+
+      $('#startAt').value = toLocalInputValue(now);
+      $('#deadlineAt').value = toLocalInputValue(deadline);
+    }
+
+    function toLocalInputValue(date) {
+      const pad = (value) => String(value).padStart(2, '0');
+
+      return [
+        date.getFullYear(),
+        '-',
+        pad(date.getMonth() + 1),
+        '-',
+        pad(date.getDate()),
+        'T',
+        pad(date.getHours()),
+        ':',
+        pad(date.getMinutes())
+      ].join('');
+    }
+
+    function formatDate(value) {
+      if (!value) return '-';
+
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+
+      return new Intl.DateTimeFormat('ko-KR', {
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(date);
+    }
+
+    function setLoading(show, text = '처리 중입니다.') {
+      $('#loadingText').textContent = text;
+      $('#loadingOverlay').classList.toggle('show', show);
+    }
+
+    let toastTimer;
+
+    function showToast(message, type = '') {
+      clearTimeout(toastTimer);
+
+      const toast = $('#toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3300);
+    }
+
+    document.addEventListener('click', () => {
+      closeAllRetakeMenus();
+    });
+
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+  </script>
+</body>
+</html>

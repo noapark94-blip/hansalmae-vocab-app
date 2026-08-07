@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+node_modules/
+.supabase/
+tools/import-report.json
+tools/generated-seed.sql
+
+legacy.xlsx
+supabase/.temp/

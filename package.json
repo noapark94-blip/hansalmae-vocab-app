@@ -1,0 +1,16 @@
+{
+  "name": "hansalmae-supabase",
+  "version": "1.0.0",
+  "description": "기존 Google Sheets + Apps Script 백엔드를 Supabase PostgreSQL/Auth/Edge Functions로 교체한 프로젝트입니다. 학생·교사 화면은 기존 디자인과 PWA 동작을 유지하며, 기존 `google.script.run` 호출 규격과 호환되는 API를 제공합니다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "supabase": "^2.111.0"
+  }
+}
