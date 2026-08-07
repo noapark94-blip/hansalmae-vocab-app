@@ -2802,26 +2802,24 @@
           signal: controller ? controller.signal : undefined
         })
           .then(function (response) {
-            if (!response.ok) {
-              throw makeError(
-                '서버 응답 오류: ' + response.status
-              );
-            }
-
-            return response.text();
+            return response.text().then(function (text) {
+              return { ok: response.ok, status: response.status, text: text };
+            });
           })
-          .then(function (text) {
+          .then(function (responseData) {
             let payload;
 
             try {
-              payload = JSON.parse(text);
+              payload = JSON.parse(responseData.text);
             } catch (_error) {
               throw makeError(
-                '서버 응답을 읽을 수 없습니다. Supabase API 주소를 확인해주세요.'
+                responseData.ok
+                  ? '서버 응답을 읽을 수 없습니다. Supabase API 주소를 확인해주세요.'
+                  : '서버 응답 오류: ' + responseData.status
               );
             }
 
-            if (!payload || payload.success !== true) {
+            if (!responseData.ok || !payload || payload.success !== true) {
               throw makeError(
                 payload && payload.message
                   ? payload.message
@@ -4251,6 +4249,20 @@
       </button>
     </div>
 
+
+    <!-- 임시 비밀번호 첫 로그인 변경 화면 -->
+    <div id="forcedPasswordScreen" class="card signup-card hidden">
+      <img class="brand-mark" src="./icon-512.png" alt="한살매 로고">
+      <h1>새 비밀번호 설정</h1>
+      <div class="subtitle">선생님이 발급한 임시 비밀번호를 본인 비밀번호로 변경해야 앱을 사용할 수 있습니다.</div>
+      <label for="forcedNewPassword">새 비밀번호</label>
+      <input id="forcedNewPassword" type="password" autocomplete="new-password" placeholder="새 비밀번호 (8자 이상)">
+      <label for="forcedNewPasswordConfirm">새 비밀번호 확인</label>
+      <input id="forcedNewPasswordConfirm" type="password" autocomplete="new-password" placeholder="새 비밀번호 다시 입력">
+      <button id="forcedPasswordButton" type="button" onclick="submitForcedPasswordChange_()">새 비밀번호로 변경</button>
+      <div id="forcedPasswordMessage" class="loading"></div>
+      <button type="button" class="secondary-button" onclick="cancelForcedPasswordChange_()">로그아웃</button>
+    </div>
 
     <!-- 학생 회원가입 화면 -->
     <div
@@ -5884,6 +5896,7 @@
 
 
     function showLoginScreen() {
+      document.getElementById('forcedPasswordScreen').classList.add('hidden');
       document.getElementById('signupScreen').classList.add('hidden');
       document.getElementById('teacherLoginScreen').classList.add('hidden');
       document.getElementById('loginScreen').classList.remove('hidden');
@@ -6324,8 +6337,69 @@
 
       savePersistentStudentLogin_(currentLoginToken, currentStudent);
 
+      if (currentStudent && currentStudent.mustChangePassword) {
+        showForcedPasswordChange_();
+        return;
+      }
+
       openMainApp(currentStudent);
       claimAttendanceBonusInBackground_();
+    }
+
+    function showForcedPasswordChange_() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('signupScreen').classList.add('hidden');
+      document.getElementById('teacherLoginScreen').classList.add('hidden');
+      document.getElementById('mainApp').classList.add('hidden');
+      document.getElementById('forcedPasswordScreen').classList.remove('hidden');
+      document.getElementById('forcedPasswordMessage').textContent = '';
+      document.getElementById('forcedNewPassword').value = '';
+      document.getElementById('forcedNewPasswordConfirm').value = '';
+      window.setTimeout(function () {
+        document.getElementById('forcedNewPassword').focus();
+      }, 50);
+      window.scrollTo(0, 0);
+    }
+
+    function submitForcedPasswordChange_() {
+      const next = document.getElementById('forcedNewPassword').value;
+      const confirmValue = document.getElementById('forcedNewPasswordConfirm').value;
+      const button = document.getElementById('forcedPasswordButton');
+      const message = document.getElementById('forcedPasswordMessage');
+      if (!next || !confirmValue) {
+        message.textContent = '새 비밀번호를 두 칸에 입력해주세요.';
+        return;
+      }
+      if (next.length < 8) {
+        message.textContent = '새 비밀번호는 8자 이상이어야 합니다.';
+        return;
+      }
+      if (next !== confirmValue) {
+        message.textContent = '새 비밀번호가 서로 일치하지 않습니다.';
+        return;
+      }
+      button.disabled = true;
+      message.textContent = '새 비밀번호를 저장하는 중입니다.';
+      google.script.run
+        .withSuccessHandler(function (result) {
+          button.disabled = false;
+          currentStudent.mustChangePassword = false;
+          savePersistentStudentLogin_(currentLoginToken, currentStudent);
+          document.getElementById('forcedPasswordScreen').classList.add('hidden');
+          alert(result && result.message ? result.message : '비밀번호가 변경되었습니다.');
+          openMainApp(currentStudent);
+          claimAttendanceBonusInBackground_();
+        })
+        .withFailureHandler(function (error) {
+          button.disabled = false;
+          message.textContent = error && error.message ? error.message : '비밀번호를 변경하지 못했습니다.';
+        })
+        .studentCompleteForcedPasswordChange(currentLoginToken, next);
+    }
+
+    function cancelForcedPasswordChange_() {
+      document.getElementById('forcedPasswordScreen').classList.add('hidden');
+      logout();
     }
 
 
@@ -6785,6 +6859,11 @@
         .add('hidden');
 
       document
+        .getElementById('forcedPasswordScreen')
+        .classList
+        .add('hidden');
+
+      document
         .getElementById('signupScreen')
         .classList
         .add('hidden');
@@ -6851,7 +6930,11 @@
        */
       if (savedStudent) {
         currentStudent = savedStudent;
-        openMainApp(savedStudent);
+        if (savedStudent.mustChangePassword) {
+          showForcedPasswordChange_();
+        } else {
+          openMainApp(savedStudent);
+        }
       } else {
         document.getElementById('loginMessage').textContent =
           '로그인 상태를 확인하는 중입니다.';
@@ -6866,6 +6949,11 @@
             if (result && result.success) {
               currentStudent = result.student;
               savePersistentStudentLogin_(savedToken, result.student);
+
+              if (result.student && result.student.mustChangePassword) {
+                showForcedPasswordChange_();
+                return;
+              }
 
               if (!savedStudent) {
                 openMainApp(result.student);
@@ -11513,7 +11601,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=52', {
+          .register('./service-worker.js?v=53', {
             updateViaCache: 'none'
           })
           .then(function (registration) {

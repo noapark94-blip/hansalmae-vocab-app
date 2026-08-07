@@ -1539,13 +1539,6 @@ protect	보호하다"></textarea>
         signal: controller ? controller.signal : undefined
       })
         .then(async (response) => {
-          if (!response.ok) {
-            throw new Error(
-              '서버 연결에 실패했습니다. HTTP ' +
-              response.status
-            );
-          }
-
           const text = await response.text();
           let envelope;
 
@@ -1553,11 +1546,13 @@ protect	보호하다"></textarea>
             envelope = JSON.parse(text);
           } catch (_error) {
             throw new Error(
-              '서버 응답을 읽을 수 없습니다.'
+              response.ok
+                ? '서버 응답을 읽을 수 없습니다.'
+                : '서버 연결에 실패했습니다. HTTP ' + response.status
             );
           }
 
-          if (!envelope.success) {
+          if (!response.ok || !envelope.success) {
             throw new Error(
               envelope.message ||
               '서버 요청에 실패했습니다.'

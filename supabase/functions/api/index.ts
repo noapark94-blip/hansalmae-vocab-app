@@ -156,6 +156,7 @@ function studentView(p: any) {
     grade,
     baseGrade: p.base_grade,
     baseYear: p.base_year,
+    mustChangePassword: Boolean(p.must_change_password),
   };
 }
 
@@ -752,11 +753,40 @@ async function dispatch(
         password: newPassword,
       });
       if (error) throw error;
-      await admin.from("password_change_audit").insert({
+      const { error: auditError } = await admin.from("password_change_audit").insert({
         user_id: p.id,
         change_type: "self_change",
       });
-      return { success: true, message: "비밀번호가 변경되었습니다. 다시 로그인해주세요." };
+      if (auditError) console.warn("password audit failed", auditError.message);
+      const { error: flagError } = await admin.from("profiles").update({
+        must_change_password: false,
+      }).eq("id", p.id);
+      if (flagError) throw flagError;
+      return { success: true, message: "비밀번호가 변경되었습니다." };
+    }
+    case "studentCompleteForcedPasswordChange": {
+      const p = await profileFromToken(args[0]);
+      const newPassword = str(args[1]);
+      if (!p.must_change_password) {
+        throw new Error("비밀번호 변경 대상 계정이 아닙니다.");
+      }
+      if (newPassword.length < 8) {
+        throw new Error("새 비밀번호는 8자 이상이어야 합니다.");
+      }
+      const { error } = await admin.auth.admin.updateUserById(p.id, {
+        password: newPassword,
+      });
+      if (error) throw error;
+      const { error: flagError } = await admin.from("profiles").update({
+        must_change_password: false,
+      }).eq("id", p.id);
+      if (flagError) throw flagError;
+      const { error: auditError } = await admin.from("password_change_audit").insert({
+        user_id: p.id,
+        change_type: "forced_change",
+      });
+      if (auditError) console.warn("password audit failed", auditError.message);
+      return { success: true, message: "새 비밀번호가 저장되었습니다." };
     }
     case "claimDailyAttendanceBonus": {
       const p = await profileFromToken(args[0]);
@@ -821,10 +851,15 @@ async function dispatch(
         password: newPassword,
       });
       if (error) throw error;
-      await admin.from("password_change_audit").insert({
+      const { error: flagError } = await admin.from("profiles").update({
+        must_change_password: true,
+      }).eq("id", student.id);
+      if (flagError) throw flagError;
+      const { error: auditError } = await admin.from("password_change_audit").insert({
         user_id: student.id,
         change_type: "teacher_reset",
       });
+      if (auditError) console.warn("password audit failed", auditError.message);
       return {
         success: true,
         message: `${student.display_name} 학생의 임시 비밀번호를 설정했습니다.`,
