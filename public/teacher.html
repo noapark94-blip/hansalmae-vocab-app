@@ -1138,7 +1138,7 @@
       </div>
 
       <div class="topbar-actions">
-        <button id="backupJsonBtn" class="outline-btn" type="button">전체 백업</button>
+        <button id="backupJsonBtn" class="outline-btn" type="button">전체 안전 백업</button>
         <button id="backupCsvBtn" class="outline-btn" type="button">학습기록 CSV</button>
         <button id="teacherLogoutBtn" class="ghost-btn" type="button">로그아웃</button>
       </div>
@@ -1718,12 +1718,15 @@ protect	보호하다"></textarea>
       try {
         setLoading(true, '백업 데이터를 준비하는 중입니다.');
         const result = await apiCall('teacherExportBackup');
+        if (!result || result.complete !== true || Number(result.backupVersion) < 2) {
+          throw new Error('전체 백업 검증에 실패했습니다. 파일을 저장하지 않았습니다.');
+        }
         const stamp = new Intl.DateTimeFormat('en-CA', {
           timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit'
         }).format(new Date());
         if (!asCsv) {
           downloadTextFile(
-            `hansalmae-backup-${stamp}.json`,
+            `hansalmae-complete-backup-${stamp}.json`,
             JSON.stringify(result, null, 2),
             'application/json;charset=utf-8'
           );

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v7-mobile-history-layout';
+const CACHE_NAME = 'hansalmae-supabase-v8-complete-backup';
 
 const REQUIRED_ASSETS = [
   './',

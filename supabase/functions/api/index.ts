@@ -160,6 +160,29 @@ function studentView(p: any) {
   };
 }
 
+async function backupAllRows(
+  table: string,
+  select = "*",
+  orderColumns: string[] = ["id"],
+) {
+  const pageSize = 1000;
+  const rows: any[] = [];
+  for (let from = 0;; from += pageSize) {
+    let query: any = admin.from(table).select(select);
+    for (const column of orderColumns) {
+      query = query.order(column, { ascending: true });
+    }
+    const { data, error } = await query.range(from, from + pageSize - 1);
+    if (error) {
+      throw new Error(`${table} 백업 중 오류가 발생했습니다: ${error.message}`);
+    }
+    const page = data ?? [];
+    rows.push(...page);
+    if (page.length < pageSize) break;
+  }
+  return rows;
+}
+
 async function signupStudent(args: unknown[]) {
   const input = (args[0] ?? {}) as Json;
   const id = str(input.studentId ?? args[0]).toLowerCase();
@@ -867,29 +890,48 @@ async function dispatch(
     }
     case "teacherExportBackup": {
       await requireStaff(args[0]);
-      const [{ data: profiles }, { data: results }, { data: wrongs }, { data: books },
-        { data: items }, { data: exams }, { data: assignments }] = await Promise.all([
-        admin.from("profiles").select("student_id,display_name,base_grade,base_year,enabled,created_at"),
-        admin.from("test_results").select("*,profiles(student_id,display_name),word_sets(name)").order("taken_at"),
-        admin.from("wrong_words").select("*,profiles(student_id),word_sets(name)"),
-        admin.from("vocabulary_books").select("*,profiles(student_id)"),
-        admin.from("vocabulary_items").select("*,profiles(student_id),vocabulary_books(name)"),
-        admin.from("teacher_exams").select("*"),
-        admin.from("exam_assignments").select("*,profiles(student_id)"),
+      const entries = await Promise.all([
+        backupAllRows("profiles"),
+        backupAllRows("word_sets"),
+        backupAllRows("words"),
+        backupAllRows("test_results"),
+        backupAllRows("wrong_words"),
+        backupAllRows("vocabulary_books"),
+        backupAllRows("vocabulary_items"),
+        backupAllRows("student_experience", "*", ["user_id"]),
+        backupAllRows("experience_logs"),
+        backupAllRows("bonus_xp_logs"),
+        backupAllRows("student_emblems", "*", ["user_id", "emblem_id"]),
+        backupAllRows("emblem_settings"),
+        backupAllRows("level_settings", "*", ["level"]),
+        backupAllRows("monthly_ranking_history", "*", ["month", "word_set_id", "user_id"]),
+        backupAllRows("student_daily_activity", "*", ["activity_date", "user_id"]),
+        backupAllRows("teacher_exams"),
+        backupAllRows("teacher_exam_words", "*", ["exam_id", "position"]),
+        backupAllRows("exam_assignments", "*", ["exam_id", "user_id"]),
+        backupAllRows("exam_progress"),
+        backupAllRows("notifications"),
       ]);
+      const names = [
+        "students", "wordSets", "words", "testResults", "wrongWords",
+        "vocabularyBooks", "vocabularyItems", "studentExperience",
+        "experienceLogs", "bonusXpLogs", "studentEmblems", "emblemSettings",
+        "levelSettings", "monthlyRankingHistory", "studentDailyActivity",
+        "teacherExams", "teacherExamWords", "examAssignments", "examProgress",
+        "notifications",
+      ];
+      const data = Object.fromEntries(names.map((name, index) => [name, entries[index]]));
+      const counts = Object.fromEntries(names.map((name, index) => [name, entries[index].length]));
       return {
         success: true,
+        backupVersion: 2,
+        complete: true,
+        scope: "public application data",
+        excluded: ["Supabase Auth password hashes", "API keys and secrets"],
         exportedAt: new Date().toISOString(),
         timeZone: KOREA_TIME_ZONE,
-        data: {
-          students: profiles ?? [],
-          testResults: results ?? [],
-          wrongWords: wrongs ?? [],
-          vocabularyBooks: books ?? [],
-          vocabularyItems: items ?? [],
-          teacherExams: exams ?? [],
-          examAssignments: assignments ?? [],
-        },
+        counts,
+        data,
       };
     }
     case "adminLogout": {
