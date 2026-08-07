@@ -1,0 +1,29 @@
+한살매 단어앱 기능 활성화 업데이트 (Windows PowerShell)
+
+1. 압축을 풀고 새 폴더로 이동합니다.
+
+2. Supabase DB와 API를 업데이트합니다.
+   npx.cmd supabase link --project-ref 본인_PROJECT_REF
+   npx.cmd supabase db push
+   npx.cmd supabase functions deploy api --no-verify-jwt
+
+3. 기존 앱스크립트 학습 기록을 가져옵니다.
+   원본 Excel 파일을 이 폴더에 legacy.xlsx라는 이름으로 복사한 뒤 실행합니다.
+
+   $env:SUPABASE_URL="https://본인_PROJECT_REF.supabase.co"
+   Supabase의 Secret service_role 키를 복사한 다음:
+   $env:SUPABASE_SERVICE_ROLE_KEY = Get-Clipboard
+
+   먼저 확인:
+   python tools\import_history.py legacy.xlsx --dry-run
+
+   실제 이관:
+   python tools\import_history.py legacy.xlsx
+
+4. 보안을 위해 PowerShell에 임시로 넣은 키를 지웁니다.
+   Remove-Item Env:SUPABASE_SERVICE_ROLE_KEY -ErrorAction SilentlyContinue
+   Set-Clipboard -Value "cleared"
+
+5. 브라우저 앱에서 Ctrl+F5를 누르고 다시 로그인해 확인합니다.
+
+주의: service_role 키와 legacy.xlsx는 GitHub에 올리지 마세요.

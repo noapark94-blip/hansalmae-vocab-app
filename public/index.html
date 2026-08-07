@@ -4435,6 +4435,14 @@
           </button>
 
           <button
+            id="accountMenuButton"
+            class="menu-button"
+            onclick="moveFromTestWithConfirm_(showAccountInformation_)"
+          >
+            내 정보
+          </button>
+
+          <button
             id="rankingMenuButton"
             class="menu-button"
             onclick="moveFromTestWithConfirm_(showRankingHome)"
@@ -4781,15 +4789,15 @@
       </div>
 
 
-      <!-- 내 학습 화면 -->
+      <!-- 내 정보 화면 -->
       <div
-        id="myPageScreen"
+        id="accountScreen"
         class="card hidden"
       >
-        <h2>내 학습</h2>
+        <h2>내 정보</h2>
 
         <div
-          id="myPageStudent"
+          id="accountStudent"
           class="subtitle"
         ></div>
 
@@ -4801,6 +4809,19 @@
           <button type="button" onclick="changeStudentPassword_()">비밀번호 변경하기</button>
           <div id="passwordChangeMessage" class="loading"></div>
         </div>
+      </div>
+
+      <!-- 내 학습 화면 -->
+      <div
+        id="myPageScreen"
+        class="card hidden"
+      >
+        <h2>내 학습</h2>
+
+        <div
+          id="myPageStudent"
+          class="subtitle"
+        ></div>
 
         <div
           id="myExperienceCard"
@@ -7307,6 +7328,24 @@
     }
 
 
+    function showAccountInformation_() {
+      hideAllStudentMainScreens_();
+      setStudentMenuActive_('account');
+
+      const student = currentStudent || {};
+      document.getElementById('accountStudent').textContent =
+        (student.studentName || '') +
+        (student.grade ? ' · ' + student.grade : '') +
+        (student.studentId ? ' · ' + student.studentId : '');
+
+      document.getElementById('currentPasswordChange').value = '';
+      document.getElementById('newPasswordChange').value = '';
+      document.getElementById('newPasswordConfirm').value = '';
+      document.getElementById('passwordChangeMessage').textContent = '';
+      window.scrollTo(0, 0);
+    }
+
+
     function renderMyPage(data) {
       document
         .getElementById('myPageLoading')
@@ -9526,6 +9565,11 @@
           'myPageMenuButton'
         );
 
+      const accountButton =
+        document.getElementById(
+          'accountMenuButton'
+        );
+
       const rankingButton =
         document.getElementById(
           'rankingMenuButton'
@@ -9534,6 +9578,7 @@
       testButton.classList.remove('active');
       vocabButton.classList.remove('active');
       myPageButton.classList.remove('active');
+      accountButton.classList.remove('active');
       rankingButton.classList.remove('active');
 
       if (menu === 'test') {
@@ -9544,6 +9589,9 @@
 
       } else if (menu === 'mypage') {
         myPageButton.classList.add('active');
+
+      } else if (menu === 'account') {
+        accountButton.classList.add('active');
 
       } else if (menu === 'ranking') {
         rankingButton.classList.add('active');
@@ -11601,7 +11649,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=53', {
+          .register('./service-worker.js?v=54', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
@@ -11761,7 +11809,7 @@ google.script.run
     function showPersonalVocabulary() {
       setActiveMenu('mypage');
       [
-        'startScreen','testScreen','resultScreen','vocabScreen','myPageScreen',
+        'startScreen','testScreen','resultScreen','vocabScreen','myPageScreen','accountScreen',
         'rankingScreen','wrongNotebookScreen','wrongTestSetupScreen',
         'personalTestSetupScreen','smartReviewScreen'
       ].forEach(function (id) {
@@ -11882,7 +11930,7 @@ google.script.run
 
     function hideAllStudentMainScreens_() {
       [
-        'startScreen','testScreen','resultScreen','vocabScreen','myPageScreen',
+        'startScreen','testScreen','resultScreen','vocabScreen','myPageScreen','accountScreen',
         'rankingScreen','wrongNotebookScreen','wrongTestSetupScreen',
         'personalVocabularyScreen','personalTestSetupScreen','smartReviewScreen'
       ].forEach(function (id) {
@@ -11894,7 +11942,7 @@ google.script.run
 
     function setStudentMenuActive_(menu) {
       [
-        'testMenuButton','vocabMenuButton','myPageMenuButton','rankingMenuButton',
+        'testMenuButton','vocabMenuButton','myPageMenuButton','accountMenuButton','rankingMenuButton',
         'teacherExamMenuButton','notificationMenuButton'
       ].forEach(function (id) {
         const el = document.getElementById(id);
@@ -11902,6 +11950,7 @@ google.script.run
       });
       const map = {
         test:'testMenuButton', vocab:'vocabMenuButton', mypage:'myPageMenuButton',
+        account:'accountMenuButton',
         ranking:'rankingMenuButton', teacherExam:'teacherExamMenuButton',
         notification:'notificationMenuButton'
       };
@@ -11912,6 +11961,10 @@ google.script.run
     const originalSetActiveMenu_ = setActiveMenu;
     setActiveMenu = function (menu) {
       originalSetActiveMenu_(menu);
+      if (menu !== 'account') {
+        const accountScreen = document.getElementById('accountScreen');
+        if (accountScreen) accountScreen.classList.add('hidden');
+      }
       ['teacherExamMenuButton','notificationMenuButton'].forEach(function (id) {
         const el = document.getElementById(id);
         if (el) el.classList.remove('active');
@@ -12446,6 +12499,7 @@ google.script.run
         'resultScreen',
         'vocabScreen',
         'myPageScreen',
+        'accountScreen',
         'rankingScreen',
         'wrongNotebookScreen',
         'wrongTestSetupScreen',
@@ -12622,6 +12676,11 @@ google.script.run
         setActiveMenu('vocab');
 
       } else if (
+        id === 'accountScreen'
+      ) {
+        setStudentMenuActive_('account');
+
+      } else if (
         id === 'myPageScreen' ||
         id === 'wrongNotebookScreen' ||
         id === 'wrongTestSetupScreen' ||
@@ -12682,6 +12741,7 @@ google.script.run
         'showTestHome',
         'showVocabHome',
         'showMyPage',
+        'showAccountInformation_',
         'showRankingHome',
         'showWrongNotebook',
         'showWrongTestSetup',

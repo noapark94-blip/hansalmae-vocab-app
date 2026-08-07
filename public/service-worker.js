@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v4-forced-password';
+const CACHE_NAME = 'hansalmae-supabase-v5-account-screen';
 
 const REQUIRED_ASSETS = [
   './',
