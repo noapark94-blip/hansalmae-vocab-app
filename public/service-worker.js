@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v8-complete-backup';
+const CACHE_NAME = 'hansalmae-supabase-v9-android-icon';
 
 const REQUIRED_ASSETS = [
   './',
@@ -9,6 +9,7 @@ const REQUIRED_ASSETS = [
   './icon-180.png',
   './icon-192.png',
   './icon-512.png',
+  './icon-maskable-512.png',
   './images/hsm-ball.png'
 ];
 
