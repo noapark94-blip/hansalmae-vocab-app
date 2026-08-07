@@ -325,6 +325,28 @@
       flex: 1;
     }
 
+    .student-reset-btn {
+      width: auto;
+      flex: 0 0 auto;
+      margin: 0;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .topbar-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-actions button { width: auto; margin: 0; }
+
     .student-name {
       font-weight: 850;
     }
@@ -1115,9 +1137,11 @@
         </div>
       </div>
 
-      <button id="teacherLogoutBtn" class="ghost-btn" type="button" style="width:auto;margin:0 0 10px auto;display:block;">
-        로그아웃
-      </button>
+      <div class="topbar-actions">
+        <button id="backupJsonBtn" class="outline-btn" type="button">전체 백업</button>
+        <button id="backupCsvBtn" class="outline-btn" type="button">학습기록 CSV</button>
+        <button id="teacherLogoutBtn" class="ghost-btn" type="button">로그아웃</button>
+      </div>
 
       <nav class="tabs" aria-label="관리 메뉴">
         <button class="tab-btn active" data-tab="createPanel">시험 만들기</button>
@@ -1410,6 +1434,8 @@ protect	보호하다"></textarea>
       $('#examForm').addEventListener('submit', createExam);
       $('#refreshExamsBtn').addEventListener('click', loadExamList);
       $('#deleteAllExamsBtn').addEventListener('click', deleteAllExams);
+      $('#backupJsonBtn').addEventListener('click', () => exportTeacherBackup(false));
+      $('#backupCsvBtn').addEventListener('click', () => exportTeacherBackup(true));
       $('#teacherLogoutBtn').addEventListener('click', teacherLogout);
       const remindIncompleteBtn = $('#remindIncompleteBtn');
       if (remindIncompleteBtn) {
@@ -1615,7 +1641,7 @@ protect	보호하다"></textarea>
       );
 
       $('#studentList').innerHTML = filtered.map((student) => `
-        <label class="student-item">
+        <div class="student-item">
           <input
             class="student-check"
             type="checkbox"
@@ -1634,14 +1660,102 @@ protect	보호하다"></textarea>
               ${escapeHtml(student.studentId)}
             </div>
           </div>
-        </label>
+          <button type="button" class="student-reset-btn"
+            data-student-id="${escapeHtml(student.studentId)}"
+            data-student-name="${escapeHtml(student.studentName)}">비밀번호 초기화</button>
+        </div>
       `).join('');
 
       $$('.student-check').forEach((checkbox) => {
         checkbox.addEventListener('change', updateSelectedCount);
       });
+      $$('.student-reset-btn').forEach((button) => {
+        button.addEventListener('click', () => resetStudentPassword(
+          button.dataset.studentId,
+          button.dataset.studentName
+        ));
+      });
 
       updateSelectedCount();
+    }
+
+    async function resetStudentPassword(studentId, studentName) {
+      const suggested = 'Hsm' + String(Math.floor(100000 + Math.random() * 900000));
+      const password = window.prompt(
+        `${studentName} 학생에게 전달할 임시 비밀번호를 입력하세요.\n8자 이상이어야 하며 기존 비밀번호는 확인할 수 없습니다.`,
+        suggested
+      );
+      if (password === null) return;
+      if (String(password).length < 8) {
+        showToast('임시 비밀번호는 8자 이상이어야 합니다.', 'error');
+        return;
+      }
+      if (!window.confirm(`${studentName} 학생의 비밀번호를 새 임시 비밀번호로 초기화할까요?`)) return;
+      try {
+        setLoading(true, '비밀번호를 초기화하는 중입니다.');
+        const result = await apiCall('teacherResetStudentPassword', studentId, password);
+        window.alert(`${result.message}\n\n임시 비밀번호: ${password}\n학생에게 안전하게 전달해주세요.`);
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function downloadTextFile(filename, content, type) {
+      const blob = new Blob([content], { type: type || 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function csvEscape(value) {
+      const text = value == null ? '' : (typeof value === 'object' ? JSON.stringify(value) : String(value));
+      return '"' + text.replace(/"/g, '""') + '"';
+    }
+
+    async function exportTeacherBackup(asCsv) {
+      try {
+        setLoading(true, '백업 데이터를 준비하는 중입니다.');
+        const result = await apiCall('teacherExportBackup');
+        const stamp = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit'
+        }).format(new Date());
+        if (!asCsv) {
+          downloadTextFile(
+            `hansalmae-backup-${stamp}.json`,
+            JSON.stringify(result, null, 2),
+            'application/json;charset=utf-8'
+          );
+        } else {
+          const rows = result.data && result.data.testResults ? result.data.testResults : [];
+          const headers = ['학생ID','학생이름','응시일시','시험구분','단어DB','문제유형','문제수','정답수','점수','포인트'];
+          const lines = [headers.map(csvEscape).join(',')];
+          rows.forEach((row) => lines.push([
+            row.profiles && row.profiles.student_id,
+            row.profiles && row.profiles.display_name,
+            row.taken_at,
+            row.test_kind,
+            row.word_sets && row.word_sets.name,
+            row.question_type,
+            row.question_count,
+            row.correct_count,
+            row.score,
+            row.points
+          ].map(csvEscape).join(',')));
+          downloadTextFile(`hansalmae-results-${stamp}.csv`, '\ufeff' + lines.join('\r\n'), 'text/csv;charset=utf-8');
+        }
+        showToast('백업 파일을 내려받았습니다.', 'success');
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
     }
 
     function updateSourceSections() {

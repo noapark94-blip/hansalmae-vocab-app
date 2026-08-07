@@ -108,6 +108,38 @@ async function requireStaff(token: unknown) {
   }
 }
 
+async function checkAdminLoginRateLimit(clientKey: string) {
+  const keyHash = await sha256(clientKey || "unknown");
+  const { data } = await admin.from("admin_login_attempts").select("*").eq(
+    "key_hash",
+    keyHash,
+  ).maybeSingle();
+  if (data?.locked_until && new Date(data.locked_until).getTime() > Date.now()) {
+    const minutes = Math.max(
+      1,
+      Math.ceil((new Date(data.locked_until).getTime() - Date.now()) / 60000),
+    );
+    throw new Error(`로그인 시도가 너무 많습니다. ${minutes}분 후 다시 시도해주세요.`);
+  }
+  return { keyHash, attempts: num(data?.attempts) };
+}
+
+async function recordAdminLoginFailure(keyHash: string, attempts: number) {
+  const next = attempts + 1;
+  const lockedUntil = next >= 5
+    ? new Date(Date.now() + 15 * 60000).toISOString()
+    : null;
+  await admin.from("admin_login_attempts").upsert({
+    key_hash: keyHash,
+    attempts: lockedUntil ? 0 : next,
+    locked_until: lockedUntil,
+    last_attempt_at: new Date().toISOString(),
+  }, { onConflict: "key_hash" });
+  if (lockedUntil) {
+    throw new Error("로그인에 5회 실패하여 15분 동안 잠겼습니다.");
+  }
+}
+
 function studentView(p: any) {
   const year = koreaYear();
   const grades = ["중1", "중2", "중3", "고1", "고2", "고3", "졸업"];
@@ -667,7 +699,11 @@ async function personalItem(input: any, p: any, bookId?: unknown) {
   };
 }
 
-async function dispatch(name: string, args: unknown[]) {
+async function dispatch(
+  name: string,
+  args: unknown[],
+  context: { clientKey?: string } = {},
+) {
   switch (name) {
     case "signupStudent":
       return signupStudent(args);
@@ -694,6 +730,34 @@ async function dispatch(name: string, args: unknown[]) {
     }
     case "studentLogout":
       return { success: true };
+    case "studentChangePassword": {
+      const p = await profileFromToken(args[0]);
+      const currentPassword = str(args[1]);
+      const newPassword = str(args[2]);
+      if (newPassword.length < 8) {
+        throw new Error("새 비밀번호는 8자 이상이어야 합니다.");
+      }
+      if (currentPassword === newPassword) {
+        throw new Error("현재 비밀번호와 다른 비밀번호를 입력해주세요.");
+      }
+      const verifyClient = createClient(url, anonKey, {
+        auth: { persistSession: false },
+      });
+      const { error: verifyError } = await verifyClient.auth.signInWithPassword({
+        email: studentEmail(str(p.student_id)),
+        password: currentPassword,
+      });
+      if (verifyError) throw new Error("현재 비밀번호가 올바르지 않습니다.");
+      const { error } = await admin.auth.admin.updateUserById(p.id, {
+        password: newPassword,
+      });
+      if (error) throw error;
+      await admin.from("password_change_audit").insert({
+        user_id: p.id,
+        change_type: "self_change",
+      });
+      return { success: true, message: "비밀번호가 변경되었습니다. 다시 로그인해주세요." };
+    }
     case "claimDailyAttendanceBonus": {
       const p = await profileFromToken(args[0]);
       const day = koreaDateKey();
@@ -726,9 +790,12 @@ async function dispatch(name: string, args: unknown[]) {
     case "checkAdminCode":
       return str(args[0]) === str(Deno.env.get("ADMIN_CODE"));
     case "adminLogin": {
+      const rate = await checkAdminLoginRateLimit(context.clientKey ?? "unknown");
       if (str(args[0]) !== str(Deno.env.get("ADMIN_CODE"))) {
+        await recordAdminLoginFailure(rate.keyHash, rate.attempts);
         throw new Error("관리자 코드가 올바르지 않습니다.");
       }
+      await admin.from("admin_login_attempts").delete().eq("key_hash", rate.keyHash);
       const token = uuid() + uuid();
       await admin.from("admin_sessions").insert({
         token_hash: await sha256(token),
@@ -738,6 +805,56 @@ async function dispatch(name: string, args: unknown[]) {
         success: true,
         token,
         expiresAt: new Date(Date.now() + 8 * 3600000).toISOString(),
+      };
+    }
+    case "teacherResetStudentPassword": {
+      await requireStaff(args[0]);
+      const studentId = str(args[1]).toLowerCase();
+      const newPassword = str(args[2]);
+      if (newPassword.length < 8) {
+        throw new Error("임시 비밀번호는 8자 이상이어야 합니다.");
+      }
+      const { data: student } = await admin.from("profiles").select("id,display_name")
+        .eq("student_id", studentId).eq("role", "student").maybeSingle();
+      if (!student) throw new Error("학생 계정을 찾을 수 없습니다.");
+      const { error } = await admin.auth.admin.updateUserById(student.id, {
+        password: newPassword,
+      });
+      if (error) throw error;
+      await admin.from("password_change_audit").insert({
+        user_id: student.id,
+        change_type: "teacher_reset",
+      });
+      return {
+        success: true,
+        message: `${student.display_name} 학생의 임시 비밀번호를 설정했습니다.`,
+      };
+    }
+    case "teacherExportBackup": {
+      await requireStaff(args[0]);
+      const [{ data: profiles }, { data: results }, { data: wrongs }, { data: books },
+        { data: items }, { data: exams }, { data: assignments }] = await Promise.all([
+        admin.from("profiles").select("student_id,display_name,base_grade,base_year,enabled,created_at"),
+        admin.from("test_results").select("*,profiles(student_id,display_name),word_sets(name)").order("taken_at"),
+        admin.from("wrong_words").select("*,profiles(student_id),word_sets(name)"),
+        admin.from("vocabulary_books").select("*,profiles(student_id)"),
+        admin.from("vocabulary_items").select("*,profiles(student_id),vocabulary_books(name)"),
+        admin.from("teacher_exams").select("*"),
+        admin.from("exam_assignments").select("*,profiles(student_id)"),
+      ]);
+      return {
+        success: true,
+        exportedAt: new Date().toISOString(),
+        timeZone: KOREA_TIME_ZONE,
+        data: {
+          students: profiles ?? [],
+          testResults: results ?? [],
+          wrongWords: wrongs ?? [],
+          vocabularyBooks: books ?? [],
+          vocabularyItems: items ?? [],
+          teacherExams: exams ?? [],
+          examAssignments: assignments ?? [],
+        },
       };
     }
     case "adminLogout": {
@@ -1982,6 +2099,11 @@ Deno.serve(async (req) => {
       await dispatch(
         str(body.functionName),
         Array.isArray(body.args) ? body.args : [],
+        {
+          clientKey: `${req.headers.get("x-forwarded-for") ?? "unknown"}|${
+            req.headers.get("user-agent") ?? "unknown"
+          }`,
+        },
       ),
     );
   } catch (e) {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v2-kst-emblems';
+const CACHE_NAME = 'hansalmae-supabase-v3-account-install-ops';
 
 const REQUIRED_ASSETS = [
   './',
@@ -6,6 +6,8 @@ const REQUIRED_ASSETS = [
   './manifest.json',
   './config.js',
   './icon.svg',
+  './icon-180.png',
+  './icon-192.png',
   './icon-512.png',
   './images/hsm-ball.png'
 ];
