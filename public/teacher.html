@@ -1945,6 +1945,11 @@ protect	보호하다"></textarea>
                 ${cancelled ? 'disabled' : ''}>
                 ${cancelled ? '취소됨' : '출제 취소'}
               </button>
+              <button type="button" class="danger-btn delete-btn"
+                data-exam-id="${escapeHtml(examId)}"
+                data-title="${escapeHtml(title)}">
+                목록에서 삭제
+              </button>
             </div>
           </article>
         `;
@@ -2022,6 +2027,12 @@ protect	보호하다"></textarea>
       $$('.cancel-btn').forEach((button) => {
         button.addEventListener('click', () =>
           cancelExam(button.dataset.examId, button.dataset.title)
+        );
+      });
+
+      $$('.delete-btn').forEach((button) => {
+        button.addEventListener('click', () =>
+          deleteExam(button.dataset.examId, button.dataset.title)
         );
       });
     }
@@ -2167,6 +2178,27 @@ protect	보호하다"></textarea>
         setLoading(true, '시험 출제를 취소하는 중입니다.');
         const result = await apiCall('teacherCancelExam', examId);
         showToast(result.message, 'success');
+        await loadExamList();
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function deleteExam(examId, title) {
+      const ok = window.confirm(
+        `"${title || '이 시험'}"을 시험 목록에서 완전히 삭제할까요?\n\n` +
+        '시험 문제, 학생 배정 및 알림이 함께 삭제됩니다.\n' +
+        '이미 제출된 학생의 성적 기록은 보존됩니다.'
+      );
+
+      if (!ok) return;
+
+      try {
+        setLoading(true, '시험을 삭제하는 중입니다.');
+        const result = await apiCall('teacherDeleteExam', examId);
+        showToast(result.message || '시험을 삭제했습니다.', 'success');
         await loadExamList();
       } catch (error) {
         showToast(error.message, 'error');
