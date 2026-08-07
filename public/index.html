@@ -1495,8 +1495,29 @@
       }
 
       .history-item {
-        gap: 10px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 7px 12px;
         padding: 14px 11px;
+      }
+
+      .history-date {
+        grid-column: 1 / -1;
+        width: auto;
+        text-align: left;
+        white-space: nowrap;
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .history-info {
+        grid-column: 1;
+      }
+
+      .history-score {
+        grid-column: 2;
+        grid-row: 2;
       }
 
 
@@ -11590,7 +11611,7 @@ google.script.run
       }
       if (isIos) {
         title.textContent = '아이폰·아이패드 설치';
-        steps.innerHTML = '<strong>Safari에서 설치하세요.</strong><br>1. 아래쪽 공유 버튼(□↑) 누르기<br>2. “홈 화면에 추가” 선택<br>3. 오른쪽 위 “추가” 누르기';
+        steps.innerHTML = '<strong>Safari에서 설치하세요.</strong><br>1. 화면 아래쪽의 “공유” 버튼 누르기<br>2. “홈 화면에 추가” 선택<br>3. 오른쪽 위 “추가” 누르기';
         install.classList.add('hidden');
       } else if (isAndroid) {
         title.textContent = '안드로이드 앱 설치';
@@ -11650,7 +11671,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=55', {
+          .register('./service-worker.js?v=56', {
             updateViaCache: 'none'
           })
           .then(function (registration) {

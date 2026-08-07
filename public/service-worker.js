@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v6-account-screen-visible';
+const CACHE_NAME = 'hansalmae-supabase-v7-mobile-history-layout';
 
 const REQUIRED_ASSETS = [
   './',
