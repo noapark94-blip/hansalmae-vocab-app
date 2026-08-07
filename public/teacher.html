@@ -1285,7 +1285,10 @@ protect	보호하다"></textarea>
       <article class="card">
         <div class="section-title">
           <h2 class="card-title" style="margin:0;">생성한 시험</h2>
-          <button id="refreshExamsBtn" type="button" class="outline-btn">새로고침</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="refreshExamsBtn" type="button" class="outline-btn">새로고침</button>
+            <button id="deleteAllExamsBtn" type="button" class="danger-btn">전체 삭제</button>
+          </div>
         </div>
         <div id="examList" class="exam-list">
           <div class="empty">시험 목록을 불러오는 중입니다.</div>
@@ -1406,6 +1409,7 @@ protect	보호하다"></textarea>
       $('#clearAllBtn').addEventListener('click', clearAllStudents);
       $('#examForm').addEventListener('submit', createExam);
       $('#refreshExamsBtn').addEventListener('click', loadExamList);
+      $('#deleteAllExamsBtn').addEventListener('click', deleteAllExams);
       $('#teacherLogoutBtn').addEventListener('click', teacherLogout);
       const remindIncompleteBtn = $('#remindIncompleteBtn');
       if (remindIncompleteBtn) {
@@ -2199,6 +2203,31 @@ protect	보호하다"></textarea>
         setLoading(true, '시험을 삭제하는 중입니다.');
         const result = await apiCall('teacherDeleteExam', examId);
         showToast(result.message || '시험을 삭제했습니다.', 'success');
+        await loadExamList();
+      } catch (error) {
+        showToast(error.message, 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function deleteAllExams() {
+      const first = window.confirm(
+        '선생님 시험 목록을 전부 삭제할까요?\n\n' +
+        '모든 시험 문제, 학생 배정 및 시험 알림이 함께 삭제됩니다.\n' +
+        '이미 제출된 학생의 성적 기록은 보존됩니다.'
+      );
+      if (!first) return;
+
+      const second = window.confirm(
+        '정말 전체 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
+      );
+      if (!second) return;
+
+      try {
+        setLoading(true, '모든 시험을 삭제하는 중입니다.');
+        const result = await apiCall('teacherDeleteAllExams');
+        showToast(result.message || '모든 시험을 삭제했습니다.', 'success');
         await loadExamList();
       } catch (error) {
         showToast(error.message, 'error');

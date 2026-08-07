@@ -1301,6 +1301,24 @@ async function dispatch(name: string, args: unknown[]) {
       if (error) throw error;
       return { success: true, message: "시험을 목록에서 완전히 삭제했습니다." };
     }
+    case "teacherDeleteAllExams": {
+      await requireStaff(args[0]);
+      const { count } = await admin.from("teacher_exams").select("id", {
+        count: "exact",
+        head: true,
+      });
+      const { error } = await admin.from("teacher_exams").delete().not(
+        "id",
+        "is",
+        null,
+      );
+      if (error) throw error;
+      return {
+        success: true,
+        deletedCount: count ?? 0,
+        message: `시험 ${count ?? 0}개를 모두 삭제했습니다.`,
+      };
+    }
     case "teacherSendReminder": {
       await requireStaff(args[0]);
       const id = str(args[1]);
