@@ -1788,7 +1788,7 @@ protect	보호하다"></textarea>
       if (
         payload.startAt &&
         payload.deadlineAt &&
-        new Date(payload.startAt) >= new Date(payload.deadlineAt)
+        parseKoreaInput(payload.startAt) >= parseKoreaInput(payload.deadlineAt)
       ) {
         throw new Error('마감 일시는 시작 일시보다 뒤여야 합니다.');
       }
@@ -2445,6 +2445,7 @@ protect	보호하다"></textarea>
       if (Number.isNaN(date.getTime())) return String(value);
 
       return date.toLocaleString('ko-KR', {
+        timeZone: 'Asia/Seoul',
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -2503,28 +2504,27 @@ protect	보호하다"></textarea>
 
     function setDefaultDates() {
       const now = new Date();
-      const deadline = new Date(now);
-      deadline.setDate(deadline.getDate() + 1);
-      deadline.setHours(22, 0, 0, 0);
+      const tomorrowKey = toKoreaDateKey(new Date(now.getTime() + 86400000));
 
       $('#startAt').value = toLocalInputValue(now);
-      $('#deadlineAt').value = toLocalInputValue(deadline);
+      $('#deadlineAt').value = tomorrowKey + 'T22:00';
     }
 
     function toLocalInputValue(date) {
-      const pad = (value) => String(value).padStart(2, '0');
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+      }).formatToParts(date);
+      const get = (type) => parts.find((part) => part.type === type)?.value || '';
+      return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}`;
+    }
 
-      return [
-        date.getFullYear(),
-        '-',
-        pad(date.getMonth() + 1),
-        '-',
-        pad(date.getDate()),
-        'T',
-        pad(date.getHours()),
-        ':',
-        pad(date.getMinutes())
-      ].join('');
+    function toKoreaDateKey(date) {
+      return toLocalInputValue(date).slice(0, 10);
+    }
+
+    function parseKoreaInput(value) {
+      return new Date(String(value || '') + ':00+09:00');
     }
 
     function formatDate(value) {
@@ -2534,6 +2534,7 @@ protect	보호하다"></textarea>
       if (Number.isNaN(date.getTime())) return String(value);
 
       return new Intl.DateTimeFormat('ko-KR', {
+        timeZone: 'Asia/Seoul',
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',

@@ -1,15 +1,32 @@
-const CACHE_NAME = 'hansalmae-supabase-v1';
+const CACHE_NAME = 'hansalmae-supabase-v2-kst-emblems';
 
 const REQUIRED_ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './config.js',
-  './icon.svg'
+  './icon.svg',
+  './icon-512.png',
+  './images/hsm-ball.png'
 ];
 
 const OPTIONAL_ASSETS = [
-  './teacher.html'
+  './teacher.html',
+  './images/emblems/title-chick.png',
+  './images/emblems/title-collector.png',
+  './images/emblems/title-predator.png',
+  './images/emblems/title-holic.png',
+  './images/emblems/title-slayer.png',
+  './images/emblems/title-madman.png',
+  './images/emblems/title-dictionary.png',
+  './images/emblems/achievement-king.png',
+  './images/emblems/achievement-success.png',
+  './images/emblems/achievement-madness-max.png',
+  './images/emblems/achievement-conqueror.png',
+  './images/emblems/achievement-teacher-blessing.png',
+  './images/emblems/achievement-reborn.png',
+  './images/emblems/achievement-vocab-trainer.png',
+  './images/emblems/achievement-wrong-hunter.png'
 ];
 
 self.addEventListener('install', function (event) {

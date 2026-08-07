@@ -9312,12 +9312,16 @@
           localStorage.getItem(rankingCacheKey) || 'null'
         );
 
-        const rankingNow = new Date();
+        const rankingNowParts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit'
+        }).formatToParts(new Date());
+        const rankingYear = Number((rankingNowParts.find(function(p){return p.type === 'year';}) || {}).value);
+        const rankingMonth = Number((rankingNowParts.find(function(p){return p.type === 'month';}) || {}).value);
         const cachedData = cachedRanking && cachedRanking.data;
         const cachedIsCurrentMonth =
           cachedData &&
-          Number(cachedData.year) === rankingNow.getFullYear() &&
-          Number(cachedData.month) === rankingNow.getMonth() + 1;
+          Number(cachedData.year) === rankingYear &&
+          Number(cachedData.month) === rankingMonth;
 
         if (cachedIsCurrentMonth) {
           monthlyRankingData = cachedData;
@@ -11885,7 +11889,6 @@ google.script.run
         '<div class="teacher-question-card">' +
         '<div class="question-info"><span>' + (teacherExamQuestionIndex + 1) + ' / ' + teacherExamSession.questions.length + '</span><span>' + teacherQuestionModeLabel_(q.mode) + '</span></div>' +
         '<div class="question">' + escapeHtml(q.prompt || '') + '</div>' +
-        (q.example ? '<div class="wrong-note-example">' + escapeHtml(q.example) + '</div>' : '') +
         '<div class="teacher-question-options">' + options + '</div>' +
         '<div class="teacher-exam-nav">' +
         '<button type="button" class="secondary-button" ' + (teacherExamQuestionIndex < 1 ? 'disabled' : '') + ' onclick="moveTeacherExamQuestion_(-1)">이전</button>' +
@@ -12107,7 +12110,7 @@ google.script.run
       let lastDate = '';
       sorted.forEach(function (item) {
         const date = item.createdAt ? new Date(item.createdAt) : null;
-        const dateKey = date && !isNaN(date.getTime()) ? date.toLocaleDateString('ko-KR') : '기타';
+        const dateKey = date && !isNaN(date.getTime()) ? date.toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul'}) : '기타';
         if (dateKey !== lastDate) {
           const group = document.createElement('div');
           group.className = 'notification-date-group';
@@ -12118,7 +12121,7 @@ google.script.run
         const card = document.createElement('div');
         card.className = 'student-notification-card' + (item.read ? '' : ' notification-unread');
         card.innerHTML = '<div class="notification-header-actions"><h3>' + escapeHtml(item.title || '알림') + '</h3>' +
-          '<span class="teacher-exam-meta">' + (date ? date.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}) : '') + '</span></div>' +
+          '<span class="teacher-exam-meta">' + (date ? date.toLocaleTimeString('ko-KR',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit'}) : '') + '</span></div>' +
           '<div class="notification-compact-text">' + escapeHtml(item.content || '') + '</div>' +
           '<div class="teacher-exam-actions">' +
           (!item.read ? '<button type="button" class="secondary-button" onclick="markStudentNotificationRead_(\'' + escapeJsString_(item.notificationId) + '\')">읽음</button>' : '') +
@@ -12230,15 +12233,15 @@ google.script.run
     }
 
     function teacherQuestionModeLabel_(mode) {
-      if (mode === 'korToEng') return '한글 → 영어';
-      if (mode === 'example') return '예문 문제';
+      if (mode === 'korToEng' || mode === 'meaningToEnglish') return '한글 → 영어';
+      if (mode === 'example' || mode === 'exampleBlank') return '예문 빈칸';
       return '영어 → 한글';
     }
 
     function formatTeacherExamDate_(value) {
       const date = new Date(value);
       if (isNaN(date.getTime())) return '';
-      return date.toLocaleString('ko-KR', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      return date.toLocaleString('ko-KR', { timeZone:'Asia/Seoul', year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
     }
 
     function escapeJsString_(value) {

@@ -30,6 +30,31 @@ const str = (v: unknown) => String(v ?? "").trim();
 const num = (v: unknown, fallback = 0) =>
   Number.isFinite(Number(v)) ? Number(v) : fallback;
 const uuid = () => crypto.randomUUID();
+const KOREA_TIME_ZONE = "Asia/Seoul";
+const koreaParts = (value: Date = new Date()) => {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: KOREA_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(value);
+  const get = (type: string) => parts.find((x) => x.type === type)?.value ?? "";
+  return { year: get("year"), month: get("month"), day: get("day") };
+};
+const koreaDateKey = (value: Date = new Date()) => {
+  const p = koreaParts(value);
+  return `${p.year}-${p.month}-${p.day}`;
+};
+const koreaYear = () => Number(koreaParts().year);
+const koreaMonthStartIso = () => {
+  const p = koreaParts();
+  return new Date(`${p.year}-${p.month}-01T00:00:00+09:00`).toISOString();
+};
+const formatKoreaDate = (value: unknown, options: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat("ko-KR", {
+    timeZone: KOREA_TIME_ZONE,
+    ...options,
+  }).format(new Date(str(value)));
 const sha256 = async (value: string) =>
   Array.from(
     new Uint8Array(
@@ -48,6 +73,14 @@ const koreaDateTime = (value: unknown) => {
   }
   return parsed.toISOString();
 };
+
+async function recordDailyActivity(userId: string) {
+  await admin.from("student_daily_activity").upsert({
+    user_id: userId,
+    activity_date: koreaDateKey(),
+    last_seen_at: new Date().toISOString(),
+  }, { onConflict: "user_id,activity_date" });
+}
 
 async function profileFromToken(token: unknown) {
   const value = str(token);
@@ -76,7 +109,7 @@ async function requireStaff(token: unknown) {
 }
 
 function studentView(p: any) {
-  const year = new Date().getFullYear();
+  const year = koreaYear();
   const grades = ["중1", "중2", "중3", "고1", "고2", "고3", "졸업"];
   const start = grades.indexOf(str(p.base_grade).replace(/\s/g, ""));
   const grade = start < 0 || !p.base_year ? p.base_grade : grades[
@@ -100,7 +133,7 @@ async function signupStudent(args: unknown[]) {
   const password = str(input.password ?? args[1]);
   const name = str(input.studentName ?? input.name ?? args[2]);
   const grade = str(input.baseGrade ?? input.grade ?? args[3]);
-  const year = num(input.baseYear ?? args[4], new Date().getFullYear());
+  const year = num(input.baseYear ?? args[4], koreaYear());
   const signupCode = str(input.signupCode);
   if (!/^[a-z0-9._-]{3,30}$/.test(id)) {
     throw new Error("학생ID는 영문 소문자와 숫자 3~30자로 입력해주세요.");
@@ -165,6 +198,7 @@ async function studentLogin(args: unknown[]) {
     };
   }
   const profile = await profileFromToken(data.session.access_token);
+  await recordDailyActivity(profile.id);
   return {
     success: true,
     token: data.session.access_token,
@@ -395,6 +429,64 @@ async function experienceView(userId: string) {
   };
 }
 
+function attendanceStreak(rows: any[]) {
+  const days = new Set((rows ?? []).map((x: any) => str(x.activity_date)));
+  let cursor = new Date(`${koreaDateKey()}T00:00:00+09:00`);
+  let streak = 0;
+  while (days.has(koreaDateKey(cursor))) {
+    streak++;
+    cursor = new Date(cursor.getTime() - 86400000);
+  }
+  return streak;
+}
+
+function perfectTestStreak(rows: any[]) {
+  let streak = 0;
+  for (const row of rows ?? []) {
+    if (num(row.question_count) < 100) continue;
+    if (num(row.score) < 100) break;
+    streak++;
+  }
+  return streak;
+}
+
+function allowedRankingCategory(grade: string, setName: string) {
+  if (grade.includes("고")) return setName.includes("고등") || setName.includes("수능");
+  if (grade.includes("중")) return setName.includes("중등");
+  return true;
+}
+
+function consecutiveMonthlyWins(rows: any[], grade: string) {
+  const groups = new Map<string, number[]>();
+  for (const row of rows ?? []) {
+    if (num(row.rank) !== 1) continue;
+    const setName = str(row.word_sets?.name);
+    if (!allowedRankingCategory(grade, setName)) continue;
+    const month = str(row.month).slice(0, 7);
+    if (!/^\d{4}-\d{2}$/.test(month)) continue;
+    const category = setName.includes("중등")
+      ? "middle"
+      : setName.includes("고등")
+      ? "high"
+      : setName.includes("수능")
+      ? "csat"
+      : setName;
+    const number = Number(month.slice(0, 4)) * 12 + Number(month.slice(5, 7));
+    groups.set(category, [...(groups.get(category) ?? []), number]);
+  }
+  let best = 0;
+  for (const values of groups.values()) {
+    const sorted = [...new Set(values)].sort((a, b) => a - b);
+    let streak = sorted.length ? 1 : 0;
+    best = Math.max(best, streak);
+    for (let i = 1; i < sorted.length; i++) {
+      streak = sorted[i] === sorted[i - 1] + 1 ? streak + 1 : 1;
+      best = Math.max(best, streak);
+    }
+  }
+  return best;
+}
+
 function wrongWordView(x: any) {
   return {
     rowNumber: x.public_id,
@@ -426,7 +518,11 @@ function vocabularyItemView(x: any) {
     translation: x.translation,
     mastered: x.mastered,
     registeredAt: x.created_at,
-    registeredDate: new Date(x.created_at).toLocaleDateString("ko-KR"),
+    registeredDate: formatKoreaDate(x.created_at, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }),
   };
 }
 
@@ -444,9 +540,16 @@ function teacherQuestions(words: any[], questionType: string) {
     a.position - b.position
   );
   return enabled.map((w: any, index: number) => {
-    const mixed = questionType === "mixed" || questionType === "random";
-    const mode = questionType === "korToEng" || questionType.includes("뜻→") ||
-        (mixed && index % 2 === 1)
+    const mixed = questionType === "mixed";
+    const random = questionType === "random";
+    const randomModes = ["englishToMeaning", "meaningToEnglish", "exampleBlank"];
+    const randomMode = randomModes[index % randomModes.length];
+    const mode = random
+      ? (randomMode === "exampleBlank" && !w.example
+        ? "englishToMeaning"
+        : randomMode)
+      : questionType === "korToEng" || questionType.includes("뜻→") ||
+          (mixed && index % 2 === 1)
       ? "meaningToEnglish"
       : questionType === "example" || questionType.includes("예문")
       ? "exampleBlank"
@@ -474,7 +577,7 @@ function teacherQuestions(words: any[], questionType: string) {
       questionId: String(w.position ?? index + 1),
       mode,
       prompt,
-      example: mode === "englishToMeaning" ? w.example : "",
+      example: "",
       options,
       correctAnswer: correct,
       english: w.word,
@@ -580,6 +683,7 @@ async function dispatch(name: string, args: unknown[]) {
     case "checkStudentSession": {
       try {
         const p = await profileFromToken(args[0]);
+        await recordDailyActivity(p.id);
         return { success: true, student: studentView(p) };
       } catch (e) {
         return {
@@ -592,7 +696,7 @@ async function dispatch(name: string, args: unknown[]) {
       return { success: true };
     case "claimDailyAttendanceBonus": {
       const p = await profileFromToken(args[0]);
-      const day = new Date().toISOString().slice(0, 10);
+      const day = koreaDateKey();
       const key = `attendance:${p.id}:${day}`;
       const { data: prior } = await admin.from("bonus_xp_logs").select(
         "xp,total_after",
@@ -922,6 +1026,10 @@ async function dispatch(name: string, args: unknown[]) {
         { count: teacherCount },
         { count: bookCount },
         { count: wrongCount },
+        { count: zeroCorrectCount },
+        { data: testRows },
+        { data: attendanceRows },
+        { data: rankingRows },
       ] = await Promise.all([
         admin.from("emblem_settings").select("*").eq("enabled", true).order(
           "sort_order",
@@ -934,8 +1042,28 @@ async function dispatch(name: string, args: unknown[]) {
         }).eq("user_id", p.id),
         admin.from("wrong_words").select("id", { count: "exact", head: true })
           .eq("user_id", p.id),
+        admin.from("test_results").select("id", { count: "exact", head: true })
+          .eq("user_id", p.id).eq("correct_count", 0).eq("status", "completed"),
+        admin.from("test_results").select("question_count,score,taken_at")
+          .eq("user_id", p.id).eq("status", "completed")
+          .order("taken_at", { ascending: false }),
+        admin.from("student_daily_activity").select("activity_date")
+          .eq("user_id", p.id).order("activity_date", { ascending: false }),
+        admin.from("monthly_ranking_history").select("month,rank,word_sets(name)")
+          .eq("user_id", p.id).eq("rank", 1).order("month"),
       ]);
       if (error) throw error;
+      const currentGrade = str(studentView(p).grade);
+      const attendanceCount = attendanceStreak(attendanceRows ?? []);
+      const perfectCount = perfectTestStreak(testRows ?? []);
+      const allowedWins = (rankingRows ?? []).filter((x: any) =>
+        allowedRankingCategory(currentGrade, str(x.word_sets?.name))
+      );
+      const monthlyWinCount = allowedWins.length;
+      const consecutiveWinCount = consecutiveMonthlyWins(
+        rankingRows ?? [],
+        currentGrade,
+      );
       const conditionValue = (e: any) =>
         num(
           Array.isArray(e.condition_value)
@@ -951,6 +1079,16 @@ async function dispatch(name: string, args: unknown[]) {
           ? num(bookCount) >= conditionValue(e)
           : e.condition_type === "WRONG_NOTEBOOK_COUNT"
           ? num(wrongCount) >= conditionValue(e)
+          : e.condition_type === "ZERO_CORRECT_COUNT"
+          ? num(zeroCorrectCount) >= conditionValue(e)
+          : e.condition_type === "ATTENDANCE_STREAK"
+          ? attendanceCount >= conditionValue(e)
+          : e.condition_type === "PERFECT_STREAK"
+          ? perfectCount >= conditionValue(e)
+          : e.condition_type === "MONTHLY_RANK_1"
+          ? monthlyWinCount >= conditionValue(e)
+          : e.condition_type === "CONSECUTIVE_MONTHLY_RANK_1"
+          ? consecutiveWinCount >= conditionValue(e)
           : false;
       const eligible = (settings ?? []).filter(qualifies);
       if (eligible.length) {
@@ -978,7 +1116,19 @@ async function dispatch(name: string, args: unknown[]) {
             ? `선생님 시험 ${value}회 응시`
             : e.condition_type === "VOCABULARY_BOOK_COUNT"
             ? `단어장 ${value}개 만들기`
-            : `오답 ${value}개 모으기`,
+            : e.condition_type === "WRONG_NOTEBOOK_COUNT"
+            ? `오답노트에 단어 ${value}개 이상 추가`
+            : e.condition_type === "ZERO_CORRECT_COUNT"
+            ? `정답 0개 시험 ${value}회 기록`
+            : e.condition_type === "ATTENDANCE_STREAK"
+            ? `${value}일 연속 출석`
+            : e.condition_type === "PERFECT_STREAK"
+            ? `100문항 이상 PERFECT ${value}회 연속 달성`
+            : e.condition_type === "MONTHLY_RANK_1"
+            ? `이달의 단어천재 랭킹 1위 달성`
+            : e.condition_type === "CONSECUTIVE_MONTHLY_RANK_1"
+            ? `이달의 단어천재 ${value}개월 연속 1위`
+            : `조건 달성 시 획득`,
           owned: Boolean(o),
           equipped: Boolean(o?.equipped),
           earnedAt: o?.earned_at ?? null,
@@ -1012,13 +1162,11 @@ async function dispatch(name: string, args: unknown[]) {
       return { success: true, message: "엠블럼을 장착했습니다." };
     }
     case "getMonthlyRanking": {
-      const now = new Date();
-      const start = new Date(
-        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
-      );
+      const now = koreaParts();
+      const start = koreaMonthStartIso();
       const { data, error } = await admin.from("test_results").select(
-        "user_id,points,grade,score,profiles(display_name,student_id),word_sets(name)",
-      ).gte("taken_at", start.toISOString());
+        "user_id,points,grade,score,profiles(display_name,student_id),word_sets(id,name)",
+      ).gte("taken_at", start);
       if (error) throw error;
       const ids = [...new Set((data ?? []).map((x: any) => x.user_id))];
       const [{ data: xp }, { data: equipped }] = await Promise.all([
@@ -1043,6 +1191,7 @@ async function dispatch(name: string, args: unknown[]) {
         high: new Map(),
         csat: new Map(),
       };
+      const categorySetIds: Record<string, string> = {};
       for (const x of data ?? []) {
         const setName = (x as any).word_sets?.name ?? "";
         const category = setName.includes("중등")
@@ -1053,6 +1202,7 @@ async function dispatch(name: string, args: unknown[]) {
           ? "csat"
           : "";
         if (!category || num(x.points) <= 0) continue;
+        categorySetIds[category] ||= str((x as any).word_sets?.id);
         const p: any = (x as any).profiles ?? {};
         const old = groups[category].get(x.user_id) ??
           {
@@ -1075,6 +1225,7 @@ async function dispatch(name: string, args: unknown[]) {
           const level: any = xpMap.get(userId);
           return {
             ...x,
+            userId,
             point: x.points,
             level: level?.level ?? 1,
             title: level?.title ?? "단어병아리",
@@ -1086,13 +1237,29 @@ async function dispatch(name: string, args: unknown[]) {
           b.points - a.points || b.perfectCount - a.perfectCount ||
           b.testCount - a.testCount || a.name.localeCompare(b.name, "ko")
         ).slice(0, 100).map((x, i) => ({ ...x, rank: i + 1 }));
-      return {
-        year: now.getFullYear(),
-        month: now.getMonth() + 1,
+      const result: any = {
+        year: Number(now.year),
+        month: Number(now.month),
         middle: rank(groups.middle),
         high: rank(groups.high),
         csat: rank(groups.csat),
       };
+      const monthDate = `${now.year}-${now.month}-01`;
+      for (const category of ["middle", "high", "csat"]) {
+        const winner = result[category]?.[0];
+        const setId = categorySetIds[category];
+        if (!winner || !setId) continue;
+        await admin.from("monthly_ranking_history").delete()
+          .eq("month", monthDate).eq("word_set_id", setId).eq("rank", 1);
+        await admin.from("monthly_ranking_history").insert({
+          month: monthDate,
+          word_set_id: setId,
+          user_id: winner.userId,
+          rank: 1,
+          points: winner.points,
+        });
+      }
+      return result;
     }
     case "getMyLearning": {
       const p = await profileFromToken(args[0]);
@@ -1102,7 +1269,13 @@ async function dispatch(name: string, args: unknown[]) {
       if (error) throw error;
       const rows = tests ?? [];
       const recentTests = rows.map((x: any) => ({
-        date: new Date(x.taken_at).toLocaleString("ko-KR"),
+        date: formatKoreaDate(x.taken_at, {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
         sheetName: x.word_sets?.name ??
           (x.test_kind === "teacher" ? "선생님 시험" : "단어 시험"),
         dayText: x.start_day
@@ -1119,7 +1292,7 @@ async function dispatch(name: string, args: unknown[]) {
       return {
         success: true,
         student: studentView(p),
-        monthText: new Date().toLocaleDateString("ko-KR", {
+        monthText: formatKoreaDate(new Date(), {
           year: "numeric",
           month: "long",
         }),
