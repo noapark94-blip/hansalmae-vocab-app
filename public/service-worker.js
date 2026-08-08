@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v12-single-session';
+const CACHE_NAME = 'hansalmae-supabase-v13-optimized';
 
 const REQUIRED_ASSETS = [
   './',

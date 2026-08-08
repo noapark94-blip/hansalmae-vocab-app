@@ -5649,6 +5649,8 @@
 
     let currentStudent = null;
     let currentLoginToken = '';
+    let currentRefreshToken = '';
+    let currentTokenExpiresAt = 0;
     let currentExperienceData = null;
     let studentSessionCheckTimer = null;
     let studentSessionCheckInFlight = false;
@@ -6476,11 +6478,15 @@
 
     const HSM_STUDENT_TOKEN_KEY_ = 'hansalmaeStudentToken';
     const HSM_STUDENT_INFO_KEY_ = 'hansalmaeStudentInfo';
+    const HSM_STUDENT_REFRESH_KEY_ = 'hansalmaeStudentRefreshToken';
+    const HSM_STUDENT_EXPIRES_KEY_ = 'hansalmaeStudentTokenExpiresAt';
 
 
-    function savePersistentStudentLogin_(token, student) {
+    function savePersistentStudentLogin_(token, student, refreshToken, expiresAt) {
       localStorage.setItem(HSM_STUDENT_TOKEN_KEY_, String(token || ''));
       localStorage.setItem(HSM_STUDENT_INFO_KEY_, JSON.stringify(student || {}));
+      if (refreshToken) localStorage.setItem(HSM_STUDENT_REFRESH_KEY_, String(refreshToken));
+      if (expiresAt) localStorage.setItem(HSM_STUDENT_EXPIRES_KEY_, String(expiresAt));
     }
 
 
@@ -6510,9 +6516,11 @@
 
     function completeStudentLogin_(result) {
       currentLoginToken = result.token;
+      currentRefreshToken = result.refreshToken || '';
+      currentTokenExpiresAt = Number(result.expiresAt || 0);
       currentStudent = result.student;
 
-      savePersistentStudentLogin_(currentLoginToken, currentStudent);
+      savePersistentStudentLogin_(currentLoginToken, currentStudent, currentRefreshToken, currentTokenExpiresAt);
 
       if (currentStudent && currentStudent.mustChangePassword) {
         showForcedPasswordChange_();
@@ -6983,6 +6991,33 @@
         return;
       }
 
+      if (
+        currentRefreshToken &&
+        currentTokenExpiresAt &&
+        currentTokenExpiresAt * 1000 - Date.now() < 10 * 60 * 1000
+      ) {
+        studentSessionCheckInFlight = true;
+        google.script.run
+          .withSuccessHandler(function (result) {
+            studentSessionCheckInFlight = false;
+            if (!result || !result.success) {
+              clearLoginState();
+              alert((result && result.message) || '로그인 정보가 만료되었습니다.');
+              return;
+            }
+            currentLoginToken = result.token;
+            currentRefreshToken = result.refreshToken || currentRefreshToken;
+            currentTokenExpiresAt = Number(result.expiresAt || 0);
+            savePersistentStudentLogin_(currentLoginToken, currentStudent, currentRefreshToken, currentTokenExpiresAt);
+          })
+          .withFailureHandler(function (error) {
+            studentSessionCheckInFlight = false;
+            handleTerminatedStudentSession_(error);
+          })
+          .studentRefreshSession(token, currentRefreshToken);
+        return;
+      }
+
       studentSessionCheckInFlight = true;
 
       google.script.run
@@ -7006,6 +7041,8 @@
     function clearLoginState() {
       stopStudentSessionMonitor_();
       currentLoginToken = '';
+      currentRefreshToken = '';
+      currentTokenExpiresAt = 0;
       currentStudent = null;
 
       if (
@@ -7028,6 +7065,8 @@
 
       localStorage.removeItem(HSM_STUDENT_TOKEN_KEY_);
       localStorage.removeItem(HSM_STUDENT_INFO_KEY_);
+      localStorage.removeItem(HSM_STUDENT_REFRESH_KEY_);
+      localStorage.removeItem(HSM_STUDENT_EXPIRES_KEY_);
 
       document
         .getElementById('mainApp')
@@ -7092,6 +7131,8 @@
 
     window.onload = function () {
       const savedToken = localStorage.getItem(HSM_STUDENT_TOKEN_KEY_);
+      currentRefreshToken = localStorage.getItem(HSM_STUDENT_REFRESH_KEY_) || '';
+      currentTokenExpiresAt = Number(localStorage.getItem(HSM_STUDENT_EXPIRES_KEY_) || 0);
       const savedStudent = readPersistentStudent_();
 
       if (!savedToken) {
@@ -14650,6 +14691,8 @@ google.script.run
   .hsm-emblem-status.owned{background:#fff0f7;color:#8f145f}
   .hsm-emblem-guide{margin:-4px 0 18px;padding:13px 15px;border-radius:14px;background:#fff7fb;color:#6c5b66;font-size:14px;line-height:1.65}
   .hsm-emblem-guide strong{color:#8f145f}
+  .hsm-emblem-rule-list{margin:8px 0 10px;padding-left:22px}
+  .hsm-emblem-rule-list li{margin:4px 0;line-height:1.55}
   .hsm-emblem-lock-icon{font-size:18px;margin-right:3px}
   .hsm-emblem-item.locked{background:#f7f7f7}
   .hsm-emblem-item.locked img{filter:grayscale(1);opacity:.32}
@@ -14746,7 +14789,17 @@ google.script.run
   <div class="hsm-emblem-panel">
     <div class="hsm-emblem-panel-head"><h3>엠블럼 도감</h3><button class="hsm-emblem-close" type="button" onclick="HSMEmblems.close()">닫기</button></div>
     <div id="hsmEmblemSummary" class="subtitle" style="margin:0 0 10px"></div>
-    <div class="hsm-emblem-guide"><strong>획득 방법</strong><br>각 엠블럼에 표시된 레벨에 도달하면 자동으로 획득합니다. 획득한 엠블럼은 언제든 원하는 것으로 바꿔 장착할 수 있습니다.</div>
+    <div class="hsm-emblem-guide">
+      <strong>랭킹 엠블럼 지급 기준</strong>
+      <ul class="hsm-emblem-rule-list">
+        <li>월간 랭킹 엠블럼은 한국시간 기준 월말 최종 순위가 확정된 후 지급됩니다.</li>
+        <li>중학생은 중등단어 부문만 인정됩니다.</li>
+        <li>고등학생은 고등단어·수능단어 부문만 인정되며, 중등단어 1위는 지급되지 않습니다.</li>
+        <li>정복자는 같은 부문에서 2개월 연속 최종 1위를 해야 합니다.</li>
+        <li>고등단어 1위 후 수능단어 1위는 연속 1위로 인정되지 않습니다.</li>
+      </ul>
+      획득한 엠블럼은 언제든 원하는 것으로 바꿔 장착할 수 있습니다.
+    </div>
     <div id="hsmEmblemGrid" class="hsm-emblem-grid"></div>
   </div>
 </div>

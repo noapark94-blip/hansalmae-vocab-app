@@ -106,7 +106,7 @@ async function profileFromToken(token: unknown) {
   const tokenHash = await sha256(value);
   const { data: activeSession, error: sessionError } = await admin
     .from("student_active_sessions")
-    .select("token_hash,expires_at")
+    .select("token_hash,expires_at,last_seen_at")
     .eq("user_id", data.user.id)
     .maybeSingle();
   if (sessionError) throw sessionError;
@@ -138,9 +138,12 @@ async function profileFromToken(token: unknown) {
         "다른 기기에서 로그인되어 현재 기기의 접속이 종료되었습니다.",
       );
     }
-    await admin.from("student_active_sessions").update({
-      last_seen_at: new Date().toISOString(),
-    }).eq("user_id", data.user.id).eq("token_hash", tokenHash);
+    const lastSeen = new Date(activeSession.last_seen_at ?? 0).getTime();
+    if (!lastSeen || Date.now() - lastSeen >= 5 * 60 * 1000) {
+      await admin.from("student_active_sessions").update({
+        last_seen_at: new Date().toISOString(),
+      }).eq("user_id", data.user.id).eq("token_hash", tokenHash);
+    }
   }
   const { data: profile } = await admin.from("profiles").select("*").eq(
     "id",
@@ -349,6 +352,52 @@ async function studentLogin(args: unknown[]) {
   };
 }
 
+async function refreshStudentSession(args: unknown[]) {
+  const oldAccessToken = str(args[0]);
+  const refreshToken = str(args[1]);
+  if (!oldAccessToken || !refreshToken) {
+    throw new StudentSessionError("SESSION_EXPIRED", "로그인 갱신 정보가 없습니다.");
+  }
+  const oldHash = await sha256(oldAccessToken);
+  const client = createClient(url, anonKey, { auth: { persistSession: false } });
+  const { data, error } = await client.auth.refreshSession({
+    refresh_token: refreshToken,
+  });
+  if (error || !data.session || !data.user) {
+    throw new StudentSessionError(
+      "SESSION_EXPIRED",
+      "로그인 정보가 만료되었습니다. 다시 로그인해주세요.",
+    );
+  }
+  const expiresAt = data.session.expires_at
+    ? new Date(data.session.expires_at * 1000).toISOString()
+    : new Date(Date.now() + 55 * 60000).toISOString();
+  const { data: replaced, error: replaceError } = await admin
+    .from("student_active_sessions")
+    .update({
+      token_hash: await sha256(data.session.access_token),
+      expires_at: expiresAt,
+      last_seen_at: new Date().toISOString(),
+    })
+    .eq("user_id", data.user.id)
+    .eq("token_hash", oldHash)
+    .select("user_id")
+    .maybeSingle();
+  if (replaceError) throw replaceError;
+  if (!replaced) {
+    throw new StudentSessionError(
+      "LOGGED_IN_FROM_ANOTHER_DEVICE",
+      "다른 기기에서 로그인되어 현재 기기의 접속이 종료되었습니다.",
+    );
+  }
+  return {
+    success: true,
+    token: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+    expiresAt: data.session.expires_at,
+  };
+}
+
 async function wordSetByName(name: unknown) {
   const { data } = await admin.from("word_sets").select("id,name").eq(
     "name",
@@ -439,45 +488,40 @@ async function saveResult(token: unknown, result: any) {
     attempt: num(result.attempt, 1),
     raw_result: result,
   };
-  const { error } = await admin.from("test_results").insert(row);
-  if (error) throw error;
   const wrongs = Array.isArray(result.wrongWords)
     ? result.wrongWords
     : Array.isArray(result.incorrectWords)
     ? result.incorrectWords
     : [];
-  for (const w of wrongs) {
-    const key = {
-      user_id: p.id,
-      word_set_id: set?.id ?? null,
-      day: num(w.day) || null,
-      word: str(w.word ?? w.english),
-    };
-    const { data: old } = await admin.from("wrong_words").select(
-      "id,wrong_count",
-    ).match(key).maybeSingle();
-    const payload = {
-      ...key,
-      meaning: str(w.meaning),
-      example: str(w.example),
-      translation: str(w.translation),
-      last_wrong_at: new Date().toISOString(),
-      mastered: false,
-    };
-    if (old) {
-      await admin.from("wrong_words").update({
-        ...payload,
-        wrong_count: old.wrong_count + 1,
-      }).eq("id", old.id);
-    } else await admin.from("wrong_words").insert(payload);
-  }
-  await grantXp(p.id, earned, `test:${id}`, {
-    test_kind: row.test_kind,
-    test_id: id,
-    question_count: count,
-    score,
-  });
-  const experience = await experienceView(p.id);
+  const atomicResult = {
+    ...row,
+    raw_result: result,
+  };
+  const atomicWrongs = wrongs.map((w: any) => ({
+    word_set_id: set?.id ?? null,
+    day: num(w.day) || null,
+    word: str(w.word ?? w.english),
+    meaning: str(w.meaning),
+    example: str(w.example),
+    translation: str(w.translation),
+  })).filter((w: any) => Boolean(w.word));
+  const payoutKey = row.test_kind === "teacher" && row.teacher_exam_id
+    ? `teacher:${p.id}:${row.teacher_exam_id}:${row.attempt}`
+    : `test:${id}`;
+  const { data: saved, error } = await admin.rpc(
+    "save_student_test_result_atomic",
+    {
+      p_user_id: p.id,
+      p_test_id: id,
+      p_result: atomicResult,
+      p_wrongs: atomicWrongs,
+      p_earned_xp: earned,
+      p_payout_key: payoutKey,
+    },
+  );
+  if (error) throw error;
+  const emblemState: any = await dispatch("getStudentEmblems", [str(token)], {});
+  const experience = emblemState?.experience ?? await experienceView(p.id);
   return {
     success: true,
     testResultId: id,
@@ -489,9 +533,13 @@ async function saveResult(token: unknown, result: any) {
     point: points,
     grade,
     earnedXp: earned,
-    savedWrongWordCount: wrongs.length,
+    savedWrongWordCount: num(saved?.saved_wrong_count, atomicWrongs.length),
     wrongCount: wrongs.length,
-    experience: { ...experience, earnedXp: earned },
+    experience: {
+      ...experience,
+      earnedXp: earned,
+      newlyGrantedEmblems: emblemState?.newlyGrantedEmblems ?? [],
+    },
   };
 }
 
@@ -597,12 +645,26 @@ function allowedRankingCategory(grade: string, setName: string) {
   return true;
 }
 
-function consecutiveMonthlyWins(rows: any[], grade: string) {
+function eligibleFinalRankingWin(row: any) {
+  if (!row?.finalized || num(row.rank) !== 1) return false;
+  const category = str(row.category) || (str(row.word_sets?.name).includes("중등")
+    ? "middle"
+    : str(row.word_sets?.name).includes("고등")
+    ? "high"
+    : str(row.word_sets?.name).includes("수능") ? "csat" : "");
+  const gradeGroup = str(row.winner_grade_group);
+  return gradeGroup === "middle"
+    ? category === "middle"
+    : gradeGroup === "high"
+    ? category === "high" || category === "csat"
+    : false;
+}
+
+function consecutiveMonthlyWins(rows: any[]) {
   const groups = new Map<string, number[]>();
   for (const row of rows ?? []) {
-    if (num(row.rank) !== 1) continue;
+    if (!eligibleFinalRankingWin(row)) continue;
     const setName = str(row.word_sets?.name);
-    if (!allowedRankingCategory(grade, setName)) continue;
     const month = str(row.month).slice(0, 7);
     if (!/^\d{4}-\d{2}$/.test(month)) continue;
     const category = setName.includes("중등")
@@ -825,6 +887,8 @@ async function dispatch(
     }
     case "studentLogin":
       return studentLogin(args);
+    case "studentRefreshSession":
+      return refreshStudentSession(args);
     case "checkStudentSession": {
       try {
         const p = await profileFromToken(args[0]);
@@ -930,7 +994,19 @@ async function dispatch(
         payout_key: key,
         total_after: total,
       });
-      return { success: true, alreadyClaimed: false, xp: 10, totalXp: total };
+      const emblemState: any = await dispatch(
+        "getStudentEmblems",
+        [str(args[0])],
+        context,
+      );
+      return {
+        success: true,
+        alreadyClaimed: false,
+        xp: 10,
+        earnedXp: 10,
+        totalXp: emblemState?.experience?.totalXp ?? total,
+        achievements: emblemState?.newlyGrantedEmblems ?? [],
+      };
     }
     case "checkAdminCode":
       return str(args[0]) === str(Deno.env.get("ADMIN_CODE"));
@@ -1146,10 +1222,16 @@ async function dispatch(
         name: str(args[1]),
       }).select().single();
       if (error) throw error;
+      const emblemState: any = await dispatch(
+        "getStudentEmblems",
+        [str(args[0])],
+        context,
+      );
       return {
         success: true,
         bookId: data.id,
         book: { bookId: data.id, name: data.name, bookName: data.name },
+        achievements: emblemState?.newlyGrantedEmblems ?? [],
       };
     }
     case "renameVocabularyBook": {
@@ -1307,6 +1389,10 @@ async function dispatch(
     case "getStudentEmblems": {
       const p = await profileFromToken(args[0]);
       const exp = await experienceView(p.id);
+      const { error: finalizeError } = await admin.rpc(
+        "finalize_due_monthly_rankings",
+      );
+      if (finalizeError) throw finalizeError;
       const [
         { data: settings, error },
         { count: teacherCount },
@@ -1325,31 +1411,29 @@ async function dispatch(
         admin.from("vocabulary_books").select("id", {
           count: "exact",
           head: true,
-        }).eq("user_id", p.id),
+        }).eq("user_id", p.id).eq("is_default", false),
         admin.from("wrong_words").select("id", { count: "exact", head: true })
           .eq("user_id", p.id),
         admin.from("test_results").select("id", { count: "exact", head: true })
           .eq("user_id", p.id).eq("correct_count", 0).eq("status", "completed"),
         admin.from("test_results").select("question_count,score,taken_at")
           .eq("user_id", p.id).eq("status", "completed")
-          .order("taken_at", { ascending: false }),
+          .gte("question_count", 100)
+          .order("taken_at", { ascending: false }).limit(10),
         admin.from("student_daily_activity").select("activity_date")
-          .eq("user_id", p.id).order("activity_date", { ascending: false }),
-        admin.from("monthly_ranking_history").select("month,rank,word_sets(name)")
+          .eq("user_id", p.id).order("activity_date", { ascending: false })
+          .limit(400),
+        admin.from("monthly_ranking_history").select(
+          "month,rank,category,winner_grade_group,finalized,word_sets(name)",
+        )
           .eq("user_id", p.id).eq("rank", 1).order("month"),
       ]);
       if (error) throw error;
-      const currentGrade = str(studentView(p).grade);
       const attendanceCount = attendanceStreak(attendanceRows ?? []);
       const perfectCount = perfectTestStreak(testRows ?? []);
-      const allowedWins = (rankingRows ?? []).filter((x: any) =>
-        allowedRankingCategory(currentGrade, str(x.word_sets?.name))
-      );
+      const allowedWins = (rankingRows ?? []).filter(eligibleFinalRankingWin);
       const monthlyWinCount = allowedWins.length;
-      const consecutiveWinCount = consecutiveMonthlyWins(
-        rankingRows ?? [],
-        currentGrade,
-      );
+      const consecutiveWinCount = consecutiveMonthlyWins(rankingRows ?? []);
       const conditionValue = (e: any) =>
         num(
           Array.isArray(e.condition_value)
@@ -1377,11 +1461,24 @@ async function dispatch(
           ? consecutiveWinCount >= conditionValue(e)
           : false;
       const eligible = (settings ?? []).filter(qualifies);
+      const { data: beforeOwnedRows } = await admin.from("student_emblems")
+        .select("emblem_id").eq("user_id", p.id);
+      const beforeOwned = new Set(
+        (beforeOwnedRows ?? []).map((x: any) => str(x.emblem_id)),
+      );
+      const newlyEligible = eligible.filter((e: any) => !beforeOwned.has(str(e.id)));
       if (eligible.length) {
         await admin.from("student_emblems").upsert(
           eligible.map((e: any) => ({ user_id: p.id, emblem_id: e.id })),
           { onConflict: "user_id,emblem_id", ignoreDuplicates: true },
         );
+      }
+      for (const emblem of newlyEligible) {
+        await grantXp(p.id, 30, `emblem:${p.id}:${emblem.id}`, {
+          test_kind: "emblem",
+          question_count: 0,
+          score: 0,
+        });
       }
       const { data: owned } = await admin.from("student_emblems").select(
         "emblem_id,earned_at,equipped",
@@ -1401,7 +1498,7 @@ async function dispatch(
             : e.condition_type === "TEACHER_TEST_COUNT"
             ? `선생님 시험 ${value}회 응시`
             : e.condition_type === "VOCABULARY_BOOK_COUNT"
-            ? `단어장 ${value}개 만들기`
+            ? `나만의 단어장 ${value}개 만들기 (기본 단어장 제외)`
             : e.condition_type === "WRONG_NOTEBOOK_COUNT"
             ? `오답노트에 단어 ${value}개 이상 추가`
             : e.condition_type === "ZERO_CORRECT_COUNT"
@@ -1411,9 +1508,9 @@ async function dispatch(
             : e.condition_type === "PERFECT_STREAK"
             ? `100문항 이상 PERFECT ${value}회 연속 달성`
             : e.condition_type === "MONTHLY_RANK_1"
-            ? `이달의 단어천재 랭킹 1위 달성`
+            ? `학년에 맞는 부문의 월간 최종 1위`
             : e.condition_type === "CONSECUTIVE_MONTHLY_RANK_1"
-            ? `이달의 단어천재 ${value}개월 연속 1위`
+            ? `같은 인정 부문에서 월간 최종 1위 ${value}개월 연속`
             : `조건 달성 시 획득`,
           owned: Boolean(o),
           equipped: Boolean(o?.equipped),
@@ -1421,30 +1518,33 @@ async function dispatch(
         };
       });
       const equippedEmblem = emblems.find((e: any) => e.equipped) ?? null;
+      const finalExperience = newlyEligible.length
+        ? await experienceView(p.id)
+        : exp;
       return {
         success: true,
         equippedEmblem,
         acquiredCount: emblems.filter((e: any) => e.owned).length,
         totalCount: emblems.length,
-        currentLevel: exp.level,
+        currentLevel: finalExperience.level,
+        experience: finalExperience,
+        newlyGrantedEmblems: newlyEligible.map((e: any) => ({
+          emblemId: e.id,
+          emblemName: e.name,
+          imagePath: e.image_path,
+          earnedXp: 30,
+        })),
         emblems,
       };
     }
     case "equipStudentEmblem": {
       const p = await profileFromToken(args[0]);
       const id = str(args[1]);
-      const { data: owned } = await admin.from("student_emblems").select(
-        "emblem_id",
-      ).eq("user_id", p.id).eq("emblem_id", id).maybeSingle();
-      if (!owned) throw new Error("아직 획득하지 않은 엠블럼입니다.");
-      await admin.from("student_emblems").update({ equipped: false }).eq(
-        "user_id",
-        p.id,
-      );
-      await admin.from("student_emblems").update({ equipped: true }).eq(
-        "user_id",
-        p.id,
-      ).eq("emblem_id", id);
+      const { error } = await admin.rpc("equip_student_emblem_atomic", {
+        p_user_id: p.id,
+        p_emblem_id: id,
+      });
+      if (error) throw error;
       return { success: true, message: "엠블럼을 장착했습니다." };
     }
     case "getMonthlyRanking": {
@@ -1477,7 +1577,6 @@ async function dispatch(
         high: new Map(),
         csat: new Map(),
       };
-      const categorySetIds: Record<string, string> = {};
       for (const x of data ?? []) {
         const setName = (x as any).word_sets?.name ?? "";
         const category = setName.includes("중등")
@@ -1488,7 +1587,6 @@ async function dispatch(
           ? "csat"
           : "";
         if (!category || num(x.points) <= 0) continue;
-        categorySetIds[category] ||= str((x as any).word_sets?.id);
         const p: any = (x as any).profiles ?? {};
         const old = groups[category].get(x.user_id) ??
           {
@@ -1530,21 +1628,6 @@ async function dispatch(
         high: rank(groups.high),
         csat: rank(groups.csat),
       };
-      const monthDate = `${now.year}-${now.month}-01`;
-      for (const category of ["middle", "high", "csat"]) {
-        const winner = result[category]?.[0];
-        const setId = categorySetIds[category];
-        if (!winner || !setId) continue;
-        await admin.from("monthly_ranking_history").delete()
-          .eq("month", monthDate).eq("word_set_id", setId).eq("rank", 1);
-        await admin.from("monthly_ranking_history").insert({
-          month: monthDate,
-          word_set_id: setId,
-          user_id: winner.userId,
-          rank: 1,
-          points: winner.points,
-        });
-      }
       return result;
     }
     case "getMyLearning": {
