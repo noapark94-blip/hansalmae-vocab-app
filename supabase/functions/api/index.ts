@@ -953,11 +953,20 @@ async function dispatch(
     case "signupStudent":
       return signupStudent(args);
     case "checkStudentIdDuplicate": {
+      const studentId = str(args[0]).toLowerCase();
+      if (!/^[a-z0-9._-]{3,30}$/.test(studentId)) {
+        return {
+          available: false,
+          message: "학생 아이디는 영문 소문자와 숫자 3~30자로 입력해주세요.",
+        };
+      }
       const { data } = await admin.from("profiles").select("id").eq(
         "student_id",
-        str(args[0]).toLowerCase(),
+        studentId,
       ).maybeSingle();
-      return !data;
+      return data
+        ? { available: false, message: "이미 사용 중인 아이디입니다." }
+        : { available: true, message: "사용할 수 있는 아이디입니다." };
     }
     case "studentLogin":
       return studentLogin(args);
