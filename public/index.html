@@ -3204,6 +3204,33 @@
 </script>
 
   <style id="data-cleanup-ui-style">
+    .account-push-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 720px;
+      margin: 16px auto;
+      padding: 13px 15px;
+      border: 1px solid #efcddd;
+      border-radius: 16px;
+      background: #fff8fb;
+    }
+
+    .account-push-copy { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .account-push-copy strong { color: #7d1452; font-size: 15px; }
+    .account-push-copy span { color: #51464c; font-size: 13px; }
+    .account-push-copy small { color: #85777f; font-size: 12px; }
+    .account-push-card button {
+      flex: 0 0 auto;
+      width: auto;
+      min-width: 92px;
+      min-height: 38px;
+      margin: 0;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
     .push-notification-setting {
       display: flex;
       align-items: center;
@@ -3241,6 +3268,9 @@
     }
 
     @media (max-width: 650px) {
+      .account-push-card { align-items: flex-start; }
+      .account-push-copy span { max-width: 190px; }
+
       .push-notification-setting { align-items: stretch; flex-direction: column; }
       .push-notification-setting button { width: 100%; }
 
@@ -4974,6 +5004,15 @@
           id="accountStudent"
           class="subtitle"
         ></div>
+
+        <div class="account-push-card">
+          <div class="account-push-copy">
+            <strong>앱 푸시 알림</strong>
+            <span>선생님 시험이 출제되면 이 기기로 알려드려요.</span>
+            <small id="accountPushNotificationStatus">현재 상태를 확인하는 중입니다.</small>
+          </div>
+          <button type="button" id="accountPushNotificationButton" onclick="toggleStudentPushNotifications_()">알림 켜기</button>
+        </div>
 
         <div class="hsm-password-card">
           <h3>비밀번호 변경</h3>
@@ -7575,6 +7614,7 @@
       document.getElementById('newPasswordChange').value = '';
       document.getElementById('newPasswordConfirm').value = '';
       document.getElementById('passwordChangeMessage').textContent = '';
+      refreshPushNotificationStatus_();
       window.scrollTo(0, 0);
     }
 
@@ -11882,7 +11922,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=59', {
+          .register('./service-worker.js?v=60', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
@@ -12591,13 +12631,16 @@ google.script.run
     }
 
     function setPushStatus_(message, enabled, disabled) {
-      const status = document.getElementById('pushNotificationStatus');
-      const button = document.getElementById('pushNotificationButton');
-      if (status) status.textContent = message;
-      if (button) {
-        button.textContent = enabled ? '푸시 알림 끄기' : '푸시 알림 켜기';
+      ['pushNotificationStatus', 'accountPushNotificationStatus'].forEach(function (id) {
+        const status = document.getElementById(id);
+        if (status) status.textContent = message;
+      });
+      ['pushNotificationButton', 'accountPushNotificationButton'].forEach(function (id) {
+        const button = document.getElementById(id);
+        if (!button) return;
+        button.textContent = enabled ? '알림 끄기' : '알림 켜기';
         button.disabled = Boolean(disabled);
-      }
+      });
     }
 
     function refreshPushNotificationStatus_() {
@@ -12626,8 +12669,10 @@ google.script.run
 
     function toggleStudentPushNotifications_() {
       if (!currentStudent || !currentLoginToken) return;
-      const button = document.getElementById('pushNotificationButton');
-      if (button) button.disabled = true;
+      ['pushNotificationButton', 'accountPushNotificationButton'].forEach(function (id) {
+        const button = document.getElementById(id);
+        if (button) button.disabled = true;
+      });
       getPushRegistration_().then(function (registration) {
         return registration.pushManager.getSubscription().then(function (subscription) {
           if (subscription) {
