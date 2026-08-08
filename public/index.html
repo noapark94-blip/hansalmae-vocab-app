@@ -10909,22 +10909,30 @@
             data: mixedWords[(engToKorCount + i) % mixedWords.length]
           });
         }
+      } else if (questionMode === 'random') {
+        const randomWords = shuffleArray(words);
+        const modeCycle = shuffleArray(['engToKor', 'korToEng', 'example']);
+
+        randomWords.forEach(function (word, index) {
+          const allowedModes = word.example
+            ? ['engToKor', 'korToEng', 'example']
+            : ['engToKor', 'korToEng'];
+          const preferredMode = modeCycle[index % modeCycle.length];
+          const selectedMode = allowedModes.indexOf(preferredMode) >= 0
+            ? preferredMode
+            : allowedModes[index % allowedModes.length];
+          availableTypes.push({ type: selectedMode, data: word });
+        });
       } else {
         words.forEach(function (word) {
-          if (
-            questionMode === 'random' ||
-            questionMode === 'engToKor'
-          ) {
+          if (questionMode === 'engToKor') {
             availableTypes.push({
               type: 'engToKor',
               data: word
             });
           }
 
-          if (
-            questionMode === 'random' ||
-            questionMode === 'korToEng'
-          ) {
+          if (questionMode === 'korToEng') {
             availableTypes.push({
               type: 'korToEng',
               data: word
@@ -10932,10 +10940,7 @@
           }
 
           if (
-            (
-              questionMode === 'random' ||
-              questionMode === 'example'
-            ) &&
+            questionMode === 'example' &&
             word.example
           ) {
             availableTypes.push({

@@ -791,6 +791,27 @@ function shuffle<T>(values: T[]) {
   return out;
 }
 
+function spreadWordsAcrossDays(words: any[]) {
+  const grouped = new Map<string, any[]>();
+  for (const word of words) {
+    const key = word.day === null || word.day === undefined
+      ? "manual"
+      : `day:${word.day}`;
+    const group = grouped.get(key) ?? [];
+    group.push(word);
+    grouped.set(key, group);
+  }
+  const queues = shuffle([...grouped.values()]).map((group) => shuffle(group));
+  const result: any[] = [];
+  while (queues.some((queue) => queue.length > 0)) {
+    for (const queue of shuffle(queues.filter((item) => item.length > 0))) {
+      const word = queue.shift();
+      if (word) result.push(word);
+    }
+  }
+  return result;
+}
+
 function teacherQuestions(words: any[], questionType: string) {
   const enabled = words.filter((x: any) => x.enabled).sort((a: any, b: any) =>
     a.position - b.position
@@ -1980,11 +2001,16 @@ async function dispatch(
       ).eq("user_id", p.id).order("assigned_at", { ascending: false });
       if (error) throw error;
       const now = Date.now();
-      const exams = (data ?? []).filter((x: any) =>
-        x.teacher_exams?.status !== "cancelled" &&
-        !(x.teacher_exams?.ends_at &&
-          new Date(x.teacher_exams.ends_at).getTime() < now)
-      ).map((x: any) => {
+      const threeDays = 3 * 24 * 60 * 60 * 1000;
+      const exams = (data ?? []).filter((x: any) => {
+        const exam = x.teacher_exams;
+        if (!exam || exam.status === "cancelled") return false;
+        const deadlineExpired = exam.ends_at &&
+          new Date(exam.ends_at).getTime() + threeDays < now;
+        const completionExpired = x.status === "completed" && x.completed_at &&
+          new Date(x.completed_at).getTime() + threeDays < now;
+        return !deadlineExpired && !completionExpired;
+      }).map((x: any) => {
         const e = x.teacher_exams;
         const early = e.starts_at && new Date(e.starts_at).getTime() > now;
         const late = e.ends_at && new Date(e.ends_at).getTime() < now;
@@ -2128,6 +2154,9 @@ async function dispatch(
         "scope_key",
         `teacher:${id}`,
       );
+      await admin.from("notifications").update({
+        read_at: new Date().toISOString(),
+      }).eq("user_id", p.id).eq("exam_id", id).is("read_at", null);
       return {
         success: true,
         result: {
@@ -2180,6 +2209,14 @@ async function dispatch(
     }
     case "studentGetNotifications": {
       const p = await profileFromToken(args[0]);
+      const { data: completedAssignments } = await admin.from("exam_assignments")
+        .select("exam_id").eq("user_id", p.id).eq("status", "completed");
+      const completedExamIds = (completedAssignments ?? []).map((x: any) => x.exam_id);
+      if (completedExamIds.length) {
+        await admin.from("notifications").update({
+          read_at: new Date().toISOString(),
+        }).eq("user_id", p.id).in("exam_id", completedExamIds).is("read_at", null);
+      }
       const { data, error } = await admin.from("notifications").select("*").eq(
         "user_id",
         p.id,
@@ -2300,6 +2337,7 @@ async function teacherCreate(args: unknown[]) {
       "시험을 만들려면 사용할 수 있는 단어가 최소 4개 필요합니다.",
     );
   }
+  words = spreadWordsAcrossDays(words);
   const questionCount = Math.min(
     num(p.questionCount, words.length),
     words.length,
