@@ -14,6 +14,14 @@ const admin = createClient(url, serviceKey, {
 });
 
 type Json = Record<string, unknown>;
+class StudentSessionError extends Error {
+  code: string;
+  constructor(code: string, message: string) {
+    super(message);
+    this.name = "StudentSessionError";
+    this.code = code;
+  }
+}
 const ok = (result: unknown) =>
   new Response(JSON.stringify({ success: true, result }), {
     headers: { ...cors, "Content-Type": "application/json" },
@@ -23,6 +31,7 @@ const fail = (e: unknown, status = 400) =>
     JSON.stringify({
       success: false,
       message: e instanceof Error ? e.message : String(e),
+      code: e instanceof StudentSessionError ? e.code : undefined,
     }),
     { status, headers: { ...cors, "Content-Type": "application/json" } },
   );
@@ -84,10 +93,54 @@ async function recordDailyActivity(userId: string) {
 
 async function profileFromToken(token: unknown) {
   const value = str(token);
-  if (!value) throw new Error("로그인 정보가 없습니다.");
+  if (!value) {
+    throw new StudentSessionError("NO_SESSION", "로그인 정보가 없습니다.");
+  }
   const { data, error } = await admin.auth.getUser(value);
   if (error || !data.user) {
-    throw new Error("로그인 정보가 만료되었습니다. 다시 로그인해주세요.");
+    throw new StudentSessionError(
+      "SESSION_EXPIRED",
+      "로그인 정보가 만료되었습니다. 다시 로그인해주세요.",
+    );
+  }
+  const tokenHash = await sha256(value);
+  const { data: activeSession, error: sessionError } = await admin
+    .from("student_active_sessions")
+    .select("token_hash,expires_at")
+    .eq("user_id", data.user.id)
+    .maybeSingle();
+  if (sessionError) throw sessionError;
+  if (!activeSession) {
+    // 기능 배포 전에 로그인되어 있던 계정은 첫 요청의 기기를 활성 기기로 등록합니다.
+    const expiresAt = new Date(Date.now() + 55 * 60000).toISOString();
+    const { error: bootstrapError } = await admin.from("student_active_sessions")
+      .upsert({
+        user_id: data.user.id,
+        token_hash: tokenHash,
+        expires_at: expiresAt,
+        last_seen_at: new Date().toISOString(),
+      }, { onConflict: "user_id" });
+    if (bootstrapError) throw bootstrapError;
+  } else {
+    if (new Date(activeSession.expires_at).getTime() <= Date.now()) {
+      await admin.from("student_active_sessions").delete().eq(
+        "user_id",
+        data.user.id,
+      );
+      throw new StudentSessionError(
+        "SESSION_EXPIRED",
+        "로그인 정보가 만료되었습니다. 다시 로그인해주세요.",
+      );
+    }
+    if (activeSession.token_hash !== tokenHash) {
+      throw new StudentSessionError(
+        "LOGGED_IN_FROM_ANOTHER_DEVICE",
+        "다른 기기에서 로그인되어 현재 기기의 접속이 종료되었습니다.",
+      );
+    }
+    await admin.from("student_active_sessions").update({
+      last_seen_at: new Date().toISOString(),
+    }).eq("user_id", data.user.id).eq("token_hash", tokenHash);
   }
   const { data: profile } = await admin.from("profiles").select("*").eq(
     "id",
@@ -240,6 +293,7 @@ async function signupStudent(args: unknown[]) {
 
 async function studentLogin(args: unknown[]) {
   const id = str(args[0]).toLowerCase(), password = str(args[1]);
+  const replaceExisting = args[2] === true;
   const client = createClient(url, anonKey, {
     auth: { persistSession: false },
   });
@@ -253,7 +307,38 @@ async function studentLogin(args: unknown[]) {
       message: "학생ID 또는 비밀번호가 올바르지 않습니다.",
     };
   }
-  const profile = await profileFromToken(data.session.access_token);
+  const { data: profile, error: profileError } = await admin.from("profiles")
+    .select("*").eq("id", data.user.id).single();
+  if (profileError || !profile?.enabled) {
+    return { success: false, code: "ACCOUNT_DISABLED", message: "현재 사용할 수 없는 계정입니다." };
+  }
+  const { data: activeSession, error: activeError } = await admin
+    .from("student_active_sessions")
+    .select("expires_at")
+    .eq("user_id", profile.id)
+    .maybeSingle();
+  if (activeError) throw activeError;
+  const activeSessionExists = activeSession &&
+    new Date(activeSession.expires_at).getTime() > Date.now();
+  if (activeSessionExists && !replaceExisting) {
+    return {
+      success: false,
+      code: "ACTIVE_SESSION_EXISTS",
+      message: "다른 기기에서 로그인 중입니다.",
+    };
+  }
+  const expiresAt = data.session.expires_at
+    ? new Date(data.session.expires_at * 1000).toISOString()
+    : new Date(Date.now() + 55 * 60000).toISOString();
+  const { error: saveSessionError } = await admin.from("student_active_sessions")
+    .upsert({
+      user_id: profile.id,
+      token_hash: await sha256(data.session.access_token),
+      expires_at: expiresAt,
+      created_at: new Date().toISOString(),
+      last_seen_at: new Date().toISOString(),
+    }, { onConflict: "user_id" });
+  if (saveSessionError) throw saveSessionError;
   await recordDailyActivity(profile.id);
   return {
     success: true,
@@ -748,12 +833,19 @@ async function dispatch(
       } catch (e) {
         return {
           success: false,
+          code: e instanceof StudentSessionError ? e.code : "INVALID_SESSION",
           message: e instanceof Error ? e.message : String(e),
         };
       }
     }
-    case "studentLogout":
+    case "studentLogout": {
+      const tokenHash = await sha256(str(args[0]));
+      await admin.from("student_active_sessions").delete().eq(
+        "token_hash",
+        tokenHash,
+      );
       return { success: true };
+    }
     case "studentChangePassword": {
       const p = await profileFromToken(args[0]);
       const currentPassword = str(args[1]);

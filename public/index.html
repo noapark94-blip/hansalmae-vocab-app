@@ -2621,6 +2621,7 @@
 
     (function installGoogleScriptRunAdapter() {
       const inflightRequests = new Map();
+      let sessionTerminationHandled = false;
 
       const CACHE_RULES = {
         teacherGetExamStatus: 10 * 1000,
@@ -2657,12 +2658,33 @@
           DEFAULT_REQUEST_TIMEOUT_MS;
       }
 
-      function makeError(message) {
+      function makeError(message, code) {
         const error = new Error(
           message || '서버 요청 중 오류가 발생했습니다.'
         );
         error.name = 'AppsScriptError';
+        error.code = code || '';
         return error;
+      }
+
+      function handleTerminatedStudentSession_(error) {
+        if (
+          sessionTerminationHandled ||
+          !error ||
+          ['NO_SESSION', 'INVALID_SESSION', 'SESSION_EXPIRED',
+            'LOGGED_IN_FROM_ANOTHER_DEVICE', 'ACCOUNT_DISABLED']
+            .indexOf(String(error.code || '')) < 0
+        ) {
+          return;
+        }
+        sessionTerminationHandled = true;
+        window.setTimeout(function () {
+          if (typeof clearLoginState === 'function') clearLoginState();
+          alert(error.message || '로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
+          window.setTimeout(function () {
+            sessionTerminationHandled = false;
+          }, 1000);
+        }, 0);
       }
 
       function stableKey(functionName, args) {
@@ -2844,7 +2866,8 @@
               throw makeError(
                 payload && payload.message
                   ? payload.message
-                  : '서버 함수 실행에 실패했습니다.'
+                  : '서버 함수 실행에 실패했습니다.',
+                payload && payload.code ? payload.code : ''
               );
             }
 
@@ -2859,6 +2882,7 @@
             return payload.result;
           })
           .catch(function (error) {
+            handleTerminatedStudentSession_(error);
             if (error && error.name === 'AbortError') {
               const timeoutMessage =
                 functionName === 'studentSubmitTeacherExam'
@@ -6934,11 +6958,10 @@
         return;
       }
 
-      // 30초마다 세션을 확인하면 학생 수가 많을 때
-      // Apps Script 요청이 과도하게 발생하므로 3분 간격으로 확인합니다.
+      // 다른 기기 로그인 여부를 1분마다 확인합니다.
       studentSessionCheckTimer = window.setInterval(
         checkCurrentStudentSession_,
-        600000
+        60000
       );
     }
 

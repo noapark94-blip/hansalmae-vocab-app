@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v10-ranking-pull-refresh';
+const CACHE_NAME = 'hansalmae-supabase-v12-single-session';
 
 const REQUIRED_ASSETS = [
   './',
