@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import webpush from "npm:web-push@3.6.7";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -82,6 +83,58 @@ const koreaDateTime = (value: unknown) => {
   }
   return parsed.toISOString();
 };
+
+function configureWebPush() {
+  const publicKey = str(Deno.env.get("VAPID_PUBLIC_KEY"));
+  const privateKey = str(Deno.env.get("VAPID_PRIVATE_KEY"));
+  const subject = str(Deno.env.get("VAPID_SUBJECT")) || "mailto:admin@example.com";
+  if (!publicKey || !privateKey) return false;
+  webpush.setVapidDetails(subject, publicKey, privateKey);
+  return true;
+}
+
+async function sendPushToStudents(userIds: string[], payload: Json) {
+  const ids = [...new Set(userIds.filter(Boolean))];
+  if (!ids.length || !configureWebPush()) {
+    return { sent: 0, failed: 0, configured: false };
+  }
+  const { data: subscriptions, error } = await admin
+    .from("student_push_subscriptions")
+    .select("id,user_id,endpoint,p256dh,auth")
+    .in("user_id", ids).eq("enabled", true);
+  if (error) throw error;
+  let sent = 0;
+  let failed = 0;
+  await Promise.all((subscriptions ?? []).map(async (subscription: any) => {
+    try {
+      await webpush.sendNotification({
+        endpoint: subscription.endpoint,
+        keys: { p256dh: subscription.p256dh, auth: subscription.auth },
+      }, JSON.stringify(payload), { TTL: 86400, urgency: "high" });
+      sent++;
+      await admin.from("student_push_subscriptions").update({
+        last_success_at: new Date().toISOString(),
+        last_error: null,
+        updated_at: new Date().toISOString(),
+      }).eq("id", subscription.id);
+    } catch (pushError: any) {
+      failed++;
+      const statusCode = num(pushError?.statusCode);
+      if (statusCode === 404 || statusCode === 410) {
+        await admin.from("student_push_subscriptions").delete().eq(
+          "id",
+          subscription.id,
+        );
+      } else {
+        await admin.from("student_push_subscriptions").update({
+          last_error: str(pushError?.message).slice(0, 500),
+          updated_at: new Date().toISOString(),
+        }).eq("id", subscription.id);
+      }
+    }
+  }));
+  return { sent, failed, configured: true };
+}
 
 async function recordDailyActivity(userId: string) {
   await admin.from("student_daily_activity").upsert({
@@ -909,6 +962,37 @@ async function dispatch(
         tokenHash,
       );
       return { success: true };
+    }
+    case "studentGetPushPublicKey": {
+      await profileFromToken(args[0]);
+      const publicKey = str(Deno.env.get("VAPID_PUBLIC_KEY"));
+      if (!publicKey) throw new Error("푸시 알림 서버 설정이 아직 완료되지 않았습니다.");
+      return { success: true, publicKey };
+    }
+    case "studentSavePushSubscription": {
+      const p = await profileFromToken(args[0]);
+      const subscription: any = args[1] ?? {};
+      const endpoint = str(subscription.endpoint);
+      const p256dh = str(subscription.keys?.p256dh);
+      const auth = str(subscription.keys?.auth);
+      if (!endpoint || !p256dh || !auth) throw new Error("푸시 알림 구독 정보가 올바르지 않습니다.");
+      const { error } = await admin.from("student_push_subscriptions").upsert({
+        user_id: p.id, endpoint, p256dh, auth,
+        user_agent: str(args[2]).slice(0, 500), enabled: true,
+        updated_at: new Date().toISOString(), last_error: null,
+      }, { onConflict: "endpoint" });
+      if (error) throw error;
+      return { success: true, message: "이 기기의 앱 푸시 알림이 켜졌습니다." };
+    }
+    case "studentDeletePushSubscription": {
+      const p = await profileFromToken(args[0]);
+      const endpoint = str(args[1]);
+      if (endpoint) {
+        const { error } = await admin.from("student_push_subscriptions").delete()
+          .eq("user_id", p.id).eq("endpoint", endpoint);
+        if (error) throw error;
+      }
+      return { success: true, message: "이 기기의 앱 푸시 알림이 꺼졌습니다." };
     }
     case "studentChangePassword": {
       const p = await profileFromToken(args[0]);
@@ -2291,6 +2375,16 @@ async function teacherCreate(args: unknown[]) {
       str(p.title)
     } 시험을 등록했습니다. 마감 시간까지 응시해 주세요.`,
   })));
+  const push = await sendPushToStudents(students.map((s: any) => s.id), {
+    title: "새로운 선생님 시험",
+    body: `${str(p.title) || "단어시험"} 시험이 배정되었습니다. 마감 시간까지 응시해 주세요.`,
+    url: "./?push=teacher-exams",
+    examId: exam.id,
+    tag: `teacher-exam-${exam.id}`,
+  }).catch((pushError) => {
+    console.error("teacher exam push failed", pushError);
+    return { sent: 0, failed: students.length, configured: false };
+  });
   return {
     success: true,
     message: "선생님 시험이 생성되었습니다.",
@@ -2300,6 +2394,9 @@ async function teacherCreate(args: unknown[]) {
     questionCount,
     targetCount: students.length,
     assignedCount: students.length,
+    pushSentCount: push.sent,
+    pushFailedCount: push.failed,
+    pushConfigured: push.configured,
   };
 }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v13-optimized';
+const CACHE_NAME = 'hansalmae-supabase-v14-web-push';
 
 const REQUIRED_ASSETS = [
   './',
@@ -51,6 +51,41 @@ self.addEventListener('activate', function (event) {
 
 self.addEventListener('message', function (event) {
   if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
+self.addEventListener('push', function (event) {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (_error) {
+    data = { body: event.data ? event.data.text() : '' };
+  }
+  event.waitUntil(self.registration.showNotification(data.title || '한살매 보카', {
+    body: data.body || '새로운 알림이 도착했습니다.',
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    tag: data.tag || 'hansalmae-notification',
+    renotify: true,
+    vibrate: [180, 80, 180],
+    data: { url: data.url || './?push=teacher-exams', examId: data.examId || '' }
+  }));
+});
+
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  const target = new URL(
+    (event.notification.data && event.notification.data.url) || './?push=teacher-exams',
+    self.location.origin
+  ).href;
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
+    for (const client of clientList) {
+      if ('focus' in client) {
+        client.postMessage({ type: 'OPEN_TEACHER_EXAMS' });
+        return client.focus();
+      }
+    }
+    return self.clients.openWindow(target);
+  }));
 });
 
 self.addEventListener('fetch', function (event) {

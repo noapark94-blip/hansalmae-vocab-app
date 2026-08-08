@@ -3204,6 +3204,22 @@
 </script>
 
   <style id="data-cleanup-ui-style">
+    .push-notification-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 18px 0;
+      padding: 16px;
+      border: 1px solid #efcddd;
+      border-radius: 18px;
+      background: #fff8fb;
+    }
+
+    .push-notification-setting strong { color: #7d1452; }
+    #pushNotificationStatus { margin-top: 5px; color: #776a72; font-size: 13px; }
+    .push-notification-setting button { width: auto; min-width: 140px; margin: 0; }
+
     .notification-cleanup-toolbar {
       display: flex;
       justify-content: flex-end;
@@ -3225,6 +3241,9 @@
     }
 
     @media (max-width: 650px) {
+      .push-notification-setting { align-items: stretch; flex-direction: column; }
+      .push-notification-setting button { width: 100%; }
+
       .wrong-note-header {
         align-items: stretch;
         flex-direction: column;
@@ -4635,6 +4654,14 @@
       <div id="studentNotificationScreen" class="card hidden">
         <h2>알림</h2>
         <div class="subtitle">새 시험 등록과 재시험 요청을 확인하세요.</div>
+
+        <div class="push-notification-setting">
+          <div>
+            <strong>앱 푸시 알림</strong>
+            <div id="pushNotificationStatus">현재 상태를 확인하는 중입니다.</div>
+          </div>
+          <button type="button" id="pushNotificationButton" onclick="toggleStudentPushNotifications_()">푸시 알림 켜기</button>
+        </div>
 
         <div class="notification-cleanup-toolbar">
           <button
@@ -6864,6 +6891,15 @@
       setTimeout(function () {
         askToResumeSavedTest();
       }, 1400);
+
+      if (new URLSearchParams(window.location.search).get('push') === 'teacher-exams') {
+        setTimeout(function () {
+          showTeacherExamHome();
+          if (window.history && window.history.replaceState) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
+        }, 550);
+      }
 
       window.scrollTo(0, 0);
     }
@@ -11846,7 +11882,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=58', {
+          .register('./service-worker.js?v=59', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
@@ -11863,6 +11899,14 @@ google.script.run
           });
       }
     }, { once: true });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', function (event) {
+        if (event.data && event.data.type === 'OPEN_TEACHER_EXAMS' && currentStudent) {
+          showTeacherExamHome();
+        }
+      });
+    }
 
   
 
@@ -12505,6 +12549,7 @@ google.script.run
       document.getElementById('studentNotificationScreen').classList.remove('hidden');
       document.getElementById('studentNotificationLoading').textContent = '알림을 불러오는 중입니다.';
       document.getElementById('studentNotificationList').innerHTML = '';
+      refreshPushNotificationStatus_();
       google.script.run
         .withSuccessHandler(function (result) {
           document.getElementById('studentNotificationLoading').textContent = '';
@@ -12521,6 +12566,110 @@ google.script.run
         })
         .studentGetNotifications(currentLoginToken);
       window.scrollTo(0, 0);
+    }
+
+    function urlBase64ToUint8Array_(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      return Uint8Array.from(Array.prototype.map.call(rawData, function (character) {
+        return character.charCodeAt(0);
+      }));
+    }
+
+    function getPushRegistration_() {
+      if (!('serviceWorker' in navigator)) return Promise.reject(new Error('이 기기는 앱 푸시 알림을 지원하지 않습니다.'));
+      return navigator.serviceWorker.ready;
+    }
+
+    function isIosDevice_() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent || '');
+    }
+
+    function isStandaloneApp_() {
+      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    }
+
+    function setPushStatus_(message, enabled, disabled) {
+      const status = document.getElementById('pushNotificationStatus');
+      const button = document.getElementById('pushNotificationButton');
+      if (status) status.textContent = message;
+      if (button) {
+        button.textContent = enabled ? '푸시 알림 끄기' : '푸시 알림 켜기';
+        button.disabled = Boolean(disabled);
+      }
+    }
+
+    function refreshPushNotificationStatus_() {
+      if (!('Notification' in window) || !('PushManager' in window) || !('serviceWorker' in navigator)) {
+        setPushStatus_('이 기기 또는 브라우저에서는 푸시 알림을 지원하지 않습니다.', false, true);
+        return;
+      }
+      if (isIosDevice_() && !isStandaloneApp_()) {
+        setPushStatus_('아이폰은 Safari의 “홈 화면에 추가”로 설치한 앱에서 켤 수 있습니다.', false, true);
+        return;
+      }
+      getPushRegistration_().then(function (registration) {
+        return registration.pushManager.getSubscription();
+      }).then(function (subscription) {
+        if (subscription && Notification.permission === 'granted') {
+          setPushStatus_('이 기기에서 선생님 시험 알림을 받고 있습니다.', true, false);
+        } else if (Notification.permission === 'denied') {
+          setPushStatus_('알림이 차단되어 있습니다. 휴대폰 설정에서 이 앱의 알림을 허용해주세요.', false, true);
+        } else {
+          setPushStatus_('시험이 출제되면 휴대폰으로 알려드립니다.', false, false);
+        }
+      }).catch(function (error) {
+        setPushStatus_(error && error.message ? error.message : '푸시 알림 상태를 확인하지 못했습니다.', false, false);
+      });
+    }
+
+    function toggleStudentPushNotifications_() {
+      if (!currentStudent || !currentLoginToken) return;
+      const button = document.getElementById('pushNotificationButton');
+      if (button) button.disabled = true;
+      getPushRegistration_().then(function (registration) {
+        return registration.pushManager.getSubscription().then(function (subscription) {
+          if (subscription) {
+            google.script.run
+              .withSuccessHandler(function () { subscription.unsubscribe().finally(refreshPushNotificationStatus_); })
+              .withFailureHandler(function (error) {
+                setPushStatus_(error && error.message ? error.message : '푸시 알림을 끄지 못했습니다.', true, false);
+              })
+              .studentDeletePushSubscription(currentLoginToken, subscription.endpoint);
+            return;
+          }
+          if (isIosDevice_() && !isStandaloneApp_()) throw new Error('아이폰은 홈 화면에 설치한 앱을 열어 알림을 켜주세요.');
+          return Notification.requestPermission().then(function (permission) {
+            if (permission !== 'granted') throw new Error('알림 권한이 허용되지 않았습니다.');
+            google.script.run
+              .withSuccessHandler(function (result) {
+                registration.pushManager.subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey: urlBase64ToUint8Array_(result.publicKey)
+                }).then(function (newSubscription) {
+                  google.script.run
+                    .withSuccessHandler(function () {
+                      setPushStatus_('이 기기에서 선생님 시험 알림을 받고 있습니다.', true, false);
+                    })
+                    .withFailureHandler(function (error) {
+                      newSubscription.unsubscribe();
+                      setPushStatus_(error && error.message ? error.message : '구독 정보를 저장하지 못했습니다.', false, false);
+                    })
+                    .studentSavePushSubscription(currentLoginToken, newSubscription.toJSON(), navigator.userAgent || '');
+                }).catch(function (error) {
+                  setPushStatus_(error && error.message ? error.message : '푸시 알림을 등록하지 못했습니다.', false, false);
+                });
+              })
+              .withFailureHandler(function (error) {
+                setPushStatus_(error && error.message ? error.message : '푸시 알림 서버 설정을 확인해주세요.', false, false);
+              })
+              .studentGetPushPublicKey(currentLoginToken);
+          });
+        });
+      }).catch(function (error) {
+        setPushStatus_(error && error.message ? error.message : '푸시 알림을 설정하지 못했습니다.', false, false);
+      });
     }
 
     function renderStudentNotifications_(notifications) {
