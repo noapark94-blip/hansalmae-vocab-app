@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v9-android-icon';
+const CACHE_NAME = 'hansalmae-supabase-v10-ranking-pull-refresh';
 
 const REQUIRED_ASSETS = [
   './',

@@ -3077,6 +3077,108 @@
   @keyframes skeletonMove { 0%{background-position:100% 0} 100%{background-position:0 0} }
 </style>
 
+<script id="hsm-ranking-pull-refresh-v1">
+  (function () {
+    var startY = 0;
+    var pullDistance = 0;
+    var tracking = false;
+    var refreshing = false;
+    var threshold = 68;
+
+    function rankingScreenVisible_() {
+      var screen = document.getElementById('rankingScreen');
+      return screen && !screen.classList.contains('hidden');
+    }
+
+    function indicator_() {
+      return document.getElementById('rankingPullRefresh');
+    }
+
+    function resetIndicator_(delay) {
+      window.setTimeout(function () {
+        var indicator = indicator_();
+        if (!indicator) return;
+        indicator.classList.remove('is-visible', 'is-ready', 'is-refreshing');
+        indicator.style.transform = 'translateY(-24px)';
+        var icon = indicator.querySelector('.ranking-pull-refresh-icon');
+        var text = indicator.querySelector('.ranking-pull-refresh-text');
+        if (icon) icon.textContent = '↓';
+        if (text) text.textContent = '아래로 당겨 새로고침';
+        refreshing = false;
+      }, delay || 0);
+    }
+
+    document.addEventListener('touchstart', function (event) {
+      if (
+        refreshing ||
+        !rankingScreenVisible_() ||
+        window.scrollY > 2 ||
+        !event.touches ||
+        event.touches.length !== 1
+      ) {
+        tracking = false;
+        return;
+      }
+      startY = event.touches[0].clientY;
+      pullDistance = 0;
+      tracking = true;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function (event) {
+      if (!tracking || refreshing || !event.touches || event.touches.length !== 1) return;
+      var delta = event.touches[0].clientY - startY;
+      if (delta <= 0) {
+        tracking = false;
+        resetIndicator_(0);
+        return;
+      }
+      event.preventDefault();
+      pullDistance = Math.min(delta * 0.58, 92);
+      var indicator = indicator_();
+      if (!indicator) return;
+      indicator.classList.add('is-visible');
+      indicator.classList.toggle('is-ready', pullDistance >= threshold);
+      indicator.style.transform = 'translateY(' + Math.max(-18, pullDistance - 34) + 'px)';
+      var text = indicator.querySelector('.ranking-pull-refresh-text');
+      if (text) {
+        text.textContent = pullDistance >= threshold
+          ? '놓으면 새로고침'
+          : '아래로 당겨 새로고침';
+      }
+    }, { passive: false });
+
+    document.addEventListener('touchend', function () {
+      if (!tracking) return;
+      tracking = false;
+      if (pullDistance < threshold || refreshing) {
+        resetIndicator_(0);
+        return;
+      }
+      refreshing = true;
+      var indicator = indicator_();
+      if (indicator) {
+        indicator.classList.remove('is-ready');
+        indicator.classList.add('is-visible', 'is-refreshing');
+        indicator.style.transform = 'translateY(18px)';
+        var icon = indicator.querySelector('.ranking-pull-refresh-icon');
+        var text = indicator.querySelector('.ranking-pull-refresh-text');
+        if (icon) icon.textContent = '↻';
+        if (text) text.textContent = '최신 순위를 불러오는 중';
+      }
+      try {
+        localStorage.removeItem('hsmMonthlyRankingCacheV2');
+      } catch (_cacheError) {}
+      if (typeof showRankingHome === 'function') showRankingHome();
+      resetIndicator_(1200);
+    }, { passive: true });
+
+    document.addEventListener('touchcancel', function () {
+      tracking = false;
+      resetIndicator_(0);
+    }, { passive: true });
+  })();
+</script>
+
   <style id="data-cleanup-ui-style">
     .notification-cleanup-toolbar {
       display: flex;
@@ -4456,14 +4558,6 @@
           </button>
 
           <button
-            id="accountMenuButton"
-            class="menu-button"
-            onclick="moveFromTestWithConfirm_(showAccountInformation_)"
-          >
-            내 정보
-          </button>
-
-          <button
             id="rankingMenuButton"
             class="menu-button"
             onclick="moveFromTestWithConfirm_(showRankingHome)"
@@ -4485,6 +4579,14 @@
             onclick="moveFromTestWithConfirm_(showStudentNotifications)"
           >
             알림 <span id="studentNotificationBadge" class="notification-badge hidden">0</span>
+          </button>
+
+          <button
+            id="accountMenuButton"
+            class="menu-button"
+            onclick="moveFromTestWithConfirm_(showAccountInformation_)"
+          >
+            내 정보
           </button>
 
           <button
@@ -5360,6 +5462,15 @@
         id="rankingScreen"
         class="card hidden"
       >
+        <div
+          id="rankingPullRefresh"
+          class="ranking-pull-refresh"
+          aria-live="polite"
+        >
+          <span class="ranking-pull-refresh-icon">↓</span>
+          <span class="ranking-pull-refresh-text">아래로 당겨 새로고침</span>
+        </div>
+
         <h2>🏆 이달의 단어천재</h2>
 
         <div
@@ -14120,9 +14231,13 @@ google.script.run
     padding:18px 20px;
   }
   .ranking-medal{
-    width:48px;
-    flex:0 0 48px;
+    width:64px;
+    flex:0 0 64px;
     padding-top:13px;
+    white-space:nowrap;
+    word-break:keep-all;
+    writing-mode:horizontal-tb;
+    line-height:1;
   }
   .ranking-main{
     flex:1;
@@ -14383,13 +14498,15 @@ google.script.run
       padding:16px 12px;
     }
     .ranking-medal{
-      width:38px;
-      flex:0 0 38px;
+      width:58px;
+      flex:0 0 58px;
       padding-top:10px;
-      font-size:23px;
+      font-size:21px;
+      white-space:nowrap;
+      word-break:keep-all;
     }
     .ranking-main{
-      width:calc(100% - 46px);
+      width:calc(100% - 66px);
       min-width:0;
     }
     .ranking-top-row{
@@ -14454,6 +14571,43 @@ google.script.run
     .hsm-ranking-showcase-student{
       font-size:20px;
     }
+  }
+
+  #rankingScreen{
+    position:relative;
+    overscroll-behavior-y:contain;
+  }
+  .ranking-pull-refresh{
+    height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    overflow:visible;
+    color:#8f145f;
+    font-size:13px;
+    font-weight:850;
+    opacity:0;
+    transform:translateY(-24px);
+    transition:opacity .16s ease,transform .16s ease;
+    pointer-events:none;
+    user-select:none;
+  }
+  .ranking-pull-refresh.is-visible{
+    opacity:1;
+  }
+  .ranking-pull-refresh.is-ready .ranking-pull-refresh-icon{
+    transform:rotate(180deg);
+  }
+  .ranking-pull-refresh.is-refreshing .ranking-pull-refresh-icon{
+    animation:hsmRankingRefreshSpin .75s linear infinite;
+  }
+  .ranking-pull-refresh-icon{
+    display:inline-flex;
+    transition:transform .16s ease;
+  }
+  @keyframes hsmRankingRefreshSpin{
+    to{transform:rotate(360deg)}
   }
   .hsm-emblem-card{margin:0 0 22px;padding:20px;border:1px solid #ead7e1;border-radius:18px;background:linear-gradient(180deg,#fffafd,#fff3f8)}
   .hsm-emblem-current{display:flex;align-items:center;gap:16px}
