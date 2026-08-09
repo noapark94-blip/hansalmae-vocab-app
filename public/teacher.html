@@ -1125,6 +1125,8 @@
     }
 
 </style>
+<link rel="stylesheet" href="./ui-icons.css?v=1">
+<link rel="stylesheet" href="./teacher-modern.css?v=1">
 </head>
 <body>
   <main class="app">
@@ -1154,7 +1156,7 @@
         <div class="grid">
           <div>
             <article class="card">
-              <h2 class="card-title">1. 기본 설정</h2>
+              <h2 class="card-title" data-hsm-icon="file">1. 기본 설정</h2>
 
               <div class="field">
                 <label for="title" class="required">시험 제목</label>
@@ -1224,7 +1226,7 @@ protect	보호하다"></textarea>
             </article>
 
             <article class="card">
-              <h2 class="card-title">2. 시험 일정 및 조건</h2>
+              <h2 class="card-title" data-hsm-icon="calendar">2. 시험 일정 및 조건</h2>
 
               <div class="row">
                 <div class="field">
@@ -1264,7 +1266,7 @@ protect	보호하다"></textarea>
           <aside>
             <article class="card">
               <div class="section-title">
-                <span>3. 시험 대상</span>
+                <span data-hsm-icon="users">3. 시험 대상</span>
                 <span id="selectedCount" class="count-badge">0명 선택</span>
               </div>
 
@@ -1308,7 +1310,7 @@ protect	보호하다"></textarea>
     <section id="listPanel" class="panel">
       <article class="card">
         <div class="section-title">
-          <h2 class="card-title" style="margin:0;">생성한 시험</h2>
+          <h2 class="card-title" data-hsm-icon="list" style="margin:0;">생성한 시험</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button id="refreshExamsBtn" type="button" class="outline-btn">새로고침</button>
             <button id="deleteAllExamsBtn" type="button" class="danger-btn">전체 삭제</button>
@@ -1333,7 +1335,7 @@ protect	보호하다"></textarea>
   <div id="statusModal" class="modal-backdrop">
     <div class="modal">
       <div class="modal-head">
-        <h2>학생 응시 현황</h2>
+        <h2 data-hsm-icon="users">학생 응시 현황</h2>
         <button id="closeModalBtn" class="close-btn" type="button" onclick="closeStatusModal()" aria-label="닫기">×</button>
       </div>
 
@@ -1373,7 +1375,7 @@ protect	보호하다"></textarea>
   <div id="detailModal" class="modal-backdrop">
     <div class="modal">
       <div class="modal-head">
-        <h2 id="detailModalTitle">시험 내용</h2>
+        <h2 id="detailModalTitle" data-hsm-icon="file">시험 내용</h2>
         <button id="closeDetailModalBtn" class="close-btn" type="button">×</button>
       </div>
       <div id="detailMeta" class="summary-grid"></div>
@@ -2687,5 +2689,6 @@ protect	보호하다"></textarea>
         .replaceAll("'", '&#039;');
     }
   </script>
+  <script src="./ui-icons.js?v=1"></script>
 </body>
 </html>

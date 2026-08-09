@@ -4282,6 +4282,7 @@
 <link rel="stylesheet" href="./design-v1.css?v=1">
 <link rel="stylesheet" href="./design-v2-mobile-nav.css?v=1">
 <link rel="stylesheet" href="./design-v3-test-rewards.css?v=1">
+<link rel="stylesheet" href="./ui-icons.css?v=1">
 </head>
 
 <body>
@@ -4644,7 +4645,7 @@
             class="menu-button"
             onclick="moveFromTestWithConfirm_(showRankingHome)"
           >
-            🏆 이달의 단어천재
+            이달의 단어천재
           </button>
 
           <button
@@ -4964,7 +4965,7 @@
             type="button"
             onclick="batchSaveCheckedVocabulary_()"
           >
-            ⭐ 선택 단어 단어장에 일괄 저장
+            선택 단어 단어장에 일괄 저장
           </button>
 
           <button
@@ -5179,7 +5180,7 @@
           id="wrongTestOpenButton"
           onclick="showWrongTestSetup()"
         >
-          📝 복습할 오답 시험보기
+          복습할 오답 시험보기
         </button>
 
         <div class="wrong-note-filter">
@@ -5250,7 +5251,7 @@
               type="button"
               onclick="batchSaveCheckedWrongWords_()"
             >
-              ⭐ 단어장 저장
+              단어장 저장
             </button>
 
             <button
@@ -5294,7 +5295,7 @@
         id="wrongTestSetupScreen"
         class="card hidden"
       >
-        <h2>📝 오답만 시험보기</h2>
+        <h2>오답만 시험보기</h2>
 
         <div class="wrong-test-guide">
           복습할 오답만 다시 출제합니다.<br>
@@ -5388,7 +5389,7 @@
 
         <div class="personal-toolbar personal-main-toolbar">
           <button onclick="showPersonalTestSetup()">
-            📝 선택 단어 시험보기
+            선택 단어 시험보기
           </button>
 
           <button
@@ -5536,7 +5537,7 @@
 
         <div class="personal-toolbar">
           <button onclick="startSmartReviewTest()">
-            📝 추천 단어 시험보기
+            추천 단어 시험보기
           </button>
 
           <button
@@ -5570,7 +5571,7 @@
           <span class="ranking-pull-refresh-text">아래로 당겨 새로고침</span>
         </div>
 
-        <h2>🏆 이달의 단어천재</h2>
+        <h2>이달의 단어천재</h2>
 
         <div
           id="rankingMonth"
@@ -8096,7 +8097,7 @@
         list.innerHTML =
           '<div class="empty-message">' +
           '아직 저장한 단어가 없습니다.<br>' +
-          '일반 단어장이나 오답노트에서 ⭐ 저장 버튼을 눌러주세요.' +
+          '일반 단어장이나 오답노트에서 단어장 저장 버튼을 눌러주세요.' +
           '</div>';
         return;
       }
@@ -9316,7 +9317,7 @@
               'onclick="saveWrongWordToPersonal(' +
                 Number(item.rowNumber) +
               ', this)">' +
-              '⭐ 단어장 저장' +
+              '단어장 저장' +
             '</button>' +
             (
               item.mastered
@@ -10078,17 +10079,13 @@
         let medal =
           student.rank + '위';
 
-        if (student.rank === 1) {
+        if (student.rank <= 3) {
           medal =
-            '🥇';
-
-        } else if (student.rank === 2) {
-          medal =
-            '🥈';
-
-        } else if (student.rank === 3) {
-          medal =
-            '🥉';
+            '<span class="hsm-rank-medal hsm-rank-medal-' +
+            student.rank +
+            '">' +
+            student.rank +
+            '</span>';
         }
 
         item.innerHTML =
@@ -10692,7 +10689,7 @@
           'word-save-button';
 
         saveButton.textContent =
-          '⭐ 나만의 단어장에 저장';
+          '나만의 단어장에 저장';
 
         saveButton.onclick = function () {
           saveToPersonalVocabulary({
@@ -12066,7 +12063,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=63', {
+          .register('./service-worker.js?v=64', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
@@ -12707,7 +12704,7 @@ google.script.run
         const encoded = encodeURIComponent(JSON.stringify(wordItem));
         return '<div class="teacher-review-item ' + (d.isCorrect ? 'is-correct' : 'is-wrong') + '">' +
           '<div class="teacher-review-word">' + escapeHtml(d.prompt || d.english || '') + '</div>' +
-          '<div class="teacher-review-line">' + (d.isCorrect ? '✅ 정답' : '❌ 오답') + '</div>' +
+          '<div class="teacher-review-line" data-hsm-icon="' + (d.isCorrect ? 'check' : 'close') + '">' + (d.isCorrect ? '정답' : '오답') + '</div>' +
           '<div class="teacher-review-line">내 답: ' + escapeHtml(d.submittedAnswer || '미응답') + '</div>' +
           '<div class="teacher-review-line">정답: <strong>' + escapeHtml(d.correctAnswer || '') + '</strong></div>' +
           '<div class="teacher-review-line">단어: ' + escapeHtml(d.english || '') + ' · ' + escapeHtml(d.meaning || '') + '</div>' +
@@ -14389,7 +14386,7 @@ google.script.run
       button.type = 'button';
       button.className = 'hsm-picker-book';
       button.innerHTML =
-        '<div class="hsm-picker-book-icon">📚</div>' +
+        '<div class="hsm-picker-book-icon" data-hsm-icon="book"></div>' +
         '<div class="hsm-picker-book-copy">' +
           '<div class="hsm-picker-book-name">' +
             escapeHtml(book.bookName || '') +
@@ -15197,7 +15194,7 @@ google.script.run
         ? '<span class="hsm-emblem-status owned">장착 중</span>'
         : owned
           ? '<span class="hsm-emblem-status owned">획득 완료</span>'
-          : '<span class="hsm-emblem-status"><span class="hsm-emblem-lock-icon">🔒</span>잠금</span>';
+          : '<span class="hsm-emblem-status" data-hsm-icon="lock">잠금</span>';
 
       const button=owned&&!equipped
         ? '<button class="hsm-emblem-equip" type="button" onclick="HSMEmblems.equip(\''+esc(e.emblemId)+'\')">이 엠블럼 장착하기</button>'
@@ -15272,7 +15269,7 @@ google.script.run
   const oldMain=window.openMainApp;if(typeof oldMain==='function')window.openMainApp=function(){const r=oldMain.apply(this,arguments);setTimeout(()=>load(true),250);return r};
   const oldMy=window.showMyPage;if(typeof oldMy==='function')window.showMyPage=function(){const r=oldMy.apply(this,arguments);ensureCard();setTimeout(()=>load(false),150);return r};
   const oldExp=window.renderExperienceSummary_;if(typeof oldExp==='function')window.renderExperienceSummary_=function(){const r=oldExp.apply(this,arguments);setTimeout(()=>load(true),100);return r};
-  const oldEarn=window.buildEarnedExperienceHtml_;if(typeof oldEarn==='function')window.buildEarnedExperienceHtml_=function(experience){let html=oldEarn.apply(this,arguments);const list=experience&&experience.newlyGrantedEmblems||[];if(list.length){const e=list[0];html+='<div class="hsm-emblem-new"><div style="font-weight:900;color:#8f145f">✨ 새로운 엠블럼 획득!</div><img src="'+esc(e.imagePath)+'" alt=""><div class="hsm-emblem-name">'+esc(e.emblemName)+'</div><button type="button" onclick="HSMEmblems.equip(\''+esc(e.emblemId)+'\')">바로 장착하기</button></div>';setTimeout(()=>load(true),250);}return html};
+  const oldEarn=window.buildEarnedExperienceHtml_;if(typeof oldEarn==='function')window.buildEarnedExperienceHtml_=function(experience){let html=oldEarn.apply(this,arguments);const list=experience&&experience.newlyGrantedEmblems||[];if(list.length){const e=list[0];html+='<div class="hsm-emblem-new"><div data-hsm-icon="trophy" style="font-weight:900;color:#8f145f">새로운 엠블럼 획득!</div><img src="'+esc(e.imagePath)+'" alt=""><div class="hsm-emblem-name">'+esc(e.emblemName)+'</div><button type="button" onclick="HSMEmblems.equip(\''+esc(e.emblemId)+'\')">바로 장착하기</button></div>';setTimeout(()=>load(true),250);}return html};
 })();
 </script>
 
@@ -15289,7 +15286,7 @@ google.script.run
 @keyframes hsmAchievementPop{from{transform:scale(.72);opacity:0}to{transform:scale(1);opacity:1}}@keyframes hsmConfetti{0%{top:-24px;transform:rotate(0deg)}100%{top:105%;transform:rotate(540deg)}}
 </style>
 <div id="hsmAchievementToast"></div>
-<div id="hsmAchievementCelebration" class="hidden" aria-hidden="true"><div class="hsm-achievement-panel"><i class="hsm-confetti"></i><i class="hsm-confetti"></i><i class="hsm-confetti"></i><i class="hsm-confetti"></i><i class="hsm-confetti"></i><i class="hsm-confetti"></i><div class="hsm-achievement-kicker">✨ 새로운 업적 달성!</div><img id="hsmAchievementImage" src="" alt=""><div id="hsmAchievementName" class="hsm-achievement-name"></div><div class="hsm-achievement-xp">+30 XP · 새로운 엠블럼 획득</div><button type="button" class="hsm-achievement-close" onclick="HSMEmblemCelebration.close()">확인</button></div></div>
+<div id="hsmAchievementCelebration" class="hidden" aria-hidden="true"><div class="hsm-achievement-panel"><i class="hsm-confetti"></i><i class="hsm-confetti"></i><i class="hsm-confetti"></i><i class="hsm-confetti"></i><i class="hsm-confetti"></i><i class="hsm-confetti"></i><div class="hsm-achievement-kicker" data-hsm-icon="trophy">새로운 업적 달성!</div><img id="hsmAchievementImage" src="" alt=""><div id="hsmAchievementName" class="hsm-achievement-name"></div><div class="hsm-achievement-xp">+30 XP · 새로운 엠블럼 획득</div><button type="button" class="hsm-achievement-close" onclick="HSMEmblemCelebration.close()">확인</button></div></div>
 <script>
 (function(){
   function esc(v){return String(v==null?'':v)}
@@ -15611,6 +15608,8 @@ google.script.run
   });
 })();
 </script>
+
+<script src="./ui-icons.js?v=1"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

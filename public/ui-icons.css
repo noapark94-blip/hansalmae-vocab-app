@@ -1,0 +1,101 @@
+/* 한살매 공통 선형 아이콘 체계 */
+.hsm-icon-label {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+h2.hsm-icon-label,
+h3.hsm-icon-label {
+  justify-content: flex-start;
+}
+
+.hsm-ui-icon {
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  color: currentColor;
+  place-items: center;
+  vertical-align: -4px;
+}
+
+.hsm-ui-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.menu-button .hsm-ui-icon,
+.tab-btn .hsm-ui-icon {
+  width: 18px;
+  height: 18px;
+  flex-basis: 18px;
+}
+
+.hsm-picker-book-icon {
+  display: grid !important;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: #f8e7f0;
+  color: #8f145f;
+  place-items: center;
+  font-size: 0;
+}
+
+.hsm-picker-book-icon .hsm-ui-icon {
+  width: 23px;
+  height: 23px;
+}
+
+.hsm-emblem-lock-icon {
+  display: none;
+}
+
+.hsm-emblem-status .hsm-ui-icon {
+  width: 15px;
+  height: 15px;
+  flex-basis: 15px;
+}
+
+.hsm-mobile-more-grid .hsm-icon-label > .hsm-more-symbol {
+  display: none;
+}
+
+.hsm-mobile-more-grid .hsm-ui-icon {
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  flex: 0 0 34px;
+  border-radius: 11px;
+  background: #f4dce9;
+  color: #8f145f;
+}
+
+.hsm-rank-medal {
+  display: inline-grid;
+  width: 45px;
+  height: 45px;
+  border: 2px solid rgba(255,255,255,.72);
+  border-radius: 50%;
+  color: #fff;
+  place-items: center;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 7px 17px rgba(75, 33, 56, .17);
+}
+
+.hsm-rank-medal-1 { background: linear-gradient(145deg, #f7c94e, #d99a1a); }
+.hsm-rank-medal-2 { background: linear-gradient(145deg, #cbd3dc, #8c99a8); }
+.hsm-rank-medal-3 { background: linear-gradient(145deg, #d89a68, #a8633d); }
+
+@media (max-width: 650px) {
+  .hsm-ui-icon { width: 18px; height: 18px; flex-basis: 18px; }
+}

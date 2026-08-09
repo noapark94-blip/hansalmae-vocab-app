@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v17-test-rewards';
+const CACHE_NAME = 'hansalmae-supabase-v18-unified-icons-teacher-ui';
 
 const REQUIRED_ASSETS = [
   './',
@@ -6,6 +6,9 @@ const REQUIRED_ASSETS = [
   './design-v1.css',
   './design-v2-mobile-nav.css',
   './design-v3-test-rewards.css',
+  './ui-icons.css',
+  './ui-icons.js',
+  './teacher-modern.css',
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
