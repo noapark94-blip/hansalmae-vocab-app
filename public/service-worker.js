@@ -1,10 +1,11 @@
-const CACHE_NAME = 'hansalmae-supabase-v16-mobile-navigation';
+const CACHE_NAME = 'hansalmae-supabase-v17-test-rewards';
 
 const REQUIRED_ASSETS = [
   './',
   './index.html',
   './design-v1.css',
   './design-v2-mobile-nav.css',
+  './design-v3-test-rewards.css',
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',

@@ -1,0 +1,441 @@
+/* 한살매 보카 디자인 3차: 시험 흐름과 결과·엠블럼 보상 경험 */
+
+#testScreen {
+  overflow: hidden;
+}
+
+#testScreen .progress-wrap {
+  height: 9px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(143, 20, 95, 0.06);
+  background: #f3e9ee;
+}
+
+#testScreen .progress-bar {
+  position: relative;
+  overflow: visible;
+  background: linear-gradient(90deg, #8f145f, #c6478e);
+  box-shadow: 0 3px 10px rgba(143, 20, 95, 0.22);
+  transition: width 0.48s cubic-bezier(.22, .78, .28, 1);
+}
+
+#testScreen .progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -4px;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #b52f7c;
+  box-shadow: 0 2px 7px rgba(102, 15, 67, 0.28);
+  transform: translateY(-50%);
+}
+
+#testScreen .question-info {
+  margin-bottom: 13px;
+  color: var(--hsm-text-secondary, #74656e);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+#testScreen .question-type {
+  padding: 7px 13px;
+  border: 1px solid #ead5e1;
+  background: #fff6fa;
+  font-size: 13px;
+}
+
+#testScreen .question {
+  min-height: 112px;
+  margin: 20px 0 22px;
+  padding: 12px;
+  font-size: clamp(27px, 6vw, 36px);
+  line-height: 1.38;
+}
+
+#testScreen.hsm-question-enter .question-type,
+#testScreen.hsm-question-enter .question,
+#testScreen.hsm-question-enter .choice {
+  animation: hsmQuestionEnter 0.38s cubic-bezier(.22, .78, .28, 1) both;
+}
+
+#testScreen.hsm-question-enter .question {
+  animation-delay: 0.035s;
+}
+
+#testScreen.hsm-question-enter .choice {
+  animation-delay: calc(0.065s + (var(--hsm-choice-index, 0) * 0.045s));
+}
+
+#testScreen .choice {
+  position: relative;
+  min-height: 58px;
+  margin-top: 10px;
+  padding: 15px 17px;
+  overflow: hidden;
+  border: 1.5px solid #eadfe5;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(70, 29, 53, 0.045);
+  font-weight: 600;
+  line-height: 1.42;
+  transition: transform .16s ease, border-color .16s ease, background-color .16s ease, box-shadow .16s ease;
+}
+
+#testScreen .choice:not(:disabled):active {
+  transform: scale(0.985);
+}
+
+#testScreen .choice.correct {
+  padding-right: 50px;
+  border-color: #3a9a69;
+  background: linear-gradient(180deg, #f1fcf6, #e8f8ef);
+  color: #17603c;
+  box-shadow: 0 8px 20px rgba(47, 156, 103, 0.12);
+  animation: hsmAnswerCorrect .48s cubic-bezier(.22, .78, .28, 1) both;
+}
+
+#testScreen .choice.correct::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  display: inline-flex;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #2f9c67;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  transform: translateY(-50%);
+}
+
+#testScreen .choice.wrong {
+  padding-right: 50px;
+  border-color: #d75876;
+  background: linear-gradient(180deg, #fff6f8, #ffedf1);
+  color: #8d2742;
+  box-shadow: 0 8px 20px rgba(200, 67, 104, 0.11);
+  animation: hsmAnswerWrong .4s ease both;
+}
+
+#testScreen .choice.wrong::after {
+  content: "×";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  display: inline-flex;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #c84368;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  transform: translateY(-50%);
+}
+
+#testScreen .choice:disabled:not(.correct):not(.wrong) {
+  opacity: 0.54;
+}
+
+#testScreen .feedback {
+  display: flex;
+  min-height: 66px;
+  margin-top: 15px;
+  padding: 11px 14px;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+#testScreen .feedback:not(:empty) {
+  border: 1px solid #eadfe5;
+  background: #fff9fc;
+  animation: hsmFeedbackUp .28s ease both;
+}
+
+/* 결과 화면 */
+#resultScreen {
+  text-align: center;
+}
+
+#resultScreen.hsm-result-reveal {
+  animation: hsmResultScreenIn .46s cubic-bezier(.22, .78, .28, 1) both;
+}
+
+#resultScreen > h2 {
+  margin-bottom: 12px;
+}
+
+#resultScreen .result-score {
+  position: relative;
+  display: grid;
+  width: 176px;
+  height: 176px;
+  margin: 22px auto 18px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, #fff 0 61%, transparent 62%),
+    conic-gradient(#9a1b67 calc(var(--hsm-result-score, 0) * 1%), #f0e4ea 0);
+  color: #7d1655;
+  place-items: center;
+  font-size: 43px;
+  font-weight: 850;
+  letter-spacing: -0.05em;
+  text-shadow: none;
+  box-shadow: 0 13px 35px rgba(95, 22, 67, 0.12);
+  animation: hsmScorePop .62s cubic-bezier(.2, .9, .2, 1.12) both;
+}
+
+#resultScreen .result-score::before {
+  content: "최종 점수";
+  position: absolute;
+  top: 49px;
+  left: 50%;
+  color: #907d88;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  transform: translateX(-50%);
+}
+
+#resultScreen .result-score::after {
+  content: attr(data-grade);
+  position: absolute;
+  right: 8px;
+  bottom: 13px;
+  display: grid;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 8px;
+  border: 3px solid #fff;
+  border-radius: 999px;
+  background: #8f145f;
+  color: #fff;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  box-shadow: 0 7px 17px rgba(84, 19, 60, 0.22);
+}
+
+#resultScreen .result-text {
+  max-width: 620px;
+  margin: 0 auto 20px;
+  padding: 17px 18px;
+  border: 1px solid #eadfe5;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fff, #fff8fb);
+  line-height: 1.7;
+  box-shadow: 0 7px 20px rgba(70, 29, 53, 0.05);
+}
+
+#resultScreen .result-text > * {
+  animation: hsmRewardItemIn .34s ease both;
+}
+
+#resultScreen .wrong-list {
+  margin-top: 19px;
+  text-align: left;
+}
+
+#resultScreen .wrong-list > h3 {
+  margin: 10px 0 12px;
+}
+
+#resultScreen .wrong-item {
+  margin: 9px 0;
+  padding: 15px 17px;
+  border: 1px solid #eddde5;
+  border-left: 4px solid #c84368;
+  border-radius: 15px;
+  background: #fffafb;
+  line-height: 1.65;
+  box-shadow: none;
+  animation: hsmRewardItemIn .34s ease both;
+}
+
+#resultScreen > button {
+  max-width: 520px;
+  margin: 18px auto 0;
+}
+
+/* 선생님 시험에도 같은 문제 전환 감각 적용 */
+#teacherExamTakingScreen.hsm-teacher-question-enter .teacher-question-card {
+  animation: hsmQuestionEnter .38s cubic-bezier(.22, .78, .28, 1) both;
+}
+
+#teacherExamTakingScreen .teacher-option-button {
+  transition: transform .16s ease, border-color .16s ease, background-color .16s ease;
+}
+
+#teacherExamTakingScreen .teacher-option-button:active {
+  transform: scale(.985);
+}
+
+/* 엠블럼 보상 화면 */
+#hsmAchievementCelebration {
+  background: rgba(39, 16, 31, .74) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+#hsmAchievementCelebration .hsm-achievement-panel {
+  isolation: isolate;
+  border: 1px solid rgba(238, 189, 86, .72) !important;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 225, 140, .44), transparent 34%),
+    linear-gradient(180deg, #fffdf8, #fff5fa) !important;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, .38), 0 0 0 7px rgba(255,255,255,.08) !important;
+  animation: hsmEmblemRewardIn .62s cubic-bezier(.16, .92, .22, 1.12) both !important;
+}
+
+#hsmAchievementCelebration .hsm-achievement-panel::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 35px;
+  left: 50%;
+  width: 270px;
+  height: 270px;
+  background: repeating-conic-gradient(from 0deg, rgba(216, 161, 52, .15) 0 8deg, transparent 8deg 20deg);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: hsmRewardRays 18s linear infinite;
+}
+
+#hsmAchievementCelebration .hsm-achievement-panel img {
+  animation: hsmEmblemFloat 2.6s ease-in-out infinite;
+}
+
+#hsmAchievementCelebration .hsm-achievement-kicker {
+  display: inline-flex;
+  padding: 7px 12px;
+  border: 1px solid #efcf80;
+  border-radius: 999px;
+  background: rgba(255, 249, 226, .88);
+}
+
+#hsmAchievementCelebration .hsm-achievement-xp {
+  display: inline-flex;
+  margin-top: 13px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  background: #fff1c9;
+}
+
+#hsmAchievementToast {
+  bottom: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 18px 45px rgba(0,0,0,.3) !important;
+}
+
+@keyframes hsmQuestionEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hsmAnswerCorrect {
+  0% { transform: scale(1); }
+  46% { transform: scale(1.022); }
+  100% { transform: scale(1); }
+}
+
+@keyframes hsmAnswerWrong {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  52% { transform: translateX(5px); }
+  76% { transform: translateX(-3px); }
+}
+
+@keyframes hsmFeedbackUp {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hsmResultScreenIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hsmScorePop {
+  from { opacity: 0; transform: scale(.72) rotate(-7deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes hsmRewardItemIn {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hsmEmblemRewardIn {
+  from { opacity: 0; transform: translateY(28px) scale(.78); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes hsmRewardRays {
+  to { transform: translateX(-50%) rotate(360deg); }
+}
+
+@keyframes hsmEmblemFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-7px) scale(1.025); }
+}
+
+@media (max-width: 650px) {
+  #testScreen {
+    padding: 20px 16px 22px;
+  }
+
+  #testScreen .question {
+    min-height: 96px;
+    margin: 15px 0 17px;
+  }
+
+  #testScreen .choice {
+    min-height: 56px;
+    padding: 14px 15px;
+    font-size: 16px;
+  }
+
+  #resultScreen .result-score {
+    width: 158px;
+    height: 158px;
+    font-size: 39px;
+  }
+
+  #resultScreen .result-score::before {
+    top: 43px;
+  }
+
+  #resultScreen .result-score::after {
+    right: 4px;
+    bottom: 10px;
+  }
+
+  #hsmAchievementCelebration .hsm-achievement-panel img {
+    width: 158px !important;
+    height: 158px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #testScreen *,
+  #resultScreen *,
+  #teacherExamTakingScreen *,
+  #hsmAchievementCelebration * {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+

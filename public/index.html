@@ -4281,6 +4281,7 @@
 </style>
 <link rel="stylesheet" href="./design-v1.css?v=1">
 <link rel="stylesheet" href="./design-v2-mobile-nav.css?v=1">
+<link rel="stylesheet" href="./design-v3-test-rewards.css?v=1">
 </head>
 
 <body>
@@ -12065,7 +12066,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=62', {
+          .register('./service-worker.js?v=63', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
@@ -15390,6 +15391,84 @@ google.script.run
       console.warn('이미지 파일을 찾을 수 없습니다:', target.getAttribute('src'));
     }, true);
   </script>
+
+<script>
+(function hsmTestAndRewardMotion_() {
+  'use strict';
+
+  function restartClass_(element, className) {
+    if (!element) return;
+    element.classList.remove(className);
+    void element.offsetWidth;
+    element.classList.add(className);
+  }
+
+  function decorateChoices_() {
+    document.querySelectorAll('#choices .choice').forEach(function (choice, index) {
+      choice.style.setProperty('--hsm-choice-index', String(index));
+    });
+  }
+
+  const originalShowQuestion = window.showQuestion;
+  if (typeof originalShowQuestion === 'function') {
+    window.showQuestion = function () {
+      const result = originalShowQuestion.apply(this, arguments);
+      decorateChoices_();
+      restartClass_(document.getElementById('testScreen'), 'hsm-question-enter');
+      return result;
+    };
+    showQuestion = window.showQuestion;
+  }
+
+  const originalShowResult = window.showResult;
+  if (typeof originalShowResult === 'function') {
+    window.showResult = function () {
+      const result = originalShowResult.apply(this, arguments);
+      const screen = document.getElementById('resultScreen');
+      const scoreElement = document.getElementById('resultScore');
+      const percentage = Math.max(0, Math.min(100, Math.round((Number(score) / Math.max(1, questions.length)) * 100)));
+      if (scoreElement) {
+        scoreElement.style.setProperty('--hsm-result-score', String(percentage));
+        scoreElement.setAttribute('data-grade', percentage === 100 ? '완벽' : percentage >= 80 ? '통과' : '복습');
+      }
+      restartClass_(screen, 'hsm-result-reveal');
+      return result;
+    };
+    showResult = window.showResult;
+  }
+
+  const originalTeacherQuestion = window.renderTeacherExamQuestion_;
+  if (typeof originalTeacherQuestion === 'function') {
+    window.renderTeacherExamQuestion_ = function () {
+      const result = originalTeacherQuestion.apply(this, arguments);
+      restartClass_(document.getElementById('teacherExamTakingScreen'), 'hsm-teacher-question-enter');
+      return result;
+    };
+    renderTeacherExamQuestion_ = window.renderTeacherExamQuestion_;
+  }
+
+  function observeRewardMessages_() {
+    const resultText = document.getElementById('resultText');
+    if (!resultText || typeof MutationObserver === 'undefined') return;
+    new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node.nodeType !== 1) return;
+          node.style.animation = 'none';
+          void node.offsetWidth;
+          node.style.animation = '';
+        });
+      });
+    }).observe(resultText, { childList: true, subtree: false });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', observeRewardMessages_, { once: true });
+  } else {
+    observeRewardMessages_();
+  }
+})();
+</script>
 
 <!-- 모바일 전용 하단 메뉴: 기존 화면 전환 함수를 그대로 사용합니다. -->
 <nav id="hsmMobileNav" class="hsm-mobile-nav" aria-label="학생용 주요 메뉴">
