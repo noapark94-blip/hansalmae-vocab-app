@@ -4280,6 +4280,7 @@
   @media(max-width:560px){.hsm-install-actions{flex-direction:column}}
 </style>
 <link rel="stylesheet" href="./design-v1.css?v=1">
+<link rel="stylesheet" href="./design-v2-mobile-nav.css?v=1">
 </head>
 
 <body>
@@ -12064,7 +12065,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=61', {
+          .register('./service-worker.js?v=62', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
@@ -15389,6 +15390,148 @@ google.script.run
       console.warn('이미지 파일을 찾을 수 없습니다:', target.getAttribute('src'));
     }, true);
   </script>
+
+<!-- 모바일 전용 하단 메뉴: 기존 화면 전환 함수를 그대로 사용합니다. -->
+<nav id="hsmMobileNav" class="hsm-mobile-nav" aria-label="학생용 주요 메뉴">
+  <button type="button" class="hsm-mobile-nav-item active" data-mobile-menu="test"
+    onclick="hsmMobileNavigate_('test')" aria-label="단어 테스트">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l2 2 4-4M7 4h10a2 2 0 0 1 2 2v14H5V6a2 2 0 0 1 2-2Zm2-2v4m6-4v4"/></svg>
+    <span>테스트</span>
+  </button>
+  <button type="button" class="hsm-mobile-nav-item" data-mobile-menu="vocab"
+    onclick="hsmMobileNavigate_('vocab')" aria-label="단어장">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Zm16 0A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"/></svg>
+    <span>단어장</span>
+  </button>
+  <button type="button" class="hsm-mobile-nav-item" data-mobile-menu="mypage"
+    onclick="hsmMobileNavigate_('mypage')" aria-label="내 학습">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9m6 10V5m6 14v-7m4 7H2"/></svg>
+    <span>내 학습</span>
+  </button>
+  <button type="button" class="hsm-mobile-nav-item" data-mobile-menu="ranking"
+    onclick="hsmMobileNavigate_('ranking')" aria-label="이달의 단어천재">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0V4Zm0 2H4v1a4 4 0 0 0 4 4m8-5h4v1a4 4 0 0 1-4 4m-4 1v5m-4 3h8m-6-3h4"/></svg>
+    <span>랭킹</span>
+  </button>
+  <button type="button" class="hsm-mobile-nav-item" data-mobile-menu="more"
+    onclick="openHsmMobileMore_()" aria-label="더보기" aria-haspopup="dialog" aria-controls="hsmMobileMore">
+    <span class="hsm-mobile-more-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span>더보기</span>
+    <b id="hsmMobileMoreBadge" class="hsm-mobile-badge hidden">0</b>
+  </button>
+</nav>
+
+<div id="hsmMobileMore" class="hsm-mobile-more hidden" aria-hidden="true">
+  <button class="hsm-mobile-more-backdrop" type="button" onclick="closeHsmMobileMore_()" aria-label="더보기 닫기"></button>
+  <section class="hsm-mobile-more-sheet" role="dialog" aria-modal="true" aria-labelledby="hsmMobileMoreTitle">
+    <div class="hsm-mobile-more-handle" aria-hidden="true"></div>
+    <div class="hsm-mobile-more-heading">
+      <h2 id="hsmMobileMoreTitle">더보기</h2>
+      <button type="button" class="hsm-mobile-more-close" onclick="closeHsmMobileMore_()" aria-label="닫기">×</button>
+    </div>
+    <div class="hsm-mobile-more-grid">
+      <button type="button" onclick="hsmMobileNavigate_('teacherExam')"><span class="hsm-more-symbol">✓</span><span>선생님 시험</span></button>
+      <button type="button" onclick="hsmMobileNavigate_('notification')"><span class="hsm-more-symbol">◌</span><span>알림</span><b id="hsmMobileNotificationBadge" class="hsm-mobile-badge hidden">0</b></button>
+      <button type="button" onclick="hsmMobileNavigate_('account')"><span class="hsm-more-symbol">○</span><span>내 정보</span></button>
+      <button type="button" class="hsm-mobile-logout" onclick="hsmMobileNavigate_('logout')"><span class="hsm-more-symbol">↪</span><span>로그아웃</span></button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function hsmMobileNavigation() {
+  'use strict';
+  const menuMap = {
+    test: function () { showTestHome(); },
+    vocab: function () { moveFromTestWithConfirm_(showVocabHome); },
+    mypage: function () { moveFromTestWithConfirm_(showMyPage); },
+    ranking: function () { moveFromTestWithConfirm_(showRankingHome); },
+    teacherExam: function () { moveFromTestWithConfirm_(showTeacherExamHome); },
+    notification: function () { moveFromTestWithConfirm_(showStudentNotifications); },
+    account: function () { moveFromTestWithConfirm_(showAccountInformation_); },
+    logout: function () { moveFromTestWithConfirm_(logout); }
+  };
+
+  function setMobileActive_(menu) {
+    const primary = ['test', 'vocab', 'mypage', 'ranking'].indexOf(menu) >= 0 ? menu : 'more';
+    document.querySelectorAll('[data-mobile-menu]').forEach(function (button) {
+      const active = button.getAttribute('data-mobile-menu') === primary;
+      button.classList.toggle('active', active);
+      if (active) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
+    });
+  }
+
+  function syncFromDesktopMenu_() {
+    const mainApp = document.getElementById('mainApp');
+    document.body.classList.toggle('hsm-student-app-open', !!mainApp && !mainApp.classList.contains('hidden'));
+    const map = {
+      testMenuButton: 'test', vocabMenuButton: 'vocab', myPageMenuButton: 'mypage',
+      rankingMenuButton: 'ranking', teacherExamMenuButton: 'teacherExam',
+      notificationMenuButton: 'notification', accountMenuButton: 'account'
+    };
+    Object.keys(map).some(function (id) {
+      const button = document.getElementById(id);
+      if (button && button.classList.contains('active')) {
+        setMobileActive_(map[id]);
+        return true;
+      }
+      return false;
+    });
+  }
+
+  function syncNotificationBadge_() {
+    const source = document.getElementById('studentNotificationBadge');
+    const count = Number(source && source.textContent || 0);
+    ['hsmMobileMoreBadge', 'hsmMobileNotificationBadge'].forEach(function (id) {
+      const badge = document.getElementById(id);
+      if (!badge) return;
+      badge.textContent = String(count);
+      badge.classList.toggle('hidden', count < 1);
+    });
+  }
+
+  window.hsmMobileNavigate_ = function (menu) {
+    window.closeHsmMobileMore_();
+    if (menuMap[menu]) menuMap[menu]();
+    window.setTimeout(syncFromDesktopMenu_, 0);
+  };
+  window.openHsmMobileMore_ = function () {
+    const sheet = document.getElementById('hsmMobileMore');
+    if (!sheet) return;
+    sheet.classList.remove('hidden');
+    sheet.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('hsm-mobile-more-open');
+    setMobileActive_('more');
+  };
+  window.closeHsmMobileMore_ = function () {
+    const sheet = document.getElementById('hsmMobileMore');
+    if (!sheet) return;
+    sheet.classList.add('hidden');
+    sheet.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('hsm-mobile-more-open');
+    syncFromDesktopMenu_();
+  };
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') window.closeHsmMobileMore_();
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+    const mainApp = document.getElementById('mainApp');
+    const badge = document.getElementById('studentNotificationBadge');
+    const desktopButtons = document.querySelectorAll('.topbar-menu .menu-button');
+    const observer = new MutationObserver(function () {
+      syncFromDesktopMenu_();
+      syncNotificationBadge_();
+    });
+    if (mainApp) observer.observe(mainApp, { attributes: true, attributeFilter: ['class'] });
+    if (badge) observer.observe(badge, { attributes: true, childList: true, subtree: true, attributeFilter: ['class'] });
+    desktopButtons.forEach(function (button) { observer.observe(button, { attributes: true, attributeFilter: ['class'] }); });
+    syncFromDesktopMenu_();
+    syncNotificationBadge_();
+  });
+})();
+</script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
