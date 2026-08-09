@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v19-mobile-compatibility';
+const CACHE_NAME = 'hansalmae-supabase-v20-shortcut-ranking-fix';
 
 const REQUIRED_ASSETS = [
   './',

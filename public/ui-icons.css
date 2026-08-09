@@ -1,14 +1,28 @@
 /* 한살매 공통 선형 아이콘 체계 */
 .hsm-icon-label {
-  display: inline-flex !important;
   align-items: center;
   justify-content: center;
   gap: 7px;
 }
 
+button.hsm-icon-label,
+.hsm-emblem-status.hsm-icon-label {
+  display: inline-flex !important;
+}
+
 h2.hsm-icon-label,
 h3.hsm-icon-label {
+  display: flex !important;
   justify-content: flex-start;
+}
+
+/* 자체 아이콘과 grid 구성을 가진 학습 카드에는 공통 아이콘을 중첩하지 않습니다. */
+.learning-shortcut {
+  display: block !important;
+}
+
+.learning-shortcut > .hsm-ui-icon {
+  display: none !important;
 }
 
 .hsm-ui-icon {

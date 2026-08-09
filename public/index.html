@@ -10068,6 +10068,9 @@
       }
 
       rankings.forEach(function (student) {
+        const rankingEmblem =
+          getRankingEmblem_(student);
+
         const item =
           document.createElement('div');
 
@@ -10106,31 +10109,31 @@
 
             '<div class="ranking-profile-row">' +
               '<div class="hsm-ranking-emblem-wrap' +
-                (student.equippedEmblem && student.equippedEmblem.imagePath
+                (rankingEmblem.imagePath
                   ? ' is-clickable'
                   : '') +
                 '" role="' +
-                (student.equippedEmblem && student.equippedEmblem.imagePath
+                (rankingEmblem.imagePath
                   ? 'button'
                   : 'img') +
                 '" tabindex="' +
-                (student.equippedEmblem && student.equippedEmblem.imagePath
+                (rankingEmblem.imagePath
                   ? '0'
                   : '-1') +
                 '" aria-label="' +
                 escapeHtml(
-                  student.equippedEmblem && student.equippedEmblem.emblemName
+                  rankingEmblem.emblemName
                     ? student.name + ' 학생의 ' +
-                      student.equippedEmblem.emblemName +
+                      rankingEmblem.emblemName +
                       ' 엠블럼 크게 보기'
                     : '장착 엠블럼 없음'
                 ) +
                 '">' +
-                (student.equippedEmblem && student.equippedEmblem.imagePath
+                (rankingEmblem.imagePath
                   ? '<img class="hsm-ranking-emblem" src="' +
-                      escapeHtml(student.equippedEmblem.imagePath) +
+                      escapeHtml(rankingEmblem.imagePath) +
                       '" alt="' +
-                      escapeHtml(student.equippedEmblem.emblemName || '장착 엠블럼') +
+                      escapeHtml(rankingEmblem.emblemName || '장착 엠블럼') +
                       '">'
                   : '<div class="hsm-ranking-emblem-placeholder">—</div>') +
               '</div>' +
@@ -10154,10 +10157,7 @@
             '</div>' +
           '</div>';
 
-        if (
-          student.equippedEmblem &&
-          student.equippedEmblem.imagePath
-        ) {
+        if (rankingEmblem.imagePath) {
           item.classList.add(
             'hsm-ranking-item-clickable'
           );
@@ -10208,14 +10208,34 @@
     }
 
 
-    function openRankingEmblemShowcase_(student) {
+    function getRankingEmblem_(student) {
+      const equipped =
+        student && student.equippedEmblem;
+
       if (
-        !student ||
-        !student.equippedEmblem ||
-        !student.equippedEmblem.imagePath
+        equipped &&
+        String(equipped.imagePath || '').trim()
       ) {
+        return equipped;
+      }
+
+      /* 장착 정보가 없는 학생도 기본 엠블럼과 상세 창을 제공합니다. */
+      return {
+        emblemId: 'title-chick',
+        emblemName: '단어병아리',
+        imagePath: './images/emblems/title-chick.png',
+        isFallback: true
+      };
+    }
+
+
+    function openRankingEmblemShowcase_(student) {
+      if (!student) {
         return;
       }
+
+      const rankingEmblem =
+        getRankingEmblem_(student);
 
       const modal =
         document.getElementById(
@@ -10268,7 +10288,7 @@
 
       const showcaseImagePath =
         String(
-          student.equippedEmblem.imagePath || ''
+          rankingEmblem.imagePath || ''
         ).trim();
 
       /*
@@ -10297,7 +10317,7 @@
 
       image.alt =
         String(
-          student.equippedEmblem.emblemName ||
+          rankingEmblem.emblemName ||
           '장착 엠블럼'
         );
 
@@ -10309,7 +10329,7 @@
 
       emblemName.textContent =
         String(
-          student.equippedEmblem.emblemName ||
+          rankingEmblem.emblemName ||
           '장착 엠블럼'
         );
 
@@ -12063,7 +12083,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=65', {
+          .register('./service-worker.js?v=66', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
