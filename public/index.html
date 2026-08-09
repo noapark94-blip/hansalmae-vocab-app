@@ -1626,6 +1626,33 @@
       background: #f9deed;
     }
 
+    #installAppButton {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    .hsm-install-button-icon {
+      display: inline-grid;
+      width: 30px;
+      height: 30px;
+      flex: 0 0 30px;
+      place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #fffafd, #f5deea);
+      box-shadow:
+        inset 0 0 0 1px rgba(143, 20, 95, .11),
+        0 3px 8px rgba(104, 31, 72, .08);
+    }
+
+    .hsm-install-button-icon svg {
+      display: block;
+      width: 25px;
+      height: 25px;
+      overflow: visible;
+    }
+
 
 
     /* =========================================================
@@ -4395,7 +4422,16 @@
         type="button"
         onclick="installHansalmaeApp()"
       >
-        📱 앱 설치하기
+        <span class="hsm-install-button-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" focusable="false">
+            <rect x="7" y="3.5" width="17" height="25" rx="4.2" fill="#fff" stroke="#8f145f" stroke-width="1.8"/>
+            <path d="M12.2 6.5h6.6" stroke="#d991b6" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M13.2 24.9h4.6" stroke="#8f145f" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="22.8" cy="19.4" r="6.1" fill="#f2b84b" stroke="#fff" stroke-width="1.7"/>
+            <path d="M22.8 15.8v6.1m-2.5-2.35 2.5 2.5 2.5-2.5" fill="none" stroke="#721247" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>앱 설치하기</span>
       </button>
 
       <button type="button" class="secondary-button" onclick="showPasswordResetGuide_()">
@@ -12111,7 +12147,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=68', {
+          .register('./service-worker.js?v=69', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
