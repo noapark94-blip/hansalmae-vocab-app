@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v21-teacher-excel-guide';
+const CACHE_NAME = 'hansalmae-supabase-v22-custom-learning-icons';
 
 const REQUIRED_ASSETS = [
   './',

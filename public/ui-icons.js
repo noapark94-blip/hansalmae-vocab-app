@@ -4,6 +4,7 @@
   const paths = {
     trophy: '<path d="M8 4h8v4a4 4 0 0 1-8 0V4Zm0 2H4v1a4 4 0 0 0 4 4m8-5h4v1a4 4 0 0 1-4 4m-4 1v5m-4 3h8m-6-3h4"/>',
     bookmark: '<path d="M6 4.8A1.8 1.8 0 0 1 7.8 3h8.4A1.8 1.8 0 0 1 18 4.8V21l-6-3.8L6 21V4.8Z"/>',
+    vocabAdd: '<path d="M5.5 5.5h10.8a1.7 1.7 0 0 1 1.7 1.7v11.3H7.2a1.7 1.7 0 0 1-1.7-1.7V5.5Z"/><path d="M10.8 5.5v6.2l2-1.35 2 1.35V5.5"/><circle cx="18.2" cy="17.8" r="4.1"/><path d="M18.2 15.8v4m-2-2h4"/>',
     test: '<path d="M7 4h10a2 2 0 0 1 2 2v14H5V6a2 2 0 0 1 2-2Zm3-1h4v4h-4V3Zm-1 9 2 2 4-4m-6 8h6"/>',
     book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Zm16 0A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"/>',
     lock: '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v2"/>',
@@ -43,7 +44,7 @@
     if (/시험 내용/.test(value)) return 'file';
     if (/시험 목록|생성한 시험/.test(value)) return 'list';
     if (/시험 만들기|시험 생성/.test(value)) return 'plus';
-    if (/단어장.*저장|단어장 저장|일괄 저장/.test(value)) return 'bookmark';
+    if (/단어장.*(?:저장|추가)|단어장 저장|일괄 저장/.test(value)) return 'vocabAdd';
     if (/오답.*시험|시험보기|시험 보기|추천 단어 시험|단어 테스트|선생님 시험/.test(value)) return 'test';
     if (/단어장/.test(value)) return 'book';
     if (/단어천재|랭킹|업적|엠블럼 획득/.test(value)) return 'trophy';
