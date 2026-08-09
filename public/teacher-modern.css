@@ -378,6 +378,27 @@ textarea {
   gap: 14px;
 }
 
+.exam-list-toolbar {
+  margin: 0 0 16px;
+}
+
+.exam-list-toolbar .card-title {
+  min-width: 0;
+  margin: 0;
+}
+
+.exam-list-toolbar-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.exam-list-toolbar-actions button {
+  min-height: 42px;
+  margin: 0;
+}
+
 .exam-card {
   padding: 19px;
   border-color: var(--line);
@@ -395,6 +416,7 @@ textarea {
   color: #3a2230;
   font-size: 18px;
   font-weight: 800;
+  line-height: 1.35;
 }
 
 .exam-id {
@@ -412,6 +434,13 @@ textarea {
   border: 1px solid #f0e6eb;
   border-radius: 13px;
   background: #fcfafb;
+}
+
+.exam-info .info-box {
+  display: flex;
+  min-height: 72px;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .info-label {
@@ -603,6 +632,14 @@ textarea {
     align-items: flex-start;
   }
 
+  .exam-head > div {
+    min-width: 0;
+  }
+
+  .exam-title {
+    overflow-wrap: anywhere;
+  }
+
   .exam-info {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -615,6 +652,43 @@ textarea {
   .exam-actions button {
     width: 100%;
     min-height: 44px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .exam-list-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .exam-list-toolbar .card-title {
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  .exam-list-toolbar-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+  }
+
+  .exam-list-toolbar-actions button {
+    width: 100%;
+    min-height: 45px;
+    padding-inline: 8px;
+    white-space: nowrap;
+  }
+
+  .exam-info .info-box {
+    min-height: 74px;
+  }
+
+  .info-value {
+    line-height: 1.4;
   }
 
   .modal {

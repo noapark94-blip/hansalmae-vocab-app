@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v23-custom-install-icon';
+const CACHE_NAME = 'hansalmae-supabase-v24-teacher-list-layout';
 
 const REQUIRED_ASSETS = [
   './',
