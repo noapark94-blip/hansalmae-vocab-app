@@ -2681,11 +2681,17 @@
         window.setTimeout(function () {
           if (typeof clearLoginState === 'function') clearLoginState();
           alert(error.message || '로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
-          window.setTimeout(function () {
-            sessionTerminationHandled = false;
-          }, 1000);
         }, 0);
       }
+
+      /*
+       * 세션 종료 처리는 앱 전체에서 이 함수 하나만 사용합니다.
+       * 동시에 여러 요청이 실패해도 안내창과 로그아웃은 한 번만 실행됩니다.
+       */
+      window.handleTerminatedStudentSession_ = handleTerminatedStudentSession_;
+      window.resetStudentSessionTerminationHandling_ = function () {
+        sessionTerminationHandled = false;
+      };
 
       function stableKey(functionName, args) {
         let serialized = '';
@@ -4685,14 +4691,6 @@
         <h2>알림</h2>
         <div class="subtitle">새 시험 등록과 재시험 요청을 확인하세요.</div>
 
-        <div class="push-notification-setting">
-          <div>
-            <strong>앱 푸시 알림</strong>
-            <div id="pushNotificationStatus">현재 상태를 확인하는 중입니다.</div>
-          </div>
-          <button type="button" id="pushNotificationButton" onclick="toggleStudentPushNotifications_()">푸시 알림 켜기</button>
-        </div>
-
         <div class="notification-cleanup-toolbar">
           <button
             type="button"
@@ -6581,6 +6579,9 @@
 
 
     function completeStudentLogin_(result) {
+      if (typeof window.resetStudentSessionTerminationHandling_ === 'function') {
+        window.resetStudentSessionTerminationHandling_();
+      }
       currentLoginToken = result.token;
       currentRefreshToken = result.refreshToken || '';
       currentTokenExpiresAt = Number(result.expiresAt || 0);
@@ -7076,8 +7077,12 @@
           .withSuccessHandler(function (result) {
             studentSessionCheckInFlight = false;
             if (!result || !result.success) {
-              clearLoginState();
-              alert((result && result.message) || '로그인 정보가 만료되었습니다.');
+              if (typeof window.handleTerminatedStudentSession_ === 'function') {
+                window.handleTerminatedStudentSession_(result || {
+                  code: 'SESSION_EXPIRED',
+                  message: '로그인 정보가 만료되었습니다.'
+                });
+              }
               return;
             }
             currentLoginToken = result.token;
@@ -7087,7 +7092,8 @@
           })
           .withFailureHandler(function (error) {
             studentSessionCheckInFlight = false;
-            handleTerminatedStudentSession_(error);
+            /* 확정적인 세션 종료는 공통 API 처리기가 한 번만 안내합니다. */
+            console.warn('로그인 자동 갱신 실패', error);
           })
           .studentRefreshSession(token, currentRefreshToken);
         return;
@@ -7100,9 +7106,9 @@
           studentSessionCheckInFlight = false;
 
           if (shouldClearLoginForSessionResult_(result)) {
-            const message = result.message || '로그인 정보가 만료되었습니다.';
-            clearLoginState();
-            alert(message);
+            if (typeof window.handleTerminatedStudentSession_ === 'function') {
+              window.handleTerminatedStudentSession_(result);
+            }
           }
         })
         .withFailureHandler(function (error) {
@@ -7204,6 +7210,63 @@
     }
 
 
+    function applyRestoredStudentSession_(token, refreshToken, expiresAt, student, openWhenNeeded) {
+      currentLoginToken = token;
+      currentRefreshToken = refreshToken || currentRefreshToken;
+      currentTokenExpiresAt = Number(expiresAt || currentTokenExpiresAt || 0);
+      currentStudent = student || currentStudent;
+      savePersistentStudentLogin_(
+        currentLoginToken,
+        currentStudent,
+        currentRefreshToken,
+        currentTokenExpiresAt
+      );
+
+      if (typeof window.resetStudentSessionTerminationHandling_ === 'function') {
+        window.resetStudentSessionTerminationHandling_();
+      }
+
+      if (openWhenNeeded && currentStudent) {
+        if (currentStudent.mustChangePassword) showForcedPasswordChange_();
+        else openMainApp(currentStudent);
+      }
+    }
+
+
+    function verifyRestoredStudentSession_(token, savedStudent, openWhenNeeded) {
+      google.script.run
+        .withSuccessHandler(function (result) {
+          document.getElementById('loginMessage').textContent = '';
+          if (result && result.success) {
+            applyRestoredStudentSession_(
+              token,
+              currentRefreshToken,
+              currentTokenExpiresAt,
+              result.student,
+              openWhenNeeded
+            );
+
+            if (!openWhenNeeded && result.student) {
+              document.getElementById('studentName').value = result.student.studentName || '';
+              document.getElementById('loggedInStudent').textContent =
+                (result.student.studentName || '') +
+                (result.student.grade ? ' · ' + result.student.grade : '');
+            }
+            return;
+          }
+          if (shouldClearLoginForSessionResult_(result) &&
+              typeof window.handleTerminatedStudentSession_ === 'function') {
+            window.handleTerminatedStudentSession_(result);
+          }
+        })
+        .withFailureHandler(function (error) {
+          console.warn('백그라운드 로그인 상태 확인 실패', error);
+          /* 통신 장애만으로 저장된 로그인 정보를 삭제하지 않습니다. */
+        })
+        .checkStudentSession(token);
+    }
+
+
     window.onload = function () {
       const savedToken = localStorage.getItem(HSM_STUDENT_TOKEN_KEY_);
       currentRefreshToken = localStorage.getItem(HSM_STUDENT_REFRESH_KEY_) || '';
@@ -7232,46 +7295,49 @@
           '로그인 상태를 확인하는 중입니다.';
       }
 
-      /* 첫 화면 렌더링과 서버 요청이 겹치지 않도록 조금 뒤에 확인합니다. */
+      /*
+       * 앱을 다시 열었을 때 만료 검사를 먼저 하지 않습니다.
+       * 토큰이 만료되었거나 곧 만료되면 저장된 refresh token으로 조용히
+       * 갱신한 뒤 새 access token을 검증합니다.
+       */
       window.setTimeout(function () {
+        const shouldRefreshFirst = Boolean(
+          currentRefreshToken &&
+          (!currentTokenExpiresAt ||
+            currentTokenExpiresAt * 1000 - Date.now() < 10 * 60 * 1000)
+        );
+
+        if (!shouldRefreshFirst) {
+          verifyRestoredStudentSession_(savedToken, savedStudent, !savedStudent);
+          return;
+        }
+
         google.script.run
           .withSuccessHandler(function (result) {
-            document.getElementById('loginMessage').textContent = '';
-
-            if (result && result.success) {
-              currentStudent = result.student;
-              savePersistentStudentLogin_(savedToken, result.student);
-
-              if (result.student && result.student.mustChangePassword) {
-                showForcedPasswordChange_();
-                return;
-              }
-
-              if (!savedStudent) {
-                openMainApp(result.student);
-                claimAttendanceBonusInBackground_();
-              } else {
-                /* 이름·학년이 바뀐 경우 화면의 기본 정보만 갱신합니다. */
-                document.getElementById('studentName').value =
-                  result.student.studentName || '';
-                document.getElementById('loggedInStudent').textContent =
-                  (result.student.studentName || '') +
-                  (result.student.grade ? ' · ' + result.student.grade : '');
+            if (!result || !result.success) {
+              if (typeof window.handleTerminatedStudentSession_ === 'function') {
+                window.handleTerminatedStudentSession_(result || {
+                  code: 'SESSION_EXPIRED',
+                  message: '로그인 정보가 만료되었습니다.'
+                });
               }
               return;
             }
 
-            if (shouldClearLoginForSessionResult_(result)) {
-              const message = result.message || '로그인 정보가 만료되었습니다.';
-              clearLoginState();
-              alert(message);
-            }
+            applyRestoredStudentSession_(
+              result.token,
+              result.refreshToken,
+              result.expiresAt,
+              savedStudent,
+              false
+            );
+            verifyRestoredStudentSession_(result.token, savedStudent, !savedStudent);
           })
           .withFailureHandler(function (error) {
-            console.warn('백그라운드 로그인 상태 확인 실패', error);
-            /* 통신 오류만으로 저장된 로그인 정보를 지우지 않습니다. */
+            console.warn('앱 시작 시 로그인 자동 갱신 실패', error);
+            /* 네트워크 오류라면 기존 화면과 로그인 정보를 그대로 유지합니다. */
           })
-          .checkStudentSession(savedToken);
+          .studentRefreshSession(savedToken, currentRefreshToken);
       }, savedStudent ? 2500 : 0);
     };
 
@@ -12594,7 +12660,6 @@ google.script.run
       document.getElementById('studentNotificationScreen').classList.remove('hidden');
       document.getElementById('studentNotificationLoading').textContent = '알림을 불러오는 중입니다.';
       document.getElementById('studentNotificationList').innerHTML = '';
-      refreshPushNotificationStatus_();
       google.script.run
         .withSuccessHandler(function (result) {
           document.getElementById('studentNotificationLoading').textContent = '';

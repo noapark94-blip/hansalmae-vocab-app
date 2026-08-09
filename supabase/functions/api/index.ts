@@ -10,6 +10,7 @@ const cors = {
 const url = Deno.env.get("SUPABASE_URL")!;
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+const STUDENT_SESSION_INACTIVITY_MS = 30 * 24 * 60 * 60 * 1000;
 const admin = createClient(url, serviceKey, {
   auth: { persistSession: false },
 });
@@ -202,7 +203,9 @@ async function profileFromToken(token: unknown) {
     "id",
     data.user.id,
   ).single();
-  if (!profile?.enabled) throw new Error("현재 사용할 수 없는 계정입니다.");
+  if (!profile?.enabled) {
+    throw new StudentSessionError("ACCOUNT_DISABLED", "현재 사용할 수 없는 계정입니다.");
+  }
   return profile;
 }
 
@@ -412,6 +415,26 @@ async function refreshStudentSession(args: unknown[]) {
     throw new StudentSessionError("SESSION_EXPIRED", "로그인 갱신 정보가 없습니다.");
   }
   const oldHash = await sha256(oldAccessToken);
+  const { data: activeSession, error: activeError } = await admin
+    .from("student_active_sessions")
+    .select("user_id,last_seen_at")
+    .eq("token_hash", oldHash)
+    .maybeSingle();
+  if (activeError) throw activeError;
+  if (!activeSession) {
+    throw new StudentSessionError(
+      "LOGGED_IN_FROM_ANOTHER_DEVICE",
+      "다른 기기에서 로그인되어 현재 기기의 접속이 종료되었습니다.",
+    );
+  }
+  const lastSeenAt = new Date(activeSession.last_seen_at ?? 0).getTime();
+  if (!lastSeenAt || Date.now() - lastSeenAt > STUDENT_SESSION_INACTIVITY_MS) {
+    await admin.from("student_active_sessions").delete().eq("token_hash", oldHash);
+    throw new StudentSessionError(
+      "SESSION_EXPIRED",
+      "30일 동안 사용하지 않아 로그인이 만료되었습니다. 다시 로그인해주세요.",
+    );
+  }
   const client = createClient(url, anonKey, { auth: { persistSession: false } });
   const { data, error } = await client.auth.refreshSession({
     refresh_token: refreshToken,
