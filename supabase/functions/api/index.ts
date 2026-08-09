@@ -1577,6 +1577,26 @@ async function dispatch(
             ? e.condition_value[0]
             : e.condition_value,
         );
+      const currentConditionValue = (e: any) =>
+        e.condition_type === "LEVEL"
+          ? exp.level
+          : e.condition_type === "TEACHER_TEST_COUNT"
+          ? num(teacherCount)
+          : e.condition_type === "VOCABULARY_BOOK_COUNT"
+          ? num(bookCount)
+          : e.condition_type === "WRONG_NOTEBOOK_COUNT"
+          ? num(wrongCount)
+          : e.condition_type === "ZERO_CORRECT_COUNT"
+          ? num(zeroCorrectCount)
+          : e.condition_type === "ATTENDANCE_STREAK"
+          ? attendanceCount
+          : e.condition_type === "PERFECT_STREAK"
+          ? perfectCount
+          : e.condition_type === "MONTHLY_RANK_1"
+          ? monthlyWinCount
+          : e.condition_type === "CONSECUTIVE_MONTHLY_RANK_1"
+          ? consecutiveWinCount
+          : 0;
       const qualifies = (e: any) =>
         e.condition_type === "LEVEL"
           ? exp.level >= conditionValue(e)
@@ -1626,6 +1646,20 @@ async function dispatch(
       const emblems = (settings ?? []).map((e: any) => {
         const o: any = ownership.get(e.id);
         const value = conditionValue(e);
+        const rawProgressValue = currentConditionValue(e);
+        const progressValue = o ? Math.max(rawProgressValue, value) : rawProgressValue;
+        const progressPercent = value > 0
+          ? Math.max(0, Math.min(100, Math.round(progressValue / value * 100)))
+          : 0;
+        const progressLabel = e.condition_type === "LEVEL"
+          ? `현재 Lv.${progressValue} / 목표 Lv.${value}`
+          : e.condition_type === "ATTENDANCE_STREAK"
+          ? `현재 ${progressValue}일 / 목표 ${value}일`
+          : e.condition_type === "CONSECUTIVE_MONTHLY_RANK_1"
+          ? `같은 부문 연속 ${progressValue}개월 / 목표 ${value}개월`
+          : e.condition_type === "MONTHLY_RANK_1"
+          ? `확정 1위 ${progressValue}회 / 목표 ${value}회`
+          : `현재 ${progressValue} / 목표 ${value}`;
         return {
           emblemId: e.id,
           emblemName: e.name,
@@ -1652,6 +1686,10 @@ async function dispatch(
           owned: Boolean(o),
           equipped: Boolean(o?.equipped),
           earnedAt: o?.earned_at ?? null,
+          progressValue,
+          progressTarget: value,
+          progressPercent,
+          progressLabel: o ? `달성 완료 · ${progressLabel}` : progressLabel,
         };
       });
       const equippedEmblem = emblems.find((e: any) => e.equipped) ?? null;

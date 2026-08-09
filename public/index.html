@@ -14965,6 +14965,14 @@ google.script.run
   .hsm-emblem-item img{width:120px;height:120px;object-fit:contain}
   .hsm-emblem-name{font-weight:900;margin-top:8px}
   .hsm-emblem-condition{font-size:13px;color:#777;margin-top:5px}
+  .hsm-emblem-progress{margin:12px 2px 2px;text-align:left}
+  .hsm-emblem-progress-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:12px;font-weight:800;color:#786873}
+  .hsm-emblem-progress-percent{flex:0 0 auto;color:#8f145f;font-variant-numeric:tabular-nums}
+  .hsm-emblem-progress-track{height:10px;overflow:hidden;border-radius:999px;background:#eadfe5;box-shadow:inset 0 1px 2px rgba(67,26,50,.08)}
+  .hsm-emblem-progress-fill{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8f145f,#d15491);transition:width .3s ease}
+  .hsm-emblem-item.locked .hsm-emblem-progress-head{color:#777}
+  .hsm-emblem-item.locked .hsm-emblem-progress-fill{background:linear-gradient(90deg,#a47c92,#c9aabc)}
+  .hsm-emblem-item.owned .hsm-emblem-progress-fill,.hsm-emblem-item.equipped .hsm-emblem-progress-fill{background:linear-gradient(90deg,#8f145f,#ee75b5)}
   .hsm-emblem-equip{margin-top:10px;padding:10px;font-size:14px}
   .hsm-emblem-new{margin-top:12px;padding:16px;border-radius:16px;background:#fff2f8;text-align:center}
   .hsm-emblem-new img{width:130px;height:130px;object-fit:contain}
@@ -15122,11 +15130,19 @@ google.script.run
         ? '<button class="hsm-emblem-equip" type="button" onclick="HSMEmblems.equip(\''+esc(e.emblemId)+'\')">이 엠블럼 장착하기</button>'
         : '';
 
-      return '<div class="hsm-emblem-item '+(!owned?'locked ':'')+(equipped?'equipped':'')+'">'+
+      const progressPercent=Math.max(0,Math.min(100,Number(e.progressPercent||0)));
+      const progress=
+        '<div class="hsm-emblem-progress" aria-label="'+esc(e.progressLabel||'진행률')+'">'+
+          '<div class="hsm-emblem-progress-head"><span>'+esc(e.progressLabel||'진행 중')+'</span><span class="hsm-emblem-progress-percent">'+progressPercent+'%</span></div>'+
+          '<div class="hsm-emblem-progress-track"><span class="hsm-emblem-progress-fill" style="width:'+progressPercent+'%"></span></div>'+
+        '</div>';
+
+      return '<div class="hsm-emblem-item '+(!owned?'locked ':'owned ')+(equipped?'equipped':'')+'">'+
         status+
         '<img src="'+esc(e.imagePath)+'" alt="'+esc(e.emblemName)+'">'+
         '<div class="hsm-emblem-name">'+esc(e.emblemName)+'</div>'+
         '<div class="hsm-emblem-condition">획득 조건: '+esc(e.conditionText||'조건 달성 시 획득')+'</div>'+
+        progress+
         button+
       '</div>';
     }).join('');
