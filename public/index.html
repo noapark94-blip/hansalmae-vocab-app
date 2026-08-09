@@ -4279,6 +4279,7 @@
   .hsm-install-actions button { margin:0; }
   @media(max-width:560px){.hsm-install-actions{flex-direction:column}}
 </style>
+<link rel="stylesheet" href="./design-v1.css?v=1">
 </head>
 
 <body>
@@ -5143,6 +5144,14 @@
         ></div>
 
         <div id="myHistoryList"></div>
+        <button
+          id="myHistoryMoreButton"
+          type="button"
+          class="secondary-button hidden"
+          onclick="loadMoreMyLearningHistory_()"
+        >
+          시험 기록 더보기
+        </button>
       </div>
 
 
@@ -5718,6 +5727,9 @@
     let currentExperienceData = null;
     let studentSessionCheckTimer = null;
     let studentSessionCheckInFlight = false;
+    let myLearningHistoryOffset_ = 0;
+    let myLearningHistoryLoading_ = false;
+    const MY_LEARNING_HISTORY_PAGE_SIZE_ = 10;
 
 
     let wrongNotebookWords = [];
@@ -7640,15 +7652,63 @@
         .getElementById('myHistoryList')
         .innerHTML = '';
 
+      myLearningHistoryOffset_ = 0;
+      myLearningHistoryLoading_ = false;
+      const moreButton = document.getElementById('myHistoryMoreButton');
+      if (moreButton) moreButton.classList.add('hidden');
+
       loadWrongNotebookPreview();
       loadPersonalVocabularyPreview();
 
+      loadMyLearningHistoryPage_(true);
+
+      window.scrollTo(0, 0);
+    }
+
+
+    function loadMyLearningHistoryPage_(reset) {
+      if (myLearningHistoryLoading_) return;
+      myLearningHistoryLoading_ = true;
+
+      if (reset) myLearningHistoryOffset_ = 0;
+
+      const moreButton = document.getElementById('myHistoryMoreButton');
+      if (moreButton) {
+        moreButton.disabled = true;
+        moreButton.textContent = reset
+          ? '시험 기록 불러오는 중...'
+          : '더 불러오는 중...';
+      }
+
       google.script.run
-        .withSuccessHandler(renderMyPage)
+        .withSuccessHandler(function (data) {
+          myLearningHistoryLoading_ = false;
+          renderMyPage(data, !reset);
+
+          const loadedCount = Array.isArray(data && data.recentTests)
+            ? data.recentTests.length
+            : 0;
+          myLearningHistoryOffset_ += loadedCount;
+
+          if (moreButton) {
+            moreButton.disabled = false;
+            moreButton.textContent = '시험 기록 더보기';
+            moreButton.classList.toggle(
+              'hidden',
+              !(data && data.hasMoreHistory)
+            );
+          }
+        })
         .withFailureHandler(function (error) {
+          myLearningHistoryLoading_ = false;
           document
             .getElementById('myPageLoading')
             .textContent = '';
+
+          if (moreButton) {
+            moreButton.disabled = false;
+            moreButton.textContent = '시험 기록 더보기';
+          }
 
           alert(
             '학습 기록을 불러오는 중 오류가 발생했습니다.\n' +
@@ -7659,9 +7719,16 @@
             )
           );
         })
-        .getMyLearning(currentLoginToken);
+        .getMyLearning(
+          currentLoginToken,
+          myLearningHistoryOffset_,
+          MY_LEARNING_HISTORY_PAGE_SIZE_
+        );
+    }
 
-      window.scrollTo(0, 0);
+
+    function loadMoreMyLearningHistory_() {
+      loadMyLearningHistoryPage_(false);
     }
 
 
@@ -7685,7 +7752,7 @@
     }
 
 
-    function renderMyPage(data) {
+    function renderMyPage(data, appendHistory) {
       document
         .getElementById('myPageLoading')
         .textContent = '';
@@ -7744,16 +7811,20 @@
       const historyList =
         document.getElementById('myHistoryList');
 
-      historyList.innerHTML = '';
+      if (!appendHistory) {
+        historyList.innerHTML = '';
+      }
 
       const recentTests =
         data.recentTests || [];
 
       if (recentTests.length === 0) {
-        historyList.innerHTML =
-          '<div class="empty-message">' +
-          '아직 저장된 시험 기록이 없습니다.' +
-          '</div>';
+        if (!appendHistory) {
+          historyList.innerHTML =
+            '<div class="empty-message">' +
+            '아직 저장된 시험 기록이 없습니다.' +
+            '</div>';
+        }
 
         return;
       }
@@ -11993,7 +12064,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=60', {
+          .register('./service-worker.js?v=61', {
             updateViaCache: 'none'
           })
           .then(function (registration) {

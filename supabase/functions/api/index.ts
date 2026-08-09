@@ -1807,10 +1807,21 @@ async function dispatch(
     }
     case "getMyLearning": {
       const p = await profileFromToken(args[0]);
-      const { data: tests, error } = await admin.from("test_results").select(
-        "*,word_sets(name)",
-      ).eq("user_id", p.id).order("taken_at", { ascending: false }).limit(100);
+      const offset = Math.max(0, num(args[1]));
+      const pageSize = Math.max(1, Math.min(50, num(args[2], 10)));
+      const [
+        { data: tests, error, count },
+        { data: summary, error: summaryError },
+      ] = await Promise.all([
+        admin.from("test_results").select("*,word_sets(name)", {
+          count: "exact",
+        }).eq("user_id", p.id)
+          .order("taken_at", { ascending: false })
+          .range(offset, offset + pageSize - 1),
+        admin.rpc("get_student_test_summary", { p_user_id: p.id }),
+      ]);
       if (error) throw error;
+      if (summaryError) throw summaryError;
       const rows = tests ?? [];
       const recentTests = rows.map((x: any) => ({
         date: formatKoreaDate(x.taken_at, {
@@ -1840,19 +1851,18 @@ async function dispatch(
           year: "numeric",
           month: "long",
         }),
-        summary: {
-          testCount: rows.length,
-          averageScore: rows.length
-            ? Math.round(
-              rows.reduce((s: any, x: any) => s + num(x.score), 0) /
-                rows.length,
-            )
-            : 0,
-          totalPoint: rows.reduce((s: any, x: any) => s + num(x.points), 0),
-          perfectCount: rows.filter((x: any) => num(x.score) >= 100).length,
+        summary: summary ?? {
+          testCount: 0,
+          averageScore: 0,
+          totalPoint: 0,
+          perfectCount: 0,
         },
         experience: await experienceView(p.id),
         recentTests,
+        historyOffset: offset,
+        historyPageSize: pageSize,
+        historyTotalCount: count ?? 0,
+        hasMoreHistory: offset + rows.length < (count ?? 0),
       };
     }
     case "teacherGetSetupData": {
