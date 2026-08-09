@@ -206,6 +206,49 @@ textarea:focus {
   font-variant-numeric: tabular-nums;
 }
 
+/* 최근 시험 기록: PC에서 날짜가 글자 단위로 꺾이지 않도록 3열 고정 */
+@media (min-width: 651px) {
+  .history-item {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr) minmax(76px, auto);
+    align-items: center;
+    gap: 20px;
+  }
+
+  .history-date {
+    width: auto;
+    min-width: 0;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .history-info {
+    min-width: 0;
+  }
+
+  .history-score {
+    min-width: 76px;
+    text-align: right;
+  }
+}
+
+@media (max-width: 650px) {
+  .history-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px 12px;
+  }
+
+  .history-date {
+    grid-column: 1 / -1;
+    width: auto;
+    text-align: left;
+    white-space: nowrap;
+  }
+}
+
 .choice,
 .teacher-option-button {
   border-color: var(--hsm-line);

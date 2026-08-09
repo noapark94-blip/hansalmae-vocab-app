@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v24-teacher-list-layout';
+const CACHE_NAME = 'hansalmae-supabase-v25-history-desktop-layout';
 
 const REQUIRED_ASSETS = [
   './',
