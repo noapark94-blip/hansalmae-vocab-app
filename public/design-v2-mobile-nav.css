@@ -194,9 +194,9 @@
   }
 
   .hsm-mobile-more-close {
-    width: 38px !important;
-    min-width: 38px !important;
-    min-height: 38px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
@@ -267,4 +267,3 @@
     to { transform: translateY(0); }
   }
 }
-

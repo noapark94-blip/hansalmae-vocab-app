@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v18-unified-icons-teacher-ui';
+const CACHE_NAME = 'hansalmae-supabase-v19-mobile-compatibility';
 
 const REQUIRED_ASSETS = [
   './',

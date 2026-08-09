@@ -110,7 +110,10 @@
         const target = mutation.target && mutation.target.nodeType === 1
           ? mutation.target.closest('button, h2, h3, [data-hsm-icon]')
           : null;
-        if (target && !target.querySelector(':scope > .hsm-ui-icon')) {
+        const hasDirectIcon = target && Array.prototype.some.call(target.children, function (child) {
+          return child.classList && child.classList.contains('hsm-ui-icon');
+        });
+        if (target && !hasDirectIcon) {
           delete target.dataset.hsmIconReady;
           decorateElement(target);
         }
