@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v20-shortcut-ranking-fix';
+const CACHE_NAME = 'hansalmae-supabase-v21-teacher-excel-guide';
 
 const REQUIRED_ASSETS = [
   './',

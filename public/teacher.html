@@ -251,6 +251,103 @@
       line-height: 1.55;
     }
 
+    .hsm-excel-guide {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fffafd;
+    }
+
+    .hsm-excel-guide summary {
+      position: relative;
+      padding: 13px 42px 13px 14px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 850;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+
+    .hsm-excel-guide summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .hsm-excel-guide summary::after {
+      content: "＋";
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .hsm-excel-guide[open] summary::after {
+      content: "−";
+    }
+
+    .hsm-excel-guide-body {
+      padding: 0 14px 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .hsm-excel-guide-body p {
+      margin: 0 0 10px;
+    }
+
+    .hsm-excel-table-wrap {
+      overflow-x: auto;
+      margin-bottom: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .hsm-excel-table {
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+      color: var(--text);
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .hsm-excel-table th,
+    .hsm-excel-table td {
+      padding: 9px 10px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    .hsm-excel-table th:last-child,
+    .hsm-excel-table td:last-child {
+      border-right: 0;
+    }
+
+    .hsm-excel-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .hsm-excel-table th {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 850;
+    }
+
+    .hsm-excel-rules {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .hsm-excel-rules strong {
+      color: var(--text);
+    }
+
     .hidden { display: none !important; }
 
     .switches {
@@ -1210,6 +1307,48 @@ protect	보호하다"></textarea>
                     한 줄에 한 단어씩 입력하세요. 영어와 뜻은 탭, 쉼표 또는 | 기호로 구분할 수 있습니다.
                     예문과 해석까지 넣으려면 영어 | 뜻 | 예문 | 해석 순서로 입력하세요.
                   </div>
+                  <details class="hsm-excel-guide">
+                    <summary>엑셀 작성·붙여넣기 방법 보기</summary>
+                    <div class="hsm-excel-guide-body">
+                      <p>
+                        엑셀에서 아래 순서로 작성한 뒤, 필요한 행을 복사해 위 입력 칸에 붙여넣으세요.
+                        한 행에는 단어 하나만 작성합니다.
+                      </p>
+                      <div class="hsm-excel-table-wrap" role="region" aria-label="엑셀 단어 작성 예시" tabindex="0">
+                        <table class="hsm-excel-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">A열 영어 (필수)</th>
+                              <th scope="col">B열 뜻 (필수)</th>
+                              <th scope="col">C열 예문 (선택)</th>
+                              <th scope="col">D열 해석 (선택)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>apple</td>
+                              <td>사과</td>
+                              <td>I ate an apple.</td>
+                              <td>나는 사과를 먹었다.</td>
+                            </tr>
+                            <tr>
+                              <td>benefit</td>
+                              <td>이익, 혜택</td>
+                              <td>This plan benefits everyone.</td>
+                              <td>이 계획은 모두에게 도움이 된다.</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <ul class="hsm-excel-rules">
+                        <li><strong>영어와 뜻만 출제:</strong> A·B열만 작성해도 됩니다.</li>
+                        <li><strong>예문 시험:</strong> C·D열까지 작성하세요.</li>
+                        <li>첫 행의 ‘영어·뜻·예문·해석’ 같은 제목은 복사하지 않는 것이 가장 안전합니다.</li>
+                        <li>셀 병합, 중간 제목, 설명 행과 빈 행은 사용하지 마세요.</li>
+                        <li>뜻이 여러 개면 한 셀 안에서 쉼표 또는 / 기호로 구분할 수 있습니다.</li>
+                      </ul>
+                    </div>
+                  </details>
                 </div>
               </div>
 
