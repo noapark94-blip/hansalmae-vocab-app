@@ -4336,7 +4336,7 @@
 </style>
 <link rel="stylesheet" href="./design-v1.css?v=2">
 <link rel="stylesheet" href="./design-v2-mobile-nav.css?v=1">
-<link rel="stylesheet" href="./design-v3-test-rewards.css?v=1">
+<link rel="stylesheet" href="./design-v3-test-rewards.css?v=2">
 <link rel="stylesheet" href="./ui-icons.css?v=1">
 </head>
 
@@ -11496,12 +11496,12 @@
           question.data.translation
         ) {
           feedback.innerHTML =
-            '정답입니다.<br>' +
-            '<span class="translation">' +
+            '<div class="feedback-status">정답입니다.</div>' +
+            '<div class="translation feedback-translation">' +
             escapeHtml(
               question.data.translation
             ) +
-            '</span>';
+            '</div>';
         } else {
           feedback.textContent =
             '정답입니다.';
@@ -11542,16 +11542,16 @@
           question.data.translation
         ) {
           feedback.innerHTML =
-            '정답: ' +
-            escapeHtml(
-              question.correctAnswer
-            ) +
-            '<br>' +
-            '<span class="translation">' +
+            '<div class="feedback-status">정답: ' +
+              escapeHtml(
+                question.correctAnswer
+              ) +
+            '</div>' +
+            '<div class="translation feedback-translation">' +
             escapeHtml(
               question.data.translation
             ) +
-            '</span>';
+            '</div>';
         } else {
           feedback.textContent =
             '정답: ' +
@@ -12147,7 +12147,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=71', {
+          .register('./service-worker.js?v=72', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
