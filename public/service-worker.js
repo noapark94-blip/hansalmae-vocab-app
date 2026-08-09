@@ -1,8 +1,10 @@
-const CACHE_NAME = 'hansalmae-supabase-v14-web-push';
+const CACHE_NAME = 'hansalmae-supabase-v15-design-system';
 
 const REQUIRED_ASSETS = [
   './',
   './index.html',
+  './design-v1.css',
+  './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
   './icon.svg',

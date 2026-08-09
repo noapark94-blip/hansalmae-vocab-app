@@ -1,0 +1,262 @@
+/* 한살매 보카 디자인 1차: 타이포그래피와 시각 체계 정돈 */
+@font-face {
+  font-family: "Pretendard Variable";
+  src: url("./fonts/PretendardVariable.woff2") format("woff2-variations");
+  font-style: normal;
+  font-weight: 45 920;
+  font-display: swap;
+}
+
+:root {
+  --hsm-primary: #8f145f;
+  --hsm-primary-pressed: #701047;
+  --hsm-primary-soft: #fff2f8;
+  --hsm-surface: #ffffff;
+  --hsm-background: #faf7f9;
+  --hsm-text: #251b22;
+  --hsm-text-secondary: #74656e;
+  --hsm-line: #eadfe5;
+  --hsm-success: #2f9c67;
+  --hsm-warning: #d39b34;
+  --hsm-danger: #c84368;
+  --hsm-radius-card: 22px;
+  --hsm-radius-control: 14px;
+  --hsm-shadow-card: 0 8px 24px rgba(70, 29, 53, 0.07);
+  --hsm-font: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--hsm-font);
+  font-synthesis: none;
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% -12%, rgba(143, 20, 95, 0.075), transparent 34%),
+    var(--hsm-background);
+  color: var(--hsm-text);
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.topbar-title,
+.my-section-title,
+.shortcut-title,
+.history-title,
+.hsm-emblem-name {
+  letter-spacing: -0.03em;
+  line-height: 1.24;
+}
+
+h1 {
+  font-size: clamp(30px, 5vw, 38px);
+  font-weight: 800;
+}
+
+h2 {
+  font-size: clamp(24px, 4vw, 30px);
+  font-weight: 800;
+}
+
+.subtitle,
+.shortcut-description,
+.history-detail,
+.personal-meta,
+.wrong-note-source,
+.word-translation,
+.translation {
+  color: var(--hsm-text-secondary);
+  line-height: 1.55;
+}
+
+.card,
+.topbar {
+  border: 1px solid rgba(75, 43, 61, 0.09);
+  background: var(--hsm-surface);
+  box-shadow: var(--hsm-shadow-card);
+  backdrop-filter: none;
+}
+
+.card {
+  border-radius: var(--hsm-radius-card);
+}
+
+.card::before {
+  height: 3px;
+  background: var(--hsm-primary);
+  opacity: 0.78;
+}
+
+button {
+  min-height: 48px;
+  border: 1px solid transparent;
+  border-radius: var(--hsm-radius-control);
+  background: var(--hsm-primary);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  box-shadow: none;
+}
+
+button:hover {
+  background: var(--hsm-primary-pressed);
+  box-shadow: none;
+}
+
+button:active {
+  box-shadow: none;
+  filter: none;
+}
+
+button:disabled {
+  border-color: transparent;
+  background: #d3c8ce;
+  color: #ffffff;
+}
+
+.secondary-button,
+.menu-button,
+.ranking-tab,
+.wrong-note-filter button {
+  border-color: var(--hsm-line);
+  background: #ffffff;
+  color: var(--hsm-primary);
+  box-shadow: none;
+}
+
+.secondary-button:hover,
+.menu-button:hover,
+.ranking-tab:hover,
+.wrong-note-filter button:hover {
+  border-color: #d9bdcc;
+  background: var(--hsm-primary-soft);
+}
+
+.menu-button.active,
+.ranking-tab.active,
+.wrong-note-filter button.active {
+  border-color: var(--hsm-primary);
+  background: var(--hsm-primary);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.logout-button,
+.danger-button {
+  background: #6f5e68;
+  box-shadow: none;
+}
+
+input,
+select,
+textarea {
+  min-height: 48px;
+  border: 1px solid var(--hsm-line);
+  border-radius: var(--hsm-radius-control);
+  background: #ffffff;
+  color: var(--hsm-text);
+  font-size: 16px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--hsm-primary);
+  box-shadow: 0 0 0 3px rgba(143, 20, 95, 0.1);
+}
+
+.word-card,
+.wrong-note-item,
+.personal-item,
+.history-item,
+.learning-shortcut,
+.ranking-item,
+.my-summary-card,
+.teacher-exam-card,
+.student-notification-card {
+  border-color: var(--hsm-line);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.my-summary-card,
+.filter-check,
+.wrong-test-guide,
+.ranking-rule,
+.empty-message {
+  background: #fdf9fb;
+}
+
+.history-date,
+.my-summary-value,
+.ranking-point,
+.history-point {
+  font-variant-numeric: tabular-nums;
+}
+
+.choice,
+.teacher-option-button {
+  border-color: var(--hsm-line);
+  background: #ffffff;
+  color: var(--hsm-text);
+  box-shadow: none;
+}
+
+.choice:hover,
+.teacher-option-button:hover {
+  border-color: var(--hsm-primary);
+  background: var(--hsm-primary-soft);
+}
+
+.progress-wrap,
+.hsm-emblem-progress-track {
+  background: #eee5ea;
+}
+
+.progress-bar,
+.hsm-emblem-progress-fill {
+  background: var(--hsm-primary);
+}
+
+@media (max-width: 650px) {
+  body {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 26px 20px;
+  }
+
+  .subtitle {
+    margin-top: 12px;
+    margin-bottom: 24px;
+    font-size: 16px;
+  }
+
+  button {
+    min-height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
