@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v29-launcher-smart-review';
+const CACHE_NAME = 'hansalmae-supabase-v31-launcher-spacing';
 
 const REQUIRED_ASSETS = [
   './',

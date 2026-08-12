@@ -4422,8 +4422,7 @@
     border: 32px solid rgba(255,255,255,.10);
     border-radius: 50%;
   }
-  .hsm-launcher-kicker { position:relative; z-index:1; font-size:13px; font-weight:800; opacity:.84; }
-  .hsm-launcher-hero h1 { position:relative; z-index:1; margin:7px 0 7px; color:#fff; font-size:clamp(25px,5vw,38px); line-height:1.22; letter-spacing:-1.3px; }
+  .hsm-launcher-hero h1 { position:relative; z-index:1; margin:0 0 9px; color:#fff; font-size:clamp(25px,5vw,38px); line-height:1.22; letter-spacing:-1.3px; }
   .hsm-launcher-hero p { position:relative; z-index:1; margin:0; max-width:560px; color:rgba(255,255,255,.82); font-size:14px; line-height:1.55; }
   .hsm-launcher-primary {
     position:relative;
@@ -4438,6 +4437,29 @@
     font-size:14px;
     font-weight:900;
     box-shadow:0 8px 18px rgba(67,10,43,.18);
+    -webkit-tap-highlight-color:transparent !important;
+    touch-action:manipulation;
+    transition:transform .14s cubic-bezier(.2,.8,.2,1), box-shadow .14s ease, background-color .14s ease;
+  }
+  @media (hover:hover) and (pointer:fine) {
+    .hsm-launcher-primary:hover {
+      transform:translateY(-1px);
+      background:#fffafd !important;
+      color:#821756 !important;
+      box-shadow:0 10px 20px rgba(67,10,43,.16) !important;
+      filter:none !important;
+    }
+  }
+  .hsm-launcher-primary:active {
+    transform:translateY(1px) scale(.994) !important;
+    background:#fff8fb !important;
+    color:#821756 !important;
+    box-shadow:0 3px 9px rgba(67,10,43,.10) !important;
+    filter:none !important;
+  }
+  .hsm-launcher-primary:focus-visible {
+    outline:3px solid rgba(255,255,255,.52);
+    outline-offset:3px;
   }
 
   .hsm-launcher-section-title { margin:22px 2px 12px; font-size:15px; font-weight:900; color:#5a2043; }
@@ -4966,7 +4988,6 @@
           </header>
 
           <div class="hsm-launcher-hero">
-            <div class="hsm-launcher-kicker">TODAY'S VOCABULARY</div>
             <h1 id="hsmLauncherGreeting">WELCOME</h1>
             <p>시험·복습·단어장을 한곳에서 바로 시작하세요.</p>
             <button type="button" class="hsm-launcher-primary" onclick="hsmLauncherOpenFeature_('test')">오늘의 단어 학습 시작</button>
@@ -12414,7 +12435,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=75', {
+          .register('./service-worker.js?v=77', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
