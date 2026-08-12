@@ -2697,6 +2697,7 @@
 
       const CACHE_PREFIX = 'hsmApiCacheV2:';
       const DEFAULT_REQUEST_TIMEOUT_MS = 45000;
+      let silentStudentRefreshPromise_ = null;
 
       function getRequestTimeoutMs(functionName) {
         const longRequestTimeouts = {
@@ -2865,7 +2866,62 @@
         }
       }
 
-      function callServer(functionName, args) {
+      function refreshStudentSessionForApi_() {
+        if (silentStudentRefreshPromise_) {
+          return silentStudentRefreshPromise_;
+        }
+
+        const token = typeof currentLoginToken !== 'undefined'
+          ? currentLoginToken
+          : '';
+        const refreshToken = typeof currentRefreshToken !== 'undefined'
+          ? currentRefreshToken
+          : '';
+
+        if (!token || !refreshToken) {
+          return Promise.reject(makeError(
+            '로그인 정보가 만료되었습니다. 다시 로그인해주세요.',
+            'SESSION_EXPIRED'
+          ));
+        }
+
+        silentStudentRefreshPromise_ = callServer(
+          'studentRefreshSession',
+          [token, refreshToken],
+          false
+        ).then(function (result) {
+          if (!result || !result.success || !result.token) {
+            throw makeError(
+              result && result.message
+                ? result.message
+                : '로그인 정보가 만료되었습니다. 다시 로그인해주세요.',
+              result && result.code ? result.code : 'SESSION_EXPIRED'
+            );
+          }
+
+          currentLoginToken = result.token;
+          currentRefreshToken = result.refreshToken || currentRefreshToken;
+          currentTokenExpiresAt = Number(result.expiresAt || 0);
+
+          if (typeof savePersistentStudentLogin_ === 'function') {
+            savePersistentStudentLogin_(
+              currentLoginToken,
+              currentStudent,
+              currentRefreshToken,
+              currentTokenExpiresAt
+            );
+          }
+
+          return result;
+        }).finally(function () {
+          silentStudentRefreshPromise_ = null;
+        });
+
+        return silentStudentRefreshPromise_;
+      }
+
+      function callServer(functionName, args, allowSessionRetry) {
+        if (allowSessionRetry !== false) allowSessionRetry = true;
         const requestKey = stableKey(functionName, args);
         const cached = getCached(functionName, args);
 
@@ -2943,6 +2999,32 @@
             return payload.result;
           })
           .catch(function (error) {
+            const sessionCode = String(error && error.code || '');
+            const canRefresh =
+              allowSessionRetry &&
+              functionName !== 'studentRefreshSession' &&
+              functionName !== 'studentLogin' &&
+              functionName !== 'studentLogout' &&
+              currentRefreshToken &&
+              ['SESSION_EXPIRED', 'INVALID_SESSION', 'NO_SESSION']
+                .indexOf(sessionCode) >= 0;
+
+            if (canRefresh) {
+              const expiredToken = currentLoginToken;
+              return refreshStudentSessionForApi_()
+                .then(function (refreshResult) {
+                  const retryArgs = (args || []).slice();
+                  if (retryArgs.length && retryArgs[0] === expiredToken) {
+                    retryArgs[0] = refreshResult.token;
+                  }
+                  return callServer(functionName, retryArgs, false);
+                })
+                .catch(function (refreshError) {
+                  handleTerminatedStudentSession_(refreshError);
+                  throw refreshError;
+                });
+            }
+
             handleTerminatedStudentSession_(error);
             if (error && error.name === 'AbortError') {
               const timeoutMessage =
@@ -7486,6 +7568,26 @@
     }
 
 
+    /*
+     * 휴대폰에서 앱을 오래 백그라운드에 두었다가 다시 열면 타이머가
+     * 멈춰 있을 수 있으므로, 화면 복귀 즉시 세션을 점검·갱신합니다.
+     */
+    document.addEventListener('visibilitychange', function () {
+      if (
+        document.visibilityState === 'visible' &&
+        currentLoginToken
+      ) {
+        window.setTimeout(checkCurrentStudentSession_, 80);
+      }
+    });
+
+    window.addEventListener('online', function () {
+      if (currentLoginToken) {
+        window.setTimeout(checkCurrentStudentSession_, 80);
+      }
+    });
+
+
     function clearLoginState() {
       stopStudentSessionMonitor_();
       currentLoginToken = '';
@@ -7646,11 +7748,17 @@
 
       currentLoginToken = savedToken;
 
+      const shouldRefreshFirst = Boolean(
+        currentRefreshToken &&
+        (!currentTokenExpiresAt ||
+          currentTokenExpiresAt * 1000 - Date.now() < 10 * 60 * 1000)
+      );
+
       /*
        * 같은 기기에서는 저장된 학생 정보로 즉시 앱을 엽니다.
        * 서버 세션 확인 때문에 로그인 화면에서 기다리지 않습니다.
        */
-      if (savedStudent) {
+      if (savedStudent && !shouldRefreshFirst) {
         currentStudent = savedStudent;
         if (savedStudent.mustChangePassword) {
           showForcedPasswordChange_();
@@ -7659,7 +7767,9 @@
         }
       } else {
         document.getElementById('loginMessage').textContent =
-          '로그인 상태를 확인하는 중입니다.';
+          shouldRefreshFirst
+            ? '로그인을 안전하게 이어가는 중입니다.'
+            : '로그인 상태를 확인하는 중입니다.';
       }
 
       /*
@@ -7668,12 +7778,6 @@
        * 갱신한 뒤 새 access token을 검증합니다.
        */
       window.setTimeout(function () {
-        const shouldRefreshFirst = Boolean(
-          currentRefreshToken &&
-          (!currentTokenExpiresAt ||
-            currentTokenExpiresAt * 1000 - Date.now() < 10 * 60 * 1000)
-        );
-
         if (!shouldRefreshFirst) {
           verifyRestoredStudentSession_(savedToken, savedStudent, !savedStudent);
           return;
@@ -7696,16 +7800,16 @@
               result.refreshToken,
               result.expiresAt,
               savedStudent,
-              false
+              true
             );
-            verifyRestoredStudentSession_(result.token, savedStudent, !savedStudent);
+            verifyRestoredStudentSession_(result.token, savedStudent, false);
           })
           .withFailureHandler(function (error) {
             console.warn('앱 시작 시 로그인 자동 갱신 실패', error);
             /* 네트워크 오류라면 기존 화면과 로그인 정보를 그대로 유지합니다. */
           })
           .studentRefreshSession(savedToken, currentRefreshToken);
-      }, savedStudent ? 2500 : 0);
+      }, shouldRefreshFirst ? 0 : (savedStudent ? 2500 : 0));
     };
 
 
@@ -12435,7 +12539,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=77', {
+          .register('./service-worker.js?v=78', {
             updateViaCache: 'none'
           })
           .then(function (registration) {

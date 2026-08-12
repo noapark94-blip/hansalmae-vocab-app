@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v31-launcher-spacing';
+const CACHE_NAME = 'hansalmae-supabase-v32-session-refresh';
 
 const REQUIRED_ASSETS = [
   './',
