@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v26-example-feedback-layout';
+const CACHE_NAME = 'hansalmae-supabase-v27-launcher-home';
 
 const REQUIRED_ASSETS = [
   './',

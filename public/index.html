@@ -4338,6 +4338,180 @@
 <link rel="stylesheet" href="./design-v2-mobile-nav.css?v=1">
 <link rel="stylesheet" href="./design-v3-test-rewards.css?v=2">
 <link rel="stylesheet" href="./ui-icons.css?v=1">
+<style id="hsm-launcher-home-style">
+  body.hsm-launcher-open { overflow: hidden; }
+  body.hsm-launcher-open #mainApp > .topbar,
+  body.hsm-launcher-open #hsmMobileNav,
+  body.hsm-launcher-open #hsmGlobalBackButton { display: none !important; }
+
+  .hsm-launcher-home {
+    position: fixed;
+    inset: 0;
+    z-index: 4800;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(20px + env(safe-area-inset-top)) 18px
+      calc(24px + env(safe-area-inset-bottom));
+    background:
+      radial-gradient(circle at 8% 6%, rgba(255,255,255,.96) 0 12%, transparent 32%),
+      radial-gradient(circle at 92% 14%, rgba(244,207,226,.85) 0 11%, transparent 31%),
+      linear-gradient(155deg, #fffafd 0%, #faedf4 52%, #f3dce8 100%);
+    color: #48142f;
+  }
+
+  .hsm-launcher-shell {
+    width: min(100%, 940px);
+    min-height: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hsm-launcher-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .hsm-launcher-brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  .hsm-launcher-logo {
+    width: 52px;
+    height: 52px;
+    padding: 5px;
+    flex: 0 0 auto;
+    object-fit: contain;
+    border-radius: 17px;
+    background: rgba(255,255,255,.92);
+    border: 1px solid #eed7e3;
+    box-shadow: 0 9px 22px rgba(91,25,62,.12);
+  }
+  .hsm-launcher-brand strong { display:block; font-size: 20px; letter-spacing: -.6px; }
+  .hsm-launcher-brand span { display:block; margin-top:3px; color:#8a6b7b; font-size:12px; }
+
+  .hsm-launcher-profile {
+    max-width: 46%;
+    padding: 9px 13px;
+    border: 1px solid rgba(218,173,197,.72);
+    border-radius: 999px;
+    background: rgba(255,255,255,.72);
+    color: #74174d;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hsm-launcher-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 22px;
+    border-radius: 27px;
+    background: linear-gradient(135deg, #74174d 0%, #a92d75 58%, #d46aa4 100%);
+    color: #fff;
+    box-shadow: 0 18px 42px rgba(105,18,70,.23);
+  }
+  .hsm-launcher-hero::after {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    right: -54px;
+    top: -74px;
+    border: 32px solid rgba(255,255,255,.10);
+    border-radius: 50%;
+  }
+  .hsm-launcher-kicker { position:relative; z-index:1; font-size:13px; font-weight:800; opacity:.84; }
+  .hsm-launcher-hero h1 { position:relative; z-index:1; margin:7px 0 7px; color:#fff; font-size:clamp(25px,5vw,38px); line-height:1.22; letter-spacing:-1.3px; }
+  .hsm-launcher-hero p { position:relative; z-index:1; margin:0; max-width:560px; color:rgba(255,255,255,.82); font-size:14px; line-height:1.55; }
+  .hsm-launcher-primary {
+    position:relative;
+    z-index:1;
+    width:auto;
+    margin:18px 0 0;
+    padding:12px 18px;
+    border:0;
+    border-radius:15px;
+    background:#fff;
+    color:#821756;
+    font-size:14px;
+    font-weight:900;
+    box-shadow:0 8px 18px rgba(67,10,43,.18);
+  }
+
+  .hsm-launcher-section-title { margin:22px 2px 12px; font-size:15px; font-weight:900; color:#5a2043; }
+  .hsm-launcher-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+  .hsm-launcher-tile {
+    position:relative;
+    min-height:142px;
+    margin:0;
+    padding:16px 14px 14px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:space-between;
+    text-align:left;
+    border:1px solid rgba(226,193,210,.82);
+    border-radius:22px;
+    background:rgba(255,255,255,.88);
+    color:#531a3b;
+    box-shadow:0 10px 26px rgba(91,25,62,.09);
+    transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  }
+  .hsm-launcher-tile:active { transform:scale(.975); }
+  .hsm-launcher-tile:hover { transform:translateY(-2px); border-color:#cf8fb3; box-shadow:0 14px 30px rgba(91,25,62,.14); }
+  .hsm-launcher-icon {
+    width:46px;
+    height:46px;
+    display:grid;
+    place-items:center;
+    border-radius:15px;
+    background:var(--tile-soft,#f8e6f0);
+    color:var(--tile-color,#941a65);
+  }
+  .hsm-launcher-icon svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .hsm-launcher-tile-copy strong { display:block; margin-top:13px; font-size:16px; letter-spacing:-.4px; }
+  .hsm-launcher-tile-copy span { display:block; margin-top:4px; color:#927787; font-size:11px; font-weight:650; line-height:1.35; }
+  .hsm-launcher-alert-badge {
+    position:absolute;
+    right:12px;
+    top:12px;
+    min-width:22px;
+    height:22px;
+    padding:0 6px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:999px;
+    background:#d6336c;
+    color:#fff;
+    font-size:11px;
+    font-weight:900;
+  }
+  .hsm-launcher-alert-badge.hidden { display:none; }
+  .hsm-launcher-footer { margin-top:auto; padding:20px 0 2px; text-align:center; color:#a08493; font-size:11px; }
+
+  @media (max-width:700px) {
+    .hsm-launcher-home { padding-left:14px; padding-right:14px; }
+    .hsm-launcher-header { margin-bottom:13px; }
+    .hsm-launcher-logo { width:46px; height:46px; border-radius:15px; }
+    .hsm-launcher-brand strong { font-size:18px; }
+    .hsm-launcher-profile { max-width:42%; padding:8px 10px; }
+    .hsm-launcher-hero { padding:20px; border-radius:24px; }
+    .hsm-launcher-primary { width:100%; }
+    .hsm-launcher-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .hsm-launcher-tile { min-height:132px; border-radius:20px; }
+  }
+
+  @media (max-width:370px) {
+    .hsm-launcher-home { padding-left:10px; padding-right:10px; }
+    .hsm-launcher-tile { min-height:126px; padding:13px 12px; }
+    .hsm-launcher-icon { width:42px; height:42px; }
+    .hsm-launcher-tile-copy strong { font-size:15px; }
+  }
+</style>
 </head>
 
 <body>
@@ -4681,6 +4855,14 @@
 
         <div class="topbar-menu">
           <button
+            id="launcherHomeMenuButton"
+            class="menu-button"
+            onclick="hsmOpenHomeFromMenu_()"
+          >
+            홈
+          </button>
+
+          <button
             id="testMenuButton"
             class="menu-button active"
             onclick="showTestHome()"
@@ -4744,6 +4926,63 @@
           </button>
         </div>
       </div>
+
+      <section id="hsmLauncherHome" class="hsm-launcher-home hidden" aria-label="한살매 보카 홈">
+        <div class="hsm-launcher-shell">
+          <header class="hsm-launcher-header">
+            <div class="hsm-launcher-brand">
+              <img class="hsm-launcher-logo" src="./images/hsm-ball.png?v=2" alt="한살매 보카 로고">
+              <div><strong>한살매 보카</strong><span>매일 조금씩, 단어가 실력이 되도록</span></div>
+            </div>
+            <div id="hsmLauncherProfile" class="hsm-launcher-profile">나의 학습</div>
+          </header>
+
+          <div class="hsm-launcher-hero">
+            <div class="hsm-launcher-kicker">TODAY'S VOCABULARY</div>
+            <h1 id="hsmLauncherGreeting">오늘도 가볍게 시작해볼까요?</h1>
+            <p>시험·복습·단어장을 한곳에서 바로 시작하세요. 학습 기록과 포인트도 자동으로 이어집니다.</p>
+            <button type="button" class="hsm-launcher-primary" onclick="hsmLauncherOpenFeature_('test')">오늘의 단어 학습 시작</button>
+          </div>
+
+          <div class="hsm-launcher-section-title">무엇을 공부할까요?</div>
+          <div class="hsm-launcher-grid">
+            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#f8e2ee;--tile-color:#9a195f" onclick="hsmLauncherOpenFeature_('test')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M7 3h10a2 2 0 0 1 2 2v16l-7-3-7 3V5a2 2 0 0 1 2-2Z"/><path d="m9 10 2 2 4-5"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>단어 테스트</strong><span>범위와 유형을 골라 시험보기</span></span>
+            </button>
+            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff0d8;--tile-color:#d18b13" onclick="hsmLauncherOpenFeature_('vocab')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>단어장</strong><span>Day별 단어와 발음 확인하기</span></span>
+            </button>
+            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#e9efff;--tile-color:#456fc7" onclick="hsmLauncherOpenFeature_('mypage')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M22 19H2"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>내 학습</strong><span>점수·오답·경험치 살펴보기</span></span>
+            </button>
+            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff3cb;--tile-color:#c58b08" onclick="hsmLauncherOpenFeature_('ranking')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M12 13v4"/><path d="M8 21h8"/><path d="M9 17h6"/><path d="M8 6H4v1a4 4 0 0 0 4 4"/><path d="M16 6h4v1a4 4 0 0 1-4 4"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>단어천재</strong><span>이달의 랭킹과 엠블럼 보기</span></span>
+            </button>
+            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#e7f6f0;--tile-color:#27866a" onclick="hsmLauncherOpenFeature_('smart')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.74V19h8v-3.26A7 7 0 0 0 12 3Z"/><path d="M9 22h6"/><path d="m9 10 2 2 4-4"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>스마트 복습</strong><span>자주 틀린 단어부터 복습하기</span></span>
+            </button>
+            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#f0e8ff;--tile-color:#7551b8" onclick="hsmLauncherOpenFeature_('teacherExam')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="m9 15 1.5 1.5L15 13"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>선생님 시험</strong><span>배정된 시험 확인하고 응시하기</span></span>
+            </button>
+            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#ffe7e9;--tile-color:#c44859" onclick="hsmLauncherOpenFeature_('notification')">
+              <b id="hsmLauncherNotificationBadge" class="hsm-launcher-alert-badge hidden">0</b>
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>알림</strong><span>새 시험과 재시험 요청 확인하기</span></span>
+            </button>
+            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#eceff3;--tile-color:#566274" onclick="hsmLauncherOpenFeature_('account')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>내 정보</strong><span>계정·비밀번호·푸시 알림 관리</span></span>
+            </button>
+          </div>
+          <div class="hsm-launcher-footer">HANSALMAE VOCAB · 오늘의 한 단어가 내일의 실력이 됩니다</div>
+        </div>
+      </section>
 
 
       <!-- 선생님이 배정한 시험 목록 -->
@@ -12147,7 +12386,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=72', {
+          .register('./service-worker.js?v=73', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
@@ -15590,6 +15829,7 @@ google.script.run
       <button type="button" class="hsm-mobile-more-close" onclick="closeHsmMobileMore_()" aria-label="닫기">×</button>
     </div>
     <div class="hsm-mobile-more-grid">
+      <button type="button" onclick="closeHsmMobileMore_();hsmOpenHomeFromMenu_()"><span class="hsm-more-symbol">⌂</span><span>홈</span></button>
       <button type="button" onclick="hsmMobileNavigate_('teacherExam')"><span class="hsm-more-symbol">✓</span><span>선생님 시험</span></button>
       <button type="button" onclick="hsmMobileNavigate_('notification')"><span class="hsm-more-symbol">◌</span><span>알림</span><b id="hsmMobileNotificationBadge" class="hsm-mobile-badge hidden">0</b></button>
       <button type="button" onclick="hsmMobileNavigate_('account')"><span class="hsm-more-symbol">○</span><span>내 정보</span></button>
@@ -15689,6 +15929,126 @@ google.script.run
     desktopButtons.forEach(function (button) { observer.observe(button, { attributes: true, attributeFilter: ['class'] }); });
     syncFromDesktopMenu_();
     syncNotificationBadge_();
+  });
+})();
+</script>
+
+<script id="hsm-launcher-home-script">
+(function hsmLauncherHome() {
+  function launcher_() { return document.getElementById('hsmLauncherHome'); }
+
+  function syncLauncherStudent_() {
+    const student = typeof currentStudent !== 'undefined' && currentStudent
+      ? currentStudent
+      : {};
+    const name = String(student.studentName || '').trim();
+    const grade = String(student.grade || '').trim();
+    const profile = document.getElementById('hsmLauncherProfile');
+    const greeting = document.getElementById('hsmLauncherGreeting');
+    const experience = document.getElementById('loggedInExperience');
+    const experienceText = String(experience && experience.textContent || '').trim();
+
+    if (profile) {
+      profile.textContent = [grade, experienceText].filter(Boolean).join(' · ') || '나의 학습';
+      profile.title = profile.textContent;
+    }
+    if (greeting) {
+      greeting.textContent = name
+        ? name + ' 학생, 오늘도 시작해볼까요?'
+        : '오늘도 가볍게 시작해볼까요?';
+    }
+  }
+
+  function syncLauncherBadge_() {
+    const source = document.getElementById('studentNotificationBadge');
+    const target = document.getElementById('hsmLauncherNotificationBadge');
+    if (!target) return;
+    const count = Number(source && source.textContent || 0);
+    target.textContent = String(count);
+    target.classList.toggle('hidden', count < 1);
+  }
+
+  window.showHsmLauncher_ = function () {
+    const screen = launcher_();
+    if (!screen) return;
+    syncLauncherStudent_();
+    syncLauncherBadge_();
+    screen.classList.remove('hidden');
+    screen.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('hsm-launcher-open');
+    if (typeof loadStudentNotificationBadge_ === 'function') {
+      loadStudentNotificationBadge_();
+    }
+    window.scrollTo(0, 0);
+  };
+
+  window.hideHsmLauncher_ = function () {
+    const screen = launcher_();
+    if (!screen) return;
+    screen.classList.add('hidden');
+    screen.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('hsm-launcher-open');
+  };
+
+  window.hsmOpenHomeFromMenu_ = function () {
+    const teacherScreen = document.getElementById('teacherExamTakingScreen');
+    if (teacherExamSession && teacherScreen && !teacherScreen.classList.contains('hidden')) {
+      alert('진행 중인 선생님 시험을 먼저 제출하거나 그만둔 뒤 홈으로 이동해주세요.');
+      return;
+    }
+    if (typeof moveFromTestWithConfirm_ === 'function') {
+      moveFromTestWithConfirm_(window.showHsmLauncher_);
+    } else {
+      window.showHsmLauncher_();
+    }
+  };
+
+  window.hsmLauncherOpenFeature_ = function (feature) {
+    const actions = {
+      test: window.showTestHome,
+      vocab: window.showVocabHome,
+      mypage: window.showMyPage,
+      ranking: window.showRankingHome,
+      smart: window.showSmartReview,
+      teacherExam: window.showTeacherExamHome,
+      notification: window.showStudentNotifications,
+      account: window.showAccountInformation_
+    };
+    const action = actions[feature];
+    if (typeof action !== 'function') return;
+    window.hideHsmLauncher_();
+    action();
+  };
+
+  const previousOpenMainApp = window.openMainApp;
+  if (typeof previousOpenMainApp === 'function') {
+    window.openMainApp = function () {
+      const result = previousOpenMainApp.apply(this, arguments);
+      const pushTarget = new URLSearchParams(window.location.search).get('push');
+      if (pushTarget !== 'teacher-exams') {
+        window.setTimeout(window.showHsmLauncher_, 80);
+      }
+      return result;
+    };
+  }
+
+  const previousClearLoginState = window.clearLoginState;
+  if (typeof previousClearLoginState === 'function') {
+    window.clearLoginState = function () {
+      window.hideHsmLauncher_();
+      return previousClearLoginState.apply(this, arguments);
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const badge = document.getElementById('studentNotificationBadge');
+    const experience = document.getElementById('loggedInExperience');
+    const observer = new MutationObserver(function () {
+      syncLauncherBadge_();
+      syncLauncherStudent_();
+    });
+    if (badge) observer.observe(badge, { childList:true, attributes:true, subtree:true, attributeFilter:['class'] });
+    if (experience) observer.observe(experience, { childList:true, subtree:true });
   });
 })();
 </script>
