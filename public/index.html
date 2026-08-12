@@ -4388,7 +4388,6 @@
     box-shadow: 0 9px 22px rgba(91,25,62,.12);
   }
   .hsm-launcher-brand strong { display:block; font-size: 20px; letter-spacing: -.6px; }
-  .hsm-launcher-brand span { display:block; margin-top:3px; color:#8a6b7b; font-size:12px; }
 
   .hsm-launcher-profile {
     max-width: 46%;
@@ -4451,17 +4450,45 @@
     display:flex;
     flex-direction:column;
     align-items:flex-start;
-    justify-content:space-between;
+    justify-content:flex-start;
     text-align:left;
     border:1px solid rgba(226,193,210,.82);
     border-radius:22px;
-    background:rgba(255,255,255,.88);
+    background:rgba(255,255,255,.88) !important;
     color:#531a3b;
     box-shadow:0 10px 26px rgba(91,25,62,.09);
-    transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    -webkit-tap-highlight-color:transparent !important;
+    touch-action:manipulation;
+    user-select:none;
+    transition:transform .14s cubic-bezier(.2,.8,.2,1), box-shadow .14s ease, border-color .14s ease, background-color .14s ease;
   }
-  .hsm-launcher-tile:active { transform:scale(.975); }
-  .hsm-launcher-tile:hover { transform:translateY(-2px); border-color:#cf8fb3; box-shadow:0 14px 30px rgba(91,25,62,.14); }
+  @media (hover:hover) and (pointer:fine) {
+    .hsm-launcher-tile:hover {
+    transform:translateY(-1px);
+    border-color:#dfb8cd;
+    background:#fffafd !important;
+    color:#531a3b !important;
+    box-shadow:0 12px 26px rgba(91,25,62,.10);
+    filter:none !important;
+    }
+  }
+  .hsm-launcher-tile:active {
+    transform:translateY(1px) scale(.992) !important;
+    border-color:#e7c9d9;
+    background:#fff7fb !important;
+    color:#531a3b !important;
+    box-shadow:0 3px 10px rgba(91,25,62,.07) !important;
+    filter:none !important;
+  }
+  .hsm-launcher-tile:focus-visible {
+    outline:3px solid rgba(169,45,117,.18);
+    outline-offset:2px;
+  }
+  .hsm-launcher-tile > :not(.hsm-launcher-icon):not(.hsm-launcher-tile-copy):not(.hsm-launcher-alert-badge) {
+    display:none !important;
+  }
+  .hsm-launcher-tile::before,
+  .hsm-launcher-tile::after { content:none !important; display:none !important; }
   .hsm-launcher-icon {
     width:46px;
     height:46px;
@@ -4472,7 +4499,8 @@
     color:var(--tile-color,#941a65);
   }
   .hsm-launcher-icon svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  .hsm-launcher-tile-copy strong { display:block; margin-top:13px; font-size:16px; letter-spacing:-.4px; }
+  .hsm-launcher-tile-copy { margin-top:auto; padding-top:13px; }
+  .hsm-launcher-tile-copy strong { display:block; margin:0; font-size:16px; letter-spacing:-.4px; line-height:1.25; }
   .hsm-launcher-tile-copy span { display:block; margin-top:4px; color:#927787; font-size:11px; font-weight:650; line-height:1.35; }
   .hsm-launcher-alert-badge {
     position:absolute;
@@ -4502,7 +4530,7 @@
     .hsm-launcher-hero { padding:20px; border-radius:24px; }
     .hsm-launcher-primary { width:100%; }
     .hsm-launcher-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-    .hsm-launcher-tile { min-height:132px; border-radius:20px; }
+    .hsm-launcher-tile { min-height:136px; border-radius:20px; }
   }
 
   @media (max-width:370px) {
@@ -4932,15 +4960,15 @@
           <header class="hsm-launcher-header">
             <div class="hsm-launcher-brand">
               <img class="hsm-launcher-logo" src="./images/hsm-ball.png?v=2" alt="한살매 보카 로고">
-              <div><strong>한살매 보카</strong><span>매일 조금씩, 단어가 실력이 되도록</span></div>
+              <div><strong>한살매 보카</strong></div>
             </div>
             <div id="hsmLauncherProfile" class="hsm-launcher-profile">나의 학습</div>
           </header>
 
           <div class="hsm-launcher-hero">
             <div class="hsm-launcher-kicker">TODAY'S VOCABULARY</div>
-            <h1 id="hsmLauncherGreeting">오늘도 가볍게 시작해볼까요?</h1>
-            <p>시험·복습·단어장을 한곳에서 바로 시작하세요. 학습 기록과 포인트도 자동으로 이어집니다.</p>
+            <h1 id="hsmLauncherGreeting">WELCOME</h1>
+            <p>시험·복습·단어장을 한곳에서 바로 시작하세요.</p>
             <button type="button" class="hsm-launcher-primary" onclick="hsmLauncherOpenFeature_('test')">오늘의 단어 학습 시작</button>
           </div>
 
@@ -12386,7 +12414,7 @@ google.script.run
     window.addEventListener('load', function () {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('./service-worker.js?v=73', {
+          .register('./service-worker.js?v=75', {
             updateViaCache: 'none'
           })
           .then(function (registration) {
@@ -15935,13 +15963,24 @@ google.script.run
 
 <script id="hsm-launcher-home-script">
 (function hsmLauncherHome() {
+  let launcherWelcomeText = 'WELCOME';
   function launcher_() { return document.getElementById('hsmLauncherHome'); }
+
+  function prepareLauncherWelcome_(student) {
+    const studentId = String(student && student.studentId || 'student').trim();
+    const key = 'hsmLauncherVisited:' + studentId;
+    let visited = false;
+    try {
+      visited = localStorage.getItem(key) === '1';
+      localStorage.setItem(key, '1');
+    } catch (_error) {}
+    launcherWelcomeText = visited ? 'WELCOME BACK' : 'WELCOME';
+  }
 
   function syncLauncherStudent_() {
     const student = typeof currentStudent !== 'undefined' && currentStudent
       ? currentStudent
       : {};
-    const name = String(student.studentName || '').trim();
     const grade = String(student.grade || '').trim();
     const profile = document.getElementById('hsmLauncherProfile');
     const greeting = document.getElementById('hsmLauncherGreeting');
@@ -15953,9 +15992,7 @@ google.script.run
       profile.title = profile.textContent;
     }
     if (greeting) {
-      greeting.textContent = name
-        ? name + ' 학생, 오늘도 시작해볼까요?'
-        : '오늘도 가볍게 시작해볼까요?';
+      greeting.textContent = launcherWelcomeText;
     }
   }
 
@@ -16023,6 +16060,7 @@ google.script.run
   const previousOpenMainApp = window.openMainApp;
   if (typeof previousOpenMainApp === 'function') {
     window.openMainApp = function () {
+      prepareLauncherWelcome_(arguments[0] || null);
       const result = previousOpenMainApp.apply(this, arguments);
       const pushTarget = new URLSearchParams(window.location.search).get('push');
       if (pushTarget !== 'teacher-exams') {
