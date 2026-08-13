@@ -96,8 +96,11 @@ function configureWebPush() {
 
 async function sendPushToStudents(userIds: string[], payload: Json) {
   const ids = [...new Set(userIds.filter(Boolean))];
-  if (!ids.length || !configureWebPush()) {
-    return { sent: 0, failed: 0, configured: false };
+  if (!ids.length) {
+    return { sent: 0, failed: 0, configured: true, sentUserIds: [], failedUserIds: [] };
+  }
+  if (!configureWebPush()) {
+    return { sent: 0, failed: ids.length, configured: false, sentUserIds: [], failedUserIds: ids };
   }
   const { data: subscriptions, error } = await admin
     .from("student_push_subscriptions")
@@ -106,6 +109,7 @@ async function sendPushToStudents(userIds: string[], payload: Json) {
   if (error) throw error;
   let sent = 0;
   let failed = 0;
+  const successfulUsers = new Set<string>();
   await Promise.all((subscriptions ?? []).map(async (subscription: any) => {
     try {
       await webpush.sendNotification({
@@ -113,19 +117,18 @@ async function sendPushToStudents(userIds: string[], payload: Json) {
         keys: { p256dh: subscription.p256dh, auth: subscription.auth },
       }, JSON.stringify(payload), { TTL: 86400, urgency: "high" });
       sent++;
-      await admin.from("student_push_subscriptions").update({
+      successfulUsers.add(str(subscription.user_id));
+      const { error: updateError } = await admin.from("student_push_subscriptions").update({
         last_success_at: new Date().toISOString(),
         last_error: null,
         updated_at: new Date().toISOString(),
       }).eq("id", subscription.id);
+      if (updateError) console.error("push success status update failed", updateError);
     } catch (pushError: any) {
       failed++;
       const statusCode = num(pushError?.statusCode);
       if (statusCode === 404 || statusCode === 410) {
-        await admin.from("student_push_subscriptions").delete().eq(
-          "id",
-          subscription.id,
-        );
+        await admin.from("student_push_subscriptions").delete().eq("id", subscription.id);
       } else {
         await admin.from("student_push_subscriptions").update({
           last_error: str(pushError?.message).slice(0, 500),
@@ -134,7 +137,15 @@ async function sendPushToStudents(userIds: string[], payload: Json) {
       }
     }
   }));
-  return { sent, failed, configured: true };
+  const sentUserIds = [...successfulUsers];
+  const failedUserIds = ids.filter((id) => !successfulUsers.has(str(id)));
+  return {
+    sent,
+    failed,
+    configured: true,
+    sentUserIds,
+    failedUserIds,
+  };
 }
 
 async function recordDailyActivity(userId: string) {
@@ -2049,23 +2060,49 @@ async function dispatch(
     case "teacherSendReminder": {
       await requireStaff(args[0]);
       const id = str(args[1]);
-      const { data } = await admin.from("exam_assignments").select("user_id")
-        .eq("exam_id", id).neq("status", "completed");
-      if (data?.length) {
-        await admin.from("notifications").insert(
-          data.map((x) => ({
-            user_id: x.user_id,
+      const { data: exam, error: examError } = await admin.from("teacher_exams")
+        .select("title").eq("id", id).single();
+      if (examError) throw examError;
+      const { data, error: assignmentError } = await admin.from("exam_assignments")
+        .select("user_id").eq("exam_id", id).neq("status", "completed");
+      if (assignmentError) throw assignmentError;
+      const users = (data ?? []).map((x: any) => x.user_id);
+      if (users.length) {
+        const { error: notificationError } = await admin.from("notifications").insert(
+          users.map((user_id) => ({
+            user_id,
             exam_id: id,
             type: "reminder",
             title: "시험 응시 알림",
-            body: "배정된 시험을 확인해주세요.",
+            body: `${str(exam?.title) || "배정된 시험"}을 확인해주세요.`,
           })),
         );
+        if (notificationError) throw notificationError;
+      }
+      const push = await sendPushToStudents(users, {
+        title: "선생님 시험 응시 알림",
+        body: `${str(exam?.title) || "배정된 시험"}을 확인해주세요.`,
+        url: "./?push=teacher-exams",
+        examId: id,
+        tag: `teacher-exam-reminder-${id}`,
+      }).catch((pushError) => {
+        console.error("teacher reminder push failed", pushError);
+        return { sent: 0, failed: users.length, configured: false, sentUserIds: [], failedUserIds: users };
+      });
+      if (push.sentUserIds.length) {
+        await admin.from("exam_assignments").update({
+          notified: true,
+          notified_at: new Date().toISOString(),
+        }).eq("exam_id", id).in("user_id", push.sentUserIds);
       }
       return {
         success: true,
-        sentCount: data?.length ?? 0,
-        message: `미완료 학생 ${data?.length ?? 0}명에게 알림을 보냈습니다.`,
+        sentCount: users.length,
+        appNotificationSavedCount: users.length,
+        pushSentStudentCount: push.sentUserIds.length,
+        pushFailedStudentCount: push.failedUserIds.length,
+        pushConfigured: push.configured,
+        message: `미완료 학생 ${users.length}명에게 앱 알림을 저장하고, ${push.sentUserIds.length}명에게 푸시를 보냈습니다.`,
       };
     }
     case "teacherRequestRetakeStudent":
@@ -2170,18 +2207,20 @@ async function dispatch(
         "*,word_sets(name),teacher_exam_words(*)",
       ).eq("id", id).single();
       if (error) throw error;
-      const { data: a } = await admin.from("exam_assignments").select(
-        "attempt,highest_score",
-      ).eq("exam_id", id).eq("user_id", p.id).single();
-      if (!a) throw new Error("배정되지 않은 시험입니다.");
+      const { data: assignment, error: assignmentError } = await admin
+        .from("exam_assignments").select("attempt,highest_score")
+        .eq("exam_id", id).eq("user_id", p.id).single();
+      if (assignmentError || !assignment) {
+        throw assignmentError ?? new Error("배정되지 않은 시험입니다.");
+      }
       const questions = teacherQuestions(
         exam.teacher_exam_words ?? [],
         str(exam.question_type),
       ).slice(0, num(exam.question_count, 100));
       const answers = new Map(
-        (Array.isArray(payload.answers) ? payload.answers : []).map((
-          x: any,
-        ) => [str(x.questionId), str(x.answer)]),
+        (Array.isArray(payload.answers) ? payload.answers : []).map((x: any) => [
+          str(x.questionId), str(x.answer),
+        ]),
       );
       const details = questions.map((q: any) => {
         const submittedAnswer = str(answers.get(q.questionId));
@@ -2199,55 +2238,91 @@ async function dispatch(
       });
       const correctCount = details.filter((x: any) => x.isCorrect).length;
       const totalCount = details.length;
-      const score = totalCount
-        ? Math.round(correctCount / totalCount * 100)
-        : 0;
-      const wrongWords = details.filter((x: any) => !x.isCorrect).map(
-        (d: any) => {
-          const q = questions.find((x: any) => x.questionId === d.questionId);
-          return {
-            word: q.english,
-            meaning: q.meaning,
-            day: q.day,
-            translation: q.translation,
-          };
+      const score = totalCount ? Math.round(correctCount / totalCount * 100) : 0;
+      const earned = Math.max(0, Math.round(totalCount * score / 100));
+      const grade = score >= 100 ? "S" : score >= 90 ? "A" : score >= 80
+        ? "B" : score >= 70 ? "C" : "D";
+      const testId = uuid();
+      const wrongWords = details.filter((x: any) => !x.isCorrect).map((d: any) => {
+        const q = questions.find((x: any) => x.questionId === d.questionId);
+        return {
+          word_set_id: exam.word_set_id ?? null,
+          word: q.english,
+          meaning: q.meaning,
+          day: q.day || null,
+          example: q.example || "",
+          translation: q.translation || "",
+        };
+      });
+      const resultRow = {
+        id: testId,
+        user_id: p.id,
+        test_kind: "teacher",
+        teacher_exam_id: id,
+        word_set_id: exam.word_set_id ?? null,
+        start_day: exam.start_day ?? null,
+        end_day: exam.end_day ?? null,
+        question_type: str(exam.question_type),
+        question_count: totalCount,
+        correct_count: correctCount,
+        score,
+        grade,
+        points: earned,
+        attempt: num(assignment.attempt) + 1,
+        raw_result: {
+          testKind: "teacher",
+          examId: id,
+          sheetName: exam.word_sets?.name ?? "",
+          questionType: exam.question_type,
+          questionCount: totalCount,
+          correctCount,
+          score,
+        },
+      };
+      const { data: saved, error: saveError } = await admin.rpc(
+        "submit_teacher_exam_atomic",
+        {
+          p_user_id: p.id,
+          p_exam_id: id,
+          p_test_id: testId,
+          p_result: resultRow,
+          p_wrongs: wrongWords,
+          p_base_xp: earned,
         },
       );
-      const result: any = await saveResult(args[0], {
-        testKind: "teacher",
-        examId: id,
-        attempt: num(a.attempt) + 1,
-        sheetName: exam.word_sets?.name ?? "",
-        questionType: exam.question_type,
-        questionCount: totalCount,
-        correctCount,
-        score,
-        wrongWords,
-      });
-      await admin.from("exam_assignments").update({
-        status: "completed",
-        attempt: num(a.attempt) + 1,
-        highest_score: Math.max(num(a.highest_score), score),
-        completed_at: new Date().toISOString(),
-      }).eq("exam_id", id).eq("user_id", p.id);
-      await admin.from("exam_progress").delete().eq("user_id", p.id).eq(
-        "scope_key",
-        `teacher:${id}`,
+      if (saveError) throw saveError;
+
+      const emblemState: any = await dispatch(
+        "getStudentEmblems", [str(args[0])], context,
       );
-      await admin.from("notifications").update({
-        read_at: new Date().toISOString(),
-      }).eq("user_id", p.id).eq("exam_id", id).is("read_at", null);
+      const experience = emblemState?.experience ?? await experienceView(p.id);
+      const awardedXp = num(saved?.awarded_xp);
+      const awardedPoints = num(saved?.awarded_points);
       return {
         success: true,
         result: {
-          ...result,
+          success: true,
+          testResultId: testId,
           title: exam.title,
+          score,
+          grade,
           passingScore: exam.passing_score,
           passed: score >= num(exam.passing_score, 60),
           correctCount,
           totalCount,
+          questionCount: totalCount,
           wrongCount: wrongWords.length,
+          savedWrongWordCount: num(saved?.saved_wrong_count, wrongWords.length),
+          points: awardedPoints,
+          point: awardedPoints,
+          earnedXp: awardedXp,
+          firstCompletion: saved?.first_completion === true,
           details,
+          experience: {
+            ...experience,
+            earnedXp: awardedXp,
+            newlyGrantedEmblems: emblemState?.newlyGrantedEmblems ?? [],
+          },
         },
       };
     }
@@ -2462,7 +2537,7 @@ async function teacherCreate(args: unknown[]) {
     created_by: creator.id,
   }).select().single();
   if (error) throw error;
-  await admin.from("teacher_exam_words").insert(
+  const { error: wordInsertError } = await admin.from("teacher_exam_words").insert(
     words.map((w: any, i: number) => ({
       exam_id: exam.id,
       position: i + 1,
@@ -2476,23 +2551,37 @@ async function teacherCreate(args: unknown[]) {
       enabled: true,
     })),
   );
-  await admin.from("exam_assignments").insert(
+  if (wordInsertError) {
+    await admin.from("teacher_exams").delete().eq("id", exam.id);
+    throw wordInsertError;
+  }
+  const { error: assignmentInsertError } = await admin.from("exam_assignments").insert(
     students.map((s: any) => ({
       exam_id: exam.id,
       user_id: s.id,
-      notified: true,
-      notified_at: new Date().toISOString(),
+      notified: false,
+      notified_at: null,
     })),
   );
-  await admin.from("notifications").insert(students.map((s: any) => ({
-    user_id: s.id,
-    exam_id: exam.id,
-    type: "assignment",
-    title: "새로운 단어시험이 등록되었습니다.",
-    body: `${str(p.creator) || creator.display_name || "관리자"} 선생님이 ${
-      str(p.title)
-    } 시험을 등록했습니다. 마감 시간까지 응시해 주세요.`,
-  })));
+  if (assignmentInsertError) {
+    await admin.from("teacher_exams").delete().eq("id", exam.id);
+    throw assignmentInsertError;
+  }
+  const { error: notificationInsertError } = await admin.from("notifications").insert(
+    students.map((s: any) => ({
+      user_id: s.id,
+      exam_id: exam.id,
+      type: "assignment",
+      title: "새로운 단어시험이 등록되었습니다.",
+      body: `${str(p.creator) || creator.display_name || "관리자"} 선생님이 ${
+        str(p.title)
+      } 시험을 등록했습니다. 마감 시간까지 응시해 주세요.`,
+    })),
+  );
+  if (notificationInsertError) {
+    await admin.from("teacher_exams").delete().eq("id", exam.id);
+    throw notificationInsertError;
+  }
   const push = await sendPushToStudents(students.map((s: any) => s.id), {
     title: "새로운 선생님 시험",
     body: `${str(p.title) || "단어시험"} 시험이 배정되었습니다. 마감 시간까지 응시해 주세요.`,
@@ -2501,21 +2590,41 @@ async function teacherCreate(args: unknown[]) {
     tag: `teacher-exam-${exam.id}`,
   }).catch((pushError) => {
     console.error("teacher exam push failed", pushError);
-    return { sent: 0, failed: students.length, configured: false };
+    return {
+      sent: 0,
+      failed: students.length,
+      configured: false,
+      sentUserIds: [],
+      failedUserIds: students.map((s: any) => s.id),
+    };
   });
+  if (push.sentUserIds.length) {
+    const { error: notifiedError } = await admin.from("exam_assignments").update({
+      notified: true,
+      notified_at: new Date().toISOString(),
+    }).eq("exam_id", exam.id).in("user_id", push.sentUserIds);
+    if (notifiedError) console.error("assignment push status update failed", notifiedError);
+  }
   return {
     success: true,
-    message: "선생님 시험이 생성되었습니다.",
+    message: `선생님 시험이 생성되었습니다.
+앱 알림 저장: ${students.length}명
+푸시 성공: ${push.sentUserIds.length}명
+푸시 미수신: ${push.failedUserIds.length}명`,
     examId: exam.id,
     title: p.title,
     totalWords: words.length,
     questionCount,
     targetCount: students.length,
     assignedCount: students.length,
+    appNotificationSavedCount: students.length,
     pushSentCount: push.sent,
     pushFailedCount: push.failed,
+    pushSentStudentCount: push.sentUserIds.length,
+    pushFailedStudentCount: push.failedUserIds.length,
     pushConfigured: push.configured,
   };
+
 }
 
 async function requestRetake(

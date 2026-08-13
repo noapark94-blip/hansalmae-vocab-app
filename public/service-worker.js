@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v32-session-refresh';
+const CACHE_NAME = 'hansalmae-supabase-v34-teacher-exam-notifications';
 
 const REQUIRED_ASSETS = [
   './',

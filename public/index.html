@@ -7376,6 +7376,7 @@
       setTimeout(function () {
         showLoginNotificationPopup_();
       }, 350);
+      startStudentNotificationPoll_();
 
       setTimeout(function () {
         askToResumeSavedTest();
@@ -7397,23 +7398,28 @@
     /**
      * 로그인 직후 읽지 않은 알림이 있으면 한 번 안내합니다.
      */
+    let studentNotificationPollTimer_ = null;
+
+    function stopStudentNotificationPoll_() {
+      if (studentNotificationPollTimer_) {
+        clearInterval(studentNotificationPollTimer_);
+        studentNotificationPollTimer_ = null;
+      }
+    }
+
+    function startStudentNotificationPoll_() {
+      stopStudentNotificationPoll_();
+      studentNotificationPollTimer_ = setInterval(function () {
+        if (!currentStudent || !currentLoginToken || document.hidden) return;
+        showLoginNotificationPopup_();
+        loadStudentNotificationBadge_();
+      }, 60000);
+    }
+
     function showLoginNotificationPopup_() {
       if (
         !currentStudent ||
         !currentStudent.studentId
-      ) {
-        return;
-      }
-
-      const popupKey =
-        'hsmLoginNotificationPopup:' +
-        currentStudent.studentId +
-        ':' +
-        currentLoginToken;
-
-      if (
-        sessionStorage.getItem(popupKey) ===
-        'shown'
       ) {
         return;
       }
@@ -7451,6 +7457,16 @@
                 return !item.read;
               }
             );
+
+          const popupKey =
+            'hsmNotificationPopup:' +
+            currentStudent.studentId +
+            ':' +
+            String(newest && newest.notificationId ? newest.notificationId : unreadCount);
+
+          if (sessionStorage.getItem(popupKey) === 'shown') {
+            return;
+          }
 
           let message =
             '새로운 알림이 ' +
@@ -7590,6 +7606,7 @@
 
     function clearLoginState() {
       stopStudentSessionMonitor_();
+      stopStudentNotificationPoll_();
       currentLoginToken = '';
       currentRefreshToken = '';
       currentTokenExpiresAt = 0;
@@ -12966,14 +12983,22 @@ google.script.run
           (exam.deadlineAt ? '<br>마감: ' + escapeHtml(formatTeacherExamDate_(exam.deadlineAt)) : '') +
           (exam.bestScore !== null && exam.bestScore !== undefined ? '<br>최고점: ' + Number(exam.bestScore) + '점' : '') +
           '</div><div class="teacher-exam-actions">' +
-          '<button type="button" ' + (canStart ? '' : 'disabled') + ' onclick="startAssignedTeacherExam(\'' + escapeJsString_(exam.examId) + '\')">' +
-          (exam.status === '시험중' ? '이어서 응시' : '시험 시작') + '</button></div>';
+          '<button type="button" ' + (canStart ? '' : 'disabled') + ' onclick="startAssignedTeacherExam(\'' + escapeJsString_(exam.examId) + '\',' + (exam.status === '응시완료' ? 'true' : 'false') + ')">' +
+          (exam.status === '시험중'
+            ? '이어서 응시'
+            : exam.status === '응시완료'
+            ? '재응시'
+            : '시험 시작') + '</button></div>';
         list.appendChild(card);
       });
     }
 
-    function startAssignedTeacherExam(examId) {
+    function startAssignedTeacherExam(examId, isRetake) {
       if (!currentStudent || !currentStudent.studentId) return;
+      if (isRetake === true && !confirm(
+        '이미 완료한 시험입니다. 재응시할까요?\n' +
+        '재응시는 최고점만 갱신되며 경험치와 포인트는 추가 지급되지 않습니다.'
+      )) return;
       google.script.run
         .withSuccessHandler(function (result) {
           if (!result || !result.success) {
@@ -13061,10 +13086,11 @@ google.script.run
 
 
     function saveAssignedTeacherExamProgress_() {
-      if (!teacherExamSession || !currentStudent) return;
+      if (!teacherExamSession || !currentStudent || teacherExamSubmitting_) return;
       if (teacherExamSaveTimer) clearTimeout(teacherExamSaveTimer);
       teacherExamSaveTimer = setTimeout(function () {
-        if (!teacherExamSession || !currentStudent) return;
+        teacherExamSaveTimer = null;
+        if (!teacherExamSession || !currentStudent || teacherExamSubmitting_) return;
         const progress = {
           exam: teacherExamSession.exam,
           questions: teacherExamSession.questions,
@@ -13095,6 +13121,10 @@ google.script.run
         return { questionId: q.questionId, answer: String(teacherExamAnswers[q.questionId] || '') };
       });
       teacherExamSubmitting_ = true;
+      if (teacherExamSaveTimer) {
+        clearTimeout(teacherExamSaveTimer);
+        teacherExamSaveTimer = null;
+      }
 
       const submitButtons = document.querySelectorAll(
         '#teacherExamTakingScreen button'
@@ -13133,6 +13163,7 @@ google.script.run
           showTeacherExamReview_(Number(result.wrongCount || 0) > 0 ? 'wrong' : 'all');
           teacherExamSession = null;
           teacherExamAnswers = {};
+          teacherExamQuestionIndex = 0;
           teacherExamCache.examsAt = 0;
           hsmRefreshWrongNotebookImmediately_();
           refreshTeacherExamDashboard_();
