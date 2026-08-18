@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v34-teacher-exam-notifications';
+const CACHE_NAME = 'hansalmae-supabase-v35-native-back-navigation';
 
 const REQUIRED_ASSETS = [
   './',
