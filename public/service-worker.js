@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v38-icon-cleanup';
+const CACHE_NAME = 'hansalmae-supabase-v39-learning-card-pc-fix';
 
 const REQUIRED_ASSETS = [
   './',
@@ -9,6 +9,7 @@ const REQUIRED_ASSETS = [
   './ui-icons.css',
   './ui-icons.js',
   './teacher-modern.css',
+  './learning-shortcut-pc-fix.css?v=1',
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
@@ -65,11 +66,8 @@ self.addEventListener('message', function (event) {
 
 self.addEventListener('push', function (event) {
   let data = {};
-  try {
-    data = event.data ? event.data.json() : {};
-  } catch (_error) {
-    data = { body: event.data ? event.data.text() : '' };
-  }
+  try { data = event.data ? event.data.json() : {}; }
+  catch (_error) { data = { body: event.data ? event.data.text() : '' }; }
   event.waitUntil(self.registration.showNotification(data.title || '한살매 보카', {
     body: data.body || '새로운 알림이 도착했습니다.',
     icon: './icon-192.png',
@@ -83,10 +81,7 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();
-  const target = new URL(
-    (event.notification.data && event.notification.data.url) || './?push=teacher-exams',
-    self.location.origin
-  ).href;
+  const target = new URL((event.notification.data && event.notification.data.url) || './?push=teacher-exams', self.location.origin).href;
   event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (clientList) {
     for (const client of clientList) {
       if ('focus' in client) {
@@ -106,9 +101,7 @@ self.addEventListener('fetch', function (event) {
   const acceptsHtml = request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
   if (acceptsHtml) {
     event.respondWith(fetch(request, { cache: 'no-store' }).then(function (response) {
-      if (!response || !response.ok) {
-        throw new Error('HTML 응답 오류: ' + (response ? response.status : 'NO_RESPONSE'));
-      }
+      if (!response || !response.ok) throw new Error('HTML 응답 오류: ' + (response ? response.status : 'NO_RESPONSE'));
       const copy = response.clone();
       caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
       return response;
