@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v51-school-vocab-selection-fix';
+const CACHE_NAME = 'hansalmae-supabase-v52-school-vocab-personal-picker';
 
 const REQUIRED_ASSETS = [
   './',
@@ -15,7 +15,7 @@ const REQUIRED_ASSETS = [
   './school-vocab.js?v=2',
   './school-vocab-student-page.js?v=1',
   './school-vocab-free-test-ui.js?v=2',
-  './school-vocab-selection-fix.js?v=1',
+  './school-vocab-selection-fix.js?v=2',
   './school-vocab-nav-close-fix.js?v=1',
   './school-vocab-student-polish.js?v=1',
   './school-vocab-custom-icon.js?v=1',
