@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v57-pc-learning-shortcut-layout';
+const CACHE_NAME = 'hansalmae-supabase-v58-school-vocab-ui-unified';
 
 const REQUIRED_ASSETS = [
   './',
@@ -18,7 +18,7 @@ const REQUIRED_ASSETS = [
   './school-vocab-free-test-match.js?v=1',
   './school-vocab-selection-fix.js?v=2',
   './school-vocab-nav-close-fix.js?v=1',
-  './school-vocab-student-polish.js?v=1',
+  './school-vocab-student-polish.js?v=2',
   './school-vocab-custom-icon.js?v=1',
   './learning-shortcut-stable-layout.js?v=2',
   './school-vocab-shortcut-status.js?v=1',
