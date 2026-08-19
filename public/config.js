@@ -4,14 +4,119 @@ window.HANSALMAE_CONFIG = {
   apiUrl: "https://qlcgoqcuaenveargxcsa.supabase.co/functions/v1/api"
 };
 
-(function installHansalmaeNativeBackNavigation(){
-  var installed=false,handlingPopState=false;
-  var navigationNames=['showTestHome','showVocabHome','showMyPage','showAccountInformation_','showRankingHome','showWrongNotebook','showWrongTestSetup','showPersonalVocabulary','showPersonalTestSetup','showSmartReview','showTeacherExamHome','showStudentNotifications'];
-  function isLoggedInAppVisible(){var mainApp=document.getElementById('mainApp');return Boolean(mainApp&&!mainApp.classList.contains('hidden'));}
-  function visibleScreenId(){return typeof window.hsmGetVisibleScreenId_==='function'?window.hsmGetVisibleScreenId_():'';}
-  function pushNavigationState(fromScreen,toScreen){if(handlingPopState||!isLoggedInAppVisible()||!fromScreen||!toScreen||fromScreen===toScreen)return;try{history.pushState({hansalmaeAppNavigation:true,screenId:toScreen,createdAt:Date.now()},'',window.location.href);}catch(error){console.warn('한살매 앱 뒤로가기 기록 생성 실패',error);}}
-  function install(){if(installed)return;if(typeof window.hsmGoBack_!=='function'||typeof window.hsmGetVisibleScreenId_!=='function'){window.setTimeout(install,100);return;}installed=true;navigationNames.forEach(function(name){var original=window[name];if(typeof original!=='function'||original.__hsmNativeBackWrapped)return;var wrapped=function(){var fromScreen=visibleScreenId();var result=original.apply(this,arguments);window.setTimeout(function(){pushNavigationState(fromScreen,visibleScreenId());},0);return result;};Object.keys(original).forEach(function(key){try{wrapped[key]=original[key];}catch(_){}});wrapped.__hsmNativeBackWrapped=true;window[name]=wrapped;});var originalGoBack=window.hsmGoBack_;window.hsmGoBack_=function(){var stack=window.hsmBackStack_,hasInternalBack=Array.isArray(stack)&&stack.length>0;if(!handlingPopState&&hasInternalBack&&history.state&&history.state.hansalmaeAppNavigation===true){history.back();return;}return originalGoBack.apply(this,arguments);};window.addEventListener('popstate',function(){var stack=window.hsmBackStack_;if(!Array.isArray(stack)||stack.length<1||!isLoggedInAppVisible())return;handlingPopState=true;try{originalGoBack();}finally{handlingPopState=false;}});}
-  if(document.readyState==='complete')window.setTimeout(install,150);else window.addEventListener('load',function(){window.setTimeout(install,150);},{once:true});
+/*
+ * iOS/PWA 뒤로가기 안정화
+ *
+ * 앱은 실제 페이지 이동이 아니라 한 문서 안에서 화면을 전환합니다.
+ * 화면마다 history.pushState()를 쌓으면 iOS 가장자리 스와이프가
+ * 앱 내부 스택과 브라우저 스택을 서로 다르게 소비해 빈 화면이나
+ * 엉뚱한 이전 문서로 빠질 수 있습니다.
+ *
+ * 따라서 브라우저 history에는 같은 URL의 안전판 1개만 유지하고,
+ * 스와이프(popstate)는 앱 내부 뒤로가기 한 단계로만 변환합니다.
+ */
+(function installHansalmaeStableBackNavigation(){
+  if (window.__HSM_STABLE_BACK_NAV__) return;
+  window.__HSM_STABLE_BACK_NAV__ = true;
+
+  var installed = false;
+  var handlingPopState = false;
+  var guardInstalled = false;
+
+  function isLoggedInAppVisible(){
+    var mainApp = document.getElementById('mainApp');
+    return Boolean(mainApp && !mainApp.classList.contains('hidden'));
+  }
+
+  function installHistoryGuard(){
+    if (guardInstalled) return;
+    guardInstalled = true;
+    try {
+      history.replaceState({hansalmaeGuardBase:true}, '', window.location.href);
+      history.pushState({hansalmaeGuardTop:true}, '', window.location.href);
+    } catch (error) {
+      console.warn('한살매 뒤로가기 안전판 생성 실패', error);
+    }
+  }
+
+  function restoreHistoryGuard(){
+    try {
+      history.pushState({hansalmaeGuardTop:true}, '', window.location.href);
+    } catch (error) {
+      console.warn('한살매 뒤로가기 안전판 복구 실패', error);
+    }
+  }
+
+  function closeSchoolVocabularyPageIfOpen(){
+    var page = document.getElementById('hsmSchoolStudentPage');
+    if (!page || page.hidden || page.classList.contains('hidden')) return false;
+
+    var back = page.querySelector('.hsm-school-back');
+    if (back && typeof back.click === 'function') {
+      back.click();
+      return true;
+    }
+
+    page.hidden = true;
+    page.classList.add('hidden');
+    return true;
+  }
+
+  function install(){
+    if (installed) return;
+    if (typeof window.hsmGoBack_ !== 'function') {
+      window.setTimeout(install, 100);
+      return;
+    }
+
+    installed = true;
+    installHistoryGuard();
+
+    var originalGoBack = window.hsmGoBack_;
+
+    /*
+     * 화면의 일반 뒤로가기 버튼은 브라우저 history를 타지 않고
+     * 기존 앱 내부 스택을 그대로 사용합니다.
+     */
+    window.hsmGoBack_ = function(){
+      return originalGoBack.apply(this, arguments);
+    };
+    window.hsmGoBack_.__hsmStableBackWrapped = true;
+
+    window.addEventListener('popstate', function(){
+      if (handlingPopState) return;
+      handlingPopState = true;
+
+      try {
+        /* 같은 URL의 안전판을 즉시 복구해 외부/빈 페이지 이탈 방지 */
+        restoreHistoryGuard();
+
+        if (!isLoggedInAppVisible()) return;
+
+        /* 수행평가 전체화면이 열려 있으면 그것부터 닫기 */
+        if (closeSchoolVocabularyPageIfOpen()) return;
+
+        var stack = window.hsmBackStack_;
+        if (Array.isArray(stack) && stack.length > 0) {
+          originalGoBack();
+        }
+      } catch (error) {
+        console.error('한살매 스와이프 뒤로가기 처리 실패', error);
+        /* 오류가 나도 현재 앱 문서 밖으로 빠지지 않게 안전판 유지 */
+        restoreHistoryGuard();
+      } finally {
+        handlingPopState = false;
+      }
+    });
+  }
+
+  if (document.readyState === 'complete') {
+    window.setTimeout(install, 150);
+  } else {
+    window.addEventListener('load', function(){
+      window.setTimeout(install, 150);
+    }, {once:true});
+  }
 })();
 
 (function loadHansalmaeSchoolVocabulary(){
