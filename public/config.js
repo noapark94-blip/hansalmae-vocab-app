@@ -98,7 +98,7 @@ window.HANSALMAE_CONFIG = {
 
   if (!document.querySelector('script[data-hsm-school-vocab-ui]')) {
     var ui = document.createElement('script');
-    ui.src = './school-vocab-ui-patch.js?v=2';
+    ui.src = './school-vocab-ui-patch.js?v=3';
     ui.defer = true;
     ui.dataset.hsmSchoolVocabUi = '1';
     document.head.appendChild(ui);
