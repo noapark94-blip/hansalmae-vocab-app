@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v52-school-vocab-personal-picker';
+const CACHE_NAME = 'hansalmae-supabase-v53-heading-icon-dedup';
 
 const REQUIRED_ASSETS = [
   './',
