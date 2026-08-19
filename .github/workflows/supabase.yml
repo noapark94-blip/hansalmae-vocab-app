@@ -16,7 +16,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # hansalmae-vocab project ref (Project Settings → General → Project ID)
   SUPABASE_PROJECT_REF: qlcgoqcuanveargxcsa
   SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
@@ -39,7 +38,7 @@ jobs:
           missing=0
           for name in SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD; do
             if [ -z "${!name}" ]; then
-              echo "::error title=Missing GitHub Actions secret::$name is not configured in Settings → Secrets and variables → Actions."
+              echo "::error title=Missing GitHub Actions secret::$name is not configured."
               missing=1
             fi
           done
@@ -58,14 +57,3 @@ jobs:
 
       - name: Deploy school vocabulary Edge Function
         run: supabase functions deploy school-vocab --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
-
-      - name: Sync application secrets when configured
-        if: ${{ secrets.ADMIN_CODE != '' && secrets.SIGNUP_CODE != '' }}
-        env:
-          ADMIN_CODE: ${{ secrets.ADMIN_CODE }}
-          SIGNUP_CODE: ${{ secrets.SIGNUP_CODE }}
-        run: |
-          supabase secrets set \
-            --project-ref "$SUPABASE_PROJECT_REF" \
-            ADMIN_CODE="$ADMIN_CODE" \
-            SIGNUP_CODE="$SIGNUP_CODE"
