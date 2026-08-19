@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v42-school-vocab-full-page';
+const CACHE_NAME = 'hansalmae-supabase-v43-learning-shortcut-stable';
 
 const REQUIRED_ASSETS = [
   './',
@@ -14,6 +14,7 @@ const REQUIRED_ASSETS = [
   './config.js',
   './school-vocab.js?v=2',
   './school-vocab-student-page.js?v=1',
+  './learning-shortcut-stable-layout.js?v=1',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
