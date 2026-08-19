@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v36-school-vocab';
+const CACHE_NAME = 'hansalmae-supabase-v37-school-vocab-mobile-fix';
 
 const REQUIRED_ASSETS = [
   './',
@@ -8,11 +8,12 @@ const REQUIRED_ASSETS = [
   './design-v3-test-rewards.css',
   './ui-icons.css',
   './ui-icons.js',
-  './school-vocab.js',
   './teacher-modern.css',
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
+  './school-vocab.js?v=1',
+  './school-vocab-ui-patch.js?v=3',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
