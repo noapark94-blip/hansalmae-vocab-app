@@ -58,13 +58,11 @@ begin
 
   next_attempt := coalesce(assignment_row.attempt, 0) + 1;
 
-  -- 수행평가도 최초 응시 XP는 지급합니다.
   awarded_xp := case
     when first_completion then greatest(coalesce(p_base_xp, 0), 0)
     else 0
   end;
 
-  -- 수행평가는 설정값과 무관하게 랭킹 포인트를 절대 지급하지 않습니다.
   awarded_points := case
     when first_completion
       and not is_school_assessment
@@ -102,8 +100,6 @@ begin
     end
   ) into saved_result;
 
-  -- 일반 통계 쿼리가 status='completed' 또는 test_kind='teacher'를 사용하므로
-  -- 수행평가 결과는 별도 상태/종류로 명확히 분리합니다.
   if is_school_assessment then
     update public.test_results
     set test_kind = 'school_assessment',
@@ -143,6 +139,25 @@ $$;
 revoke all on function public.submit_teacher_exam_atomic(uuid,uuid,uuid,jsonb,jsonb,integer) from public;
 grant execute on function public.submit_teacher_exam_atomic(uuid,uuid,uuid,jsonb,jsonb,integer) to service_role;
 
+-- 오래된 화면/클라이언트가 award_points=true를 보내도 DB에서 수행평가는 무조건 false로 고정합니다.
+create or replace function public.force_school_assessment_no_points()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  if new.source_type = '수행평가' then
+    new.award_points := false;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists teacher_exams_force_school_assessment_no_points on public.teacher_exams;
+create trigger teacher_exams_force_school_assessment_no_points
+before insert or update of source_type, award_points on public.teacher_exams
+for each row execute function public.force_school_assessment_no_points();
+
 -- 이미 저장된 수행평가 공식시험 결과도 동일 정책으로 정리합니다.
 update public.test_results tr
 set test_kind = 'school_assessment',
@@ -157,7 +172,6 @@ where tr.teacher_exam_id = te.id
     or tr.points <> 0
   );
 
--- 수행평가 시험 자체도 포인트 비활성 상태로 고정합니다.
 update public.teacher_exams
 set award_points = false
 where source_type = '수행평가'
