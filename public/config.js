@@ -19,6 +19,15 @@ window.HANSALMAE_CONFIG = {
   if(document.readyState==='complete')window.setTimeout(install,150);else window.addEventListener('load',function(){window.setTimeout(install,150);},{once:true});
 })();
 
+(function loadLearningShortcutPcFix(){
+  if(document.querySelector('link[data-hsm-learning-shortcut-fix]')) return;
+  var link=document.createElement('link');
+  link.rel='stylesheet';
+  link.href='./learning-shortcut-pc-fix.css?v=1';
+  link.dataset.hsmLearningShortcutFix='1';
+  document.head.appendChild(link);
+})();
+
 // 선생님·학생 공통 학교 수행평가 단어장 기능을 분리된 모듈로 로드합니다.
 (function loadHansalmaeSchoolVocabulary(){
   if(document.querySelector('script[data-hsm-school-vocab]'))return;
