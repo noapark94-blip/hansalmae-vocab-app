@@ -81,8 +81,7 @@
       element.dataset.hsmIconReady = '1';
       return;
     }
-    /* 자체 section-icon 또는 이미 삽입된 공통 아이콘이 있으면 절대 하나 더 붙이지 않습니다. */
-    if (element.querySelector(':scope > .section-icon, :scope > .hsm-ui-icon')) {
+    if (element.matches('button') && element.querySelector('.section-icon')) {
       element.dataset.hsmIconReady = '1';
       return;
     }
@@ -117,7 +116,7 @@
           ? mutation.target.closest('button, h2, h3, [data-hsm-icon]')
           : null;
         const hasDirectIcon = target && Array.prototype.some.call(target.children, function (child) {
-          return child.classList && (child.classList.contains('hsm-ui-icon') || child.classList.contains('section-icon'));
+          return child.classList && child.classList.contains('hsm-ui-icon');
         });
         if (target && !hasDirectIcon) {
           delete target.dataset.hsmIconReady;
