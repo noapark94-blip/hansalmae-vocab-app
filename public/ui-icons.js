@@ -81,12 +81,8 @@
       element.dataset.hsmIconReady = '1';
       return;
     }
-    /*
-     * 학습 바로가기 카드는 자체 SVG 아이콘과 전용 레이아웃을 사용합니다.
-     * 공통 아이콘을 한 번 더 붙이면 아이콘이 중복되고 카드의 grid 배치가
-     * inline-flex로 바뀌므로, 기존 section-icon이 있으면 그대로 보존합니다.
-     */
-    if (element.matches('button') && element.querySelector('.section-icon')) {
+    /* 자체 section-icon 또는 이미 삽입된 공통 아이콘이 있으면 절대 하나 더 붙이지 않습니다. */
+    if (element.querySelector(':scope > .section-icon, :scope > .hsm-ui-icon')) {
       element.dataset.hsmIconReady = '1';
       return;
     }
@@ -121,7 +117,7 @@
           ? mutation.target.closest('button, h2, h3, [data-hsm-icon]')
           : null;
         const hasDirectIcon = target && Array.prototype.some.call(target.children, function (child) {
-          return child.classList && child.classList.contains('hsm-ui-icon');
+          return child.classList && (child.classList.contains('hsm-ui-icon') || child.classList.contains('section-icon'));
         });
         if (target && !hasDirectIcon) {
           delete target.dataset.hsmIconReady;
