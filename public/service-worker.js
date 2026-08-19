@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v58-school-vocab-ui-unified';
+const CACHE_NAME = 'hansalmae-supabase-v59-school-vocab-exam-polish';
 
 const REQUIRED_ASSETS = [
   './',
@@ -36,6 +36,7 @@ const OPTIONAL_ASSETS = [
   './teacher-school-vocab-search-fix.js?v=1',
   './teacher-school-vocab-tab-fix.js?v=1',
   './teacher-school-vocab-edit-fix.js?v=1',
+  './teacher-school-vocab-exam-polish.js?v=1',
   './images/emblems/title-chick.png',
   './images/emblems/title-collector.png',
   './images/emblems/title-predator.png',
