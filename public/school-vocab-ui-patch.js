@@ -8,32 +8,37 @@
     var s=document.createElement('style');
     s.id='hsmSvUiPatchStyle';
     s.textContent=[
-      '.hsm-sv-excel-guide{margin:12px 0 18px;border:1px solid #eadbe4;border-radius:16px;background:#fffafd;overflow:hidden}',
-      '.hsm-sv-excel-guide summary{cursor:pointer;list-style:none;padding:15px 16px;font-weight:900;color:#8f145f;font-size:15px;display:flex;justify-content:space-between;align-items:center}',
+      '#hsmSchoolVocabTeacherPanel,#hsmSchoolVocabTeacherPanel *{box-sizing:border-box}',
+      '#hsmSchoolVocabTeacherPanel{max-width:100%;overflow-x:hidden}',
+      '#hsmSchoolVocabTeacherPanel .hsm-sv-grid,#hsmSchoolVocabTeacherPanel .hsm-sv-card,#hsmSchoolVocabTeacherPanel .hsm-sv-field{min-width:0;max-width:100%}',
+      '.hsm-sv-excel-guide{width:100%;max-width:100%;min-width:0;margin:12px 0 18px;border:1px solid #eadbe4;border-radius:16px;background:#fffafd;overflow:hidden}',
+      '.hsm-sv-excel-guide summary{cursor:pointer;list-style:none;padding:15px 16px;font-weight:900;color:#8f145f;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:12px;min-width:0}',
       '.hsm-sv-excel-guide summary::-webkit-details-marker{display:none}',
-      '.hsm-sv-excel-guide summary:after{content:"+";font-size:22px;line-height:1}',
+      '.hsm-sv-excel-guide summary:after{content:"+";font-size:22px;line-height:1;flex:0 0 auto}',
       '.hsm-sv-excel-guide[open] summary:after{content:"−"}',
-      '.hsm-sv-guide-body{padding:0 16px 16px;color:#67606a;font-size:13px;line-height:1.65}',
-      '.hsm-sv-guide-table-wrap{overflow:auto;margin:12px 0}',
-      '.hsm-sv-guide-table{width:100%;min-width:560px;border-collapse:separate;border-spacing:0;border:1px solid #eadbe4;border-radius:12px;overflow:hidden;background:#fff}',
-      '.hsm-sv-guide-table th,.hsm-sv-guide-table td{padding:10px 12px;text-align:left;border-right:1px solid #eadbe4;border-bottom:1px solid #eadbe4;white-space:nowrap}',
+      '.hsm-sv-guide-body{min-width:0;max-width:100%;padding:0 16px 16px;color:#67606a;font-size:13px;line-height:1.65;overflow:hidden;word-break:keep-all}',
+      '.hsm-sv-guide-table-wrap{width:100%;max-width:100%;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0;border-radius:12px}',
+      '.hsm-sv-guide-table{width:100%;min-width:560px;border-collapse:separate;border-spacing:0;border:1px solid #eadbe4;border-radius:12px;overflow:hidden;background:#fff;table-layout:fixed}',
+      '.hsm-sv-guide-table th,.hsm-sv-guide-table td{padding:10px 12px;text-align:left;border-right:1px solid #eadbe4;border-bottom:1px solid #eadbe4;white-space:normal;overflow-wrap:anywhere;vertical-align:top}',
       '.hsm-sv-guide-table th{background:#fff1f7;color:#81205d;font-weight:900}.hsm-sv-guide-table th:last-child,.hsm-sv-guide-table td:last-child{border-right:0}.hsm-sv-guide-table tr:last-child td{border-bottom:0}',
       '.hsm-sv-guide-list{margin:10px 0 0;padding-left:20px}.hsm-sv-guide-list li{margin:5px 0}',
-      '.hsm-sv-student-tools{margin:10px 0 10px}.hsm-sv-search{width:100%;border:1px solid #dedde7;border-radius:12px;padding:12px 13px;background:#fff;color:#222;font:inherit}',
-      '.hsm-sv-selection-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px}.hsm-sv-selection-count{font-size:12px;font-weight:900;color:#8f145f;background:#fff0f7;border:1px solid #f0c9dc;border-radius:999px;padding:5px 9px;white-space:nowrap}',
+      '.hsm-sv-student-tools{margin:10px 0}.hsm-sv-search{display:block;width:100%;max-width:100%;min-width:0;border:1px solid #dedde7;border-radius:12px;padding:12px 13px;background:#fff;color:#222;font:inherit}',
+      '.hsm-sv-selection-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px;min-width:0}.hsm-sv-selection-count{font-size:12px;font-weight:900;color:#8f145f;background:#fff0f7;border:1px solid #f0c9dc;border-radius:999px;padding:5px 9px;white-space:nowrap;flex:0 0 auto}',
       '.hsm-sv-student.hsm-sv-filter-hidden{display:none}',
-      '@media(max-width:800px){.hsm-sv-excel-guide summary{font-size:14px;padding:14px}.hsm-sv-guide-body{padding:0 14px 14px}.hsm-sv-search{font-size:16px}.hsm-sv-selection-head{align-items:flex-start}}'
+      '@media(max-width:800px){#hsmSchoolVocabTeacherPanel .hsm-sv-grid{grid-template-columns:minmax(0,1fr)!important;width:100%}#hsmSchoolVocabTeacherPanel .hsm-sv-card{width:100%;padding:16px}.hsm-sv-excel-guide summary{font-size:14px;padding:14px}.hsm-sv-guide-body{padding:0 14px 14px;font-size:12px}.hsm-sv-guide-table{min-width:520px}.hsm-sv-search{font-size:16px}.hsm-sv-selection-head{align-items:center}.hsm-sv-actions{max-width:100%}}',
+      '@media(max-width:430px){.hsm-sv-guide-table{min-width:500px}.hsm-sv-guide-table th,.hsm-sv-guide-table td{padding:9px 10px;font-size:12px}.hsm-sv-guide-list{padding-left:18px}.hsm-sv-selection-count{font-size:11px}}'
     ].join('');
     document.head.appendChild(s);
   }
 
   function selectedCount(box){return box?box.querySelectorAll('input[data-hsm-sv-student]:checked').length:0;}
   function updateCount(panel){
-    var box=panel.querySelector('#hsmSvStudents');
-    var badge=panel.querySelector('#hsmSvSelectedCount');
+    var box=panel&&panel.querySelector('#hsmSvStudents');
+    var badge=panel&&panel.querySelector('#hsmSvSelectedCount');
     if(badge) badge.textContent=selectedCount(box)+'명 선택';
   }
   function filterStudents(panel){
+    if(!panel) return;
     var input=panel.querySelector('#hsmSvStudentSearch');
     var q=(input&&input.value||'').trim().toLowerCase();
     panel.querySelectorAll('#hsmSvStudents .hsm-sv-student').forEach(function(row){
@@ -41,47 +46,78 @@
       row.classList.toggle('hsm-sv-filter-hidden',!!q&&text.indexOf(q)<0);
     });
   }
-  function enhance(panel){
-    if(!panel||panel.dataset.hsmSvEnhanced==='1') return;
-    var words=panel.querySelector('#hsmSvWords');
-    var students=panel.querySelector('#hsmSvStudents');
-    if(!words||!students) return;
-    panel.dataset.hsmSvEnhanced='1';
-
-    var help=words.parentElement.querySelector('.hsm-sv-help');
-    if(help){
-      help.innerHTML='엑셀에서 <strong>영어 · 뜻 · 예문 · 해석</strong> 순서의 셀을 복사해 그대로 붙여넣을 수 있습니다. 영어와 뜻은 필수이며 예문·해석은 선택입니다.';
-      var guide=document.createElement('details');
-      guide.className='hsm-sv-excel-guide';
-      guide.innerHTML='<summary>엑셀 작성·붙여넣기 방법 보기</summary><div class="hsm-sv-guide-body">엑셀에서 아래 순서로 작성한 뒤 필요한 행만 선택해서 복사하고 위 단어 입력 칸에 붙여넣으세요. <strong>한 행에는 단어 하나</strong>만 작성합니다.<div class="hsm-sv-guide-table-wrap"><table class="hsm-sv-guide-table"><thead><tr><th>A열 영어 (필수)</th><th>B열 뜻 (필수)</th><th>C열 예문 (선택)</th><th>D열 해석 (선택)</th></tr></thead><tbody><tr><td>apple</td><td>사과</td><td>I ate an apple.</td><td>나는 사과를 먹었다.</td></tr><tr><td>benefit</td><td>이익, 혜택</td><td>This plan benefits everyone.</td><td>이 계획은 모두에게 도움이 된다.</td></tr></tbody></table></div><ul class="hsm-sv-guide-list"><li><strong>영어와 뜻만 출제:</strong> A·B열만 작성해도 됩니다.</li><li><strong>예문 시험까지 사용:</strong> C·D열까지 작성하세요.</li><li>첫 행의 ‘영어·뜻·예문·해석’ 같은 제목은 복사하지 않는 것이 가장 안전합니다.</li><li>셀 병합, 중간 제목, 설명 행과 빈 행은 사용하지 마세요.</li><li>뜻이 여러 개면 한 셀 안에서 쉼표 또는 / 기호로 구분할 수 있습니다.</li></ul></div>';
-      help.insertAdjacentElement('afterend',guide);
-    }
-
+  function addGuide(words){
+    if(!words||document.getElementById('hsmSvExcelGuide')) return;
+    var help=words.parentElement&&words.parentElement.querySelector('.hsm-sv-help');
+    if(!help) return;
+    help.innerHTML='엑셀에서 <strong>영어 · 뜻 · 예문 · 해석</strong> 순서의 셀을 복사해 그대로 붙여넣을 수 있습니다. 영어와 뜻은 필수이며 예문·해석은 선택입니다.';
+    var guide=document.createElement('details');
+    guide.id='hsmSvExcelGuide';
+    guide.className='hsm-sv-excel-guide';
+    guide.innerHTML='<summary>엑셀 작성·붙여넣기 방법 보기</summary><div class="hsm-sv-guide-body">엑셀에서 아래 순서로 작성한 뒤 필요한 행만 선택해서 복사하고 위 단어 입력 칸에 붙여넣으세요. <strong>한 행에는 단어 하나</strong>만 작성합니다.<div class="hsm-sv-guide-table-wrap"><table class="hsm-sv-guide-table"><thead><tr><th>A열 영어 (필수)</th><th>B열 뜻 (필수)</th><th>C열 예문 (선택)</th><th>D열 해석 (선택)</th></tr></thead><tbody><tr><td>apple</td><td>사과</td><td>I ate an apple.</td><td>나는 사과를 먹었다.</td></tr><tr><td>benefit</td><td>이익, 혜택</td><td>This plan benefits everyone.</td><td>이 계획은 모두에게 도움이 된다.</td></tr></tbody></table></div><ul class="hsm-sv-guide-list"><li><strong>영어와 뜻만 출제:</strong> A·B열만 작성해도 됩니다.</li><li><strong>예문 시험까지 사용:</strong> C·D열까지 작성하세요.</li><li>첫 행의 ‘영어·뜻·예문·해석’ 같은 제목은 복사하지 않는 것이 가장 안전합니다.</li><li>셀 병합, 중간 제목, 설명 행과 빈 행은 사용하지 마세요.</li><li>뜻이 여러 개면 한 셀 안에서 쉼표 또는 / 기호로 구분할 수 있습니다.</li></ul></div>';
+    help.insertAdjacentElement('afterend',guide);
+  }
+  function addStudentTools(panel,students){
+    if(!panel||!students) return;
     var field=students.closest('.hsm-sv-field');
-    if(field){
+    if(!field) return;
+    var head=panel.querySelector('#hsmSvSelectionHead');
+    if(!head){
       var label=field.querySelector('label');
       if(label){
-        var head=document.createElement('div');
+        head=document.createElement('div');
+        head.id='hsmSvSelectionHead';
         head.className='hsm-sv-selection-head';
         head.innerHTML='<strong>배정 학생</strong><span id="hsmSvSelectedCount" class="hsm-sv-selection-count">0명 선택</span>';
         label.replaceWith(head);
       }
+    }
+    var search=panel.querySelector('#hsmSvStudentSearch');
+    if(!search){
       var tools=document.createElement('div');
       tools.className='hsm-sv-student-tools';
       tools.innerHTML='<input id="hsmSvStudentSearch" class="hsm-sv-search" type="search" placeholder="학생 이름 또는 아이디 검색" autocomplete="off">';
       students.insertAdjacentElement('beforebegin',tools);
-      tools.querySelector('input').addEventListener('input',function(){filterStudents(panel);});
+      search=tools.querySelector('input');
+      search.addEventListener('input',function(){filterStudents(panel);});
     }
-    students.addEventListener('change',function(){updateCount(panel);});
+    if(students.dataset.hsmSvBound!=='1'){
+      students.dataset.hsmSvBound='1';
+      students.addEventListener('change',function(){updateCount(panel);});
+    }
     var all=panel.querySelector('#hsmSvSelectAll'), clear=panel.querySelector('#hsmSvClearAll');
-    if(all) all.addEventListener('click',function(){setTimeout(function(){updateCount(panel);filterStudents(panel);},0);});
-    if(clear) clear.addEventListener('click',function(){setTimeout(function(){updateCount(panel);filterStudents(panel);},0);});
+    if(all&&all.dataset.hsmSvBound!=='1'){
+      all.dataset.hsmSvBound='1';
+      all.addEventListener('click',function(){setTimeout(function(){enhance(panel);updateCount(panel);filterStudents(panel);},0);});
+    }
+    if(clear&&clear.dataset.hsmSvBound!=='1'){
+      clear.dataset.hsmSvBound='1';
+      clear.addEventListener('click',function(){setTimeout(function(){enhance(panel);updateCount(panel);filterStudents(panel);},0);});
+    }
     updateCount(panel);
+  }
+  function enhance(panel){
+    if(!panel) return;
+    var words=panel.querySelector('#hsmSvWords');
+    var students=panel.querySelector('#hsmSvStudents');
+    if(!words||!students) return;
+    addGuide(words);
+    addStudentTools(panel,students);
+    filterStudents(panel);
   }
 
   addStyles();
-  var observer=new MutationObserver(function(){enhance(document.getElementById('hsmSchoolVocabTeacherPanel'));});
+  var queued=false;
+  function scheduleEnhance(){
+    if(queued) return;
+    queued=true;
+    window.requestAnimationFrame(function(){
+      queued=false;
+      enhance(document.getElementById('hsmSchoolVocabTeacherPanel'));
+    });
+  }
+  var observer=new MutationObserver(scheduleEnhance);
   observer.observe(document.documentElement,{childList:true,subtree:true});
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){enhance(document.getElementById('hsmSchoolVocabTeacherPanel'));});
-  else enhance(document.getElementById('hsmSchoolVocabTeacherPanel'));
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',scheduleEnhance);
+  else scheduleEnhance();
 })();
