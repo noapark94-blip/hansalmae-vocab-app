@@ -9,9 +9,7 @@ window.HANSALMAE_CONFIG = {
 (function installHansalmaeNativeBackNavigation() {
   var installed = false;
   var handlingPopState = false;
-  var navigationNames = [
-    'showTestHome','showVocabHome','showMyPage','showAccountInformation_','showRankingHome','showWrongNotebook','showWrongTestSetup','showPersonalVocabulary','showPersonalTestSetup','showSmartReview','showTeacherExamHome','showStudentNotifications'
-  ];
+  var navigationNames = ['showTestHome','showVocabHome','showMyPage','showAccountInformation_','showRankingHome','showWrongNotebook','showWrongTestSetup','showPersonalVocabulary','showPersonalTestSetup','showSmartReview','showTeacherExamHome','showStudentNotifications'];
   function isLoggedInAppVisible(){var mainApp=document.getElementById('mainApp');return Boolean(mainApp&&!mainApp.classList.contains('hidden'));}
   function visibleScreenId(){if(typeof window.hsmGetVisibleScreenId_==='function')return window.hsmGetVisibleScreenId_();return '';}
   function pushNavigationState(fromScreen,toScreen){if(handlingPopState||!isLoggedInAppVisible()||!fromScreen||!toScreen||fromScreen===toScreen)return;try{history.pushState({hansalmaeAppNavigation:true,screenId:toScreen,createdAt:Date.now()},'',window.location.href);}catch(error){console.warn('한살매 앱 뒤로가기 기록 생성 실패',error);}}
@@ -21,17 +19,12 @@ window.HANSALMAE_CONFIG = {
 
 (function loadLearningShortcutPcFix(){
   if(document.querySelector('link[data-hsm-learning-shortcut-fix]')) return;
-  var link=document.createElement('link');
-  link.rel='stylesheet';
-  link.href='./learning-shortcut-pc-fix.css?v=1';
-  link.dataset.hsmLearningShortcutFix='1';
-  document.head.appendChild(link);
+  var link=document.createElement('link');link.rel='stylesheet';link.href='./learning-shortcut-pc-fix.css?v=1';link.dataset.hsmLearningShortcutFix='1';document.head.appendChild(link);
 })();
 
-// 선생님·학생 공통 학교 수행평가 단어장 기능을 분리된 모듈로 로드합니다.
 (function loadHansalmaeSchoolVocabulary(){
   if(document.querySelector('script[data-hsm-school-vocab]'))return;
   var script=document.createElement('script');script.src='./school-vocab.js?v=1';script.defer=true;script.dataset.hsmSchoolVocab='1';document.head.appendChild(script);
-  if(!document.querySelector('script[data-hsm-school-vocab-ui]')){var ui=document.createElement('script');ui.src='./school-vocab-ui-patch.js?v=4';ui.defer=true;ui.dataset.hsmSchoolVocabUi='1';document.head.appendChild(ui);}
+  if(!document.querySelector('script[data-hsm-school-vocab-ui]')){var ui=document.createElement('script');ui.src='./school-vocab-ui-patch.js?v=5';ui.defer=true;ui.dataset.hsmSchoolVocabUi='1';document.head.appendChild(ui);}
   if(!document.querySelector('script[data-hsm-school-vocab-icon]')){var icon=document.createElement('script');icon.src='./school-vocab-icon-patch.js?v=1';icon.defer=true;icon.dataset.hsmSchoolVocabIcon='1';document.head.appendChild(icon);}
 })();
