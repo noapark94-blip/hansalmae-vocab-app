@@ -37,26 +37,9 @@ window.HANSALMAE_CONFIG = {
   }
 
   function pushNavigationState(fromScreen, toScreen) {
-    if (
-      handlingPopState ||
-      !isLoggedInAppVisible() ||
-      !fromScreen ||
-      !toScreen ||
-      fromScreen === toScreen
-    ) {
-      return;
-    }
-
+    if (handlingPopState || !isLoggedInAppVisible() || !fromScreen || !toScreen || fromScreen === toScreen) return;
     try {
-      history.pushState(
-        {
-          hansalmaeAppNavigation: true,
-          screenId: toScreen,
-          createdAt: Date.now()
-        },
-        '',
-        window.location.href
-      );
+      history.pushState({ hansalmaeAppNavigation: true, screenId: toScreen, createdAt: Date.now() }, '', window.location.href);
     } catch (error) {
       console.warn('한살매 앱 뒤로가기 기록 생성 실패', error);
     }
@@ -64,83 +47,44 @@ window.HANSALMAE_CONFIG = {
 
   function install() {
     if (installed) return;
-    if (
-      typeof window.hsmGoBack_ !== 'function' ||
-      typeof window.hsmGetVisibleScreenId_ !== 'function'
-    ) {
+    if (typeof window.hsmGoBack_ !== 'function' || typeof window.hsmGetVisibleScreenId_ !== 'function') {
       window.setTimeout(install, 100);
       return;
     }
-
     installed = true;
-
     navigationNames.forEach(function (name) {
       var original = window[name];
-      if (typeof original !== 'function' || original.__hsmNativeBackWrapped) {
-        return;
-      }
-
+      if (typeof original !== 'function' || original.__hsmNativeBackWrapped) return;
       var wrapped = function () {
         var fromScreen = visibleScreenId();
         var result = original.apply(this, arguments);
-
-        window.setTimeout(function () {
-          pushNavigationState(fromScreen, visibleScreenId());
-        }, 0);
-
+        window.setTimeout(function () { pushNavigationState(fromScreen, visibleScreenId()); }, 0);
         return result;
       };
-
-      Object.keys(original).forEach(function (key) {
-        try {
-          wrapped[key] = original[key];
-        } catch (_) {}
-      });
+      Object.keys(original).forEach(function (key) { try { wrapped[key] = original[key]; } catch (_) {} });
       wrapped.__hsmNativeBackWrapped = true;
       window[name] = wrapped;
     });
-
     var originalGoBack = window.hsmGoBack_;
-
     window.hsmGoBack_ = function () {
       var stack = window.hsmBackStack_;
       var hasInternalBack = Array.isArray(stack) && stack.length > 0;
-
-      if (
-        !handlingPopState &&
-        hasInternalBack &&
-        history.state &&
-        history.state.hansalmaeAppNavigation === true
-      ) {
+      if (!handlingPopState && hasInternalBack && history.state && history.state.hansalmaeAppNavigation === true) {
         history.back();
         return;
       }
-
       return originalGoBack.apply(this, arguments);
     };
-
     window.addEventListener('popstate', function () {
       var stack = window.hsmBackStack_;
-      if (!Array.isArray(stack) || stack.length < 1 || !isLoggedInAppVisible()) {
-        return;
-      }
-
+      if (!Array.isArray(stack) || stack.length < 1 || !isLoggedInAppVisible()) return;
       handlingPopState = true;
-      try {
-        originalGoBack();
-      } finally {
-        handlingPopState = false;
-      }
+      try { originalGoBack(); } finally { handlingPopState = false; }
     });
   }
 
-  if (document.readyState === 'complete') {
-    window.setTimeout(install, 150);
-  } else {
-    window.addEventListener('load', function () {
-      window.setTimeout(install, 150);
-    }, { once: true });
-  }
+  if (document.readyState === 'complete') window.setTimeout(install, 150);
+  else window.addEventListener('load', function () { window.setTimeout(install, 150); }, { once: true });
 })();
 
 // 선생님·학생 공통 학교 수행평가 단어장 기능을 분리된 모듈로 로드합니다.
@@ -151,4 +95,12 @@ window.HANSALMAE_CONFIG = {
   script.defer = true;
   script.dataset.hsmSchoolVocab = '1';
   document.head.appendChild(script);
+
+  if (!document.querySelector('script[data-hsm-school-vocab-ui]')) {
+    var ui = document.createElement('script');
+    ui.src = './school-vocab-ui-patch.js?v=2';
+    ui.defer = true;
+    ui.dataset.hsmSchoolVocabUi = '1';
+    document.head.appendChild(ui);
+  }
 })();
