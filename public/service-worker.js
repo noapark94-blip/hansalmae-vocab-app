@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v47-school-vocab-custom-icon';
+const CACHE_NAME = 'hansalmae-supabase-v48-school-vocab-edit-fix';
 
 const REQUIRED_ASSETS = [
   './',
@@ -32,6 +32,7 @@ const OPTIONAL_ASSETS = [
   './school-vocab-ui-patch.js?v=6',
   './teacher-school-vocab-search-fix.js?v=1',
   './teacher-school-vocab-tab-fix.js?v=1',
+  './teacher-school-vocab-edit-fix.js?v=1',
   './images/emblems/title-chick.png',
   './images/emblems/title-collector.png',
   './images/emblems/title-predator.png',
