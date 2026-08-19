@@ -10,97 +10,18 @@ window.HANSALMAE_CONFIG = {
   var installed = false;
   var handlingPopState = false;
   var navigationNames = [
-    'showTestHome',
-    'showVocabHome',
-    'showMyPage',
-    'showAccountInformation_',
-    'showRankingHome',
-    'showWrongNotebook',
-    'showWrongTestSetup',
-    'showPersonalVocabulary',
-    'showPersonalTestSetup',
-    'showSmartReview',
-    'showTeacherExamHome',
-    'showStudentNotifications'
+    'showTestHome','showVocabHome','showMyPage','showAccountInformation_','showRankingHome','showWrongNotebook','showWrongTestSetup','showPersonalVocabulary','showPersonalTestSetup','showSmartReview','showTeacherExamHome','showStudentNotifications'
   ];
-
-  function isLoggedInAppVisible() {
-    var mainApp = document.getElementById('mainApp');
-    return Boolean(mainApp && !mainApp.classList.contains('hidden'));
-  }
-
-  function visibleScreenId() {
-    if (typeof window.hsmGetVisibleScreenId_ === 'function') {
-      return window.hsmGetVisibleScreenId_();
-    }
-    return '';
-  }
-
-  function pushNavigationState(fromScreen, toScreen) {
-    if (handlingPopState || !isLoggedInAppVisible() || !fromScreen || !toScreen || fromScreen === toScreen) return;
-    try {
-      history.pushState({ hansalmaeAppNavigation: true, screenId: toScreen, createdAt: Date.now() }, '', window.location.href);
-    } catch (error) {
-      console.warn('한살매 앱 뒤로가기 기록 생성 실패', error);
-    }
-  }
-
-  function install() {
-    if (installed) return;
-    if (typeof window.hsmGoBack_ !== 'function' || typeof window.hsmGetVisibleScreenId_ !== 'function') {
-      window.setTimeout(install, 100);
-      return;
-    }
-    installed = true;
-    navigationNames.forEach(function (name) {
-      var original = window[name];
-      if (typeof original !== 'function' || original.__hsmNativeBackWrapped) return;
-      var wrapped = function () {
-        var fromScreen = visibleScreenId();
-        var result = original.apply(this, arguments);
-        window.setTimeout(function () { pushNavigationState(fromScreen, visibleScreenId()); }, 0);
-        return result;
-      };
-      Object.keys(original).forEach(function (key) { try { wrapped[key] = original[key]; } catch (_) {} });
-      wrapped.__hsmNativeBackWrapped = true;
-      window[name] = wrapped;
-    });
-    var originalGoBack = window.hsmGoBack_;
-    window.hsmGoBack_ = function () {
-      var stack = window.hsmBackStack_;
-      var hasInternalBack = Array.isArray(stack) && stack.length > 0;
-      if (!handlingPopState && hasInternalBack && history.state && history.state.hansalmaeAppNavigation === true) {
-        history.back();
-        return;
-      }
-      return originalGoBack.apply(this, arguments);
-    };
-    window.addEventListener('popstate', function () {
-      var stack = window.hsmBackStack_;
-      if (!Array.isArray(stack) || stack.length < 1 || !isLoggedInAppVisible()) return;
-      handlingPopState = true;
-      try { originalGoBack(); } finally { handlingPopState = false; }
-    });
-  }
-
-  if (document.readyState === 'complete') window.setTimeout(install, 150);
-  else window.addEventListener('load', function () { window.setTimeout(install, 150); }, { once: true });
+  function isLoggedInAppVisible(){var mainApp=document.getElementById('mainApp');return Boolean(mainApp&&!mainApp.classList.contains('hidden'));}
+  function visibleScreenId(){if(typeof window.hsmGetVisibleScreenId_==='function')return window.hsmGetVisibleScreenId_();return '';}
+  function pushNavigationState(fromScreen,toScreen){if(handlingPopState||!isLoggedInAppVisible()||!fromScreen||!toScreen||fromScreen===toScreen)return;try{history.pushState({hansalmaeAppNavigation:true,screenId:toScreen,createdAt:Date.now()},'',window.location.href);}catch(error){console.warn('한살매 앱 뒤로가기 기록 생성 실패',error);}}
+  function install(){if(installed)return;if(typeof window.hsmGoBack_!=='function'||typeof window.hsmGetVisibleScreenId_!=='function'){window.setTimeout(install,100);return;}installed=true;navigationNames.forEach(function(name){var original=window[name];if(typeof original!=='function'||original.__hsmNativeBackWrapped)return;var wrapped=function(){var fromScreen=visibleScreenId();var result=original.apply(this,arguments);window.setTimeout(function(){pushNavigationState(fromScreen,visibleScreenId());},0);return result;};Object.keys(original).forEach(function(key){try{wrapped[key]=original[key];}catch(_){}});wrapped.__hsmNativeBackWrapped=true;window[name]=wrapped;});var originalGoBack=window.hsmGoBack_;window.hsmGoBack_=function(){var stack=window.hsmBackStack_;var hasInternalBack=Array.isArray(stack)&&stack.length>0;if(!handlingPopState&&hasInternalBack&&history.state&&history.state.hansalmaeAppNavigation===true){history.back();return;}return originalGoBack.apply(this,arguments);};window.addEventListener('popstate',function(){var stack=window.hsmBackStack_;if(!Array.isArray(stack)||stack.length<1||!isLoggedInAppVisible())return;handlingPopState=true;try{originalGoBack();}finally{handlingPopState=false;}});}
+  if(document.readyState==='complete')window.setTimeout(install,150);else window.addEventListener('load',function(){window.setTimeout(install,150);},{once:true});
 })();
 
 // 선생님·학생 공통 학교 수행평가 단어장 기능을 분리된 모듈로 로드합니다.
-(function loadHansalmaeSchoolVocabulary() {
-  if (document.querySelector('script[data-hsm-school-vocab]')) return;
-  var script = document.createElement('script');
-  script.src = './school-vocab.js?v=1';
-  script.defer = true;
-  script.dataset.hsmSchoolVocab = '1';
-  document.head.appendChild(script);
-
-  if (!document.querySelector('script[data-hsm-school-vocab-ui]')) {
-    var ui = document.createElement('script');
-    ui.src = './school-vocab-ui-patch.js?v=3';
-    ui.defer = true;
-    ui.dataset.hsmSchoolVocabUi = '1';
-    document.head.appendChild(ui);
-  }
+(function loadHansalmaeSchoolVocabulary(){
+  if(document.querySelector('script[data-hsm-school-vocab]'))return;
+  var script=document.createElement('script');script.src='./school-vocab.js?v=1';script.defer=true;script.dataset.hsmSchoolVocab='1';document.head.appendChild(script);
+  if(!document.querySelector('script[data-hsm-school-vocab-ui]')){var ui=document.createElement('script');ui.src='./school-vocab-ui-patch.js?v=4';ui.defer=true;ui.dataset.hsmSchoolVocabUi='1';document.head.appendChild(ui);}
 })();
