@@ -25,5 +25,6 @@ window.HANSALMAE_CONFIG = {
   }else{
     if(!document.querySelector('script[data-hsm-school-vocab-student-page]')){var page=document.createElement('script');page.src='./school-vocab-student-page.js?v=1';page.defer=true;page.dataset.hsmSchoolVocabStudentPage='1';document.head.appendChild(page);}
     if(!document.querySelector('script[data-hsm-learning-shortcut-stable]')){var stable=document.createElement('script');stable.src='./learning-shortcut-stable-layout.js?v=1';stable.defer=true;stable.dataset.hsmLearningShortcutStable='1';document.head.appendChild(stable);}
+    if(!document.querySelector('script[data-hsm-school-vocab-status]')){var status=document.createElement('script');status.src='./school-vocab-shortcut-status.js?v=1';status.defer=true;status.dataset.hsmSchoolVocabStatus='1';document.head.appendChild(status);}
   }
 })();
