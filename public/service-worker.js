@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v40-school-vocab-search-fix';
+const CACHE_NAME = 'hansalmae-supabase-v41-stable-ui-restore';
 
 const REQUIRED_ASSETS = [
   './',
@@ -9,15 +9,10 @@ const REQUIRED_ASSETS = [
   './ui-icons.css',
   './ui-icons.js',
   './teacher-modern.css',
-  './learning-shortcut-pc-fix.css?v=1',
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
   './school-vocab.js?v=2',
-  './school-vocab-ui-patch.js?v=6',
-  './school-vocab-icon-patch.js?v=1',
-  './teacher-school-vocab-search-fix.js?v=1',
-  './teacher-school-vocab-tab-fix.js?v=1',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
@@ -28,6 +23,9 @@ const REQUIRED_ASSETS = [
 
 const OPTIONAL_ASSETS = [
   './teacher.html',
+  './school-vocab-ui-patch.js?v=6',
+  './teacher-school-vocab-search-fix.js?v=1',
+  './teacher-school-vocab-tab-fix.js?v=1',
   './images/emblems/title-chick.png',
   './images/emblems/title-collector.png',
   './images/emblems/title-predator.png',
