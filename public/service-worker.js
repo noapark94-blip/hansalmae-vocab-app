@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v54-school-free-test-match';
+const CACHE_NAME = 'hansalmae-supabase-v55-stable-swipe-back';
 
 const REQUIRED_ASSETS = [
   './',
