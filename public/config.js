@@ -142,3 +142,13 @@ window.HANSALMAE_CONFIG = {
     }, { once: true });
   }
 })();
+
+// 선생님·학생 공통 학교 수행평가 단어장 기능을 분리된 모듈로 로드합니다.
+(function loadHansalmaeSchoolVocabulary() {
+  if (document.querySelector('script[data-hsm-school-vocab]')) return;
+  var script = document.createElement('script');
+  script.src = './school-vocab.js?v=1';
+  script.defer = true;
+  script.dataset.hsmSchoolVocab = '1';
+  document.head.appendChild(script);
+})();
