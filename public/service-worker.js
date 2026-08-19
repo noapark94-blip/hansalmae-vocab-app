@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v41-stable-ui-restore';
+const CACHE_NAME = 'hansalmae-supabase-v42-school-vocab-full-page';
 
 const REQUIRED_ASSETS = [
   './',
@@ -13,6 +13,7 @@ const REQUIRED_ASSETS = [
   './manifest.json',
   './config.js',
   './school-vocab.js?v=2',
+  './school-vocab-student-page.js?v=1',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
