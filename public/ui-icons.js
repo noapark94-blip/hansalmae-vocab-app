@@ -30,6 +30,39 @@
 
   const emojiPrefix = /^[\s\uFE0F]*(?:[🏆⭐📝📚📖🔒✅❌✨🔥💡🎯📊📢🔔👤⚙️🎉🥇🥈🥉]+[\uFE0F\u200D]*)+\s*/u;
 
+  function normalizedText(element) {
+    return String(element && element.textContent || '').replace(emojiPrefix, '').replace(/\s+/g, ' ').trim();
+  }
+
+  function isOwnIconHeading(element) {
+    if (!element || !element.matches || !element.matches('h2,h3')) return false;
+    const value = normalizedText(element);
+    return value.indexOf('나만의 단어장') !== -1 || value.indexOf('오답노트') !== -1;
+  }
+
+  function hasCustomHeadingIcon(element) {
+    if (!element) return false;
+    return Array.prototype.some.call(element.children || [], function (child) {
+      if (!child || !child.classList) return false;
+      if (child.classList.contains('hsm-ui-icon')) return false;
+      return child.matches('img,svg,.section-icon,.learning-shortcut-icon,.hsm-learning-shortcut-icon,.hsm-shortcut-icon,.shortcut-icon,[class*="icon"]');
+    });
+  }
+
+  function keepOwnHeadingIconOnly(element) {
+    if (!isOwnIconHeading(element)) return false;
+    const generated = Array.from(element.children || []).filter(function (child) {
+      return child.classList && child.classList.contains('hsm-ui-icon');
+    });
+    if (hasCustomHeadingIcon(element)) {
+      generated.forEach(function (icon) { icon.remove(); });
+      element.classList.remove('hsm-icon-label');
+      element.dataset.hsmIconReady = '1';
+      return true;
+    }
+    return false;
+  }
+
   function iconForText(text) {
     const value = String(text || '').replace(emojiPrefix, '').replace(/\s+/g, ' ').trim();
     if (!value) return '';
@@ -76,7 +109,9 @@
   }
 
   function decorateElement(element) {
-    if (!element || element.nodeType !== 1 || element.dataset.hsmIconReady === '1') return;
+    if (!element || element.nodeType !== 1) return;
+    if (keepOwnHeadingIconOnly(element)) return;
+    if (element.dataset.hsmIconReady === '1') return;
     if (element.closest('.hsm-mobile-nav')) {
       element.dataset.hsmIconReady = '1';
       return;
@@ -115,6 +150,7 @@
         const target = mutation.target && mutation.target.nodeType === 1
           ? mutation.target.closest('button, h2, h3, [data-hsm-icon]')
           : null;
+        if (target && keepOwnHeadingIconOnly(target)) return;
         const hasDirectIcon = target && Array.prototype.some.call(target.children, function (child) {
           return child.classList && child.classList.contains('hsm-ui-icon');
         });
