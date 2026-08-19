@@ -14,7 +14,7 @@ window.HANSALMAE_CONFIG = {
   if(document.readyState==='complete')window.setTimeout(install,150);else window.addEventListener('load',function(){window.setTimeout(install,150);},{once:true});
 })();
 
-// 수행평가 기능은 전용 모듈만 로드하고, 학생 앱 전체에 영향을 주는 보정 CSS/아이콘 패치는 로드하지 않습니다.
+// 수행평가 기능은 선생님 UI와 학생 UI를 분리해 로드합니다.
 (function loadHansalmaeSchoolVocabulary(){
   if(document.querySelector('script[data-hsm-school-vocab]'))return;
   var script=document.createElement('script');script.src='./school-vocab.js?v=2';script.defer=true;script.dataset.hsmSchoolVocab='1';document.head.appendChild(script);
@@ -22,5 +22,7 @@ window.HANSALMAE_CONFIG = {
     if(!document.querySelector('script[data-hsm-school-vocab-ui]')){var ui=document.createElement('script');ui.src='./school-vocab-ui-patch.js?v=6';ui.defer=true;ui.dataset.hsmSchoolVocabUi='1';document.head.appendChild(ui);}
     if(!document.querySelector('script[data-hsm-school-vocab-search-fix]')){var searchFix=document.createElement('script');searchFix.src='./teacher-school-vocab-search-fix.js?v=1';searchFix.defer=true;searchFix.dataset.hsmSchoolVocabSearchFix='1';document.head.appendChild(searchFix);}
     if(!document.querySelector('script[data-hsm-school-vocab-tab-fix]')){var fix=document.createElement('script');fix.src='./teacher-school-vocab-tab-fix.js?v=1';fix.defer=true;fix.dataset.hsmSchoolVocabTabFix='1';document.head.appendChild(fix);}
+  }else{
+    if(!document.querySelector('script[data-hsm-school-vocab-student-page]')){var page=document.createElement('script');page.src='./school-vocab-student-page.js?v=1';page.defer=true;page.dataset.hsmSchoolVocabStudentPage='1';document.head.appendChild(page);}
   }
 })();
