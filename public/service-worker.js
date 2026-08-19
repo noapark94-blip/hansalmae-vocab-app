@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v37-school-vocab-mobile-fix';
+const CACHE_NAME = 'hansalmae-supabase-v38-icon-cleanup';
 
 const REQUIRED_ASSETS = [
   './',
@@ -13,7 +13,8 @@ const REQUIRED_ASSETS = [
   './manifest.json',
   './config.js',
   './school-vocab.js?v=1',
-  './school-vocab-ui-patch.js?v=3',
+  './school-vocab-ui-patch.js?v=4',
+  './school-vocab-icon-patch.js?v=1',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
