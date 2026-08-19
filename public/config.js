@@ -14,13 +14,13 @@ window.HANSALMAE_CONFIG = {
   if(document.readyState==='complete')window.setTimeout(install,150);else window.addEventListener('load',function(){window.setTimeout(install,150);},{once:true});
 })();
 
-(function loadLearningShortcutPcFix(){if(document.querySelector('link[data-hsm-learning-shortcut-fix]'))return;var link=document.createElement('link');link.rel='stylesheet';link.href='./learning-shortcut-pc-fix.css?v=1';link.dataset.hsmLearningShortcutFix='1';document.head.appendChild(link);})();
-
+// 수행평가 기능은 전용 모듈만 로드하고, 학생 앱 전체에 영향을 주는 보정 CSS/아이콘 패치는 로드하지 않습니다.
 (function loadHansalmaeSchoolVocabulary(){
   if(document.querySelector('script[data-hsm-school-vocab]'))return;
   var script=document.createElement('script');script.src='./school-vocab.js?v=2';script.defer=true;script.dataset.hsmSchoolVocab='1';document.head.appendChild(script);
-  if(!document.querySelector('script[data-hsm-school-vocab-ui]')){var ui=document.createElement('script');ui.src='./school-vocab-ui-patch.js?v=6';ui.defer=true;ui.dataset.hsmSchoolVocabUi='1';document.head.appendChild(ui);}
-  if(!document.querySelector('script[data-hsm-school-vocab-icon]')){var icon=document.createElement('script');icon.src='./school-vocab-icon-patch.js?v=1';icon.defer=true;icon.dataset.hsmSchoolVocabIcon='1';document.head.appendChild(icon);}
-  if(!document.querySelector('script[data-hsm-school-vocab-search-fix]')){var searchFix=document.createElement('script');searchFix.src='./teacher-school-vocab-search-fix.js?v=1';searchFix.defer=true;searchFix.dataset.hsmSchoolVocabSearchFix='1';document.head.appendChild(searchFix);}
-  if(/teacher\.html/i.test(location.pathname)&&!document.querySelector('script[data-hsm-school-vocab-tab-fix]')){var fix=document.createElement('script');fix.src='./teacher-school-vocab-tab-fix.js?v=1';fix.defer=true;fix.dataset.hsmSchoolVocabTabFix='1';document.head.appendChild(fix);}
+  if(/teacher\.html/i.test(location.pathname)){
+    if(!document.querySelector('script[data-hsm-school-vocab-ui]')){var ui=document.createElement('script');ui.src='./school-vocab-ui-patch.js?v=6';ui.defer=true;ui.dataset.hsmSchoolVocabUi='1';document.head.appendChild(ui);}
+    if(!document.querySelector('script[data-hsm-school-vocab-search-fix]')){var searchFix=document.createElement('script');searchFix.src='./teacher-school-vocab-search-fix.js?v=1';searchFix.defer=true;searchFix.dataset.hsmSchoolVocabSearchFix='1';document.head.appendChild(searchFix);}
+    if(!document.querySelector('script[data-hsm-school-vocab-tab-fix]')){var fix=document.createElement('script');fix.src='./teacher-school-vocab-tab-fix.js?v=1';fix.defer=true;fix.dataset.hsmSchoolVocabTabFix='1';document.head.appendChild(fix);}
+  }
 })();
