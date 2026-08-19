@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v39-learning-card-pc-fix';
+const CACHE_NAME = 'hansalmae-supabase-v40-school-vocab-search-fix';
 
 const REQUIRED_ASSETS = [
   './',
@@ -13,9 +13,11 @@ const REQUIRED_ASSETS = [
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
-  './school-vocab.js?v=1',
-  './school-vocab-ui-patch.js?v=4',
+  './school-vocab.js?v=2',
+  './school-vocab-ui-patch.js?v=6',
   './school-vocab-icon-patch.js?v=1',
+  './teacher-school-vocab-search-fix.js?v=1',
+  './teacher-school-vocab-tab-fix.js?v=1',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
