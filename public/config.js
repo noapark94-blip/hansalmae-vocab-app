@@ -23,7 +23,7 @@ window.HANSALMAE_CONFIG = {
     if(!document.querySelector('script[data-hsm-school-vocab-nav-close]')){var navClose=document.createElement('script');navClose.src='./school-vocab-nav-close-fix.js?v=1';navClose.defer=true;navClose.dataset.hsmSchoolVocabNavClose='1';document.head.appendChild(navClose);}
     if(!document.querySelector('script[data-hsm-school-vocab-polish]')){var polish=document.createElement('script');polish.src='./school-vocab-student-polish.js?v=1';polish.defer=true;polish.dataset.hsmSchoolVocabPolish='1';document.head.appendChild(polish);}
     if(!document.querySelector('script[data-hsm-school-vocab-custom-icon]')){var customIcon=document.createElement('script');customIcon.src='./school-vocab-custom-icon.js?v=1';customIcon.defer=true;customIcon.dataset.hsmSchoolVocabCustomIcon='1';document.head.appendChild(customIcon);}
-    if(!document.querySelector('script[data-hsm-learning-shortcut-stable]')){var stable=document.createElement('script');stable.src='./learning-shortcut-stable-layout.js?v=1';stable.defer=true;stable.dataset.hsmLearningShortcutStable='1';document.head.appendChild(stable);}
+    if(!document.querySelector('script[data-hsm-learning-shortcut-stable]')){var stable=document.createElement('script');stable.src='./learning-shortcut-stable-layout.js?v=2';stable.defer=true;stable.dataset.hsmLearningShortcutStable='1';document.head.appendChild(stable);}
     if(!document.querySelector('script[data-hsm-school-vocab-status]')){var status=document.createElement('script');status.src='./school-vocab-shortcut-status.js?v=1';status.defer=true;status.dataset.hsmSchoolVocabStatus='1';document.head.appendChild(status);}
   }
 })();
