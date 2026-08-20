@@ -29,9 +29,85 @@
   };
 
   const emojiPrefix = /^[\s\uFE0F]*(?:[🏆⭐📝📚📖🔒✅❌✨🔥💡🎯📊📢🔔👤⚙️🎉🥇🥈🥉]+[\uFE0F\u200D]*)+\s*/u;
+  const schoolAssessmentSeenPrefix = 'hsm-school-assessment-seen-v1:';
 
   function normalizedText(element) {
     return String(element && element.textContent || '').replace(emojiPrefix, '').replace(/\s+/g, ' ').trim();
+  }
+
+  function currentStudentSeenKey() {
+    const student = window.currentStudent;
+    if (!student) return '';
+    const id = student.studentId || student.userId || student.id || student.username || '';
+    if (!id) return '';
+    return schoolAssessmentSeenPrefix + String(id).trim().toLowerCase();
+  }
+
+  function isSchoolAssessmentCard(element) {
+    if (!element || !element.textContent) return false;
+    return normalizedText(element).indexOf('학교 수행평가') !== -1;
+  }
+
+  function schoolAssessmentCards() {
+    const selectors = [
+      'button.learning-shortcut',
+      'button.hsm-learning-shortcut',
+      'button[class*="shortcut"]',
+      'a[class*="shortcut"]',
+      '[role="button"][class*="shortcut"]',
+      '[onclick][class*="shortcut"]',
+      '.learning-shortcut',
+      '.hsm-learning-shortcut'
+    ];
+    const found = new Set();
+    document.querySelectorAll(selectors.join(',')).forEach(function (element) {
+      if (isSchoolAssessmentCard(element)) found.add(element);
+    });
+    return Array.from(found);
+  }
+
+  function schoolAssessmentNewBadges(card) {
+    if (!card) return [];
+    return Array.from(card.querySelectorAll('span,small,em,strong,b,div')).filter(function (element) {
+      return String(element.textContent || '').trim().toUpperCase() === 'NEW';
+    });
+  }
+
+  function syncSchoolAssessmentNewBadge() {
+    const key = currentStudentSeenKey();
+    if (!key) return;
+    let seen = false;
+    try {
+      seen = window.localStorage.getItem(key) === '1';
+    } catch (_) {}
+    schoolAssessmentCards().forEach(function (card) {
+      schoolAssessmentNewBadges(card).forEach(function (badge) {
+        badge.hidden = seen;
+        badge.style.display = seen ? 'none' : '';
+      });
+    });
+  }
+
+  function markSchoolAssessmentSeen() {
+    const key = currentStudentSeenKey();
+    if (!key) return;
+    try {
+      window.localStorage.setItem(key, '1');
+    } catch (_) {}
+    syncSchoolAssessmentNewBadge();
+  }
+
+  function closestSchoolAssessmentCard(target) {
+    let node = target && target.nodeType === 1 ? target : target && target.parentElement;
+    while (node && node !== document.body) {
+      if (
+        node.matches &&
+        node.matches('button,a,[role="button"],[onclick],.learning-shortcut,.hsm-learning-shortcut,[class*="shortcut"]') &&
+        isSchoolAssessmentCard(node)
+      ) return node;
+      node = node.parentElement;
+    }
+    return null;
   }
 
   function isOwnIconHeading(element) {
@@ -143,6 +219,13 @@
 
   function start() {
     decorateRoot(document.body);
+    syncSchoolAssessmentNewBadge();
+
+    document.addEventListener('click', function (event) {
+      if (!closestSchoolAssessmentCard(event.target)) return;
+      markSchoolAssessmentSeen();
+    }, true);
+
     if (typeof MutationObserver === 'undefined') return;
     new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
@@ -159,10 +242,12 @@
           decorateElement(target);
         }
       });
+      syncSchoolAssessmentNewBadge();
     }).observe(document.body, { childList: true, subtree: true });
   }
 
   window.HSMIcons = { decorate: decorateRoot, create: buildIcon };
+  window.HSMSchoolAssessmentNew = { sync: syncSchoolAssessmentNewBadge, markSeen: markSchoolAssessmentSeen };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 })();
