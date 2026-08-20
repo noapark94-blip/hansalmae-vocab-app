@@ -57,3 +57,6 @@ jobs:
 
       - name: Deploy school vocabulary Edge Function
         run: supabase functions deploy school-vocab --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
+
+      - name: Deploy feature state Edge Function
+        run: supabase functions deploy feature-state --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
