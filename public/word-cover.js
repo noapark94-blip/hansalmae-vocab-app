@@ -118,12 +118,18 @@
     node.setAttribute('aria-label', '가려진 내용을 확인');
     node.setAttribute('aria-pressed', 'false');
     var startX = 0;
+    var suppressClick = false;
     node.addEventListener('pointerdown', function (event) { startX = event.clientX; });
     node.addEventListener('pointerup', function (event) {
       if (Math.abs(event.clientX - startX) < 80) return;
+      suppressClick = true;
       reveal(node, true);
+      window.setTimeout(function () { suppressClick = false; }, 0);
     });
-    node.addEventListener('click', function () { reveal(node); });
+    node.addEventListener('click', function () {
+      if (suppressClick) return;
+      reveal(node);
+    });
     node.addEventListener('keydown', function (event) {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
