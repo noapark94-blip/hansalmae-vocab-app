@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v62-school-assessment-new-seen';
+const CACHE_NAME = 'hansalmae-supabase-v63-classcard-word-cover';
 
 const REQUIRED_ASSETS = [
   './',
@@ -22,6 +22,7 @@ const REQUIRED_ASSETS = [
   './school-vocab-custom-icon.js?v=1',
   './learning-shortcut-stable-layout.js?v=2',
   './school-vocab-shortcut-status.js?v=1',
+  './word-cover.js?v=1',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
