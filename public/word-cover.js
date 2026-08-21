@@ -53,6 +53,10 @@
       .hsm-cover-target{position:relative!important;isolation:isolate;display:flex!important;align-items:center;min-width:0;min-height:42px;cursor:pointer;border-radius:10px;outline:none;-webkit-tap-highlight-color:transparent}
       .word-English.hsm-cover-target,.personal-word.hsm-cover-target,.wrong-note-word.hsm-cover-target{flex:1 1 160px!important;width:auto!important;align-self:stretch}
       .word-meaning.hsm-cover-target,.wrong-note-meaning.hsm-cover-target,.hsm-school-word-eng.hsm-cover-target,.hsm-school-word-mean.hsm-cover-target{width:100%!important}
+      #wrongNotebookList .wrong-note-top>.wrong-note-word{width:100%;min-width:0}
+      #wrongNotebookList .wrong-note-meta.hsm-wrong-meta-row{display:flex!important;align-items:center;flex-wrap:wrap;gap:7px;margin:9px 0 0!important;color:#8b7b84!important;text-align:left!important;font-size:12px!important;line-height:1.35!important}
+      #wrongNotebookList .hsm-wrong-count{display:inline-flex;align-items:center;min-height:25px;padding:4px 9px;border:1px solid #ead2df;border-radius:999px;background:#f9edf3;color:#8f145f;font-weight:850;white-space:nowrap}
+      #wrongNotebookList .hsm-wrong-date{color:#8b7b84;font-weight:650;white-space:nowrap}
       .hsm-cover-target::after{content:'눌러서 확인';position:absolute;z-index:3;inset:0;display:flex;align-items:center;justify-content:center;padding:5px 8px;border:1px solid rgba(143,20,95,.12);border-radius:10px;background:linear-gradient(135deg,#f5e9f0 0%,#ead6e2 100%);color:#8d6178;font-size:11px;font-weight:850;line-height:1.2;white-space:nowrap;letter-spacing:-.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 3px 9px rgba(84,27,61,.08);opacity:1;transform:translateX(0);transition:opacity .2s ease,transform .24s cubic-bezier(.22,.8,.28,1),visibility .2s ease;visibility:visible}
       .hsm-cover-target.hsm-cover-revealed::after{opacity:0;transform:translateX(10px);visibility:hidden;pointer-events:none}
       .hsm-cover-target:focus-visible{box-shadow:0 0 0 3px rgba(143,20,95,.2)}
@@ -175,10 +179,59 @@
     });
   }
 
+  function seoulDateParts(date) {
+    var parts = new Intl.DateTimeFormat('ko-KR', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric'
+    }).formatToParts(date);
+    var values = {};
+    parts.forEach(function (part) {
+      if (part.type !== 'literal') values[part.type] = Number(part.value);
+    });
+    return values;
+  }
+
+  function formatWrongNoteDate(raw) {
+    var date = new Date(String(raw || '').trim());
+    if (Number.isNaN(date.getTime())) return '최근 기록';
+    var value = seoulDateParts(date);
+    var today = seoulDateParts(new Date());
+    return value.year === today.year
+      ? '최근 ' + value.month + '월 ' + value.day + '일'
+      : '최근 ' + value.year + '. ' + value.month + '. ' + value.day + '.';
+  }
+
+  function polishWrongNoteMeta() {
+    document.querySelectorAll('#wrongNotebookList .wrong-note-item .wrong-note-meta').forEach(function (meta) {
+      if (meta.dataset.hsmWrongMetaPolished === '1') return;
+      var text = meta.textContent.replace(/\s+/g, ' ').trim();
+      var countMatch = text.match(/틀린\s*횟수\s*(\d+)\s*회/);
+      var recentMatch = text.match(/최근\s+(.+)$/);
+      var count = countMatch ? countMatch[1] : '0';
+      var countBadge = document.createElement('span');
+      var dateLabel = document.createElement('span');
+      countBadge.className = 'hsm-wrong-count';
+      dateLabel.className = 'hsm-wrong-date';
+      countBadge.textContent = count + '회 오답';
+      dateLabel.textContent = formatWrongNoteDate(recentMatch ? recentMatch[1] : '');
+      meta.textContent = '';
+      meta.appendChild(countBadge);
+      meta.appendChild(dateLabel);
+      meta.classList.add('hsm-wrong-meta-row');
+      meta.dataset.hsmWrongMetaPolished = '1';
+      var card = meta.closest('.wrong-note-item');
+      var meaning = card && card.querySelector('.wrong-note-meaning');
+      if (meaning && meaning.nextElementSibling !== meta) meaning.insertAdjacentElement('afterend', meta);
+    });
+  }
+
   function sync() {
     scheduled = false;
     addStyle();
     ensureToolbars();
+    polishWrongNoteMeta();
     var mode = getMode();
     document.querySelectorAll('[data-cover-mode]').forEach(function (button) {
       var active = button.dataset.coverMode === mode;
