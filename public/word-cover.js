@@ -51,14 +51,14 @@
       .hsm-cover-segments button{width:auto!important;min-width:0!important;min-height:32px!important;margin:0!important;padding:6px 7px!important;border:0!important;border-radius:8px!important;background:transparent!important;box-shadow:none!important;color:#795e6d!important;font-family:inherit!important;font-size:11.5px!important;font-weight:800!important;line-height:1.2!important;white-space:nowrap;transition:background .18s ease,color .18s ease,box-shadow .18s ease,transform .12s ease}
       .hsm-cover-segments button:active{transform:scale(.97)}.hsm-cover-segments button.is-active{background:#fff!important;color:#8f145f!important;box-shadow:0 2px 8px rgba(86,25,62,.12)!important}
       .hsm-cover-target{position:relative!important;isolation:isolate;display:flex!important;align-items:center;min-width:0;min-height:42px;cursor:pointer;border-radius:10px;outline:none;-webkit-tap-highlight-color:transparent}
-      .word-English.hsm-cover-target,.personal-word.hsm-cover-target{flex:1 1 160px!important;width:auto!important;align-self:stretch}
+      .word-English.hsm-cover-target,.personal-word.hsm-cover-target,.wrong-note-word.hsm-cover-target{flex:1 1 160px!important;width:auto!important;align-self:stretch}
       .word-meaning.hsm-cover-target,.wrong-note-meaning.hsm-cover-target,.hsm-school-word-eng.hsm-cover-target,.hsm-school-word-mean.hsm-cover-target{width:100%!important}
       .hsm-cover-target::after{content:'눌러서 확인';position:absolute;z-index:3;inset:0;display:flex;align-items:center;justify-content:center;padding:5px 8px;border:1px solid rgba(143,20,95,.12);border-radius:10px;background:linear-gradient(135deg,#f5e9f0 0%,#ead6e2 100%);color:#8d6178;font-size:11px;font-weight:850;line-height:1.2;white-space:nowrap;letter-spacing:-.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 3px 9px rgba(84,27,61,.08);opacity:1;transform:translateX(0);transition:opacity .2s ease,transform .24s cubic-bezier(.22,.8,.28,1),visibility .2s ease;visibility:visible}
       .hsm-cover-target.hsm-cover-revealed::after{opacity:0;transform:translateX(10px);visibility:hidden;pointer-events:none}
       .hsm-cover-target:focus-visible{box-shadow:0 0 0 3px rgba(143,20,95,.2)}
       .hsm-cover-companion{filter:blur(7px);opacity:.22!important;user-select:none;pointer-events:none;transition:filter .2s ease,opacity .2s ease}
       .hsm-cover-companion.hsm-cover-companion-revealed{filter:none;opacity:1!important;user-select:auto;pointer-events:auto}
-      #vocabLoading:empty,#personalVocabularyLoading:empty{display:none!important}
+      #vocabLoading:empty,#personalVocabularyLoading:empty,#wrongNotebookLoading:empty{display:none!important}
       @media(max-width:560px){.hsm-cover-toolbar{grid-template-columns:22px minmax(0,1fr);gap:6px;padding:7px 8px}.hsm-cover-label{justify-content:center}.hsm-cover-label span{display:none}.hsm-cover-label svg{width:18px;height:18px}.hsm-cover-segments button{padding:7px 3px!important;font-size:11px!important}.hsm-cover-target::after{font-size:10.5px}}
       @media(prefers-reduced-motion:reduce){.hsm-cover-target::after,.hsm-cover-segments button,.hsm-cover-companion{transition:none!important}}
     `;
@@ -101,6 +101,8 @@
     if (regular) ensureToolbar(regular, 'regular', document.getElementById('vocabLoading'));
     var personal = document.getElementById('personalVocabularyList');
     if (personal) ensureToolbar(personal, 'personal', document.getElementById('personalVocabularyLoading'));
+    var wrong = document.getElementById('wrongNotebookList');
+    if (wrong) ensureToolbar(wrong, 'wrong', document.getElementById('wrongNotebookLoading'));
     if (schoolBookIsOpen()) {
       var schoolList = document.querySelector('#hsmSchoolPageBody .hsm-school-word-list');
       ensureToolbar(schoolList, 'school', document.getElementById('hsmSchoolSelectBar'));
@@ -114,10 +116,12 @@
     if (mode === 'meaning') {
       selectors.push('#vocabScreen:not(.hidden) #wordList .word-meaning');
       selectors.push('#personalVocabularyScreen:not(.hidden) #personalVocabularyList .wrong-note-meaning');
+      selectors.push('#wrongNotebookScreen:not(.hidden) #wrongNotebookList .wrong-note-meaning');
       if (schoolBookIsOpen()) selectors.push('#hsmSchoolPageBody .hsm-school-word-list .hsm-school-word-mean');
     } else {
       selectors.push('#vocabScreen:not(.hidden) #wordList .word-English');
       selectors.push('#personalVocabularyScreen:not(.hidden) #personalVocabularyList .personal-word');
+      selectors.push('#wrongNotebookScreen:not(.hidden) #wrongNotebookList .wrong-note-word');
       if (schoolBookIsOpen()) selectors.push('#hsmSchoolPageBody .hsm-school-word-list .hsm-school-word-eng');
     }
     return selectors.length ? Array.prototype.slice.call(document.querySelectorAll(selectors.join(','))) : [];
@@ -153,7 +157,7 @@
 
   function companionsFor(node) {
     var mode = getMode();
-    var card = node.closest('.word-card,.personal-item');
+    var card = node.closest('.word-card,.personal-item,.wrong-note-item');
     if (!card) return [];
     var selector = mode === 'meaning'
       ? '.word-translation,.wrong-note-translation'
