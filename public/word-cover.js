@@ -54,6 +54,7 @@
       .word-English.hsm-cover-target,.personal-word.hsm-cover-target,.wrong-note-word.hsm-cover-target{flex:1 1 160px!important;width:auto!important;align-self:stretch}
       .word-meaning.hsm-cover-target,.wrong-note-meaning.hsm-cover-target,.hsm-school-word-eng.hsm-cover-target,.hsm-school-word-mean.hsm-cover-target{width:100%!important}
       #wrongNotebookList .wrong-note-top>.wrong-note-word{width:100%;min-width:0}
+      #wrongNotebookList .wrong-note-top>.wrong-note-word.hsm-cover-target{flex:0 1 auto!important;align-self:flex-start!important;width:fit-content!important;min-width:min(160px,100%)!important;max-width:100%!important;min-height:46px}
       #wrongNotebookList .wrong-note-meta.hsm-wrong-meta-row{display:flex!important;align-items:center;flex-wrap:wrap;gap:7px;margin:9px 0 0!important;color:#8b7b84!important;text-align:left!important;font-size:12px!important;line-height:1.35!important}
       #wrongNotebookList .hsm-wrong-count{display:inline-flex;align-items:center;min-height:25px;padding:4px 9px;border:1px solid #ead2df;border-radius:999px;background:#f9edf3;color:#8f145f;font-weight:850;white-space:nowrap}
       #wrongNotebookList .hsm-wrong-date{color:#8b7b84;font-weight:650;white-space:nowrap}
