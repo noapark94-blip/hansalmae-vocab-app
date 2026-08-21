@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v65-word-cover-layout';
+const CACHE_NAME = 'hansalmae-supabase-v66-wrong-note-word-cover';
 
 const REQUIRED_ASSETS = [
   './',
@@ -22,7 +22,7 @@ const REQUIRED_ASSETS = [
   './school-vocab-custom-icon.js?v=1',
   './learning-shortcut-stable-layout.js?v=2',
   './school-vocab-shortcut-status.js?v=1',
-  './word-cover.js?v=3',
+  './word-cover.js?v=4',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
