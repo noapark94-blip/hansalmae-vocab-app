@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v67-wrong-note-meta-layout';
+const CACHE_NAME = 'hansalmae-supabase-v68-compact-wrong-cover';
 
 const REQUIRED_ASSETS = [
   './',
@@ -22,7 +22,7 @@ const REQUIRED_ASSETS = [
   './school-vocab-custom-icon.js?v=1',
   './learning-shortcut-stable-layout.js?v=2',
   './school-vocab-shortcut-status.js?v=1',
-  './word-cover.js?v=5',
+  './word-cover.js?v=6',
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
