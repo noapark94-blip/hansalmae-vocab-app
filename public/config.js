@@ -26,6 +26,6 @@ window.HANSALMAE_CONFIG = {
     if(!document.querySelector('script[data-hsm-school-vocab-custom-icon]')){var customIcon=document.createElement('script');customIcon.src='./school-vocab-custom-icon.js?v=1';customIcon.defer=true;customIcon.dataset.hsmSchoolVocabCustomIcon='1';document.head.appendChild(customIcon);}
     if(!document.querySelector('script[data-hsm-learning-shortcut-stable]')){var stable=document.createElement('script');stable.src='./learning-shortcut-stable-layout.js?v=2';stable.defer=true;stable.dataset.hsmLearningShortcutStable='1';document.head.appendChild(stable);}
     if(!document.querySelector('script[data-hsm-school-vocab-status]')){var status=document.createElement('script');status.src='./school-vocab-shortcut-status.js?v=1';status.defer=true;status.dataset.hsmSchoolVocabStatus='1';document.head.appendChild(status);}
-    if(!document.querySelector('script[data-hsm-word-cover]')){var cover=document.createElement('script');cover.src='./word-cover.js?v=2';cover.defer=true;cover.dataset.hsmWordCover='1';document.head.appendChild(cover);}
+    if(!document.querySelector('script[data-hsm-word-cover]')){var cover=document.createElement('script');cover.src='./word-cover.js?v=3';cover.defer=true;cover.dataset.hsmWordCover='1';document.head.appendChild(cover);}
   }
 })();

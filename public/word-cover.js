@@ -34,6 +34,9 @@
       node.classList.remove('hsm-cover-revealed');
       node.setAttribute('aria-pressed', 'false');
     });
+    document.querySelectorAll('.hsm-cover-companion').forEach(function (node) {
+      node.classList.remove('hsm-cover-companion', 'hsm-cover-companion-revealed');
+    });
     sync();
   }
 
@@ -42,18 +45,22 @@
     var style = document.createElement('style');
     style.id = 'hsmWordCoverStyle';
     style.textContent = `
-      .hsm-cover-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 16px;padding:10px 11px;border:1px solid #eadce4;border-radius:16px;background:linear-gradient(135deg,#fff 0%,#fcf7fa 100%);box-shadow:0 7px 20px rgba(94,33,70,.055)}
+      .hsm-cover-toolbar{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:9px;margin:12px 0 14px;padding:8px 9px;border:1px solid #eadce4;border-radius:14px;background:linear-gradient(135deg,#fff 0%,#fcf7fa 100%);box-shadow:0 5px 16px rgba(94,33,70,.05)}
       .hsm-cover-label{display:flex;align-items:center;gap:8px;min-width:0;color:#5d2947;font-size:13px;font-weight:850;white-space:nowrap}.hsm-cover-label svg{width:19px;height:19px;flex:none}
-      .hsm-cover-segments{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;border-radius:12px;background:#f1e7ed;min-width:0}
-      .hsm-cover-segments button{width:auto!important;min-height:34px!important;margin:0!important;padding:7px 10px!important;border:0!important;border-radius:9px!important;background:transparent!important;box-shadow:none!important;color:#795e6d!important;font-family:inherit!important;font-size:12px!important;font-weight:800!important;line-height:1.2!important;white-space:nowrap;transition:background .18s ease,color .18s ease,box-shadow .18s ease,transform .12s ease}
+      .hsm-cover-segments{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;width:100%;padding:3px;border-radius:11px;background:#f1e7ed;min-width:0}
+      .hsm-cover-segments button{width:auto!important;min-width:0!important;min-height:32px!important;margin:0!important;padding:6px 7px!important;border:0!important;border-radius:8px!important;background:transparent!important;box-shadow:none!important;color:#795e6d!important;font-family:inherit!important;font-size:11.5px!important;font-weight:800!important;line-height:1.2!important;white-space:nowrap;transition:background .18s ease,color .18s ease,box-shadow .18s ease,transform .12s ease}
       .hsm-cover-segments button:active{transform:scale(.97)}.hsm-cover-segments button.is-active{background:#fff!important;color:#8f145f!important;box-shadow:0 2px 8px rgba(86,25,62,.12)!important}
-      .hsm-cover-target{position:relative!important;isolation:isolate;min-height:30px;cursor:pointer;border-radius:9px;outline:none;-webkit-tap-highlight-color:transparent}
-      .hsm-cover-target::after{content:'눌러서 확인';position:absolute;z-index:3;inset:-3px -5px;display:flex;align-items:center;justify-content:center;padding:5px 8px;border:1px solid rgba(143,20,95,.12);border-radius:9px;background:linear-gradient(135deg,#f5e9f0 0%,#ead6e2 100%);color:#8d6178;font-size:11px;font-weight:850;letter-spacing:-.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 3px 9px rgba(84,27,61,.08);opacity:1;transform:translateX(0);transition:opacity .2s ease,transform .24s cubic-bezier(.22,.8,.28,1),visibility .2s ease;visibility:visible}
+      .hsm-cover-target{position:relative!important;isolation:isolate;display:flex!important;align-items:center;min-width:0;min-height:42px;cursor:pointer;border-radius:10px;outline:none;-webkit-tap-highlight-color:transparent}
+      .word-English.hsm-cover-target,.personal-word.hsm-cover-target{flex:1 1 160px!important;width:auto!important;align-self:stretch}
+      .word-meaning.hsm-cover-target,.wrong-note-meaning.hsm-cover-target,.hsm-school-word-eng.hsm-cover-target,.hsm-school-word-mean.hsm-cover-target{width:100%!important}
+      .hsm-cover-target::after{content:'눌러서 확인';position:absolute;z-index:3;inset:0;display:flex;align-items:center;justify-content:center;padding:5px 8px;border:1px solid rgba(143,20,95,.12);border-radius:10px;background:linear-gradient(135deg,#f5e9f0 0%,#ead6e2 100%);color:#8d6178;font-size:11px;font-weight:850;line-height:1.2;white-space:nowrap;letter-spacing:-.02em;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 3px 9px rgba(84,27,61,.08);opacity:1;transform:translateX(0);transition:opacity .2s ease,transform .24s cubic-bezier(.22,.8,.28,1),visibility .2s ease;visibility:visible}
       .hsm-cover-target.hsm-cover-revealed::after{opacity:0;transform:translateX(10px);visibility:hidden;pointer-events:none}
       .hsm-cover-target:focus-visible{box-shadow:0 0 0 3px rgba(143,20,95,.2)}
-      .hsm-school-word-eng.hsm-cover-target::after,.hsm-school-word-mean.hsm-cover-target::after{inset:-4px -4px}
-      @media(max-width:560px){.hsm-cover-toolbar{align-items:stretch;flex-direction:column;gap:8px;padding:10px}.hsm-cover-label{padding:0 2px}.hsm-cover-segments{width:100%}.hsm-cover-segments button{padding:8px 5px!important}.hsm-cover-target::after{font-size:10px}}
-      @media(prefers-reduced-motion:reduce){.hsm-cover-target::after,.hsm-cover-segments button{transition:none!important}}
+      .hsm-cover-companion{filter:blur(7px);opacity:.22!important;user-select:none;pointer-events:none;transition:filter .2s ease,opacity .2s ease}
+      .hsm-cover-companion.hsm-cover-companion-revealed{filter:none;opacity:1!important;user-select:auto;pointer-events:auto}
+      #vocabLoading:empty,#personalVocabularyLoading:empty{display:none!important}
+      @media(max-width:560px){.hsm-cover-toolbar{grid-template-columns:22px minmax(0,1fr);gap:6px;padding:7px 8px}.hsm-cover-label{justify-content:center}.hsm-cover-label span{display:none}.hsm-cover-label svg{width:18px;height:18px}.hsm-cover-segments button{padding:7px 3px!important;font-size:11px!important}.hsm-cover-target::after{font-size:10.5px}}
+      @media(prefers-reduced-motion:reduce){.hsm-cover-target::after,.hsm-cover-segments button,.hsm-cover-companion{transition:none!important}}
     `;
     document.head.appendChild(style);
   }
@@ -70,28 +77,34 @@
     return bar;
   }
 
-  function ensureToolbar(list, marker) {
+  function ensureToolbar(list, marker, beforeNode) {
     if (!list || !list.parentElement) return;
     var parent = list.parentElement;
     var existing = parent.querySelector('[data-hsm-cover-for="' + marker + '"]');
     if (!existing) {
       existing = toolbar();
       existing.dataset.hsmCoverFor = marker;
-      parent.insertBefore(existing, list);
     }
+    var reference = beforeNode && beforeNode.parentElement === parent ? beforeNode : list;
+    if (existing.nextSibling !== reference) parent.insertBefore(existing, reference);
   }
 
   function schoolBookIsOpen() {
     var page = document.getElementById('hsmSchoolPageBody');
-    return Boolean(page && page.querySelector('#hsmSchoolStartMixed') && page.querySelector('.hsm-school-word-list'));
+    return Boolean(page && page.querySelector('.hsm-school-word-list') &&
+      (page.querySelector('#hsmSchoolTestButton') || page.querySelector('#hsmSchoolSelectBar') || page.querySelector('#hsmSchoolStartMixed')) &&
+      !page.querySelector('.hsm-school-test-wrap,.hsm-school-free-card'));
   }
 
   function ensureToolbars() {
     var regular = document.getElementById('wordList');
-    if (regular) ensureToolbar(regular, 'regular');
+    if (regular) ensureToolbar(regular, 'regular', document.getElementById('vocabLoading'));
     var personal = document.getElementById('personalVocabularyList');
-    if (personal) ensureToolbar(personal, 'personal');
-    if (schoolBookIsOpen()) ensureToolbar(document.querySelector('#hsmSchoolPageBody .hsm-school-word-list'), 'school');
+    if (personal) ensureToolbar(personal, 'personal', document.getElementById('personalVocabularyLoading'));
+    if (schoolBookIsOpen()) {
+      var schoolList = document.querySelector('#hsmSchoolPageBody .hsm-school-word-list');
+      ensureToolbar(schoolList, 'school', document.getElementById('hsmSchoolSelectBar'));
+    }
   }
 
   function wantedTargets() {
@@ -138,11 +151,24 @@
     });
   }
 
+  function companionsFor(node) {
+    var mode = getMode();
+    var card = node.closest('.word-card,.personal-item');
+    if (!card) return [];
+    var selector = mode === 'meaning'
+      ? '.word-translation,.wrong-note-translation'
+      : '.word-example,.wrong-note-example';
+    return Array.prototype.slice.call(card.querySelectorAll(selector));
+  }
+
   function reveal(node, force) {
     var revealed = force ? true : !node.classList.contains('hsm-cover-revealed');
     node.classList.toggle('hsm-cover-revealed', revealed);
     node.setAttribute('aria-pressed', String(revealed));
     node.setAttribute('aria-label', revealed ? '내용 다시 가리기' : '가려진 내용을 확인');
+    companionsFor(node).forEach(function (companion) {
+      companion.classList.toggle('hsm-cover-companion-revealed', revealed);
+    });
   }
 
   function sync() {
@@ -157,6 +183,17 @@
     });
     var wanted = wantedTargets();
     var wantedSet = new Set(wanted);
+    var desiredCompanions = new Set();
+    wanted.forEach(function (node) {
+      companionsFor(node).forEach(function (companion) {
+        desiredCompanions.add(companion);
+      });
+    });
+    document.querySelectorAll('.hsm-cover-companion').forEach(function (node) {
+      if (!desiredCompanions.has(node)) {
+        node.classList.remove('hsm-cover-companion', 'hsm-cover-companion-revealed');
+      }
+    });
     document.querySelectorAll('.hsm-cover-target').forEach(function (node) {
       if (!wantedSet.has(node)) {
         node.classList.remove('hsm-cover-target', 'hsm-cover-revealed');
@@ -166,6 +203,10 @@
     wanted.forEach(function (node) {
       prepareTarget(node);
       node.classList.add('hsm-cover-target');
+      companionsFor(node).forEach(function (companion) {
+        companion.classList.add('hsm-cover-companion');
+        companion.classList.toggle('hsm-cover-companion-revealed', node.classList.contains('hsm-cover-revealed'));
+      });
     });
   }
 
