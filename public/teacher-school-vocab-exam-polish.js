@@ -52,7 +52,7 @@
       optionField.classList.add('hsm-sv-exam-options-field');
       Array.from(optionField.querySelectorAll('label')).slice(1).forEach(function(label){label.classList.add('hsm-sv-exam-option');label.removeAttribute('style');});
       var point=optionField.querySelector('#hsmSvExamPoint');
-      if(point){point.checked=false;var pointLabel=point.closest('label');if(pointLabel) pointLabel.remove();}
+      if(point){point.checked=false;var pointLabel=point.closest('label');if(pointLabel){pointLabel.hidden=true;pointLabel.setAttribute('aria-hidden','true');pointLabel.style.setProperty('display','none','important');}}
       var note=document.createElement('div');note.className='hsm-sv-xp-note';note.innerHTML='<span>✓</span><span><strong>경험치(XP) 지급</strong><br>수행평가 공식시험은 XP만 지급되고 랭킹 포인트는 지급되지 않습니다.</span>';optionField.appendChild(note);
     }
     var create=overlay.querySelector('#hsmSvExamCreate');
