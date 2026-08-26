@@ -9,13 +9,13 @@ window.HANSALMAE_CONFIG = {
 
 (function loadHansalmaeSchoolVocabulary(){
   if(document.querySelector('script[data-hsm-school-vocab]'))return;
-  var script=document.createElement('script');script.src='./school-vocab.js?v=3';script.defer=true;script.dataset.hsmSchoolVocab='1';document.head.appendChild(script);
+  var script=document.createElement('script');script.src='./school-vocab.js?v=4';script.defer=true;script.dataset.hsmSchoolVocab='1';document.head.appendChild(script);
   if(/teacher\.html/i.test(location.pathname)){
     if(!document.querySelector('script[data-hsm-school-vocab-ui]')){var ui=document.createElement('script');ui.src='./school-vocab-ui-patch.js?v=6';ui.defer=true;ui.dataset.hsmSchoolVocabUi='1';document.head.appendChild(ui);}
     if(!document.querySelector('script[data-hsm-school-vocab-search-fix]')){var searchFix=document.createElement('script');searchFix.src='./teacher-school-vocab-search-fix.js?v=1';searchFix.defer=true;searchFix.dataset.hsmSchoolVocabSearchFix='1';document.head.appendChild(searchFix);}
     if(!document.querySelector('script[data-hsm-school-vocab-tab-fix]')){var fix=document.createElement('script');fix.src='./teacher-school-vocab-tab-fix.js?v=1';fix.defer=true;fix.dataset.hsmSchoolVocabTabFix='1';document.head.appendChild(fix);}
     if(!document.querySelector('script[data-hsm-school-vocab-edit-fix]')){var editFix=document.createElement('script');editFix.src='./teacher-school-vocab-edit-fix.js?v=1';editFix.defer=true;editFix.dataset.hsmSchoolVocabEditFix='1';document.head.appendChild(editFix);}
-    if(!document.querySelector('script[data-hsm-school-vocab-exam-polish]')){var examPolish=document.createElement('script');examPolish.src='./teacher-school-vocab-exam-polish.js?v=2';examPolish.defer=true;examPolish.dataset.hsmSchoolVocabExamPolish='1';document.head.appendChild(examPolish);}
+    if(!document.querySelector('script[data-hsm-school-vocab-exam-polish]')){var examPolish=document.createElement('script');examPolish.src='./teacher-school-vocab-exam-polish.js?v=3';examPolish.defer=true;examPolish.dataset.hsmSchoolVocabExamPolish='1';document.head.appendChild(examPolish);}
   }else{
     if(!document.querySelector('script[data-hsm-school-vocab-student-page]')){var page=document.createElement('script');page.src='./school-vocab-student-page.js?v=2';page.defer=true;page.dataset.hsmSchoolVocabStudentPage='1';document.head.appendChild(page);}
     if(!document.querySelector('script[data-hsm-school-vocab-free-test-ui]')){var freeTestUi=document.createElement('script');freeTestUi.src='./school-vocab-free-test-ui.js?v=2';freeTestUi.defer=true;freeTestUi.dataset.hsmSchoolVocabFreeTestUi='1';document.head.appendChild(freeTestUi);}
