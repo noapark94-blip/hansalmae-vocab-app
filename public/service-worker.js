@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v70-school-exam-null-option';
+const CACHE_NAME = 'hansalmae-supabase-v71-school-exam-option-compat';
 
 const REQUIRED_ASSETS = [
   './',
@@ -12,7 +12,7 @@ const REQUIRED_ASSETS = [
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
-  './school-vocab.js?v=3',
+  './school-vocab.js?v=4',
   './school-vocab-student-page.js?v=2',
   './school-vocab-free-test-ui.js?v=2',
   './school-vocab-free-test-match.js?v=1',
@@ -37,7 +37,7 @@ const OPTIONAL_ASSETS = [
   './teacher-school-vocab-search-fix.js?v=1',
   './teacher-school-vocab-tab-fix.js?v=1',
   './teacher-school-vocab-edit-fix.js?v=1',
-  './teacher-school-vocab-exam-polish.js?v=2',
+  './teacher-school-vocab-exam-polish.js?v=3',
   './images/emblems/title-chick.png',
   './images/emblems/title-collector.png',
   './images/emblems/title-predator.png',
