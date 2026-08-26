@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v69-mobile-shortcut-layout';
+const CACHE_NAME = 'hansalmae-supabase-v70-school-exam-null-option';
 
 const REQUIRED_ASSETS = [
   './',
@@ -12,7 +12,7 @@ const REQUIRED_ASSETS = [
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
-  './school-vocab.js?v=2',
+  './school-vocab.js?v=3',
   './school-vocab-student-page.js?v=2',
   './school-vocab-free-test-ui.js?v=2',
   './school-vocab-free-test-match.js?v=1',

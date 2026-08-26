@@ -247,7 +247,7 @@
             deadlineAt: overlay.querySelector('#hsmSvExamEnd').value,
             passingScore: Number(overlay.querySelector('#hsmSvExamPass').value),
             allowRetake: overlay.querySelector('#hsmSvExamRetake').checked,
-            givePoint: overlay.querySelector('#hsmSvExamPoint').checked
+            givePoint: Boolean(overlay.querySelector('#hsmSvExamPoint') && overlay.querySelector('#hsmSvExamPoint').checked)
           });
           alert('수행평가 공식시험을 출제했습니다.\n' + result.questionCount + '문제 · ' + result.targetCount + '명');
           overlay.remove();
