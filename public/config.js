@@ -9,7 +9,7 @@ window.HANSALMAE_CONFIG = {
 
 (function loadHansalmaeSchoolVocabulary(){
   if(document.querySelector('script[data-hsm-school-vocab]'))return;
-  var script=document.createElement('script');script.src='./school-vocab.js?v=2';script.defer=true;script.dataset.hsmSchoolVocab='1';document.head.appendChild(script);
+  var script=document.createElement('script');script.src='./school-vocab.js?v=3';script.defer=true;script.dataset.hsmSchoolVocab='1';document.head.appendChild(script);
   if(/teacher\.html/i.test(location.pathname)){
     if(!document.querySelector('script[data-hsm-school-vocab-ui]')){var ui=document.createElement('script');ui.src='./school-vocab-ui-patch.js?v=6';ui.defer=true;ui.dataset.hsmSchoolVocabUi='1';document.head.appendChild(ui);}
     if(!document.querySelector('script[data-hsm-school-vocab-search-fix]')){var searchFix=document.createElement('script');searchFix.src='./teacher-school-vocab-search-fix.js?v=1';searchFix.defer=true;searchFix.dataset.hsmSchoolVocabSearchFix='1';document.head.appendChild(searchFix);}
