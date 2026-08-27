@@ -358,7 +358,7 @@
     if (!anchor || !anchor.parentNode) return;
     var button = anchor.cloneNode(true);
     button.id = 'hsmSchoolVocabShortcut'; button.removeAttribute('onclick');
-    var title = button.querySelector('.shortcut-title span:last-child'); if (title) title.innerHTML = '학교 수행평가 <span class="hsm-sv-launcher-badge">NEW</span>';
+    var title = button.querySelector('.shortcut-title span:last-child'); if (title) title.textContent = '학교 수행평가';
     var desc = button.querySelector('.shortcut-description'); if (desc) desc.textContent = '선생님이 배정한 학교 단어를 학습하고 연습시험을 봅니다.';
     button.onclick = openStudentRoot;
     anchor.insertAdjacentElement('afterend', button);
