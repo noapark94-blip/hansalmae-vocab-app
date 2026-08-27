@@ -10620,7 +10620,7 @@
                 '</div>' +
 
                 '<div class="ranking-detail">' +
-                  '포인트 획득 시험 ' +
+                  '시험 ' +
                   student.testCount +
                   '회 · PERFECT ' +
                   student.perfectCount +
@@ -15396,6 +15396,7 @@ google.script.run
     font-size:13px;
     line-height:1.4;
     word-break:keep-all;
+    white-space:nowrap;
   }
   @media(max-width:560px){
     .ranking-item{
@@ -15458,7 +15459,7 @@ google.script.run
     }
     .hsm-ranking-info .ranking-detail{
       font-size:12.5px;
-      overflow-wrap:anywhere;
+      letter-spacing:-.12px;
     }
     .hsm-ranking-showcase-card{
       width:min(94vw,410px);
