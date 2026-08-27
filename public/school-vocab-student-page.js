@@ -29,7 +29,7 @@
   #hsmSchoolVocabShortcut .shortcut-title span{writing-mode:horizontal-tb!important;word-break:keep-all!important}
   #hsmSchoolVocabShortcut .section-icon,#hsmSchoolVocabShortcut>.shortcut-icon{grid-column:1!important;grid-row:1!important;margin:0!important;justify-self:center!important}
   #hsmSchoolVocabShortcut .shortcut-description{grid-column:1/3!important;grid-row:2!important;margin:0!important;min-width:0!important;line-height:1.55!important}
-  #hsmSchoolVocabShortcut .shortcut-stat,#hsmSchoolVocabShortcut .shortcut-status,#hsmSchoolVocabShortcut .shortcut-meta{grid-column:1/3!important;grid-row:3!important;margin:0!important;min-width:0!important;line-height:1.4!important}
+  #hsmSchoolVocabShortcut .shortcut-count,#hsmSchoolVocabShortcut .shortcut-stat,#hsmSchoolVocabShortcut .shortcut-status,#hsmSchoolVocabShortcut .shortcut-meta{grid-column:1/3!important;grid-row:3!important;margin:0!important;min-width:0!important;line-height:1.4!important}
   #hsmSchoolVocabShortcut .shortcut-arrow,#hsmSchoolVocabShortcut>.arrow{grid-column:3!important;grid-row:1/4!important;align-self:center!important;justify-self:end!important}
   `;document.head.appendChild(s);}
 
