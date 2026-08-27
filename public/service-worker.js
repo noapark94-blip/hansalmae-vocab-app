@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v72-ranking-detail-one-line';
+const CACHE_NAME = 'hansalmae-supabase-v73-school-shortcut-count-layout';
 
 const REQUIRED_ASSETS = [
   './',
@@ -13,7 +13,7 @@ const REQUIRED_ASSETS = [
   './manifest.json',
   './config.js',
   './school-vocab.js?v=4',
-  './school-vocab-student-page.js?v=2',
+  './school-vocab-student-page.js?v=3',
   './school-vocab-free-test-ui.js?v=2',
   './school-vocab-free-test-match.js?v=1',
   './school-vocab-selection-fix.js?v=2',
