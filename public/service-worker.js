@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v71-school-exam-option-compat';
+const CACHE_NAME = 'hansalmae-supabase-v72-ranking-detail-one-line';
 
 const REQUIRED_ASSETS = [
   './',
