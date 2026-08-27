@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hansalmae-supabase-v73-school-shortcut-count-layout';
+const CACHE_NAME = 'hansalmae-supabase-v74-school-shortcut-card-flow';
 
 const REQUIRED_ASSETS = [
   './',
@@ -12,15 +12,15 @@ const REQUIRED_ASSETS = [
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   './config.js',
-  './school-vocab.js?v=4',
-  './school-vocab-student-page.js?v=3',
+  './school-vocab.js?v=5',
+  './school-vocab-student-page.js?v=4',
   './school-vocab-free-test-ui.js?v=2',
   './school-vocab-free-test-match.js?v=1',
   './school-vocab-selection-fix.js?v=2',
   './school-vocab-nav-close-fix.js?v=1',
   './school-vocab-student-polish.js?v=2',
   './school-vocab-custom-icon.js?v=1',
-  './learning-shortcut-stable-layout.js?v=2',
+  './learning-shortcut-stable-layout.js?v=3',
   './school-vocab-shortcut-status.js?v=1',
   './word-cover.js?v=6',
   './icon.svg',
