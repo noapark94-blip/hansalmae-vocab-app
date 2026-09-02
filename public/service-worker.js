@@ -1,4 +1,4 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260902-1';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260902-2';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
@@ -28,6 +28,7 @@ const REQUIRED_ASSETS = [
   versioned('./learning-shortcut-stable-layout.js'),
   versioned('./school-vocab-shortcut-status.js'),
   versioned('./word-cover.js'),
+  versioned('./school-content-student.js'),
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
@@ -43,6 +44,7 @@ const OPTIONAL_ASSETS = [
   versioned('./teacher-school-vocab-tab-fix.js'),
   versioned('./teacher-school-vocab-edit-fix.js'),
   versioned('./teacher-school-vocab-exam-polish.js'),
+  versioned('./school-content-teacher.js'),
   './images/emblems/title-chick.png',
   './images/emblems/title-collector.png',
   './images/emblems/title-predator.png',

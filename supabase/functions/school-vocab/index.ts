@@ -70,6 +70,268 @@ function cleanWords(input: unknown) {
   })).filter((x) => x.word && x.meaning).slice(0, 2000);
 }
 
+function cleanContentSentences(input: unknown) {
+  if (!Array.isArray(input)) return [];
+  return input.slice(0, 300).map((sentence: any, sentenceIndex: number) => {
+    const sourceChunks = Array.isArray(sentence?.chunks) ? sentence.chunks.slice(0, 24) : [];
+    const chunks = sourceChunks.map((chunk: any, chunkIndex: number) => {
+      const text = str(chunk?.text).slice(0, 1000);
+      if (!text) throw new Error(`${sentenceIndex + 1}번 문장의 ${chunkIndex + 1}번 청크가 비어 있습니다.`);
+      const sourceMorphs = Array.isArray(chunk?.morphs) ? chunk.morphs.slice(0, 5) : [];
+      const morphs = sourceMorphs.map((morph: any, morphIndex: number) => {
+        const answerText = str(morph?.answerText).slice(0, 200);
+        const prompt = str(morph?.prompt).slice(0, 200);
+        if (!answerText || !prompt) {
+          throw new Error(`${sentenceIndex + 1}번 문장의 어형 변형 제시어와 정답을 확인해주세요.`);
+        }
+        if (!text.includes(answerText)) {
+          throw new Error(`${sentenceIndex + 1}번 문장의 '${answerText}'이(가) 해당 청크에 없습니다.`);
+        }
+        const accepted = Array.isArray(morph?.answers) ? morph.answers.map(str).filter(Boolean) : [];
+        const answers = [...new Set([answerText, ...accepted])].slice(0, 12);
+        return {
+          id: `s${sentenceIndex + 1}c${chunkIndex + 1}m${morphIndex + 1}`,
+          answerText,
+          prompt,
+          answers,
+          hint: str(morph?.hint).slice(0, 160),
+          caseSensitive: Boolean(morph?.caseSensitive),
+        };
+      });
+      let morphCursor = 0;
+      for (const morph of morphs) {
+        const position = text.indexOf(morph.answerText, morphCursor);
+        if (position < 0) {
+          throw new Error(`${sentenceIndex + 1}번 문장의 어형 정답 부분이 겹치거나 본문 순서와 다릅니다.`);
+        }
+        morphCursor = position + morph.answerText.length;
+      }
+      return { id: `s${sentenceIndex + 1}c${chunkIndex + 1}`, text, morphs };
+    });
+    if (chunks.length < 2) throw new Error(`${sentenceIndex + 1}번 문장은 청크가 2개 이상이어야 합니다.`);
+    return {
+      id: `s${sentenceIndex + 1}`,
+      position: sentenceIndex + 1,
+      translation: str(sentence?.translation).slice(0, 2000),
+      chunks,
+    };
+  });
+}
+
+async function contentStudents() {
+  const { data, error } = await admin.from("profiles")
+    .select("student_id,display_name,base_grade,base_year")
+    .eq("role", "student").eq("enabled", true).order("display_name");
+  if (error) throw error;
+  return (data ?? []).map((s: any) => ({
+    studentId: s.student_id,
+    studentName: s.display_name,
+    grade: s.base_grade,
+    baseGrade: s.base_grade,
+    baseYear: s.base_year,
+  }));
+}
+
+async function teacherContentBooks() {
+  const { data, error } = await admin.from("school_content_books").select(
+    "id,title,school_name,grade_label,textbook,unit_label,description,sentence_count,enabled,created_at,updated_at,school_content_assignments(count)",
+  ).order("updated_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((book: any) => ({
+    bookId: book.id,
+    title: book.title,
+    schoolName: book.school_name,
+    gradeLabel: book.grade_label,
+    textbook: book.textbook,
+    unitLabel: book.unit_label,
+    description: book.description,
+    sentenceCount: book.sentence_count,
+    studentCount: book.school_content_assignments?.[0]?.count ?? 0,
+    enabled: book.enabled,
+    createdAt: book.created_at,
+    updatedAt: book.updated_at,
+  }));
+}
+
+async function teacherContentSetup(token: unknown) {
+  await requireStaff(token);
+  const [books, students] = await Promise.all([teacherContentBooks(), contentStudents()]);
+  return { books, students };
+}
+
+async function teacherGetContentBook(token: unknown, payload: any) {
+  await requireStaff(token);
+  const bookId = str(payload?.bookId);
+  const [{ data: book, error }, { data: assignments, error: assignmentError }] = await Promise.all([
+    admin.from("school_content_books").select("*").eq("id", bookId).single(),
+    admin.from("school_content_assignments").select("profiles(student_id,display_name,base_grade)")
+      .eq("book_id", bookId).order("assigned_at"),
+  ]);
+  if (error) throw error;
+  if (assignmentError) throw assignmentError;
+  return {
+    bookId: book.id,
+    title: book.title,
+    schoolName: book.school_name,
+    gradeLabel: book.grade_label,
+    textbook: book.textbook,
+    unitLabel: book.unit_label,
+    description: book.description,
+    enabled: book.enabled,
+    sentences: book.sentences ?? [],
+    students: (assignments ?? []).map((x: any) => ({
+      studentId: x.profiles?.student_id,
+      studentName: x.profiles?.display_name,
+      grade: x.profiles?.base_grade,
+    })),
+  };
+}
+
+async function teacherSaveContentBook(token: unknown, payload: any) {
+  await requireStaff(token);
+  const title = str(payload?.title).slice(0, 120);
+  const sentences = cleanContentSentences(payload?.sentences);
+  if (!title) throw new Error("본문 이름을 입력해주세요.");
+  if (!sentences.length) throw new Error("청크를 나눈 문장을 1개 이상 등록해주세요.");
+  const requestedIds = Array.isArray(payload?.studentIds)
+    ? [...new Set(payload.studentIds.map(str).filter(Boolean))].slice(0, 2000)
+    : [];
+  if (!requestedIds.length) throw new Error("본문을 받을 학생을 1명 이상 선택해주세요.");
+  const { data: students, error: studentError } = await admin.from("profiles").select("id,student_id")
+    .eq("role", "student").eq("enabled", true).in("student_id", requestedIds);
+  if (studentError) throw studentError;
+  if ((students ?? []).length !== requestedIds.length) throw new Error("선택한 학생 중 사용할 수 없는 계정이 있습니다.");
+
+  const values = {
+    title,
+    school_name: str(payload?.schoolName).slice(0, 120),
+    grade_label: str(payload?.gradeLabel).slice(0, 80),
+    textbook: str(payload?.textbook).slice(0, 120),
+    unit_label: str(payload?.unitLabel).slice(0, 120),
+    description: str(payload?.description).slice(0, 500),
+    sentences,
+    sentence_count: sentences.length,
+    enabled: payload?.enabled !== false,
+    updated_at: new Date().toISOString(),
+  };
+  let bookId = str(payload?.bookId);
+  let created = false;
+  if (bookId) {
+    const { error } = await admin.from("school_content_books").update(values).eq("id", bookId);
+    if (error) throw error;
+  } else {
+    const { data, error } = await admin.from("school_content_books").insert(values).select("id").single();
+    if (error) throw error;
+    bookId = data.id;
+    created = true;
+  }
+  try {
+    const { error: deleteError } = await admin.from("school_content_assignments").delete().eq("book_id", bookId);
+    if (deleteError) throw deleteError;
+    const { error: insertError } = await admin.from("school_content_assignments").insert(
+      (students ?? []).map((student: any) => ({ book_id: bookId, user_id: student.id })),
+    );
+    if (insertError) throw insertError;
+  } catch (error) {
+    if (created) await admin.from("school_content_books").delete().eq("id", bookId);
+    throw error;
+  }
+  return { bookId, sentenceCount: sentences.length, studentCount: students?.length ?? 0 };
+}
+
+async function teacherDeleteContentBook(token: unknown, payload: any) {
+  await requireStaff(token);
+  const { error } = await admin.from("school_content_books").delete().eq("id", str(payload?.bookId));
+  if (error) throw error;
+  return { success: true };
+}
+
+async function studentListContentBooks(token: unknown) {
+  const profile = await requireStudent(token);
+  const { data, error } = await admin.from("school_content_assignments").select(
+    "assigned_at,school_content_books!inner(id,title,school_name,grade_label,textbook,unit_label,description,sentence_count,enabled,updated_at)",
+  ).eq("user_id", profile.id).eq("school_content_books.enabled", true).order("assigned_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((x: any) => ({
+    bookId: x.school_content_books.id,
+    title: x.school_content_books.title,
+    schoolName: x.school_content_books.school_name,
+    gradeLabel: x.school_content_books.grade_label,
+    textbook: x.school_content_books.textbook,
+    unitLabel: x.school_content_books.unit_label,
+    description: x.school_content_books.description,
+    sentenceCount: x.school_content_books.sentence_count,
+    assignedAt: x.assigned_at,
+    updatedAt: x.school_content_books.updated_at,
+  }));
+}
+
+async function studentGetContentBook(token: unknown, payload: any) {
+  const profile = await requireStudent(token);
+  const bookId = str(payload?.bookId);
+  const { data: assignment, error: assignmentError } = await admin.from("school_content_assignments")
+    .select("book_id").eq("book_id", bookId).eq("user_id", profile.id).maybeSingle();
+  if (assignmentError) throw assignmentError;
+  if (!assignment) throw new Error("배정되지 않은 학교 내신 본문입니다.");
+  const { data: book, error } = await admin.from("school_content_books").select("*").eq("id", bookId).single();
+  if (error) throw error;
+  if (!book.enabled) throw new Error("현재 사용할 수 없는 학교 내신 본문입니다.");
+  return {
+    bookId: book.id,
+    title: book.title,
+    schoolName: book.school_name,
+    gradeLabel: book.grade_label,
+    textbook: book.textbook,
+    unitLabel: book.unit_label,
+    description: book.description,
+    sentences: book.sentences ?? [],
+  };
+}
+
+async function studentSaveContentResult(token: unknown, payload: any) {
+  const profile = await requireStudent(token);
+  const bookId = str(payload?.bookId);
+  const { data: assignment, error: assignmentError } = await admin.from("school_content_assignments")
+    .select("book_id").eq("book_id", bookId).eq("user_id", profile.id).maybeSingle();
+  if (assignmentError) throw assignmentError;
+  if (!assignment) throw new Error("배정되지 않은 학교 내신 본문입니다.");
+  const sentenceCount = Math.max(0, Math.min(300, Math.floor(num(payload?.sentenceCount))));
+  const sentenceCorrect = Math.max(0, Math.min(sentenceCount, Math.floor(num(payload?.sentenceCorrectCount))));
+  const orderCorrect = Math.max(0, Math.min(sentenceCount, Math.floor(num(payload?.orderCorrectCount))));
+  const morphCorrect = Math.max(0, Math.min(sentenceCount, Math.floor(num(payload?.morphCorrectCount))));
+  const score = sentenceCount ? Math.round(sentenceCorrect / sentenceCount * 100) : 0;
+  const details = Array.isArray(payload?.details) ? payload.details.slice(0, 300).map((item: any) => ({
+    sentenceId: str(item?.sentenceId).slice(0, 80),
+    orderCorrect: Boolean(item?.orderCorrect),
+    morphCorrect: Boolean(item?.morphCorrect),
+    correct: Boolean(item?.correct),
+    selectedChunkIds: Array.isArray(item?.selectedChunkIds)
+      ? item.selectedChunkIds.map(str).filter(Boolean).slice(0, 24)
+      : [],
+    morphs: Array.isArray(item?.morphs) ? item.morphs.slice(0, 120).map((morph: any) => ({
+      morphId: str(morph?.morphId).slice(0, 80),
+      prompt: str(morph?.prompt).slice(0, 200),
+      answer: str(morph?.answer).slice(0, 300),
+      correctAnswers: Array.isArray(morph?.correctAnswers)
+        ? morph.correctAnswers.map(str).filter(Boolean).slice(0, 12)
+        : [],
+      correct: Boolean(morph?.correct),
+    })) : [],
+  })) : [];
+  const { error } = await admin.from("school_content_results").insert({
+    book_id: bookId,
+    user_id: profile.id,
+    sentence_count: sentenceCount,
+    sentence_correct_count: sentenceCorrect,
+    order_correct_count: orderCorrect,
+    morph_correct_count: morphCorrect,
+    score,
+    details,
+  });
+  if (error) throw error;
+  return { success: true, score };
+}
+
 async function teacherBooks() {
   const { data, error } = await admin.from("school_vocab_books").select(
     "id,title,school_name,grade_label,description,enabled,created_at,updated_at,school_vocab_words(count),school_vocab_assignments(count)",
@@ -321,6 +583,13 @@ Deno.serve(async (req) => {
       case "studentListBooks": result = await studentListBooks(token); break;
       case "studentGetBook": result = await studentGetBook(token, payload); break;
       case "studentSaveSelfTestResult": result = await studentSaveSelfTestResult(token, payload); break;
+      case "teacherContentSetup": result = await teacherContentSetup(token); break;
+      case "teacherGetContentBook": result = await teacherGetContentBook(token, payload); break;
+      case "teacherSaveContentBook": result = await teacherSaveContentBook(token, payload); break;
+      case "teacherDeleteContentBook": result = await teacherDeleteContentBook(token, payload); break;
+      case "studentListContentBooks": result = await studentListContentBooks(token); break;
+      case "studentGetContentBook": result = await studentGetContentBook(token, payload); break;
+      case "studentSaveContentResult": result = await studentSaveContentResult(token, payload); break;
       default: throw new Error("지원하지 않는 수행평가 단어장 요청입니다.");
     }
     return ok(result);
