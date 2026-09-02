@@ -85,6 +85,8 @@ async function verifyStudent() {
   const { window } = dom;
   window.localStorage.setItem('hansalmaeStudentToken', 'student-test');
   window.alert = () => {};
+  const confirms = [];
+  window.confirm = (message) => { confirms.push(message); return false; };
   window.HANSALMAE_CONFIG = { apiUrl: 'https://example.supabase.co/functions/v1/api' };
   const sentence = {
     id: 's1',
@@ -114,6 +116,11 @@ async function verifyStudent() {
   click(window, window.document.querySelector('[data-content-book]'));
   await wait(20);
   click(window, window.document.querySelector('#hsmContentStart'));
+  click(window, window.document.querySelector('.hsm-ct-back'));
+  assert.equal(window.document.querySelector('#hsmSchoolContentPage').hidden, false, '시험 종료를 취소하면 시험 화면에 남아야 합니다.');
+  assert.match(confirms[0], /현재 시험을 그만둘까요/);
+  assert.match(confirms[0], /진행 내용은 삭제됩니다/);
+  assert.ok(window.document.querySelector('.hsm-content-study'), '시험 종료 취소 후 진행 중인 문제가 유지되어야 합니다.');
   for (const id of ['c1', 'c2', 'c3']) {
     click(window, window.document.querySelector(`[data-pool-id="${id}"]`));
   }
