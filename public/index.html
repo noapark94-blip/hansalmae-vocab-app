@@ -2665,7 +2665,8 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./config.js"></script>
+  <script src="./config.js?v=20260902-1"></script>
+  <script src="./app-update.js?v=20260902-1"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -12552,27 +12553,6 @@ google.script.run
     }
 
     window.setTimeout(removeAppSplash, 1800);
-
-    window.addEventListener('load', function () {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
-          .register('./service-worker.js?v=78', {
-            updateViaCache: 'none'
-          })
-          .then(function (registration) {
-            registration.update();
-
-            if (registration.waiting) {
-              registration.waiting.postMessage({
-                type: 'SKIP_WAITING'
-              });
-            }
-          })
-          .catch(function (error) {
-            console.error('서비스 워커 등록 실패:', error);
-          });
-      }
-    }, { once: true });
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', function (event) {
