@@ -9,12 +9,14 @@
   function isOpen(){var page=schoolPage();return !!(page && !page.hidden);}
   function closeSchoolPageForNav(){
     var page=schoolPage();
-    if(!page || page.hidden)return;
+    if(!page || page.hidden)return true;
+    if(typeof window.hsmRequestCloseSchoolVocabPage_==='function')return window.hsmRequestCloseSchoolVocabPage_();
     page.hidden=true;
     document.documentElement.style.overflow='';
     if(location.hash==='#school-vocab'){
       try{history.replaceState({},'',location.pathname+location.search);}catch(_){ }
     }
+    return true;
   }
 
   document.addEventListener('click',function(event){
@@ -25,7 +27,11 @@
     var aria=normalize(target.getAttribute && (target.getAttribute('aria-label')||target.getAttribute('title')));
     var label=NAV_LABELS.find(function(x){return text===x || aria===x || text.endsWith(x);});
     if(!label)return;
-    closeSchoolPageForNav();
+    if(closeSchoolPageForNav()===false){
+      event.preventDefault();
+      event.stopPropagation();
+      if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+    }
   },true);
 
   window.addEventListener('popstate',function(){
