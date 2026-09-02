@@ -1,4 +1,8 @@
-const CACHE_NAME = 'hansalmae-supabase-v74-school-shortcut-card-flow';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260902-1';
+const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
+const versioned = function (path) {
+  return path + '?v=' + encodeURIComponent(BUILD_VERSION);
+};
 
 const REQUIRED_ASSETS = [
   './',
@@ -11,18 +15,19 @@ const REQUIRED_ASSETS = [
   './teacher-modern.css',
   './fonts/PretendardVariable.woff2',
   './manifest.json',
-  './config.js',
-  './school-vocab.js?v=5',
-  './school-vocab-student-page.js?v=4',
-  './school-vocab-free-test-ui.js?v=2',
-  './school-vocab-free-test-match.js?v=1',
-  './school-vocab-selection-fix.js?v=2',
-  './school-vocab-nav-close-fix.js?v=1',
-  './school-vocab-student-polish.js?v=2',
-  './school-vocab-custom-icon.js?v=1',
-  './learning-shortcut-stable-layout.js?v=3',
-  './school-vocab-shortcut-status.js?v=1',
-  './word-cover.js?v=6',
+  versioned('./config.js'),
+  versioned('./app-update.js'),
+  versioned('./school-vocab.js'),
+  versioned('./school-vocab-student-page.js'),
+  versioned('./school-vocab-free-test-ui.js'),
+  versioned('./school-vocab-free-test-match.js'),
+  versioned('./school-vocab-selection-fix.js'),
+  versioned('./school-vocab-nav-close-fix.js'),
+  versioned('./school-vocab-student-polish.js'),
+  versioned('./school-vocab-custom-icon.js'),
+  versioned('./learning-shortcut-stable-layout.js'),
+  versioned('./school-vocab-shortcut-status.js'),
+  versioned('./word-cover.js'),
   './icon.svg',
   './icon-180.png',
   './icon-192.png',
@@ -33,11 +38,11 @@ const REQUIRED_ASSETS = [
 
 const OPTIONAL_ASSETS = [
   './teacher.html',
-  './school-vocab-ui-patch.js?v=6',
-  './teacher-school-vocab-search-fix.js?v=1',
-  './teacher-school-vocab-tab-fix.js?v=1',
-  './teacher-school-vocab-edit-fix.js?v=1',
-  './teacher-school-vocab-exam-polish.js?v=3',
+  versioned('./school-vocab-ui-patch.js'),
+  versioned('./teacher-school-vocab-search-fix.js'),
+  versioned('./teacher-school-vocab-tab-fix.js'),
+  versioned('./teacher-school-vocab-edit-fix.js'),
+  versioned('./teacher-school-vocab-exam-polish.js'),
   './images/emblems/title-chick.png',
   './images/emblems/title-collector.png',
   './images/emblems/title-predator.png',
@@ -125,6 +130,22 @@ self.addEventListener('fetch', function (event) {
     }));
     return;
   }
+
+  const isCodeAsset = request.destination === 'script' ||
+    request.destination === 'style' ||
+    /\.(?:js|css)$/i.test(url.pathname);
+  if (isCodeAsset) {
+    event.respondWith(fetch(request, { cache: 'no-store' }).then(function (response) {
+      if (!response || !response.ok) throw new Error('코드 파일 응답 오류: ' + (response ? response.status : 'NO_RESPONSE'));
+      const copy = response.clone();
+      caches.open(CACHE_NAME).then(function (cache) { cache.put(request, copy); });
+      return response;
+    }).catch(function () {
+      return caches.match(request);
+    }));
+    return;
+  }
+
   event.respondWith(caches.match(request).then(function (cached) {
     const networkRequest = fetch(request).then(function (response) {
       if (response && response.ok) {
