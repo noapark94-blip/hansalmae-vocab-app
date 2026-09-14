@@ -176,22 +176,9 @@ async function profileFromToken(token: unknown) {
     .maybeSingle();
   if (sessionError) throw sessionError;
   if (!activeSession) {
-    // 기능 배포 전에 로그인되어 있던 계정은 첫 요청의 기기를 활성 기기로 등록합니다.
-    const expiresAt = new Date(Date.now() + 55 * 60000).toISOString();
-    const { error: bootstrapError } = await admin.from("student_active_sessions")
-      .upsert({
-        user_id: data.user.id,
-        token_hash: tokenHash,
-        expires_at: expiresAt,
-        last_seen_at: new Date().toISOString(),
-      }, { onConflict: "user_id" });
-    if (bootstrapError) throw bootstrapError;
+    throw new StudentSessionError("NO_SESSION", "로그인 정보가 없습니다. 다시 로그인해주세요.");
   } else {
     if (new Date(activeSession.expires_at).getTime() <= Date.now()) {
-      await admin.from("student_active_sessions").delete().eq(
-        "user_id",
-        data.user.id,
-      );
       throw new StudentSessionError(
         "SESSION_EXPIRED",
         "로그인 정보가 만료되었습니다. 다시 로그인해주세요.",
@@ -472,7 +459,8 @@ async function refreshStudentSession(args: unknown[]) {
     .maybeSingle();
   if (replaceError) throw replaceError;
   if (!replaced) {
-    throw new StudentSessionError(
+    const { data: latest } = await admin.from("student_active_sessions").select("token_hash").eq("user_id", data.user.id).maybeSingle();
+    if (latest?.token_hash !== await sha256(data.session.access_token)) throw new StudentSessionError(
       "LOGGED_IN_FROM_ANOTHER_DEVICE",
       "다른 기기에서 로그인되어 현재 기기의 접속이 종료되었습니다.",
     );
@@ -532,6 +520,7 @@ async function getWords(args: unknown[], vocabulary = false) {
 
 async function saveResult(token: unknown, result: any) {
   const p = await profileFromToken(token);
+  result = { ...result }; delete result.loginToken; delete result.token; delete result.refreshToken;
   const setName = str(result.sheetName ?? result.dbName ?? result.wordType);
   const { data: set } = setName
     ? await admin.from("word_sets").select("id").eq("name", setName)
@@ -541,13 +530,15 @@ async function saveResult(token: unknown, result: any) {
     result.questionCount ?? result.totalQuestions ?? result.problemCount,
   );
   const correct = num(result.correctCount ?? result.correctAnswers);
-  const score = num(
-    result.score,
-    count ? Math.round(correct / count * 100) : 0,
-  );
-  const id = uuid();
+  const score = count ? Math.round(correct / count * 100) : 0;
+  if (!Number.isInteger(count) || count < 1 || count > 2000 || !Number.isInteger(correct) || correct < 0 || correct > count || score < 0 || score > 100) throw new Error("시험 결과를 다시 확인해주세요.");
+  const requestId = str(result.requestId);
+  if (requestId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestId)) throw new Error("시험 저장 번호가 올바르지 않습니다.");
+  const id = requestId || uuid();
+  const { data: existing } = await admin.from("test_results").select("user_id").eq("id",id).maybeSingle();
+  if (existing && existing.user_id !== p.id) throw new Error("시험 저장 번호를 다시 확인해주세요.");
   const earned = Math.max(0, Math.round(count * score / 100));
-  const points = num(result.points, earned);
+  const points = earned;
   const grade = str(result.grade) ||
     (score >= 100
       ? "S"
@@ -2213,6 +2204,9 @@ async function dispatch(
       if (assignmentError || !assignment) {
         throw assignmentError ?? new Error("배정되지 않은 시험입니다.");
       }
+      if (exam.status === "cancelled" || exam.status === "closed") throw new Error("종료되거나 취소된 시험입니다.");
+      if (exam.starts_at && new Date(exam.starts_at).getTime() > Date.now()) throw new Error("아직 응시 시간이 아닙니다.");
+      if (exam.ends_at && new Date(exam.ends_at).getTime() < Date.now()) throw new Error("응시 기간이 끝났습니다.");
       const questions = teacherQuestions(
         exam.teacher_exam_words ?? [],
         str(exam.question_type),

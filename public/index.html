@@ -2665,8 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./config.js?v=20260902-4"></script>
-  <script src="./app-update.js?v=20260902-4"></script>
+  <script src="./school-runtime.js?v=20260914-1"></script>
+  <script src="./config.js?v=20260914-1"></script>
+  <script src="./app-update.js?v=20260914-1"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -2867,7 +2868,7 @@
         }
       }
 
-      function refreshStudentSessionForApi_() {
+      function refreshStudentSessionUnlocked_() {
         if (silentStudentRefreshPromise_) {
           return silentStudentRefreshPromise_;
         }
@@ -2921,7 +2922,38 @@
         return silentStudentRefreshPromise_;
       }
 
+      function syncStoredSession_() {
+        const saved = localStorage.getItem('hansalmaeStudentToken');
+        if(saved && saved !== currentLoginToken) {
+          currentLoginToken = saved;
+          currentRefreshToken = localStorage.getItem('hansalmaeStudentRefreshToken') || '';
+          currentTokenExpiresAt = Number(localStorage.getItem('hansalmaeStudentTokenExpiresAt') || 0);
+        }
+      }
+      let coordinatedRefresh_ = null;
+      function refreshStudentSessionForApi_() {
+        if(coordinatedRefresh_) return coordinatedRefresh_;
+        const startedToken = currentLoginToken;
+        const run = function() {
+          syncStoredSession_();
+          if(currentLoginToken !== startedToken && currentTokenExpiresAt * 1000 > Date.now()+60000) {
+            return Promise.resolve({success:true,token:currentLoginToken,refreshToken:currentRefreshToken,expiresAt:currentTokenExpiresAt});
+          }
+          return refreshStudentSessionUnlocked_();
+        };
+        coordinatedRefresh_ = (navigator.locks ? navigator.locks.request('hsm-student-session-refresh',run) : run())
+          .finally(function(){coordinatedRefresh_=null;});
+        return coordinatedRefresh_;
+      }
+      window.hsmRefreshStudentSession_ = refreshStudentSessionForApi_;
+      window.hsmEnsureStudentSession_ = function(force) {
+        syncStoredSession_();
+        if(!force && currentLoginToken && currentTokenExpiresAt*1000 > Date.now()+600000) return Promise.resolve(currentLoginToken);
+        return refreshStudentSessionForApi_().then(function(r){return r.token;});
+      };
+
       function callServer(functionName, args, allowSessionRetry) {
+        if(functionName==='saveTestResult' && args[1] && window.hsmQueueMainResult_) window.hsmQueueMainResult_(args[1]);
         if (allowSessionRetry !== false) allowSessionRetry = true;
         const requestKey = stableKey(functionName, args);
         const cached = getCached(functionName, args);
@@ -2996,11 +3028,17 @@
             );
 
             clearRelatedCache(functionName);
+            if(functionName==='saveTestResult' && window.hsmMainResultSaved_) window.hsmMainResultSaved_(args[1].requestId);
 
             return payload.result;
           })
           .catch(function (error) {
             const sessionCode = String(error && error.code || '');
+            if(allowSessionRetry && ['LOGGED_IN_FROM_ANOTHER_DEVICE','SESSION_EXPIRED'].indexOf(sessionCode)>=0) {
+              const saved = localStorage.getItem('hansalmaeStudentToken');
+              if(saved && args && saved !== args[0]) { syncStoredSession_(); const retry=(args||[]).slice();retry[0]=saved;return callServer(functionName,retry,false); }
+            }
+
             const canRefresh =
               allowSessionRetry &&
               functionName !== 'studentRefreshSession' &&
@@ -6999,6 +7037,7 @@
     function savePersistentStudentLogin_(token, student, refreshToken, expiresAt) {
       localStorage.setItem(HSM_STUDENT_TOKEN_KEY_, String(token || ''));
       localStorage.setItem(HSM_STUDENT_INFO_KEY_, JSON.stringify(student || {}));
+      window.dispatchEvent(new Event('hsm:student-session'));
       if (refreshToken) localStorage.setItem(HSM_STUDENT_REFRESH_KEY_, String(refreshToken));
       if (expiresAt) localStorage.setItem(HSM_STUDENT_EXPIRES_KEY_, String(expiresAt));
     }
@@ -7539,29 +7578,9 @@
         currentTokenExpiresAt * 1000 - Date.now() < 10 * 60 * 1000
       ) {
         studentSessionCheckInFlight = true;
-        google.script.run
-          .withSuccessHandler(function (result) {
-            studentSessionCheckInFlight = false;
-            if (!result || !result.success) {
-              if (typeof window.handleTerminatedStudentSession_ === 'function') {
-                window.handleTerminatedStudentSession_(result || {
-                  code: 'SESSION_EXPIRED',
-                  message: '로그인 정보가 만료되었습니다.'
-                });
-              }
-              return;
-            }
-            currentLoginToken = result.token;
-            currentRefreshToken = result.refreshToken || currentRefreshToken;
-            currentTokenExpiresAt = Number(result.expiresAt || 0);
-            savePersistentStudentLogin_(currentLoginToken, currentStudent, currentRefreshToken, currentTokenExpiresAt);
-          })
-          .withFailureHandler(function (error) {
-            studentSessionCheckInFlight = false;
-            /* 확정적인 세션 종료는 공통 API 처리기가 한 번만 안내합니다. */
-            console.warn('로그인 자동 갱신 실패', error);
-          })
-          .studentRefreshSession(token, currentRefreshToken);
+        window.hsmEnsureStudentSession_().catch(function(error){
+          if(typeof window.handleTerminatedStudentSession_==='function') window.handleTerminatedStudentSession_(error);
+        }).finally(function(){studentSessionCheckInFlight=false;});
         return;
       }
 
@@ -7801,32 +7820,12 @@
           return;
         }
 
-        google.script.run
-          .withSuccessHandler(function (result) {
-            if (!result || !result.success) {
-              if (typeof window.handleTerminatedStudentSession_ === 'function') {
-                window.handleTerminatedStudentSession_(result || {
-                  code: 'SESSION_EXPIRED',
-                  message: '로그인 정보가 만료되었습니다.'
-                });
-              }
-              return;
-            }
-
-            applyRestoredStudentSession_(
-              result.token,
-              result.refreshToken,
-              result.expiresAt,
-              savedStudent,
-              true
-            );
-            verifyRestoredStudentSession_(result.token, savedStudent, false);
-          })
-          .withFailureHandler(function (error) {
-            console.warn('앱 시작 시 로그인 자동 갱신 실패', error);
-            /* 네트워크 오류라면 기존 화면과 로그인 정보를 그대로 유지합니다. */
-          })
-          .studentRefreshSession(savedToken, currentRefreshToken);
+        window.hsmRefreshStudentSession_().then(function(result){
+          applyRestoredStudentSession_(result.token,result.refreshToken,result.expiresAt,savedStudent,true);
+          verifyRestoredStudentSession_(result.token,savedStudent,false);
+        }).catch(function(error){
+          if(typeof window.handleTerminatedStudentSession_==='function')window.handleTerminatedStudentSession_(error);
+        });
       }, shouldRefreshFirst ? 0 : (savedStudent ? 2500 : 0));
     };
 
@@ -11979,7 +11978,7 @@
           saveTestProgress();
           showQuestion();
         } else {
-          clearTestProgress();
+          saveTestProgress();
           showResult();
         }
       }, 1900);
@@ -12002,7 +12001,8 @@
 
 
     function showResult() {
-      clearTestProgress();
+      if (!currentTestContext.resultRequestId) currentTestContext.resultRequestId = crypto.randomUUID();
+      saveTestProgress();
 
       document
         .getElementById('testScreen')
@@ -12044,13 +12044,12 @@
 
 
         const resultData = {
+  requestId: currentTestContext.resultRequestId,
   studentId:
     currentStudent
       ? currentStudent.studentId
       : '',
 
-  loginToken:
-    currentLoginToken,
 
   studentName:
     currentStudent
@@ -12132,6 +12131,7 @@
 
 google.script.run
   .withSuccessHandler(function (savedResult) {
+    if(currentTestContext.resultRequestId===resultData.requestId)clearTestProgress();
     let pointMessage = '';
 
     if (

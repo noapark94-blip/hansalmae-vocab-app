@@ -7,7 +7,7 @@
   function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
   function apiUrl(){var b=window.HANSALMAE_CONFIG&&window.HANSALMAE_CONFIG.apiUrl;return String(b||'').replace(/\/api\/?$/,'/school-vocab');}
   function token(){return localStorage.getItem('hansalmaeStudentToken')||'';}
-  async function call(action,payload){var r=await fetch(apiUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,token:token(),payload:payload||{}})});var j={};try{j=await r.json();}catch(_){ }if(!r.ok||!j.success)throw new Error(j&&j.message?j.message:'수행평가 단어장 요청에 실패했습니다.');return j.result;}
+  async function call(action,payload){if(window.hsmSchoolApi_)return window.hsmSchoolApi_(action,payload);var r=await fetch(apiUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,token:token(),payload:payload||{}})});var j={};try{j=await r.json();}catch(_){ }if(!r.ok||!j.success)throw new Error(j&&j.message?j.message:'수행평가 단어장 요청에 실패했습니다.');return j.result;}
   function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
 
   function style(){if(document.getElementById('hsmSchoolStudentPageStyle'))return;var s=document.createElement('style');s.id='hsmSchoolStudentPageStyle';s.textContent=`
@@ -39,11 +39,14 @@
   function root(){var r=document.getElementById('hsmSchoolStudentPage');if(!r){r=document.createElement('section');r.id='hsmSchoolStudentPage';r.hidden=true;document.body.appendChild(r);}return r;}
   function head(title,sub){return '<div class="hsm-school-page-inner"><div class="hsm-school-page-head"><button class="hsm-school-back" type="button" aria-label="뒤로가기">‹</button><div><div class="hsm-school-page-title">'+esc(title)+'</div>'+(sub?'<div class="hsm-school-page-sub">'+esc(sub)+'</div>':'')+'</div></div><div id="hsmSchoolPageBody"></div></div>';}
   function openPage(){var r=root();state.previousHash=location.hash;r.innerHTML=head('학교 수행평가 단어장','선생님이 배정한 학교 단어장');r.hidden=false;document.documentElement.style.overflow='hidden';history.pushState({hsmSchoolVocabPage:true},'',location.href.split('#')[0]+'#school-vocab');r.querySelector('.hsm-school-back').onclick=requestClosePage;loadBooks();}
-  function isTestActive(){var r=root();return!r.hidden&&!!r.querySelector('.hsm-school-test-wrap');}
+  function isTestActive(){var r=root();return!r.hidden&&!!r.querySelector('.hsm-school-test-wrap,.hsm-school-free-card');}
   function confirmTestExit(){return!isTestActive()||confirm('현재 시험을 그만둘까요?\n지금까지의 진행 내용은 삭제됩니다.');}
   function requestClosePage(){if(!confirmTestExit())return false;closePage();return true;}
-  function closePage(){var r=root();r.hidden=true;document.documentElement.style.overflow='';state.test=null;if(location.hash==='#school-vocab'){history.replaceState({},'',location.pathname+location.search+(state.previousHash||''));}}
+  function closePage(){window.dispatchEvent(new Event('hsm:school-test-close'));var r=root();r.hidden=true;document.documentElement.style.overflow='';state.test=null;if(location.hash==='#school-vocab'){history.replaceState({},'',location.pathname+location.search+(state.previousHash||''));}}
   window.hsmRequestCloseSchoolVocabPage_=requestClosePage;
+  window.hsmSchoolVocabList_=loadBooks;
+  window.hsmSchoolVocabBook_=function(){return state.book;};
+  window.hsmSchoolVocabReopen_=function(){if(state.book)return openBook(state.book.bookId);return loadBooks();};
   function body(){return root().querySelector('#hsmSchoolPageBody');}
 
   async function loadBooks(){var b=body();b.innerHTML='<div class="hsm-school-card"><div class="hsm-school-empty">수행평가 단어장을 불러오는 중입니다.</div></div>';try{state.books=await call('studentListBooks');b.innerHTML='<div class="hsm-school-card"><div class="hsm-school-note">학교 수행평가용으로 배정된 단어장입니다. 연습시험은 월간 랭킹 포인트에 반영되지 않습니다.</div>'+(state.books.length?state.books.map(function(x){return '<div class="hsm-school-book" data-book="'+esc(x.bookId)+'"><div><h3>'+esc(x.title)+'</h3><div class="hsm-school-meta">'+esc([x.schoolName,x.gradeLabel].filter(Boolean).join(' · '))+'<br>단어 '+Number(x.wordCount||0)+'개</div></div><button class="hsm-school-open" type="button">단어장 열기</button></div>';}).join('<div style="height:10px"></div>'):'<div class="hsm-school-empty">아직 배정된 수행평가 단어장이 없습니다.</div>')+'</div>';b.onclick=function(e){var c=e.target.closest('[data-book]');if(c)openBook(c.getAttribute('data-book'));};}catch(e){b.innerHTML='<div class="hsm-school-card"><div class="hsm-school-empty">'+esc(e.message)+'</div></div>';}}

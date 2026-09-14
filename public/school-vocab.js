@@ -21,6 +21,7 @@
   }
 
   async function call(action, token, payload) {
+    if(/^student/.test(action)&&window.hsmSchoolApi_)return window.hsmSchoolApi_(action,payload);
     var response = await fetch(apiUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -368,6 +369,7 @@
     injectStyle();
     installTeacher();
     installStudentShortcut();
+    window.addEventListener('hsm:student-session', installStudentShortcut);
     var attempts = 0;
     var timer = setInterval(function () {
       attempts++; installTeacher(); installStudentShortcut();

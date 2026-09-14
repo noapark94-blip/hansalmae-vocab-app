@@ -5,7 +5,7 @@
   window.__HANSALMAE_APP_UPDATE_COORDINATOR__ = true;
 
   var BUILD_VERSION = String(
-    window.HANSALMAE_BUILD_VERSION || '20260902-4'
+    window.HANSALMAE_BUILD_VERSION || '20260914-1'
   );
   var RELOAD_GUARD_KEY = 'hsmAppUpdateReloadGuard';
   var UPDATED_TO_KEY = 'hsmAppUpdatedTo';
@@ -35,13 +35,14 @@
   }
 
   function isTestInProgress() {
+    if(document.querySelector('[data-hsm-save-pending]')||window.hsmTeacherDirty_)return true;
     if (isVisible(document.getElementById('testScreen'))) return true;
     if (isVisible(document.getElementById('teacherExamTakingScreen'))) return true;
 
     var schoolPage = document.getElementById('hsmSchoolStudentPage');
     if (
       isVisible(schoolPage) &&
-      schoolPage.querySelector('.hsm-school-test-wrap')
+      schoolPage.querySelector('.hsm-school-test-wrap,.hsm-school-free-card')
     ) return true;
 
     var schoolOverlay = document.getElementById('hsmSchoolVocabStudentOverlay');
@@ -113,7 +114,7 @@
   function applyUpdateWhenSafe() {
     if (!updatePending) return;
     if (isTestInProgress()) {
-      showToast('시험이 끝나면 최신 버전이 자동 적용됩니다.', 2600);
+      showToast('진행 중인 작업을 마치면 최신 버전이 적용됩니다.', 2600);
       if (!pendingTimer) {
         pendingTimer = window.setInterval(function () {
           if (!isTestInProgress()) {
@@ -196,6 +197,9 @@
     }
   }
 
+  document.addEventListener('input',function(e){if(/teacher\.html/i.test(location.pathname)&&e.target.closest('.panel'))window.hsmTeacherDirty_=true;});
+  document.addEventListener('change',function(e){if(/teacher\.html/i.test(location.pathname)&&e.target.closest('.panel'))window.hsmTeacherDirty_=true;});
+  window.addEventListener('beforeunload',function(e){if(window.hsmTeacherDirty_){e.preventDefault();e.returnValue='';}});
   function start() {
     showAppliedMessage();
     registerServiceWorker();

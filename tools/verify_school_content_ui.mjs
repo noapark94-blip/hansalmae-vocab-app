@@ -109,6 +109,7 @@ async function verifyStudent() {
     if (request.action === 'studentSaveContentResult') result = { success: true, score: 100 };
     return { ok: true, json: async () => ({ success: true, result }) };
   };
+  window.eval(fs.readFileSync(new URL('public/school-runtime.js',root),'utf8'));
   window.eval(studentScript);
   await wait(20);
   const shortcut = window.document.querySelector('#hsmSchoolContentShortcut');
@@ -175,6 +176,7 @@ async function verifySchoolVocabExit() {
         : {};
     return { ok: true, json: async () => ({ success: true, result }) };
   };
+  window.eval(fs.readFileSync(new URL('public/school-runtime.js',root),'utf8'));
   window.eval(schoolVocabScript);
   window.eval(schoolVocabNavScript);
   await wait(20);

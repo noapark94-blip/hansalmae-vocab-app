@@ -139,6 +139,7 @@ async function teacherContentBooks() {
   if (error) throw error;
   return (data ?? []).map((book: any) => ({
     bookId: book.id,
+    updatedAt: book.updated_at,
     title: book.title,
     schoolName: book.school_name,
     gradeLabel: book.grade_label,
@@ -149,7 +150,6 @@ async function teacherContentBooks() {
     studentCount: book.school_content_assignments?.[0]?.count ?? 0,
     enabled: book.enabled,
     createdAt: book.created_at,
-    updatedAt: book.updated_at,
   }));
 }
 
@@ -171,6 +171,7 @@ async function teacherGetContentBook(token: unknown, payload: any) {
   if (assignmentError) throw assignmentError;
   return {
     bookId: book.id,
+    updatedAt: book.updated_at,
     title: book.title,
     schoolName: book.school_name,
     gradeLabel: book.grade_label,
@@ -214,29 +215,12 @@ async function teacherSaveContentBook(token: unknown, payload: any) {
     enabled: payload?.enabled !== false,
     updated_at: new Date().toISOString(),
   };
-  let bookId = str(payload?.bookId);
-  let created = false;
-  if (bookId) {
-    const { error } = await admin.from("school_content_books").update(values).eq("id", bookId);
-    if (error) throw error;
-  } else {
-    const { data, error } = await admin.from("school_content_books").insert(values).select("id").single();
-    if (error) throw error;
-    bookId = data.id;
-    created = true;
-  }
-  try {
-    const { error: deleteError } = await admin.from("school_content_assignments").delete().eq("book_id", bookId);
-    if (deleteError) throw deleteError;
-    const { error: insertError } = await admin.from("school_content_assignments").insert(
-      (students ?? []).map((student: any) => ({ book_id: bookId, user_id: student.id })),
-    );
-    if (insertError) throw insertError;
-  } catch (error) {
-    if (created) await admin.from("school_content_books").delete().eq("id", bookId);
-    throw error;
-  }
-  return { bookId, sentenceCount: sentences.length, studentCount: students?.length ?? 0 };
+  const { data, error } = await admin.rpc("save_school_book_atomic", {
+    p_kind: "content", p_book_id: str(payload?.bookId) || null, p_values: values,
+    p_items: sentences, p_student_ids: requestedIds, p_expected_updated_at: payload?.updatedAt || null,
+  });
+  if (error) throw error;
+  return data;
 }
 
 async function teacherDeleteContentBook(token: unknown, payload: any) {
@@ -278,6 +262,7 @@ async function studentGetContentBook(token: unknown, payload: any) {
   if (!book.enabled) throw new Error("현재 사용할 수 없는 학교 내신 본문입니다.");
   return {
     bookId: book.id,
+    updatedAt: book.updated_at,
     title: book.title,
     schoolName: book.school_name,
     gradeLabel: book.grade_label,
@@ -318,7 +303,8 @@ async function studentSaveContentResult(token: unknown, payload: any) {
       correct: Boolean(morph?.correct),
     })) : [],
   })) : [];
-  const { error } = await admin.from("school_content_results").insert({
+  const { error } = await admin.from("school_content_results").upsert({
+    request_id: str(payload?.requestId) || crypto.randomUUID(),
     book_id: bookId,
     user_id: profile.id,
     sentence_count: sentenceCount,
@@ -327,7 +313,7 @@ async function studentSaveContentResult(token: unknown, payload: any) {
     morph_correct_count: morphCorrect,
     score,
     details,
-  });
+  }, { onConflict: "user_id,request_id", ignoreDuplicates: true });
   if (error) throw error;
   return { success: true, score };
 }
@@ -382,6 +368,7 @@ async function teacherGetBook(token: unknown, payload: any) {
   if (assignmentsError) throw assignmentsError;
   return {
     bookId: book.id,
+    updatedAt: book.updated_at,
     title: book.title,
     schoolName: book.school_name,
     gradeLabel: book.grade_label,
@@ -407,42 +394,14 @@ async function teacherSaveBook(token: unknown, payload: any) {
     .eq("role", "student").eq("enabled", true).in("student_id", requestedStudentIds);
   if (studentError) throw studentError;
   if (!students?.length) throw new Error("선택한 학생 계정을 찾을 수 없습니다.");
-  const { data: creator } = await admin.from("profiles").select("id").in("role", ["teacher", "admin"]).limit(1).maybeSingle();
-  let bookId = str(payload?.bookId);
-  let created = false;
-  if (bookId) {
-    const { error } = await admin.from("school_vocab_books").update({
-      title: str(payload.title), school_name: str(payload.schoolName), grade_label: str(payload.gradeLabel),
-      description: str(payload.description), enabled: payload.enabled !== false, updated_at: new Date().toISOString(),
-    }).eq("id", bookId);
-    if (error) throw error;
-  } else {
-    const { data, error } = await admin.from("school_vocab_books").insert({
-      title: str(payload.title), school_name: str(payload.schoolName), grade_label: str(payload.gradeLabel),
-      description: str(payload.description), enabled: true, created_by: creator?.id ?? null,
-    }).select("id").single();
-    if (error) throw error;
-    bookId = data.id;
-    created = true;
-  }
-  try {
-    await Promise.all([
-      admin.from("school_vocab_words").delete().eq("book_id", bookId),
-      admin.from("school_vocab_assignments").delete().eq("book_id", bookId),
-    ]);
-    const { error: wordError } = await admin.from("school_vocab_words").insert(words.map((w, i) => ({
-      book_id: bookId, position: i + 1, ...w,
-    })));
-    if (wordError) throw wordError;
-    const { error: assignmentError } = await admin.from("school_vocab_assignments").insert((students ?? []).map((s: any) => ({
-      book_id: bookId, user_id: s.id,
-    })));
-    if (assignmentError) throw assignmentError;
-  } catch (e) {
-    if (created) await admin.from("school_vocab_books").delete().eq("id", bookId);
-    throw e;
-  }
-  return { success: true, bookId, wordCount: words.length, studentCount: students?.length ?? 0 };
+  if (students.length !== requestedStudentIds.length) throw new Error("선택한 학생 계정을 다시 확인해주세요.");
+  const { data, error } = await admin.rpc("save_school_book_atomic", {
+    p_kind: "vocab", p_book_id: str(payload?.bookId) || null,
+    p_values: { title: str(payload.title), school_name: str(payload.schoolName), grade_label: str(payload.gradeLabel), description: str(payload.description), enabled: payload.enabled !== false },
+    p_items: words, p_student_ids: requestedStudentIds, p_expected_updated_at: payload?.updatedAt || null,
+  });
+  if (error) throw error;
+  return data;
 }
 
 async function teacherDeleteBook(token: unknown, payload: any) {
@@ -557,10 +516,11 @@ async function studentSaveSelfTestResult(token: unknown, payload: any) {
   const correct = Math.max(0, Math.min(count, num(payload?.correctCount)));
   const score = count ? Math.round(correct / count * 100) : 0;
   const wrongWords = Array.isArray(payload?.wrongWords) ? payload.wrongWords.slice(0, 500) : [];
-  const { error } = await admin.from("school_vocab_test_results").insert({
+  const { error } = await admin.from("school_vocab_test_results").upsert({
+    request_id: str(payload?.requestId) || crypto.randomUUID(),
     book_id: bookId, user_id: p.id, question_type: str(payload?.questionType) || "mixed",
     question_count: count, correct_count: correct, score, wrong_words: wrongWords,
-  });
+  }, { onConflict: "user_id,request_id", ignoreDuplicates: true });
   if (error) throw error;
   return { success: true, score };
 }

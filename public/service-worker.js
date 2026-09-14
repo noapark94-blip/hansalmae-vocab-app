@@ -1,4 +1,4 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260902-4';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260914-1';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
@@ -16,6 +16,7 @@ const REQUIRED_ASSETS = [
   './fonts/PretendardVariable.woff2',
   './manifest.json',
   versioned('./config.js'),
+  versioned('./school-runtime.js'),
   versioned('./app-update.js'),
   versioned('./school-vocab.js'),
   versioned('./school-vocab-student-page.js'),
