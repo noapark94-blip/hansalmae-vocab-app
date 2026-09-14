@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260914-1"></script>
-  <script src="./config.js?v=20260914-1"></script>
-  <script src="./app-update.js?v=20260914-1"></script>
+  <script src="./school-runtime.js?v=20260914-2"></script>
+  <script src="./config.js?v=20260914-2"></script>
+  <script src="./app-update.js?v=20260914-2"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -2924,6 +2924,10 @@
 
       function syncStoredSession_() {
         const saved = localStorage.getItem('hansalmaeStudentToken');
+        const storedStudent = JSON.parse(localStorage.getItem('hansalmaeStudentInfo') || '{}');
+        if(currentStudent && currentStudent.studentId && (!saved || storedStudent.studentId !== currentStudent.studentId)) {
+          throw makeError('다른 탭에서 계정이 변경되었습니다. 새로고침 후 다시 이용해주세요.', 'ACCOUNT_CHANGED');
+        }
         if(saved && saved !== currentLoginToken) {
           currentLoginToken = saved;
           currentRefreshToken = localStorage.getItem('hansalmaeStudentRefreshToken') || '';
@@ -2953,6 +2957,9 @@
       };
 
       function callServer(functionName, args, allowSessionRetry) {
+        if(currentStudent && currentStudent.studentId && args && args[0] === currentLoginToken && !['studentLogin','studentLogout','studentRefreshSession'].includes(functionName)) {
+          try { syncStoredSession_(); } catch(error) { return Promise.reject(error); }
+        }
         if(functionName==='saveTestResult' && args[1] && window.hsmQueueMainResult_) window.hsmQueueMainResult_(args[1]);
         if (allowSessionRetry !== false) allowSessionRetry = true;
         const requestKey = stableKey(functionName, args);
@@ -11866,6 +11873,7 @@
       const question =
         questions[currentIndex];
 
+      question.submittedAnswer = selectedAnswer;
       const buttons =
         document.querySelectorAll('.choice');
 
@@ -12045,6 +12053,8 @@
 
         const resultData = {
   requestId: currentTestContext.resultRequestId,
+  source: currentTestContext.source || 'normal',
+  answerEvidence: questions.map(function(q){return {type:q.type, word:q.data.word, day:q.data.day, sheetName:Object.prototype.hasOwnProperty.call(q.data,"sheetName")?q.data.sheetName:currentTestContext.sheetName, answer:q.submittedAnswer};}),
   studentId:
     currentStudent
       ? currentStudent.studentId
@@ -13162,6 +13172,7 @@ google.script.run
           );
         })
         .studentSubmitTeacherExam(currentLoginToken, {
+          requestId: teacherExamSession.submitRequestId || (teacherExamSession.submitRequestId=crypto.randomUUID()),
           examId: teacherExamSession.exam.examId,
           attempt: Number(teacherExamSession.exam.attempt) || 1,
           answers: answers

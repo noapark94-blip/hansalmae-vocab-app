@@ -5,7 +5,7 @@
   window.__HANSALMAE_APP_UPDATE_COORDINATOR__ = true;
 
   var BUILD_VERSION = String(
-    window.HANSALMAE_BUILD_VERSION || '20260914-1'
+    window.HANSALMAE_BUILD_VERSION || '20260914-2'
   );
   var RELOAD_GUARD_KEY = 'hsmAppUpdateReloadGuard';
   var UPDATED_TO_KEY = 'hsmAppUpdatedTo';
@@ -197,8 +197,8 @@
     }
   }
 
-  document.addEventListener('input',function(e){if(/teacher\.html/i.test(location.pathname)&&e.target.closest('.panel'))window.hsmTeacherDirty_=true;});
-  document.addEventListener('change',function(e){if(/teacher\.html/i.test(location.pathname)&&e.target.closest('.panel'))window.hsmTeacherDirty_=true;});
+  document.addEventListener('input',function(e){if(/teacher\.html/i.test(location.pathname)&&e.target.closest('.panel') && !e.target.matches('input[type=search]') && !/search|filter/i.test(e.target.id||''))window.hsmTeacherDirty_=true;});
+  document.addEventListener('change',function(e){if(/teacher\.html/i.test(location.pathname)&&e.target.closest('.panel') && !e.target.matches('input[type=search]') && !/search|filter/i.test(e.target.id||''))window.hsmTeacherDirty_=true;});
   window.addEventListener('beforeunload',function(e){if(window.hsmTeacherDirty_){e.preventDefault();e.returnValue='';}});
   function start() {
     showAppliedMessage();

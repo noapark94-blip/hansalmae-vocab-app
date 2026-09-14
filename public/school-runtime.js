@@ -93,14 +93,14 @@
       if(owner!==userKey())return;
       var token=await window.hsmEnsureStudentSession_();
       if(owner!==userKey())return;
-      await new Promise(function(resolve,reject){window.google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).saveTestResult(token,row);});
+      try { await new Promise(function(resolve,reject){window.google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).saveTestResult(token,row);}); } catch (_) {}
     }
   }
   var flushing = false;
   async function flush() {
     if (flushing || !userKey() || !localStorage.getItem('hansalmaeStudentToken')) return;
     flushing = true;
-    try { for (var entry of readOutbox()) await send(entry); await flushMain(); } catch (_) {}
+    try { for (var entry of readOutbox()) { try { await send(entry); } catch (_) {} } await flushMain(); } catch (_) {}
     finally { flushing = false; }
   }
   window.addEventListener('hsm:student-session', function () { setTimeout(flush, 0); });

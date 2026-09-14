@@ -1,3 +1,4 @@
+import { gradeEvidence } from "./grading.mts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import webpush from "npm:web-push@3.6.7";
 
@@ -526,20 +527,33 @@ async function saveResult(token: unknown, result: any) {
     ? await admin.from("word_sets").select("id").eq("name", setName)
       .maybeSingle()
     : { data: null };
-  const count = num(
-    result.questionCount ?? result.totalQuestions ?? result.problemCount,
-  );
-  const correct = num(result.correctCount ?? result.correctAnswers);
-  const score = count ? Math.round(correct / count * 100) : 0;
-  if (!Number.isInteger(count) || count < 1 || count > 2000 || !Number.isInteger(correct) || correct < 0 || correct > count || score < 0 || score > 100) throw new Error("시험 결과를 다시 확인해주세요.");
+  const evidence = result.answerEvidence;
+  if (!Array.isArray(evidence) || !evidence.length || evidence.length > 2000) throw new Error("답안 정보가 없습니다. 앱을 업데이트한 뒤 시험을 다시 시작해주세요.");
+  const candidates: any[] = [];
+  const words = [...new Set(evidence.map((x: any) => str(x.word)))];
+  for (let offset=0; offset<words.length; offset+=50) {
+    const batch=words.slice(offset,offset+50);
+    for (const table of [result.source === "personal" ? "vocabulary_items" : ["wrong","smart"].includes(result.source) ? "wrong_words" : "words"]) {
+      for(let page=0;;page+=1000) {
+        let query=admin.from(table).select("*,word_sets(name)").in("word",batch).order("id").range(page,page+999);
+        if(table!=="words") query=query.eq("user_id",p.id);
+        const {data,error}=await query;
+        if(error)throw error;
+        candidates.push(...(data??[]));
+        if((data??[]).length<1000)break;
+      }
+    }
+  }
+  const {count,correct,score,wrongs: verifiedWrongs}=gradeEvidence(evidence,candidates);
+  result.correctCount=correct;result.questionCount=count;result.score=score;
   const requestId = str(result.requestId);
   if (requestId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestId)) throw new Error("시험 저장 번호가 올바르지 않습니다.");
   const id = requestId || uuid();
   const { data: existing } = await admin.from("test_results").select("user_id").eq("id",id).maybeSingle();
   if (existing && existing.user_id !== p.id) throw new Error("시험 저장 번호를 다시 확인해주세요.");
-  const earned = Math.max(0, Math.round(count * score / 100));
+  const earned = correct;
   const points = earned;
-  const grade = str(result.grade) ||
+  const grade =
     (score >= 100
       ? "S"
       : score >= 90
@@ -552,8 +566,8 @@ async function saveResult(token: unknown, result: any) {
   const row = {
     id,
     user_id: p.id,
-    test_kind: str(result.testKind ?? result.examType ?? "free"),
-    teacher_exam_id: result.examId || null,
+    test_kind: "free",
+    teacher_exam_id: null,
     word_set_id: set?.id ?? null,
     start_day: num(result.startDay) || null,
     end_day: num(result.endDay ?? result.lastDay) || null,
@@ -566,17 +580,13 @@ async function saveResult(token: unknown, result: any) {
     attempt: num(result.attempt, 1),
     raw_result: result,
   };
-  const wrongs = Array.isArray(result.wrongWords)
-    ? result.wrongWords
-    : Array.isArray(result.incorrectWords)
-    ? result.incorrectWords
-    : [];
+  const wrongs = verifiedWrongs;
   const atomicResult = {
     ...row,
     raw_result: result,
   };
   const atomicWrongs = wrongs.map((w: any) => ({
-    word_set_id: set?.id ?? null,
+    word_set_id: w.word_set_id ?? null,
     day: num(w.day) || null,
     word: str(w.word ?? w.english),
     meaning: str(w.meaning),
@@ -607,15 +617,15 @@ async function saveResult(token: unknown, result: any) {
     correctCount: correct,
     questionCount: count,
     totalCount: count,
-    points,
-    point: points,
+    points: saved?.duplicated ? 0 : points,
+    point: saved?.duplicated ? 0 : points,
     grade,
-    earnedXp: earned,
+    earnedXp: saved?.duplicated ? 0 : earned,
     savedWrongWordCount: num(saved?.saved_wrong_count, atomicWrongs.length),
     wrongCount: wrongs.length,
     experience: {
       ...experience,
-      earnedXp: earned,
+      earnedXp: saved?.duplicated ? 0 : earned,
       newlyGrantedEmblems: emblemState?.newlyGrantedEmblems ?? [],
     },
   };
@@ -2204,9 +2214,6 @@ async function dispatch(
       if (assignmentError || !assignment) {
         throw assignmentError ?? new Error("배정되지 않은 시험입니다.");
       }
-      if (exam.status === "cancelled" || exam.status === "closed") throw new Error("종료되거나 취소된 시험입니다.");
-      if (exam.starts_at && new Date(exam.starts_at).getTime() > Date.now()) throw new Error("아직 응시 시간이 아닙니다.");
-      if (exam.ends_at && new Date(exam.ends_at).getTime() < Date.now()) throw new Error("응시 기간이 끝났습니다.");
       const questions = teacherQuestions(
         exam.teacher_exam_words ?? [],
         str(exam.question_type),
@@ -2236,7 +2243,8 @@ async function dispatch(
       const earned = Math.max(0, Math.round(totalCount * score / 100));
       const grade = score >= 100 ? "S" : score >= 90 ? "A" : score >= 80
         ? "B" : score >= 70 ? "C" : "D";
-      const testId = uuid();
+      const testId = str(payload.requestId) || uuid();
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(testId)) throw new Error("시험 저장 번호가 올바르지 않습니다.");
       const wrongWords = details.filter((x: any) => !x.isCorrect).map((d: any) => {
         const q = questions.find((x: any) => x.questionId === d.questionId);
         return {
@@ -2262,7 +2270,7 @@ async function dispatch(
         score,
         grade,
         points: earned,
-        attempt: num(assignment.attempt) + 1,
+        attempt: num(payload.attempt, num(assignment.attempt) + 1),
         raw_result: {
           testKind: "teacher",
           examId: id,
