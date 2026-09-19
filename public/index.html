@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260919-1"></script>
-  <script src="./config.js?v=20260919-1"></script>
-  <script src="./app-update.js?v=20260919-1"></script>
+  <script src="./school-runtime.js?v=20260919-2"></script>
+  <script src="./config.js?v=20260919-2"></script>
+  <script src="./app-update.js?v=20260919-2"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4689,6 +4689,24 @@
     .hsm-launcher-icon { width:42px; height:42px; }
     .hsm-launcher-tile-copy strong { font-size:15px; }
   }
+</style>
+
+<style id="hsm-study-polish">
+#vocabScreen .word-card{padding:14px 16px!important;gap:12px!important;margin-top:9px!important;border-radius:16px!important;box-shadow:0 3px 12px rgba(70,29,53,.035)!important}
+#vocabScreen .word-English{font-size:20px!important;line-height:1.4}
+#vocabScreen .word-meaning{font-size:16px!important;margin-top:5px!important;overflow-wrap:anywhere}
+#vocabScreen .word-save-button{width:auto!important;max-width:100%;min-height:40px;margin-top:10px!important;padding:8px 12px!important;font-size:13px!important;border-radius:10px!important;white-space:normal}
+.word-details{margin-top:8px}.word-details summary{cursor:pointer;min-height:40px;display:list-item;align-content:center;color:#78636e;font-size:13px}.word-details[open] summary{color:#8f145f}.word-details .word-example{margin-top:4px!important;padding-top:8px!important}
+#hsmSchoolStudentPage .hsm-school-search-dock{position:sticky;top:0;z-index:20;background:#fff;padding:10px 0;border-bottom:1px solid #eadfe5}
+#hsmSchoolStudentPage .hsm-school-search-dock .hsm-school-selectbar{margin:8px 0 0!important}
+#hsmSchoolStudentPage .hsm-school-search-dock input{font-size:16px}
+#hsmSchoolStudentPage .hsm-school-back,#hsmSchoolContentPage .hsm-ct-back{width:44px!important;height:44px!important;min-width:44px!important;border-radius:12px!important;font-size:26px!important}
+body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsmSchoolContentPage:not([hidden])) #hsmGlobalBackButton{display:none!important}
+#hsmGlobalBackButton{min-height:44px;border-radius:12px!important}
+.hsm-launcher-hero{padding:20px!important;border-radius:22px!important;box-shadow:0 10px 26px rgba(105,18,70,.15)!important}
+.hsm-launcher-hero h1{font-size:clamp(24px,5vw,32px)!important}
+.word-details summary:focus-visible,#hsmSchoolStudentPage button:focus-visible,#hsmSchoolContentPage button:focus-visible{outline:3px solid #8f145f;outline-offset:3px}
+@media(max-width:600px){#vocabScreen .word-card{padding:12px!important;gap:10px!important}#vocabScreen .word-English{font-size:19px!important}#vocabScreen .word-meaning{font-size:15px!important}.hsm-launcher-hero{padding:18px!important}#hsmSchoolStudentPage .hsm-school-card{padding:14px!important}#hsmSchoolStudentPage .hsm-school-search-dock{padding-top:8px}#hsmSchoolStudentPage .hsm-school-page-title{font-size:21px!important;overflow-wrap:anywhere}}
 </style>
 </head>
 
@@ -11090,6 +11108,7 @@
           .getElementById('showCheckedOnly')
           .checked;
 
+      const expandedExamples = new Set(Array.from(wordList.querySelectorAll('details[open]')).map(function(el){return el.dataset.wordKey;}));
       wordList.innerHTML = '';
 
       let visibleCount = 0;
@@ -11131,6 +11150,7 @@
 
         checkbox.type = 'checkbox';
         checkbox.className = 'word-check';
+        checkbox.setAttribute('aria-label', word.word + ' 복습할 단어 선택');
         checkbox.checked = checked;
 
         checkbox.onchange = function () {
@@ -11164,6 +11184,7 @@
           '</div>';
 
 
+        if (word.example || word.translation) html += '<details class="word-details"><summary>예문 · 해석 보기</summary>';
         if (word.example) {
           html +=
             '<div class="word-example">' +
@@ -11180,7 +11201,10 @@
         }
 
 
+        if (word.example || word.translation) html += '</details>';
         content.innerHTML = html;
+        const details = content.querySelector('details');
+        if (details) { details.dataset.wordKey = JSON.stringify([document.getElementById('vocabSheetName').value, word.day, word.word]); details.open = expandedExamples.has(details.dataset.wordKey); }
 
         const saveButton =
           document.createElement('button');
