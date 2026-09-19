@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260919-4"></script>
-  <script src="./config.js?v=20260919-4"></script>
-  <script src="./app-update.js?v=20260919-4"></script>
+  <script src="./school-runtime.js?v=20260919-5"></script>
+  <script src="./config.js?v=20260919-5"></script>
+  <script src="./app-update.js?v=20260919-5"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4651,7 +4651,7 @@
   .hsm-launcher-icon svg { width:25px; height:25px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .hsm-launcher-tile-copy { margin-top:auto; padding-top:13px; }
   .hsm-launcher-tile-copy strong { display:block; margin:0; font-size:16px; letter-spacing:-.4px; line-height:1.25; }
-  .hsm-launcher-tile-copy span { display:block; margin-top:4px; color:#927787; font-size:11px; font-weight:650; line-height:1.35; }
+  .hsm-launcher-tile-copy span { display:block; margin-top:4px; color:#927787; font-size:13px; font-weight:500; line-height:1.45; }
   .hsm-launcher-alert-badge {
     position:absolute;
     right:12px;
@@ -4710,6 +4710,12 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
 @media(max-height:560px){#hsmSchoolStudentPage .hsm-school-search-dock{position:static}}
 .hsm-launcher-study-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hsm-launcher-study-grid .hsm-launcher-tile{--tile-soft:#f8eaf1!important;--tile-color:#8f145f!important;min-height:128px;border-radius:18px;box-shadow:0 4px 14px rgba(91,25,62,.045)}.hsm-launcher-manage-grid .hsm-launcher-tile{--tile-soft:#f3f0f2!important;--tile-color:#78636e!important;border-radius:16px;box-shadow:none}.hsm-launcher-section-title{font-weight:750;letter-spacing:-.02em}.hsm-launcher-manage-grid .hsm-launcher-tile{min-height:110px;padding:16px}.hsm-launcher-manage-grid .hsm-launcher-icon{width:38px;height:38px}
 @media(max-width:650px){.hsm-launcher-study-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hsm-launcher-manage-grid .hsm-launcher-tile{min-height:100px;padding:14px}}
+#hsmSchoolStudentPage #hsmSchoolAddPersonal[hidden]{display:none!important}
+#hsmSchoolStudentPage .hsm-school-search-dock{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center}
+#hsmSchoolStudentPage .hsm-school-search-dock>label,#hsmSchoolStudentPage #hsmSchoolSearchStatus{grid-column:1/-1}
+#hsmSchoolStudentPage .hsm-school-search-dock #hsmSchoolWordSearch{grid-column:1}
+#hsmSchoolStudentPage .hsm-school-search-dock .hsm-school-exam-shortcut{grid-column:2;grid-row:2;margin:0!important;min-height:44px}
+#hsmSchoolStudentPage .hsm-school-search-dock .hsm-school-selectbar{grid-column:1/-1}
 </style>
 </head>
 
@@ -5150,10 +5156,10 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>단어장</strong><span>Day별 단어와 발음 확인하기</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff0d8;--tile-color:#d18b13" onclick="hsmLauncherOpenFeature_('schoolVocab')">
-              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg></span>
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="m3 10 9-6 9 6v10H3Z"/><path d="M9 20v-6h6v6M8 10h8"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>학교 수행평가</strong><span>배정 단어 학습·연습시험</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#f0e8ff;--tile-color:#7551b8" onclick="hsmLauncherOpenFeature_('schoolContent')">
-              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="m9 15 1.5 1.5L15 13"/></svg></span>
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6Z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>학교 내신 본문</strong><span>청크 배열·어형 연습</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#e7f6f0;--tile-color:#27866a" onclick="hsmLauncherOpenFeature_('smart')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.74V19h8v-3.26A7 7 0 0 0 12 3Z"/><path d="M9 22h6"/><path d="m9 10 2 2 4-4"/></svg></span>

@@ -8,6 +8,12 @@ function fixture(html, logged=true) {
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  const dom=new JSDOM('<!doctype html><html><head></head><body>'+html+'</body></html>',{url:'https://example.test/index.html',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
  const w=dom.window;w.alert=()=>{};w.confirm=()=>false;
+ // Dispose observers and animation callbacks before tearing down the DOM.
+ const observers=[],frames=new Set(),Observer=w.MutationObserver,raf=w.requestAnimationFrame.bind(w),close=w.close.bind(w);
+ w.MutationObserver=class extends Observer{constructor(cb){super(cb);observers.push(this);}};
+ w.requestAnimationFrame=cb=>{const id=raf(time=>{frames.delete(id);cb(time);});frames.add(id);return id;};
+ w.close=()=>{observers.forEach(o=>o.disconnect());frames.forEach(id=>w.cancelAnimationFrame(id));frames.clear();close();};
+
  if(logged){w.localStorage.setItem('hansalmaeStudentToken','fixture-token');w.localStorage.setItem('hansalmaeStudentInfo',JSON.stringify({studentId:'fixture'}));}
  w.HANSALMAE_CONFIG={apiUrl:'https://example.test/api'};
  return {dom,w,errors,load:name=>w.eval(source(name)),click:sel=>{const el=w.document.querySelector(sel);assert.ok(el,sel);el.click();}};
