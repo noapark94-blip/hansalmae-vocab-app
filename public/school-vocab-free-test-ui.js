@@ -10,7 +10,8 @@
   function active(){var r=document.getElementById('hsmSchoolStudentPage');return !!(r&&!r.hidden);}
 
   function addStyle(){if(document.getElementById('hsmSchoolFreeTestUiStyle'))return;var s=document.createElement('style');s.id='hsmSchoolFreeTestUiStyle';s.textContent=`
-  #hsmSchoolStudentPage .hsm-school-tools{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:16px 0 12px}
+  #hsmSchoolStudentPage .hsm-school-action-row:has(>.hsm-school-tools){margin:12px 0 0!important}
+  #hsmSchoolStudentPage .hsm-school-tools{display:flex;gap:9px;align-items:center;flex-wrap:wrap;width:100%;margin:0}
   #hsmSchoolStudentPage .hsm-school-test-main{width:auto!important;margin:0!important;padding:12px 17px!important;border-radius:13px!important;background:#981461!important;color:#fff!important;font-size:14px!important;font-weight:850!important}
   #hsmSchoolStudentPage .hsm-school-test-setup{display:none;width:100%;padding:14px;border:1px solid #ead9e3;border-radius:16px;background:#fff9fc;box-shadow:0 10px 24px rgba(93,25,67,.08)}
   #hsmSchoolStudentPage .hsm-school-test-setup.open{display:block}
