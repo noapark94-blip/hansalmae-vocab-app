@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260919-6"></script>
-  <script src="./config.js?v=20260919-6"></script>
-  <script src="./app-update.js?v=20260919-6"></script>
+  <script src="./school-runtime.js?v=20260919-7"></script>
+  <script src="./config.js?v=20260919-7"></script>
+  <script src="./app-update.js?v=20260919-7"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4716,6 +4716,20 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
 #hsmSchoolStudentPage .hsm-school-search-dock .hsm-school-exam-shortcut{grid-column:2;grid-row:2;margin:0!important;min-height:44px}
 #hsmSchoolStudentPage .hsm-school-search-dock .hsm-school-selectbar{grid-column:1/-1}
 </style>
+
+<style id="hsm-audit-consistency">
+/* Keep the launcher as the only active page while it is open. */
+body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
+@media(min-width:651px){
+  #mainApp>.topbar{flex-direction:column!important;align-items:stretch!important;gap:9px!important}
+  #mainApp>.topbar>.topbar-title{justify-content:flex-start!important;flex-wrap:wrap;min-width:0}
+  #mainApp>.topbar>.topbar-menu{width:100%;min-width:0;flex-wrap:nowrap!important;justify-content:flex-start!important;overflow-x:auto;gap:6px!important;padding-bottom:2px}
+  #mainApp>.topbar>.topbar-menu>button{flex:0 0 auto;white-space:nowrap}
+  #mainApp>.topbar>.topbar-menu>.logout-button{margin-left:auto!important}
+}
+#personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
+#personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
+</style>
 </head>
 
 <body>
@@ -5907,6 +5921,8 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
             선택
           </button>
         </div>
+
+        <p id="personalTestSelectionHint" role="status" aria-live="polite">시험 볼 단어를 4개 이상 선택해주세요.</p>
 
         <div
           id="personalBulkToolbar"
@@ -8697,6 +8713,19 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
     }
 
 
+    function updatePersonalTestHint_() {
+      const hint = document.getElementById('personalTestSelectionHint');
+      if (!hint) return;
+      const selected = getSelectedPersonalRows_().length;
+      const total = personalVocabularyWords.length;
+      hint.textContent = total < 4
+        ? '현재 단어장에 단어가 ' + total + '개 있어요. 시험을 보려면 4개 이상 필요해요.'
+        : selected >= 4
+          ? selected + '개 선택 · 선택한 단어로 시험을 시작할 수 있어요.'
+          : '시험 볼 단어를 4개 이상 선택해주세요. 현재 ' + selected + '개 선택' + (selected ? ' · ' + (4 - selected) + '개 더 선택' : '');
+      hint.classList.toggle('is-ready', selected >= 4);
+    }
+
     function togglePersonalSelectionMode_() {
       personalSelectionMode_ =
         !personalSelectionMode_;
@@ -8764,6 +8793,7 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
 
 
     function updatePersonalBulkToolbar_() {
+      updatePersonalTestHint_();
       const selectedRows =
         getSelectedPersonalRows_();
 
@@ -14353,6 +14383,7 @@ google.script.run
       );
 
     list.innerHTML = '';
+    updatePersonalTestHint_();
 
     if (!personalVocabularyBooks.length) {
       list.innerHTML =
@@ -14534,35 +14565,20 @@ google.script.run
 
 <script id="hsm-personal-test-selection-helper">
   (function () {
-    const original =
-      window.showPersonalTestSetup;
-
-    window.showPersonalTestSetup =
-      function () {
-        const selected =
-          typeof getSelectedPersonalRows_ ===
-            'function'
-            ? getSelectedPersonalRows_()
-            : [];
-
-        if (
-          selected.length < 4 &&
-          !personalSelectionMode_
-        ) {
-          personalSelectionMode_ = true;
-          applyPersonalSelectionMode_();
-
-          alert(
-            '시험 볼 단어를 왼쪽 체크박스에서 4개 이상 선택해주세요.'
-          );
-          return;
-        }
-
-        return original.apply(
-          this,
-          arguments
-        );
-      };
+    const original = window.showPersonalTestSetup;
+    window.showPersonalTestSetup = function () {
+      const selected = getSelectedPersonalRows_();
+      const valid = personalVocabularyWords.filter(function (item) {
+        return selected.includes(Number(item.rowNumber));
+      });
+      if (valid.length < 4) {
+        personalSelectionMode_ = true;
+        applyPersonalSelectionMode_();
+        updatePersonalTestHint_();
+        return;
+      }
+      return original.apply(this, arguments);
+    };
   })();
 </script>
 

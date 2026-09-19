@@ -133,12 +133,13 @@
   }
 
   function prepareTarget(node) {
-    if (node.dataset.hsmCoverReady === '1') return;
-    node.dataset.hsmCoverReady = '1';
     node.setAttribute('role', 'button');
     node.setAttribute('tabindex', '0');
-    node.setAttribute('aria-label', '가려진 내용을 확인');
-    node.setAttribute('aria-pressed', 'false');
+    var isRevealed = node.classList.contains('hsm-cover-revealed');
+    node.setAttribute('aria-label', isRevealed ? '내용 다시 가리기' : '가려진 내용을 확인');
+    node.setAttribute('aria-pressed', String(isRevealed));
+    if (node.dataset.hsmCoverReady === '1') return;
+    node.dataset.hsmCoverReady = '1';
     var startX = 0;
     var suppressClick = false;
     node.addEventListener('pointerdown', function (event) { startX = event.clientX; });
@@ -153,7 +154,7 @@
       reveal(node);
     });
     node.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter' || event.key === ' ') {
+      if (node.classList.contains('hsm-cover-target') && (event.key === 'Enter' || event.key === ' ')) {
         event.preventDefault();
         reveal(node);
       }
@@ -171,6 +172,7 @@
   }
 
   function reveal(node, force) {
+    if (!node.classList.contains('hsm-cover-target')) return;
     var revealed = force ? true : !node.classList.contains('hsm-cover-revealed');
     node.classList.toggle('hsm-cover-revealed', revealed);
     node.setAttribute('aria-pressed', String(revealed));
@@ -256,6 +258,9 @@
       if (!wantedSet.has(node)) {
         node.classList.remove('hsm-cover-target', 'hsm-cover-revealed');
         node.removeAttribute('aria-pressed');
+        node.removeAttribute('aria-label');
+        node.removeAttribute('role');
+        node.removeAttribute('tabindex');
       }
     });
     wanted.forEach(function (node) {

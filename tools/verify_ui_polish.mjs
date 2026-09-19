@@ -16,3 +16,42 @@ sw.wrongNotebookWords=[{rowNumber:1,mastered:false}];sw.alert=()=>{};sw.renderWr
 const screens=new JSDOM('<div id="teacherExamList"></div><div id="studentNotificationList"></div>',{url:'https://example.test',runScripts:'outside-only'}),ew=screens.window;ew.escapeHtml=x=>String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');ew.escapeJsString_=x=>String(x);ew.formatTeacherExamDate_=x=>x;ew.teacherAssignedExams=[{examId:'1',title:'예정',availability:'응시대기',status:'미응시'},{examId:'2',title:'진행',availability:'응시가능',status:'시험중'},{examId:'3',title:'완료',availability:'응시불가',status:'응시완료'}];ew.eval(html.slice(html.indexOf('    function renderTeacherExamList_()'),html.indexOf('    function startAssignedTeacherExam(')));ew.renderTeacherExamList_();const examButtons=ew.document.querySelectorAll('#teacherExamList button');assert.equal(examButtons[0].disabled,true);assert.equal(examButtons[1].disabled,false);assert.equal(examButtons[1].textContent,'이어서 응시');assert.equal(examButtons[2].disabled,true);ew.eval(html.slice(html.indexOf('    function renderStudentNotifications_('),html.indexOf('    function markStudentNotificationRead_(')));ew.renderStudentNotifications_([{notificationId:'1',title:'읽지 않음',read:false},{notificationId:'2',title:'읽음',read:true}]);assert.equal(ew.document.querySelectorAll('.notification-unread').length,1);assert.equal(ew.document.querySelectorAll('.danger-button').length,1);ew.renderStudentNotifications_([]);assert.match(ew.document.querySelector('#studentNotificationList').textContent,/새로운 알림이 없습니다/);screens.window.close();console.log('PASS exam availability/resume buttons and notification unread/delete/empty states');
 const routes=new JSDOM('',{url:'https://example.test',runScripts:'outside-only'}),rw=routes.window;const opened=[];rw.hideHsmLauncher_=()=>opened.push('hide');rw.showMyPage=()=>opened.push('mypage');rw.hsmOpenSchoolVocabPage_=()=>opened.push('schoolVocab');rw.hsmOpenSchoolContentPage_=()=>opened.push('schoolContent');const routeStart=html.indexOf('  window.hsmLauncherOpenFeature_ = function (feature) {');rw.eval(html.slice(routeStart,html.indexOf('  const previousOpenMainApp',routeStart)));rw.hsmLauncherOpenFeature_('schoolVocab');assert.deepEqual(opened,['hide','mypage','schoolVocab']);opened.length=0;rw.hsmLauncherOpenFeature_('schoolContent');assert.deepEqual(opened,['hide','mypage','schoolContent']);routes.window.close();console.log('PASS school home shortcuts preserve learning page as return destination');
 const idle=new JSDOM('<div id="hsmSchoolStudentPage"><div id="hsmSchoolPageBody"><div class="hsm-school-action-row"><button id="hsmSchoolStartMixed">시험</button></div><div class="hsm-school-word-list">'+['alpha','alpha','beta','gamma'].map(word=>`<div class="hsm-school-word-row"><span class="hsm-school-word-num">1</span><span class="hsm-school-word-eng">${word}</span><span class="hsm-school-word-mean">뜻${word}</span></div>`).join('')+'</div></div></div>',{url:'https://example.test',runScripts:'outside-only'});const iw=idle.window;let updates=0,closed=false;const timers=[];iw.requestAnimationFrame=cb=>{if(closed)return;updates++;if(updates<80)timers.push(setTimeout(cb,1));};iw.eval(source('school-vocab-free-test-ui.js'));iw.eval(source('school-vocab-selection-fix.js'));await new Promise(r=>setTimeout(r,150));const settled=updates;await new Promise(r=>setTimeout(r,80));assert.equal(updates,settled,'idle observers must stop');assert.ok(updates<20);assert.equal(iw.document.querySelector('#hsmSchoolAddPersonal').hidden,true);const first=iw.document.querySelector('.hsm-school-word-check');first.checked=true;first.dispatchEvent(new iw.Event('change',{bubbles:true}));await new Promise(r=>setTimeout(r,100));assert.equal(iw.document.querySelector('#hsmSchoolSelectedCount').textContent,'2개 선택');assert.equal(iw.document.querySelector('#hsmSchoolAddPersonal').hidden,false);const settledSelected=updates;await new Promise(r=>setTimeout(r,80));assert.equal(updates,settledSelected,'duplicate words must not cause count oscillation');closed=true;timers.forEach(clearTimeout);idle.window.close();console.log('PASS idle observers settle; duplicate selections stay consistent; save action appears only on selection');
+
+
+const consistencyHtml=source('index.html');
+const selectionHintDom=new JSDOM('<p id="personalTestSelectionHint"></p>',{url:'https://example.test',runScripts:'outside-only'});
+const sh=selectionHintDom.window;let selectedForHint=[],startedForHint=0;
+sh.personalVocabularyWords=[1,2,3,4].map(rowNumber=>({rowNumber}));
+sh.getSelectedPersonalRows_=()=>selectedForHint;
+sh.personalSelectionMode_=false;
+sh.applyPersonalSelectionMode_=()=>sh.updatePersonalTestHint_();
+sh.showPersonalTestSetup=()=>{startedForHint++;};
+sh.alert=()=>assert.fail('selection validation must use an inline hint');
+sh.eval(consistencyHtml.match(/function updatePersonalTestHint_\(\) \{[\s\S]*?(?=\n    function togglePersonalSelectionMode_)/)[0]);
+sh.eval(consistencyHtml.match(/<script id="hsm-personal-test-selection-helper">([\s\S]*?)<\/script>/)[1]);
+sh.showPersonalTestSetup();assert.equal(startedForHint,0);assert.equal(sh.personalSelectionMode_,true);
+assert.match(sh.document.querySelector('p').textContent,/현재 0개 선택/);
+selectedForHint=[1,2];sh.showPersonalTestSetup();assert.match(sh.document.querySelector('p').textContent,/2개 더 선택/);
+sh.personalVocabularyWords=[{rowNumber:1},{rowNumber:2}];sh.updatePersonalTestHint_();assert.match(sh.document.querySelector('p').textContent,/현재 단어장에 단어가 2개/);
+sh.personalVocabularyWords=[1,2,3,4].map(rowNumber=>({rowNumber}));selectedForHint=[1,2,3,4];sh.updatePersonalTestHint_();
+assert.equal(sh.document.querySelector('p').classList.contains('is-ready'),true);
+sh.showPersonalTestSetup();assert.equal(startedForHint,1);selectionHintDom.window.close();
+console.log('PASS personal test validation stays inline and requires four valid selected words');
+
+const coverLifecycleDom=new JSDOM('<div id="vocabScreen"><div id="wordList"><div class="word-card"><div class="word-English">test</div><div class="word-meaning">시험</div></div></div></div>',{url:'https://example.test',runScripts:'outside-only'});
+const cl=coverLifecycleDom.window;let coverFrame;
+cl.requestAnimationFrame=fn=>{coverFrame=fn;};
+cl.eval(source('word-cover.js'));cl.document.dispatchEvent(new cl.Event('DOMContentLoaded'));
+const coverMeaning=cl.document.querySelector('.word-meaning');
+cl.document.querySelector('[data-cover-mode="meaning"]').click();
+assert.equal(coverMeaning.getAttribute('role'),'button');
+coverMeaning.click();assert.equal(coverMeaning.getAttribute('aria-pressed'),'true');
+if(coverFrame)coverFrame();assert.equal(coverMeaning.getAttribute('aria-pressed'),'true');
+cl.document.querySelector('[data-cover-mode="off"]').click();
+for(const attr of ['role','tabindex','aria-label','aria-pressed'])assert.equal(coverMeaning.hasAttribute(attr),false);
+coverMeaning.click();assert.equal(coverMeaning.classList.contains('hsm-cover-revealed'),false);
+cl.document.querySelector('[data-cover-mode="meaning"]').click();
+assert.equal(coverMeaning.getAttribute('tabindex'),'0');
+coverMeaning.dispatchEvent(new cl.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+assert.equal(coverMeaning.getAttribute('aria-pressed'),'true');coverLifecycleDom.window.close();
+console.log('PASS cover off restores plain text; reactivation keeps keyboard reveal working');
