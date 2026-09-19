@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260919-2"></script>
-  <script src="./config.js?v=20260919-2"></script>
-  <script src="./app-update.js?v=20260919-2"></script>
+  <script src="./school-runtime.js?v=20260919-3"></script>
+  <script src="./config.js?v=20260919-3"></script>
+  <script src="./app-update.js?v=20260919-3"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4707,6 +4707,7 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
 .hsm-launcher-hero h1{font-size:clamp(24px,5vw,32px)!important}
 .word-details summary:focus-visible,#hsmSchoolStudentPage button:focus-visible,#hsmSchoolContentPage button:focus-visible{outline:3px solid #8f145f;outline-offset:3px}
 @media(max-width:600px){#vocabScreen .word-card{padding:12px!important;gap:10px!important}#vocabScreen .word-English{font-size:19px!important}#vocabScreen .word-meaning{font-size:15px!important}.hsm-launcher-hero{padding:18px!important}#hsmSchoolStudentPage .hsm-school-card{padding:14px!important}#hsmSchoolStudentPage .hsm-school-search-dock{padding-top:8px}#hsmSchoolStudentPage .hsm-school-page-title{font-size:21px!important;overflow-wrap:anywhere}}
+@media(max-height:560px){#hsmSchoolStudentPage .hsm-school-search-dock{position:static}}
 </style>
 </head>
 
@@ -6034,7 +6035,7 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
         </select>
 
         <div class="personal-toolbar">
-          <button onclick="startSmartReviewTest()">
+          <button id="smartReviewStartButton" onclick="startSmartReviewTest()">
             추천 단어 시험보기
           </button>
 
@@ -9181,7 +9182,11 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
     }
 
 
+    let smartReviewRequestId = 0;
     function loadSmartReview() {
+      const requestId = ++smartReviewRequestId;
+      smartReviewWords = [];
+      document.getElementById("smartReviewStartButton").disabled = true;
       const count =
         Number(
           document
@@ -9200,6 +9205,7 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
 
       google.script.run
         .withSuccessHandler(function (result) {
+          if (requestId !== smartReviewRequestId) return;
           document
             .getElementById('smartReviewLoading')
             .textContent = '';
@@ -9216,21 +9222,14 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
             smartReviewWords.length +
             '개 · 자주 틀린 단어를 우선 추천합니다.';
 
+          document.getElementById("smartReviewStartButton").disabled = smartReviewWords.length < 4;
           renderSmartReview();
         })
         .withFailureHandler(function (error) {
-          document
-            .getElementById('smartReviewLoading')
-            .textContent = '';
-
-          alert(
-            '스마트 복습을 불러오는 중 오류가 발생했습니다.\n' +
-            (
-              error && error.message
-                ? error.message
-                : error
-            )
-          );
+          if (requestId !== smartReviewRequestId) return;
+          smartReviewWords = [];
+          document.getElementById('smartReviewLoading').textContent = '복습 목록을 불러오지 못했습니다. 추천 단어 수를 다시 선택해 재시도해주세요.';
+          document.getElementById('smartReviewSummary').textContent = '추천 목록 확인이 필요합니다.';
         })
         .getSmartReviewWords(
           currentLoginToken,
@@ -14749,58 +14748,9 @@ google.script.run
 
 
   /*
-   * 오답 상태를 바꾼 뒤 서버 재조회 없이
-   * 화면부터 즉시 갱신합니다.
+   * 오답 상태는 서버 저장 성공이 확인된 뒤 갱신합니다.
    */
-  const originalToggleWrongWordMastered_ =
-    window.toggleWrongWordMastered;
-
-  window.toggleWrongWordMastered =
-    function (
-      rowNumber,
-      mastered
-    ) {
-      const target =
-        wrongNotebookWords.find(
-          function (item) {
-            return (
-              Number(item.rowNumber) ===
-              Number(rowNumber)
-            );
-          }
-        );
-
-      if (target) {
-        target.mastered =
-          Boolean(mastered);
-
-        applyWrongNotebookResult_({
-          success: true,
-          words:
-            wrongNotebookWords,
-          activeCount:
-            wrongNotebookWords.filter(
-              function (item) {
-                return !item.mastered;
-              }
-            ).length,
-          masteredCount:
-            wrongNotebookWords.filter(
-              function (item) {
-                return item.mastered;
-              }
-            ).length,
-          totalCount:
-            wrongNotebookWords.length
-        });
-      }
-
-      return originalToggleWrongWordMastered_
-        .apply(
-          this,
-          arguments
-        );
-    };
+  // 저장 성공 후 원래 함수에서 목록과 개수를 갱신합니다.
 </script>
 
 
