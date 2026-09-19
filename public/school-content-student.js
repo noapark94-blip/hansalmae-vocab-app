@@ -30,6 +30,7 @@
   function root(){var r=document.getElementById('hsmSchoolContentPage');if(!r){r=document.createElement('section');r.id='hsmSchoolContentPage';r.hidden=true;document.body.appendChild(r);}return r;}
   function shell(title,sub){return'<div class="hsm-ct-inner"><div class="hsm-ct-head"><button type="button" class="hsm-ct-back" aria-label="뒤로가기">‹</button><div><div class="hsm-ct-title">'+esc(title)+'</div><div class="hsm-ct-sub">'+esc(sub||'')+'</div></div></div><div id="hsmContentBody"></div></div>';}
   function body(){return root().querySelector('#hsmContentBody');}
+  window.hsmOpenSchoolContentPage_=openPage;
   function openPage(){var r=root();state.previousHash=location.hash;state.previousOverflow=document.documentElement.style.overflow;r.innerHTML=shell('학교 내신 본문','청크 배열과 어형 변형 연습');r.hidden=false;document.documentElement.style.overflow='hidden';history.pushState({hsmSchoolContentPage:true},'',location.href.split('#')[0]+'#school-content');r.querySelector('.hsm-ct-back').onclick=requestClosePage;loadBooks();}
   function isTestActive(){var r=root();return!r.hidden&&!!r.querySelector('.hsm-content-study');}
   function confirmTestExit(){return!isTestActive()||confirm('현재 시험을 그만둘까요?\n지금까지의 진행 내용은 삭제됩니다.');}

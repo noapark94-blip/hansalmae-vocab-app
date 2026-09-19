@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260919-3"></script>
-  <script src="./config.js?v=20260919-3"></script>
-  <script src="./app-update.js?v=20260919-3"></script>
+  <script src="./school-runtime.js?v=20260919-4"></script>
+  <script src="./config.js?v=20260919-4"></script>
+  <script src="./app-update.js?v=20260919-4"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4708,6 +4708,8 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
 .word-details summary:focus-visible,#hsmSchoolStudentPage button:focus-visible,#hsmSchoolContentPage button:focus-visible{outline:3px solid #8f145f;outline-offset:3px}
 @media(max-width:600px){#vocabScreen .word-card{padding:12px!important;gap:10px!important}#vocabScreen .word-English{font-size:19px!important}#vocabScreen .word-meaning{font-size:15px!important}.hsm-launcher-hero{padding:18px!important}#hsmSchoolStudentPage .hsm-school-card{padding:14px!important}#hsmSchoolStudentPage .hsm-school-search-dock{padding-top:8px}#hsmSchoolStudentPage .hsm-school-page-title{font-size:21px!important;overflow-wrap:anywhere}}
 @media(max-height:560px){#hsmSchoolStudentPage .hsm-school-search-dock{position:static}}
+.hsm-launcher-study-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hsm-launcher-study-grid .hsm-launcher-tile{--tile-soft:#f8eaf1!important;--tile-color:#8f145f!important;min-height:128px;border-radius:18px;box-shadow:0 4px 14px rgba(91,25,62,.045)}.hsm-launcher-manage-grid .hsm-launcher-tile{--tile-soft:#f3f0f2!important;--tile-color:#78636e!important;border-radius:16px;box-shadow:none}.hsm-launcher-section-title{font-weight:750;letter-spacing:-.02em}.hsm-launcher-manage-grid .hsm-launcher-tile{min-height:110px;padding:16px}.hsm-launcher-manage-grid .hsm-launcher-icon{width:38px;height:38px}
+@media(max-width:650px){.hsm-launcher-study-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hsm-launcher-manage-grid .hsm-launcher-tile{min-height:100px;padding:14px}}
 </style>
 </head>
 
@@ -5140,42 +5142,40 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
             <button type="button" class="hsm-launcher-primary" onclick="hsmLauncherOpenFeature_('test')">오늘의 단어 학습 시작</button>
           </div>
 
-          <div class="hsm-launcher-section-title">무엇을 공부할까요?</div>
-          <div class="hsm-launcher-grid">
-            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#f8e2ee;--tile-color:#9a195f" onclick="hsmLauncherOpenFeature_('test')">
+          <div class="hsm-launcher-section-title">학습 바로 시작</div>
+<div class="hsm-launcher-grid hsm-launcher-study-grid"><button type="button" class="hsm-launcher-tile" style="--tile-soft:#f8e2ee;--tile-color:#9a195f" onclick="hsmLauncherOpenFeature_('test')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M7 3h10a2 2 0 0 1 2 2v16l-7-3-7 3V5a2 2 0 0 1 2-2Z"/><path d="m9 10 2 2 4-5"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>단어 테스트</strong><span>범위와 유형을 골라 시험보기</span></span>
-            </button>
-            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff0d8;--tile-color:#d18b13" onclick="hsmLauncherOpenFeature_('vocab')">
+            </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff0d8;--tile-color:#d18b13" onclick="hsmLauncherOpenFeature_('vocab')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>단어장</strong><span>Day별 단어와 발음 확인하기</span></span>
-            </button>
-            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#e9efff;--tile-color:#456fc7" onclick="hsmLauncherOpenFeature_('mypage')">
-              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M22 19H2"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>내 학습</strong><span>점수·오답·경험치 살펴보기</span></span>
-            </button>
-            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff3cb;--tile-color:#c58b08" onclick="hsmLauncherOpenFeature_('ranking')">
-              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M12 13v4"/><path d="M8 21h8"/><path d="M9 17h6"/><path d="M8 6H4v1a4 4 0 0 0 4 4"/><path d="M16 6h4v1a4 4 0 0 1-4 4"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>단어천재</strong><span>이달의 랭킹과 엠블럼 보기</span></span>
-            </button>
-            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#e7f6f0;--tile-color:#27866a" onclick="hsmLauncherOpenFeature_('smart')">
+            </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff0d8;--tile-color:#d18b13" onclick="hsmLauncherOpenFeature_('schoolVocab')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>학교 수행평가</strong><span>배정 단어 학습·연습시험</span></span>
+            </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#f0e8ff;--tile-color:#7551b8" onclick="hsmLauncherOpenFeature_('schoolContent')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="m9 15 1.5 1.5L15 13"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>학교 내신 본문</strong><span>청크 배열·어형 연습</span></span>
+            </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#e7f6f0;--tile-color:#27866a" onclick="hsmLauncherOpenFeature_('smart')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.74V19h8v-3.26A7 7 0 0 0 12 3Z"/><path d="M9 22h6"/><path d="m9 10 2 2 4-4"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>스마트 복습</strong><span>자주 틀린 단어부터 복습하기</span></span>
-            </button>
-            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#f0e8ff;--tile-color:#7551b8" onclick="hsmLauncherOpenFeature_('teacherExam')">
+            </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#f0e8ff;--tile-color:#7551b8" onclick="hsmLauncherOpenFeature_('teacherExam')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="m9 15 1.5 1.5L15 13"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>선생님 시험</strong><span>배정된 시험 확인하고 응시하기</span></span>
-            </button>
-            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#ffe7e9;--tile-color:#c44859" onclick="hsmLauncherOpenFeature_('notification')">
+            </button></div>
+<div class="hsm-launcher-section-title">기록과 관리</div><div class="hsm-launcher-grid hsm-launcher-manage-grid"><button type="button" class="hsm-launcher-tile" style="--tile-soft:#e9efff;--tile-color:#456fc7" onclick="hsmLauncherOpenFeature_('mypage')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M22 19H2"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>내 학습</strong><span>점수·오답·경험치 살펴보기</span></span>
+            </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff3cb;--tile-color:#c58b08" onclick="hsmLauncherOpenFeature_('ranking')">
+              <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M12 13v4"/><path d="M8 21h8"/><path d="M9 17h6"/><path d="M8 6H4v1a4 4 0 0 0 4 4"/><path d="M16 6h4v1a4 4 0 0 1-4 4"/></svg></span>
+              <span class="hsm-launcher-tile-copy"><strong>단어천재</strong><span>이달의 랭킹과 엠블럼 보기</span></span>
+            </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#ffe7e9;--tile-color:#c44859" onclick="hsmLauncherOpenFeature_('notification')">
               <b id="hsmLauncherNotificationBadge" class="hsm-launcher-alert-badge hidden">0</b>
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>알림</strong><span>새 시험과 재시험 요청 확인하기</span></span>
-            </button>
-            <button type="button" class="hsm-launcher-tile" style="--tile-soft:#eceff3;--tile-color:#566274" onclick="hsmLauncherOpenFeature_('account')">
+            </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#eceff3;--tile-color:#566274" onclick="hsmLauncherOpenFeature_('account')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>내 정보</strong><span>계정·비밀번호·푸시 알림 관리</span></span>
-            </button>
-          </div>
+            </button></div>
           <div class="hsm-launcher-footer">HANSALMAE VOCAB · 오늘의 한 단어가 내일의 실력이 됩니다</div>
         </div>
       </section>
@@ -5537,52 +5537,7 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
           class="subtitle"
         ></div>
 
-        <div
-          id="myExperienceCard"
-          class="experience-card"
-          role="button"
-          tabindex="0"
-          aria-label="레벨과 경험치 안내 보기"
-          onclick="openLevelGuideModal_()"
-          onkeydown="handleLevelGuideKeydown_(event)"
-        >
-          <div class="experience-head">
-            <div id="myExperienceLevel" class="experience-level">Lv.1</div>
-            <div id="myExperienceTitle" class="experience-title">단어병아리</div>
-          </div>
-          <div class="experience-progress-wrap">
-            <div id="myExperienceProgress" class="experience-progress-bar"></div>
-          </div>
-          <div class="experience-meta">
-            <span id="myExperienceXp">0 XP</span>
-            <span id="myExperienceRemaining">다음 레벨까지 60 XP</span>
-          </div>
-          <div class="experience-card-guide">눌러서 레벨 시스템 보기</div>
-        </div>
-
-        <div class="my-summary">
-          <div class="my-summary-card">
-            <div class="my-summary-label">누적 시험</div>
-            <div id="myTestCount" class="my-summary-value">0회</div>
-          </div>
-
-          <div class="my-summary-card">
-            <div class="my-summary-label">평균 점수</div>
-            <div id="myAverageScore" class="my-summary-value">0점</div>
-          </div>
-
-          <div class="my-summary-card">
-            <div class="my-summary-label">획득 포인트</div>
-            <div id="myTotalPoint" class="my-summary-value">0P</div>
-          </div>
-
-          <div class="my-summary-card">
-            <div class="my-summary-label">PERFECT</div>
-            <div id="myPerfectCount" class="my-summary-value">0회</div>
-          </div>
-        </div>
-
-
+        <div class="my-section-title">학습 바로가기</div>
         <div class="learning-shortcuts">
           <button
             class="learning-shortcut"
@@ -5635,6 +5590,53 @@ body:has(#hsmSchoolStudentPage:not([hidden])) #hsmGlobalBackButton,body:has(#hsm
             </div>
           </button>
         </div>
+
+        <div class="my-section-title">나의 성장과 기록</div>
+        <div
+          id="myExperienceCard"
+          class="experience-card"
+          role="button"
+          tabindex="0"
+          aria-label="레벨과 경험치 안내 보기"
+          onclick="openLevelGuideModal_()"
+          onkeydown="handleLevelGuideKeydown_(event)"
+        >
+          <div class="experience-head">
+            <div id="myExperienceLevel" class="experience-level">Lv.1</div>
+            <div id="myExperienceTitle" class="experience-title">단어병아리</div>
+          </div>
+          <div class="experience-progress-wrap">
+            <div id="myExperienceProgress" class="experience-progress-bar"></div>
+          </div>
+          <div class="experience-meta">
+            <span id="myExperienceXp">0 XP</span>
+            <span id="myExperienceRemaining">다음 레벨까지 60 XP</span>
+          </div>
+          <div class="experience-card-guide">눌러서 레벨 시스템 보기</div>
+        </div>
+
+        <div class="my-summary">
+          <div class="my-summary-card">
+            <div class="my-summary-label">누적 시험</div>
+            <div id="myTestCount" class="my-summary-value">0회</div>
+          </div>
+
+          <div class="my-summary-card">
+            <div class="my-summary-label">평균 점수</div>
+            <div id="myAverageScore" class="my-summary-value">0점</div>
+          </div>
+
+          <div class="my-summary-card">
+            <div class="my-summary-label">획득 포인트</div>
+            <div id="myTotalPoint" class="my-summary-value">0P</div>
+          </div>
+
+          <div class="my-summary-card">
+            <div class="my-summary-label">PERFECT</div>
+            <div id="myPerfectCount" class="my-summary-value">0회</div>
+          </div>
+        </div>
+
 
         <div class="my-section-title">
           최근 시험 기록
@@ -16169,6 +16171,8 @@ google.script.run
       mypage: window.showMyPage,
       ranking: window.showRankingHome,
       smart: window.showSmartReview,
+      schoolVocab: function(){window.showMyPage();window.hsmOpenSchoolVocabPage_();},
+      schoolContent: function(){window.showMyPage();window.hsmOpenSchoolContentPage_();},
       teacherExam: window.showTeacherExamHome,
       notification: window.showStudentNotifications,
       account: window.showAccountInformation_
