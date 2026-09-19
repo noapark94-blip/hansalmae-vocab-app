@@ -359,6 +359,7 @@
     if (!anchor || !anchor.parentNode) return;
     var button = anchor.cloneNode(true);
     button.id = 'hsmSchoolVocabShortcut'; button.removeAttribute('onclick');
+    var count = button.querySelector('.shortcut-count'); if (count) { count.id = 'hsmSchoolVocabCount'; count.textContent = '배정 단어장을 불러오는 중…'; }
     var title = button.querySelector('.shortcut-title span:last-child'); if (title) title.textContent = '학교 수행평가';
     var desc = button.querySelector('.shortcut-description'); if (desc) desc.textContent = '선생님이 배정한 학교 단어를 학습하고 연습시험을 봅니다.';
     button.onclick = openStudentRoot;

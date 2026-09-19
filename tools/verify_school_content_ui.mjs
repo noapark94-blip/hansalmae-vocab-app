@@ -124,6 +124,9 @@ async function verifyStudent() {
   assert.match(confirms[0], /현재 시험을 그만둘까요/);
   assert.match(confirms[0], /진행 내용은 삭제됩니다/);
   assert.ok(window.document.querySelector('.hsm-content-study'), '시험 종료 취소 후 진행 중인 문제가 유지되어야 합니다.');
+  click(window, window.document.querySelector('#hsmContentCheck'));
+  assert.match(window.document.querySelector('#hsmContentFeedback').textContent, /남은 청크/);
+  assert.equal(window.document.querySelector('#hsmContentCheck').disabled, false);
   for (const id of ['c1', 'c2', 'c3']) {
     click(window, window.document.querySelector(`[data-pool-id="${id}"]`));
   }

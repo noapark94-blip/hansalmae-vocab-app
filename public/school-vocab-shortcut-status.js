@@ -7,7 +7,7 @@
   function featureStateUrl(){var b=window.HANSALMAE_CONFIG&&window.HANSALMAE_CONFIG.apiUrl;return String(b||'').replace(/\/api\/?$/,'/feature-state');}
   function token(){return localStorage.getItem('hansalmaeStudentToken')||'';}
   function card(){return document.getElementById('hsmSchoolVocabShortcut');}
-  function statusNode(){var c=card();if(!c)return null;return c.querySelector('.shortcut-stat,.shortcut-status,.shortcut-meta')||Array.from(c.children).find(function(el){return /불러오는 중/.test(el.textContent||'');})||null;}
+  function statusNode(){var c=card();if(!c)return null;return c.querySelector('.shortcut-count,.shortcut-stat,.shortcut-status,.shortcut-meta')||Array.from(c.children).find(function(el){return /불러오는 중/.test(el.textContent||'');})||null;}
   function newBadgeNode(){var c=card();if(!c)return null;return Array.from(c.querySelectorAll('span,small,em,strong,b,div')).find(function(el){return String(el.textContent||'').trim().toUpperCase()==='NEW';})||null;}
   function setStatus(text){var node=statusNode();if(node)node.textContent=text;}
   function setNewSeen(seen){var badge=newBadgeNode();if(!badge)return;badge.hidden=!!seen;badge.style.display=seen?'none':'';}
@@ -20,6 +20,8 @@
 
   function bindCard(){var c=card();if(!c)return false;if(c.dataset.hsmNewSeenBound!=='1'){c.dataset.hsmNewSeenBound='1';c.addEventListener('click',markNewSeen,true);}refresh();refreshNewState();return true;}
 
+  window.addEventListener('hsm:student-session',function(){setTimeout(bindCard,0);});
+  document.addEventListener('click',function(e){if(e.target.closest('#hsmSchoolVocabShortcut'))refresh();},true);
   var tries=0,timer=setInterval(function(){tries++;if(bindCard()){clearInterval(timer);}else if(tries>40)clearInterval(timer);},250);
   document.addEventListener('visibilitychange',function(){if(!document.hidden){refresh();refreshNewState();}});
   window.addEventListener('focus',function(){refresh();refreshNewState();});
