@@ -1223,7 +1223,7 @@
 
 </style>
 <link rel="stylesheet" href="./ui-icons.css?v=1">
-<link rel="stylesheet" href="./teacher-modern.css?v=1">
+<link rel="stylesheet" href="./teacher-modern.css?v=20260920-1">
 </head>
 <body>
   <main class="app">
@@ -1428,10 +1428,11 @@ protect	보호하다"></textarea>
                   <input id="studentSearch" type="search"
                     placeholder="학생 이름 또는 아이디 검색" />
                   <div class="student-actions">
-                    <button type="button" id="selectAllBtn" class="small-btn">전체 선택</button>
-                    <button type="button" id="clearAllBtn" class="small-btn">해제</button>
+                    <button type="button" id="selectAllBtn" class="small-btn">검색 결과 선택</button>
+                    <button type="button" id="clearAllBtn" class="small-btn">전체 해제</button>
                   </div>
                 </div>
+                <p class="help">검색을 바꿔도 선택은 유지됩니다. 전체 해제는 모든 선택을 지웁니다.</p>
                 <div id="studentList" class="student-list">
                   <div class="empty">학생 정보를 불러오는 중입니다.</div>
                 </div>
@@ -1515,15 +1516,15 @@ protect	보호하다"></textarea>
     <div class="modal">
       <div class="modal-head">
         <h2 id="detailModalTitle" data-hsm-icon="file">시험 내용</h2>
-        <button id="closeDetailModalBtn" class="close-btn" type="button">×</button>
+        <button id="closeDetailModalBtn" class="close-btn" type="button" aria-label="닫기">×</button>
       </div>
       <div id="detailMeta" class="summary-grid"></div>
       <div id="detailWordList" class="word-detail-list"></div>
     </div>
   </div>
 
-  <script src="./config.js?v=20260919-7"></script>
-  <script src="./app-update.js?v=20260919-7"></script>
+  <script src="./config.js?v=20260920-1"></script>
+  <script src="./app-update.js?v=20260920-1"></script>
   <script>
     const API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -1537,6 +1538,7 @@ protect	보호하다"></textarea>
     };
 
     let currentStatusExamId = '';
+    const selectedStudentIds = new Set();
 
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => Array.from(document.querySelectorAll(selector));
@@ -1773,17 +1775,14 @@ protect	보호하다"></textarea>
         return;
       }
 
-      const previouslySelected = new Set(
-        $$('.student-check:checked').map((input) => input.value)
-      );
-
       $('#studentList').innerHTML = filtered.map((student) => `
         <div class="student-item">
           <input
             class="student-check"
             type="checkbox"
             value="${escapeHtml(student.studentId)}"
-            ${previouslySelected.has(student.studentId) ? 'checked' : ''}
+            aria-label="${escapeHtml(student.studentName)} (${escapeHtml(student.studentId)}) 선택"
+            ${selectedStudentIds.has(String(student.studentId)) ? 'checked' : ''}
           />
           <div class="student-meta">
             <div class="student-name hsm-teacher-student-name">
@@ -1804,7 +1803,11 @@ protect	보호하다"></textarea>
       `).join('');
 
       $$('.student-check').forEach((checkbox) => {
-        checkbox.addEventListener('change', updateSelectedCount);
+        checkbox.addEventListener('change', () => {
+          if (checkbox.checked) selectedStudentIds.add(checkbox.value);
+          else selectedStudentIds.delete(checkbox.value);
+          updateSelectedCount();
+        });
       });
       $$('.student-reset-btn').forEach((button) => {
         button.addEventListener('click', () => resetStudentPassword(
@@ -1933,7 +1936,7 @@ protect	보호하다"></textarea>
           (student) => String(student.grade) === String(grade)
         ).length;
       } else {
-        count = $$('.student-check:checked').length;
+        count = selectedStudentIds.size;
       }
 
       $('#selectedCount').textContent = `${count}명 선택`;
@@ -1942,11 +1945,13 @@ protect	보호하다"></textarea>
     function selectAllVisibleStudents() {
       $$('.student-check').forEach((checkbox) => {
         checkbox.checked = true;
+        selectedStudentIds.add(checkbox.value);
       });
       updateSelectedCount();
     }
 
     function clearAllStudents() {
+      selectedStudentIds.clear();
       $$('.student-check').forEach((checkbox) => {
         checkbox.checked = false;
       });
@@ -1986,7 +1991,7 @@ protect	보호하다"></textarea>
             : '',
         targetStudentIds:
           targetType === '학생선택'
-            ? $$('.student-check:checked').map((input) => input.value)
+            ? Array.from(selectedStudentIds)
             : [],
         startAt: $('#startAt').value,
         deadlineAt: $('#deadlineAt').value,

@@ -2,7 +2,7 @@
 // 모든 동적 기능 파일이 같은 버전으로 로드되므로 기기별 혼합 캐시를 방지합니다.
 (function initializeHansalmaeBuildVersion(){
   var script=document.currentScript;
-  var version='20260919-7';
+  var version='20260920-1';
   try{
     version=new URL(script&&script.src||'',document.baseURI).searchParams.get('v')||version;
   }catch(_error){}
@@ -47,3 +47,4 @@ window.HANSALMAE_CONFIG = {
     if(!document.querySelector('script[data-hsm-school-content-student]')){var contentStudent=document.createElement('script');contentStudent.src=asset('./school-content-student.js');contentStudent.defer=true;contentStudent.dataset.hsmSchoolContentStudent='1';document.head.appendChild(contentStudent);}
   }
 })();
+
