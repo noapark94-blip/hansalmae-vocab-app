@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-7"></script>
-  <script src="./config.js?v=20260924-7"></script>
-  <script src="./app-update.js?v=20260924-7"></script>
+  <script src="./school-runtime.js?v=20260924-8"></script>
+  <script src="./config.js?v=20260924-8"></script>
+  <script src="./app-update.js?v=20260924-8"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4730,10 +4730,12 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-7">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-7">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-7">
-<script defer src="./test-setup.js?v=20260924-7"></script>
+<link rel="stylesheet" href="./test-setup.css?v=20260924-8">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-8">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-8">
+<script defer src="./test-setup.js?v=20260924-8"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-8">
+<script defer src="./wrong-review.js?v=20260924-8"></script>
 </head>
 
 <body>
@@ -11573,7 +11575,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       document.getElementById('loadingText').textContent =
         '';
 
-      if (!words || words.length < 4) {
+      if (!words || !words.length || (words.length < 4 && !(options && options.distractorWords && options.distractorWords.length >= 4))) {
         alert(
           '선택한 범위에 단어가 4개 이상 있어야 합니다.'
         );
@@ -11581,7 +11583,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         return;
       }
 
-      allWords = words;
+      allWords = options && options.distractorWords || words;
 
       options = options || {};
 
@@ -11782,6 +11784,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       let questionText = '';
       let correctAnswer = '';
       let choicePool = [];
+      const optionWords = currentTestContext.source === 'wrong' && question.data.sheetName ? allWords.filter(function(w){return w.sheetName === question.data.sheetName;}) : allWords;
 
 
       if (question.type === 'engToKor') {
@@ -11790,7 +11793,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         correctAnswer = question.data.meaning;
 
         choicePool =
-          allWords.map(function (item) {
+          optionWords.map(function (item) {
             return item.meaning;
           });
       }
@@ -11802,7 +11805,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         correctAnswer = question.data.word;
 
         choicePool =
-          allWords.map(function (item) {
+          optionWords.map(function (item) {
             return item.word;
           });
       }
@@ -11830,7 +11833,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
   // 선지도 각 단어의 F열을 우선 사용하고,
   // F열이 비어 있으면 B열 사용
   choicePool =
-    allWords.map(function (item) {
+    optionWords.map(function (item) {
       return (
         item.exampleAnswer ||
         item.word
