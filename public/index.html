@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260924-30"></script>
+  <script src="./app-dialogs.js?v=20260924-31"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-30"></script>
-  <script src="./config.js?v=20260924-30"></script>
-  <script src="./app-update.js?v=20260924-30"></script>
+  <script src="./school-runtime.js?v=20260924-31"></script>
+  <script src="./config.js?v=20260924-31"></script>
+  <script src="./app-update.js?v=20260924-31"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4745,15 +4745,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-30">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-30">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-30">
-<script defer src="./test-setup.js?v=20260924-30"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-30">
-<script defer src="./wrong-review.js?v=20260924-30"></script>
-<script defer src="./vocab-selection.js?v=20260924-30"></script>
-<script defer src="./personal-dialogs.js?v=20260924-30"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-30">
+<link rel="stylesheet" href="./test-setup.css?v=20260924-31">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-31">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-31">
+<script defer src="./test-setup.js?v=20260924-31"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-31">
+<script defer src="./wrong-review.js?v=20260924-31"></script>
+<script defer src="./vocab-selection.js?v=20260924-31"></script>
+<script defer src="./personal-dialogs.js?v=20260924-31"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-31">
 </head>
 
 <body>
@@ -5649,6 +5649,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             <div id="myExperienceLevel" class="experience-level">Lv.1</div>
             <div id="myExperienceTitle" class="experience-title">단어병아리</div>
           </div>
+          <div class="experience-level-range"><span id="myExperienceFrom">Lv.1</span><span id="myExperienceTo">Lv.2</span></div>
           <div class="experience-progress-wrap">
             <div id="myExperienceProgress" class="experience-progress-bar"></div>
           </div>
@@ -7241,6 +7242,10 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       if (levelEl) levelEl.textContent = 'Lv.' + level;
       if (titleEl) titleEl.textContent = title;
       if (progressEl) progressEl.style.width = progress + '%';
+      const fromEl = document.getElementById('myExperienceFrom');
+      const toEl = document.getElementById('myExperienceTo');
+      if (fromEl) fromEl.textContent = 'Lv.' + level;
+      if (toEl) toEl.textContent = maxLevel ? '최고 레벨' : 'Lv.' + (level + 1);
       if (xpEl) xpEl.textContent = totalXp.toLocaleString() + ' XP';
       if (remainingEl) {
         remainingEl.textContent = maxLevel
@@ -15611,7 +15616,7 @@ google.script.run
   function ensureCard(){
     const screen=document.getElementById('myPageScreen'); if(!screen||document.getElementById('hsmMyEmblemCard')) return;
     const xp=document.getElementById('myExperienceCard'); const card=document.createElement('div'); card.id='hsmMyEmblemCard'; card.className='hsm-emblem-card';
-    card.innerHTML='<div class="hsm-emblem-current"><img id="hsmCurrentEmblemImage" src="./images/emblems/title-chick.png" alt=""><div><span id="hsmCurrentEmblemBadge" class="hsm-emblem-equipped" hidden>장착 중</span><div id="hsmCurrentEmblemName" class="hsm-emblem-current-name">단어병아리</div><div id="hsmCurrentEmblemSub" class="hsm-emblem-current-sub">보유 엠블럼을 불러오는 중입니다.</div></div></div><button type="button" class="hsm-emblem-open" data-hsm-icon-ready="1" onclick="HSMEmblems.open()">엠블럼 관리 ›</button>';
+    card.innerHTML='<div class="hsm-emblem-current"><img id="hsmCurrentEmblemImage" src="./images/emblems/title-chick.png" alt=""><div><span id="hsmCurrentEmblemBadge" class="hsm-emblem-equipped" hidden>장착 중</span><div id="hsmCurrentEmblemName" class="hsm-emblem-current-name">단어병아리</div><div id="hsmCurrentEmblemSub" class="hsm-emblem-current-sub">보유 엠블럼을 불러오는 중입니다.</div><button type="button" class="hsm-emblem-open" data-hsm-icon-ready="1" onclick="HSMEmblems.open()">엠블럼 관리 ›</button></div></div>';
     if(xp&&xp.parentNode) xp.parentNode.insertBefore(card,xp.nextSibling); else screen.appendChild(card);
   }
   function apply(data){
@@ -15622,7 +15627,7 @@ google.script.run
     if(eq){
       if(img)img.src=eq.imagePath;
       if(name)name.textContent=eq.emblemName;
-      if(sub)sub.textContent='획득 '+Number(data.acquiredCount||0)+' / '+Number(data.totalCount||0)+'개 수집';
+      if(sub)sub.textContent='전체 '+Number(data.totalCount||0)+'개 중 '+Number(data.acquiredCount||0)+'개 수집';
     }else{
       if(name)name.textContent='장착한 엠블럼 없음';
       if(sub)sub.textContent='획득 '+Number(data.acquiredCount||0)+' / '+Number(data.totalCount||0)+' · 엠블럼을 선택해주세요.';
@@ -16201,7 +16206,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260924-30"></script>
+<script src="./ui-icons.js?v=20260924-31"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

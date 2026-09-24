@@ -201,19 +201,19 @@
 #myPageScreen .experience-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 20px}
 #myPageScreen .experience-level{font-size:34px;font-weight:800;line-height:1.15;letter-spacing:-1px;color:#821555}
 #myPageScreen .experience-title{min-width:0;max-width:60%;padding:5px 10px;border:1px solid #ffffffa6;border-radius:999px;background:#ffffff80;font-size:12px;font-weight:650;line-height:1.5;text-align:center;color:#733154;word-break:keep-all;overflow-wrap:anywhere}
-#myPageScreen .experience-progress-wrap{height:9px;margin:0;border-radius:999px;background:#dfccda;overflow:hidden}
+#myPageScreen .experience-progress-wrap{height:15px;margin:0;border-radius:999px;background:#dfccda;overflow:hidden}
 #myPageScreen .experience-progress-bar{height:100%;border-radius:inherit;background:linear-gradient(90deg,#8f145f,#ce5a9e);box-shadow:0 0 8px #ab3e7920}
 #myPageScreen .experience-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px 12px;margin-top:10px;font-size:12px;font-weight:500;line-height:1.5;color:#795b6d}
 #myPageScreen .experience-card-guide{margin:14px 0 0;text-align:right;font-size:12px;font-weight:600;line-height:1.5;color:#854365}
 #myPageScreen #hsmMyEmblemCard{margin:0 0 16px;padding:18px;border:1px solid #eee2d8;border-radius:20px;background:linear-gradient(125deg,#fffaf2,#fff 75%);box-shadow:0 4px 16px #80533706}
 #myPageScreen .hsm-emblem-current{display:flex;gap:16px;min-width:0;align-items:center}
-#myPageScreen .hsm-emblem-current img{box-sizing:border-box;flex:0 0 76px;width:76px;height:76px;padding:4px;object-fit:contain;border:1px solid #f1e5d9;border-radius:22px;background:#fff;box-shadow:0 5px 14px #8e694412}
+#myPageScreen .hsm-emblem-current img{box-sizing:border-box;flex:0 0 108px;width:108px;height:108px;padding:2px;object-fit:contain;border:0;border-radius:50%;background:radial-gradient(circle,#f8e8c9 0%,#fff4e2 58%,#fffaf200 72%);box-shadow:none}
 #myPageScreen .hsm-emblem-current>div{min-width:0;flex:1}
 #myPageScreen .hsm-emblem-equipped{display:inline-flex;align-items:center;gap:4px;margin:0 0 5px;padding:3px 7px;border-radius:6px;background:#f4e8d4;color:#826027;font-size:10px;font-weight:650;line-height:1.4}
 #myPageScreen .hsm-emblem-equipped[hidden]{display:none!important}
 #myPageScreen .hsm-emblem-current-name{font-size:18px;font-weight:700;line-height:1.4;letter-spacing:-.4px;color:#563449;word-break:keep-all;overflow-wrap:anywhere}
 #myPageScreen .hsm-emblem-current-sub{margin-top:5px;font-size:12px;font-weight:400;line-height:1.6;color:#89737d;word-break:keep-all;overflow-wrap:anywhere}
-#myPageScreen .hsm-emblem-open{display:block;width:auto;min-height:44px;margin:14px 0 0 auto;padding:10px 14px;border:1px solid #e8d7e2;border-radius:12px;background:#fff;color:#853363;font-size:13px;font-weight:650;line-height:1.5;box-shadow:none;transform:none}
+#myPageScreen .hsm-emblem-open{display:block;width:auto;min-height:44px;margin:10px 0 0;padding:8px 12px;border:1px solid #e8d7e2;border-radius:12px;background:#fff;color:#853363;font-size:13px;font-weight:650;line-height:1.5;box-shadow:none;transform:none}
 #myPageScreen .hsm-emblem-open:hover{background:#faf0f6;border-color:#cfa5be}
 #myPageScreen .hsm-emblem-open:focus-visible{outline:2px solid #8f145f;outline-offset:3px}
 #myPageScreen .my-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 24px}
@@ -228,7 +228,10 @@
 @media(max-width:360px){
  #myPageScreen .experience-card{padding:18px!important}
  #myPageScreen .hsm-emblem-current{gap:12px}
- #myPageScreen .hsm-emblem-current img{flex-basis:64px;width:64px;height:64px}
+ #myPageScreen .hsm-emblem-current img{flex-basis:88px;width:88px;height:88px}
  #myPageScreen .hsm-emblem-current-name{font-size:16px}
  #myPageScreen .my-summary-card{padding:13px}
 }
+
+#myPageScreen .experience-level-range{display:flex;justify-content:space-between;gap:12px;margin:0 0 7px;font-size:11px;font-weight:650;line-height:1.5;color:#8b5c77}
+#myPageScreen .experience-level-range>span:last-child{color:#8f145f;text-align:right}
