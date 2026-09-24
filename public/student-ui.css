@@ -516,3 +516,30 @@ body.collection-open{overflow:hidden}
 #hsmSchoolStudentPage #hsmSchoolExamDialog #hsmSchoolSetupNotice{font-size:11px!important;line-height:1.6;color:#998391!important;margin:10px 0 18px}
 #hsmSchoolStudentPage #hsmSchoolExamDialog #hsmSchoolTestCount{box-sizing:border-box;font-size:16px;min-height:46px}
 #hsmSchoolStudentPage #hsmSchoolExamDialog #hsmSchoolStartNow{min-height:48px!important;margin-top:20px!important;font-weight:700!important}
+
+/* Selection replaces the number; reading columns never change. */
+#mainApp .hsm-unified-word.word-card,
+#mainApp .hsm-unified-word .personal-card-layout,
+#mainApp .hsm-unified-word .wrong-note-select-layout{display:block!important;grid-template-columns:minmax(0,1fr)!important}
+#mainApp .hsm-unified-word .hsm-word-number{position:relative!important;width:18px!important;height:18px}
+#mainApp .hsm-unified-word .hsm-slot-control{display:none!important;position:absolute;inset:-9px;margin:0!important;padding:9px!important;width:36px;height:36px;box-sizing:border-box;cursor:pointer}
+#mainApp #vocabScreen.hsm-vocab-selecting .hsm-slot-control,
+#mainApp #wrongNotebookList.selection-mode .hsm-slot-control,
+#mainApp #personalVocabularyList.selection-mode .hsm-slot-control{display:block!important}
+#mainApp #vocabScreen.hsm-vocab-selecting .hsm-number-text,
+#mainApp #wrongNotebookList.selection-mode .hsm-number-text,
+#mainApp #personalVocabularyList.selection-mode .hsm-number-text{visibility:hidden}
+#mainApp .hsm-unified-word .hsm-slot-control input[type=checkbox]{display:block!important;position:static!important;appearance:none!important;-webkit-appearance:none!important;opacity:1!important;pointer-events:auto!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;margin:0!important;padding:0!important;border:1.5px solid #c7b5c1!important;border-radius:5px!important;background:#fff!important;box-shadow:none!important;cursor:pointer}
+#mainApp .hsm-unified-word:has(input[type=checkbox]:checked){background:#fcf5fa!important;border-color:#d6b1c9!important}
+#mainApp .hsm-unified-word .hsm-slot-control input:checked{background:#8f145f!important;border-color:#8f145f!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='m4 9 3 3 7-7' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E")!important}
+#mainApp .hsm-unified-word .hsm-slot-control input:focus-visible{outline:2px solid #8f145f!important;outline-offset:3px}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-row,
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study.is-selecting .hsm-school-word-row{grid-template-columns:18px minmax(0,1fr)!important;column-gap:6px!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-row .hsm-school-word-eng,
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-row .hsm-school-word-mean{grid-column:2!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-row .hsm-school-word-num{grid-column:1!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study.is-selecting .hsm-school-word-num{visibility:hidden}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-check{grid-column:1!important;grid-row:1!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;max-width:18px!important;align-self:center!important;margin:0!important}
+
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-check-hit{grid-column:1;grid-row:1;align-self:center;justify-self:center;box-sizing:border-box;width:36px;height:36px;padding:9px;margin:-9px;cursor:pointer}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study:not(.is-selecting) .hsm-school-check-hit{display:none}
