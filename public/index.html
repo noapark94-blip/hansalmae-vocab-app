@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-50"></script>
+  <script src="./app-dialogs.js?v=20260925-51"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-50"></script>
-  <script src="./config.js?v=20260925-50"></script>
-  <script src="./app-update.js?v=20260925-50"></script>
+  <script src="./school-runtime.js?v=20260925-51"></script>
+  <script src="./config.js?v=20260925-51"></script>
+  <script src="./app-update.js?v=20260925-51"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -3915,6 +3915,7 @@
     justify-content: center;
   }
 
+  .hsm-picker-modal[hidden],
   .hsm-picker-modal.hidden {
     display: none !important;
   }
@@ -4745,15 +4746,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-50">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-50">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-50">
-<script defer src="./test-setup.js?v=20260925-50"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-50">
-<script defer src="./wrong-review.js?v=20260925-50"></script>
-<script defer src="./vocab-selection.js?v=20260925-50"></script>
-<script defer src="./personal-dialogs.js?v=20260925-50"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-50">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-51">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-51">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-51">
+<script defer src="./test-setup.js?v=20260925-51"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-51">
+<script defer src="./wrong-review.js?v=20260925-51"></script>
+<script defer src="./vocab-selection.js?v=20260925-51"></script>
+<script defer src="./personal-dialogs.js?v=20260925-51"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-51">
 </head>
 
 <body>
@@ -14810,7 +14811,7 @@ google.script.run
   >
     <div
       class="hsm-picker-backdrop"
-      onclick="closePersonalBookPicker_()"
+      data-book-picker-close
     ></div>
 
     <div class="hsm-picker-sheet">
@@ -14827,7 +14828,7 @@ google.script.run
         <button
           type="button"
           class="hsm-picker-close"
-          onclick="closePersonalBookPicker_()"
+          data-book-picker-close
           aria-label="닫기"
         >
           ×
@@ -14847,13 +14848,6 @@ google.script.run
         ＋ 새 단어장 만들기
       </button>
 
-      <button
-        type="button"
-        class="secondary-button hsm-picker-cancel"
-        onclick="closePersonalBookPicker_()"
-      >
-        취소
-      </button>
     </div>
   </div>
 
@@ -14862,6 +14856,13 @@ google.script.run
   let personalBookPickerMode_ = '';
   let personalBookPickerPayload_ = null;
   let personalBookPickerButton_ = null;
+
+  // Bind directly so closing does not depend on inline handler lookup.
+  document.querySelectorAll('#personalBookPickerModal [data-book-picker-close]')
+    .forEach(function (control) {
+      control.addEventListener('click', closePersonalBookPicker_);
+    });
+
 
   function openPersonalBookPicker_(
     books,
@@ -14927,6 +14928,7 @@ google.script.run
       list.appendChild(button);
     });
 
+    modal.hidden = false;
     modal.classList.remove('hidden');
     document.body.classList.add(
       'hsm-modal-open'
@@ -14940,6 +14942,7 @@ google.script.run
     );
 
     if (modal) {
+      modal.hidden = true;
       modal.classList.add('hidden');
     }
 
@@ -14975,7 +14978,10 @@ google.script.run
     const modal = document.getElementById(
       'personalBookPickerModal'
     );
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+      modal.hidden = true;
+      modal.classList.add('hidden');
+    }
     document.body.classList.remove(
       'hsm-modal-open'
     );
@@ -16287,7 +16293,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-50"></script>
+<script src="./ui-icons.js?v=20260925-51"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
