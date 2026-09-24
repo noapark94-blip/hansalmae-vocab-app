@@ -116,7 +116,7 @@
 #personalVocabularyScreen #personalTestSelectionHint.is-ready{color:#8f145f}
 #personalVocabularyScreen .personal-book-label{display:none}
 #personalVocabularyScreen .personal-item{margin-top:8px;padding:14px;border-radius:14px;transition:border-color .15s,background .15s}
-#personalVocabularyScreen .personal-item.is-selected{border-color:#dba6c5;background:#fffafd}
+#personalVocabularyScreen #personalVocabularyList.selection-mode .personal-item.is-selected{border-color:#dba6c5;background:#fffafd}
 #personalVocabularyScreen .personal-item-top{align-items:flex-start;gap:8px}
 #personalVocabularyScreen .personal-word{font-size:21px;overflow-wrap:anywhere}
 #personalVocabularyScreen .personal-meta{font-size:11px;line-height:1.5;color:#998b95}
@@ -423,7 +423,7 @@ body.collection-open{overflow:hidden}
 
 /* Shared vocabulary card typography and layout; original controls remain in place. */
 #mainApp .hsm-unified-word{box-sizing:border-box!important;min-width:0!important;margin:12px 0 0!important;padding:17px 16px!important;border:1px solid #eae1e7!important;border-radius:16px!important;background:#fff;box-shadow:none!important;transform:none!important}
-#mainApp .hsm-unified-word.checked{border-color:#cb8aaf!important;background:#fdf7fb}
+#mainApp #vocabScreen.hsm-vocab-selecting .hsm-unified-word.checked{border-color:#cb8aaf!important;background:#fdf7fb}
 #mainApp .hsm-unified-word .word-content,#mainApp .hsm-unified-word .wrong-note-select-content,#mainApp .hsm-unified-word .personal-card-content{min-width:0!important;width:100%;max-width:100%}
 #mainApp .hsm-unified-word .hsm-word-meta{display:flex!important;align-items:flex-start!important;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 12px!important}
 #mainApp .hsm-unified-word .hsm-word-source,#mainApp .hsm-unified-word .wrong-note-source,#mainApp .hsm-unified-word .personal-meta{min-width:0;max-width:100%;margin:0!important;padding:0!important;font-size:11px!important;font-weight:400!important;line-height:1.5!important;color:#a08d99!important;text-align:left!important;word-break:keep-all;overflow-wrap:anywhere}
@@ -501,7 +501,7 @@ body.collection-open{overflow:hidden}
 #hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study.is-selecting .hsm-school-word-row{grid-template-columns:26px 18px minmax(0,1fr)!important;column-gap:8px!important}
 #hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-check{appearance:none!important;-webkit-appearance:none!important;width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;max-width:20px!important;padding:0!important;border:1.5px solid #cdbac6!important;border-radius:6px!important;background:#fff!important;box-shadow:none!important;cursor:pointer}
 #hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-check:checked{background:#8f145f!important;border-color:#8f145f!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='m5 10 3 3 7-7' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important}
-#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-row.is-selected{background:#fcf5fa!important;border-color:#d6b1c9!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study.is-selecting .hsm-school-word-row.is-selected{background:#fcf5fa!important;border-color:#d6b1c9!important}
 #hsmSchoolStudentPage #hsmSchoolExamDialog{box-sizing:border-box;width:calc(100% - 24px);max-width:440px;max-height:calc(100dvh - 32px);margin:auto auto 12px;padding:20px 18px max(20px,env(safe-area-inset-bottom));border:1px solid #ede1e8;border-radius:24px;background:#fff;box-shadow:0 20px 70px #31132433;overflow:auto;color:#422b39}
 #hsmSchoolExamDialog::backdrop{background:#281b254d;backdrop-filter:blur(4px)}
 #hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
@@ -530,7 +530,7 @@ body.collection-open{overflow:hidden}
 #mainApp #wrongNotebookList.selection-mode .hsm-number-text,
 #mainApp #personalVocabularyList.selection-mode .hsm-number-text{visibility:hidden}
 #mainApp .hsm-unified-word .hsm-slot-control input[type=checkbox]{display:block!important;position:static!important;appearance:none!important;-webkit-appearance:none!important;opacity:1!important;pointer-events:auto!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;margin:0!important;padding:0!important;border:1.5px solid #c7b5c1!important;border-radius:5px!important;background:#fff!important;box-shadow:none!important;cursor:pointer}
-#mainApp .hsm-unified-word:has(input[type=checkbox]:checked){background:#fcf5fa!important;border-color:#d6b1c9!important}
+#mainApp #vocabScreen.hsm-vocab-selecting .hsm-unified-word:has(input[type=checkbox]:checked),#mainApp #wrongNotebookList.selection-mode .hsm-unified-word:has(input[type=checkbox]:checked),#mainApp #personalVocabularyList.selection-mode .hsm-unified-word:has(input[type=checkbox]:checked){background:#fcf5fa!important;border-color:#d6b1c9!important}
 #mainApp .hsm-unified-word .hsm-slot-control input:checked{background:#8f145f!important;border-color:#8f145f!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='m4 9 3 3 7-7' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E")!important}
 #mainApp .hsm-unified-word .hsm-slot-control input:focus-visible{outline:2px solid #8f145f!important;outline-offset:3px}
 #hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-row,
