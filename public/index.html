@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-57"></script>
+  <script src="./app-dialogs.js?v=20260925-58"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-57"></script>
-  <script src="./config.js?v=20260925-57"></script>
-  <script src="./app-update.js?v=20260925-57"></script>
+  <script src="./school-runtime.js?v=20260925-58"></script>
+  <script src="./config.js?v=20260925-58"></script>
+  <script src="./app-update.js?v=20260925-58"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4746,15 +4746,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-57">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-57">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-57">
-<script defer src="./test-setup.js?v=20260925-57"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-57">
-<script defer src="./wrong-review.js?v=20260925-57"></script>
-<script defer src="./vocab-selection.js?v=20260925-57"></script>
-<script defer src="./personal-dialogs.js?v=20260925-57"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-57">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-58">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-58">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-58">
+<script defer src="./test-setup.js?v=20260925-58"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-58">
+<script defer src="./wrong-review.js?v=20260925-58"></script>
+<script defer src="./vocab-selection.js?v=20260925-58"></script>
+<script defer src="./personal-dialogs.js?v=20260925-58"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-58">
 </head>
 
 <body>
@@ -6919,59 +6919,12 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
 
     function showReplaceLoginConfirm_() {
-      return new Promise(function (resolve) {
-        const previous = document.getElementById('hsmReplaceLoginConfirm');
-        if (previous) previous.remove();
-
-        const overlay = document.createElement('div');
-        overlay.id = 'hsmReplaceLoginConfirm';
-        overlay.setAttribute('role', 'dialog');
-        overlay.setAttribute('aria-modal', 'true');
-        overlay.style.cssText = [
-          'position:fixed','inset:0','z-index:2147483647',
-          'display:flex','align-items:center','justify-content:center',
-          'padding:24px','background:rgba(25,15,21,.58)',
-          'backdrop-filter:blur(5px)','-webkit-backdrop-filter:blur(5px)'
-        ].join(';');
-
-        const panel = document.createElement('div');
-        panel.style.cssText = [
-          'width:min(92vw,430px)','background:#fff','border-radius:24px',
-          'padding:25px 22px 20px','box-shadow:0 24px 70px rgba(0,0,0,.28)',
-          'font-family:inherit','text-align:left'
-        ].join(';');
-
-        panel.innerHTML =
-          '<div style="font-size:21px;font-weight:900;color:#651044;margin-bottom:12px">다른 기기 로그인 확인</div>' +
-          '<div style="font-size:17px;line-height:1.65;color:#352b31">기존 기기에서 로그인 중입니다.<br>기존 기기의 접속을 종료하고 이 기기에서 로그인하시겠습니까?</div>' +
-          '<div style="display:flex;gap:10px;margin-top:22px">' +
-            '<button type="button" data-action="cancel" style="flex:1;padding:14px 10px;border:1px solid #d9bdcc;border-radius:14px;background:#fff;color:#651044;font-size:16px;font-weight:800">취소</button>' +
-            '<button type="button" data-action="replace" style="flex:1.6;padding:14px 10px;border:0;border-radius:14px;background:#8d165f;color:#fff;font-size:16px;font-weight:800">기존 기기 종료 후 로그인</button>' +
-          '</div>';
-
-        overlay.appendChild(panel);
-        document.body.appendChild(overlay);
-
-        let finished = false;
-        function finish(value) {
-          if (finished) return;
-          finished = true;
-          document.removeEventListener('keydown', onKeyDown, true);
-          overlay.remove();
-          resolve(value);
-        }
-        function onKeyDown(event) {
-          if (event.key === 'Escape') finish(false);
-        }
-        document.addEventListener('keydown', onKeyDown, true);
-        panel.querySelector('[data-action="cancel"]').addEventListener('click', function () { finish(false); });
-        panel.querySelector('[data-action="replace"]').addEventListener('click', function () { finish(true); });
-        overlay.addEventListener('click', function (event) {
-          if (event.target === overlay) finish(false);
-        });
+      return HSMDialog.confirm({
+        title: '이 기기에서 로그인할까요?',
+        message: '다른 기기에서 사용 중인 계정이에요.\n계속하면 기존 기기의 접속이 종료됩니다.',
+        action: '로그인', cancel: '취소'
       });
     }
-
 
     function loginStudent() {
       const studentId =
@@ -16318,7 +16271,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-57"></script>
+<script src="./ui-icons.js?v=20260925-58"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

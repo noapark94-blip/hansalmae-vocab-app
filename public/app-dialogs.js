@@ -10,6 +10,7 @@
     if (kind === 'confirm') {
       options.action = /삭제/.test(text) ? '삭제하기' : /로그아웃/.test(text) ? '로그아웃' : /제출/.test(text) ? '제출하기' : '진행하기';
       options.danger = /삭제|초기화/.test(text);
+      options.title = /삭제/.test(text) ? '삭제할까요?' : /초기화/.test(text) ? '초기화할까요?' : /로그아웃/.test(text) ? '로그아웃할까요?' : /제출/.test(text) ? '제출할까요?' : '진행할까요?';
       if (/그만둘|다른 메뉴로 이동/.test(text)) Object.assign(options, { title: '시험을 그만둘까요?', message: '지금 나가면 진행 중인 시험 기록이 삭제돼요.', action: '나가기', cancel: '계속 풀기', danger: true });
     }
     if (kind === 'prompt') { options.title = text.split('\n')[0]; options.message = text.split('\n').slice(1).join('\n'); options.label = '입력 내용'; options.action = '확인'; }
@@ -26,7 +27,7 @@
     d.className = 'hsm-app-dialog';
     d.setAttribute('aria-labelledby', id + '-title');
     d.setAttribute('aria-describedby', id + '-message');
-    d.innerHTML = '<form novalidate><div class="hsm-dialog-mark" aria-hidden="true"></div><h2></h2><p class="hsm-dialog-message"></p><div class="hsm-dialog-field" hidden><label></label><input autocomplete="off"><p class="hsm-dialog-validation" role="alert" hidden></p></div><div class="hsm-dialog-actions"><button type="button" data-cancel data-hsm-icon-ready="1"></button><button type="submit" data-accept data-hsm-icon-ready="1"></button></div></form>';
+    d.innerHTML = '<form novalidate><div class="hsm-dialog-mark" aria-hidden="true"></div><h2 tabindex="-1" autofocus data-hsm-icon-ready="1"></h2><p class="hsm-dialog-message"></p><div class="hsm-dialog-field" hidden><label></label><input autocomplete="off"><p class="hsm-dialog-validation" role="alert" hidden></p></div><div class="hsm-dialog-actions"><button type="button" data-cancel data-hsm-icon-ready="1"></button><button type="submit" data-accept data-hsm-icon-ready="1"></button></div></form>';
     d.querySelector('.hsm-dialog-mark').textContent = o.kind === 'prompt' ? '＋' : o.danger ? '!' : '✓';
     d.querySelector('h2').id = id + '-title';d.querySelector('h2').textContent = o.title;
     var message = d.querySelector('.hsm-dialog-message'); message.id = id + '-message'; message.textContent = o.message || '';message.hidden = !o.message;
@@ -58,7 +59,7 @@
     };
     document.body.appendChild(d);d.showModal();
     if (o.kind === 'prompt') { input.focus();input.select(); }
-    else (o.kind === 'confirm' ? cancel : accept).focus();
+    else d.querySelector('h2').focus({preventScroll:true});
   }
   function request(kind, value, initial) {
     var options = settings(kind, value, initial), key = JSON.stringify(options);
