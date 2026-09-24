@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-4"></script>
-  <script src="./config.js?v=20260924-4"></script>
-  <script src="./app-update.js?v=20260924-4"></script>
+  <script src="./school-runtime.js?v=20260924-5"></script>
+  <script src="./config.js?v=20260924-5"></script>
+  <script src="./app-update.js?v=20260924-5"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4730,10 +4730,10 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-4">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-4">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-4">
-<script defer src="./test-setup.js?v=20260924-4"></script>
+<link rel="stylesheet" href="./test-setup.css?v=20260924-5">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-5">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-5">
+<script defer src="./test-setup.js?v=20260924-5"></script>
 </head>
 
 <body>
@@ -5823,8 +5823,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         <h2>오답만 시험보기</h2>
 
         <div class="wrong-test-guide">
-          복습할 오답만 다시 출제합니다.<br>
-          객관식 보기를 만들기 위해 같은 단어 종류의 오답이 최소 4개 필요합니다.
+          틀렸던 단어를 다시 익혀보세요.<br>
+          같은 종류의 오답이 4개 이상이면 시작할 수 있어요.
         </div>
 
         <label for="wrongTestSheetName">
@@ -5842,7 +5842,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
         <select id="wrongTestQuestionMode">
           <option value="random">랜덤 출제</option>
-          <option value="engToKor">영어 → 한글만</option>
+          <option value="engToKor" selected>영어 → 한글만</option>
           <option value="korToEng">한글 → 영어만</option>
           <option value="mixed">영한·한영 혼합</option>
           <option value="example">예문 문제만</option>
@@ -9621,9 +9621,10 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       document
         .getElementById('wrongTestAvailableText')
         .textContent =
-        '현재 시험 가능한 오답 단어: ' +
+        '복습할 오답 ' +
         words.length +
-        '개 · 같은 단어를 여러 유형으로 반복 출제할 수 있습니다.';
+        '개 · 문제 수를 늘리면 반복 출제됩니다.';
+      window.dispatchEvent(new Event('hsm:wrong-count'));
     }
 
 

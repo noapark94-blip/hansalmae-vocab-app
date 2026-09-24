@@ -30,12 +30,12 @@
   }
   function choices(select, id, names) {
     var group = document.createElement('div'); group.id = id; group.className = 'hsm-setup-choices';
-    group.setAttribute('role', 'group'); group.setAttribute('aria-label', id === 'hsmSetupSheets' || id === 'hsmVocabSheets' ? '단어 종류' : '문제 유형');
+    group.setAttribute('role', 'group'); group.setAttribute('aria-label', id === 'hsmSetupSheets' || id === 'hsmVocabSheets' || id === 'hsmWrongSheets' ? '단어 종류' : '문제 유형');
     select.insertAdjacentElement('afterend', group); select.hidden = true;
     function render() {
       group.replaceChildren();
-      Array.from(select.options).filter(function (o) { return o.value; }).sort(function(a,b){return id === 'hsmSetupModes' ? ['engToKor','korToEng','mixed','random','example'].indexOf(a.value)-['engToKor','korToEng','mixed','random','example'].indexOf(b.value) : 0;}).forEach(function (o) {
-        var b = button(names && names[o.value] || o.textContent.trim().replace(/DB$/i, ''), function () {
+      Array.from(select.options).filter(function (o) { return o.value; }).sort(function(a,b){return (id === 'hsmSetupModes' || id === 'hsmWrongModes') ? ['engToKor','korToEng','mixed','random','example'].indexOf(a.value)-['engToKor','korToEng','mixed','random','example'].indexOf(b.value) : 0;}).forEach(function (o) {
+        var b = button(names && names[o.value] || o.textContent.trim().replace(/DB(?=\s*\(|$)/i, ''), function () {
           select.value = o.value; select.dispatchEvent(new Event('change', {bubbles:true})); sync();
         });
         b.dataset.value = o.value; group.appendChild(b);
@@ -45,7 +45,7 @@
     new MutationObserver(render).observe(select, {childList:true}); render();
   }
   function sync() {
-    [['hsmSetupSheets','sheetName'],['hsmVocabSheets','vocabSheetName'],['hsmSetupModes','questionMode'],['hsmSetupCounts','questionCount']].forEach(function (pair) {
+    [['hsmWrongSheets','wrongTestSheetName'],['hsmWrongModes','wrongTestQuestionMode'],['hsmSetupSheets','sheetName'],['hsmVocabSheets','vocabSheetName'],['hsmSetupModes','questionMode'],['hsmSetupCounts','questionCount']].forEach(function (pair) {
       var group = $(pair[0]), select = $(pair[1]); if (!group || !select) return;
       group.querySelectorAll('button').forEach(function (b) {
         var selected = b.dataset.value === select.value || (b.dataset.value === 'custom' && !['10','20','30'].includes(select.value));
@@ -86,6 +86,18 @@
     choices($('sheetName'), 'hsmSetupSheets');
     choices($('vocabSheetName'), 'hsmVocabSheets');
     choices($('questionMode'), 'hsmSetupModes', {engToKor:'영어 → 한글',korToEng:'한글 → 영어',mixed:'영한·한영 혼합',random:'랜덤 출제',example:'예문 문제'});
+    if ($('wrongTestSheetName')) {
+      choices($('wrongTestSheetName'), 'hsmWrongSheets');
+      choices($('wrongTestQuestionMode'), 'hsmWrongModes', {engToKor:'영어 → 한글',korToEng:'한글 → 영어',mixed:'영한·한영 혼합',random:'랜덤 출제',example:'예문 문제'});
+      ['wrongTestSheetName','wrongTestQuestionMode'].forEach(function(id){$(id).addEventListener('change',sync);});
+      var wrongCount = $('wrongTestQuestionCount'), quick = document.createElement('div');
+      quick.className = 'hsm-wrong-counts'; quick.setAttribute('role','group'); quick.setAttribute('aria-label','문제 수 빠른 선택');
+      wrongCount.insertAdjacentElement('beforebegin',quick);
+      ['10','20','30'].forEach(function(value){var b=button(value+'개',function(){wrongCount.value=value;wrongCount.dispatchEvent(new Event('input',{bubbles:true}));});b.dataset.value=value;quick.appendChild(b);});
+      function syncWrongCount(){quick.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.value===wrongCount.value));});}
+      wrongCount.addEventListener('input',syncWrongCount);
+      window.addEventListener('hsm:wrong-count',syncWrongCount); syncWrongCount();
+    }
     var counts = document.createElement('div'); counts.id = 'hsmSetupCounts'; counts.className = 'hsm-setup-choices'; counts.setAttribute('role','group'); counts.setAttribute('aria-label','문제 수');
     var count = $('questionCount'); count.insertAdjacentElement('beforebegin',counts); count.hidden = true;
     ['10','20','30','custom'].forEach(function (value) {
