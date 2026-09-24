@@ -44,7 +44,7 @@
 #mainApp .topbar-title{flex-wrap:wrap;row-gap:3px!important}
 #mainApp .topbar-title #hsmGlobalBackButton{position:static!important;flex:0 0 36px;width:36px!important;min-width:36px!important;min-height:36px!important;height:36px;margin:0 3px 0 0!important;padding:0!important;display:inline-flex;align-items:center;justify-content:center;background:#fff!important;border:1px solid #eadfe5!important;border-radius:10px!important;color:#8f145f!important;box-shadow:none!important;backdrop-filter:none;font-size:25px!important}
 #mainApp .topbar-title #hsmGlobalBackButton.hidden{display:none!important}
-#startScreen #hsmSetupModes>button:last-child{grid-column:1/-1}
+#startScreen #hsmSetupModes>button,#wrongTestSetupScreen #hsmWrongModes>button{grid-column:auto;min-width:0}
 #vocabScreen .vocab-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 #vocabScreen .filter-check{min-height:44px;padding:10px 12px;gap:10px}
 .hsm-launcher-home .hsm-launcher-tile-copy span{word-break:keep-all;overflow-wrap:anywhere;line-height:1.45}
