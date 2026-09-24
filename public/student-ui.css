@@ -300,3 +300,14 @@
 #accountScreen .hsm-password-card input::placeholder{font-size:13px;color:#aa9ca5}
 #accountScreen .hsm-password-card>button{min-height:46px;margin-top:18px;border-radius:11px;background:linear-gradient(100deg,#8b1e5e,#a03978);font-size:13px}
 @media(max-width:350px){#accountScreen .account-push-card{padding:12px;column-gap:6px}#accountScreen .account-push-copy strong{font-size:14px;gap:6px}}
+
+/* A real switch tied to the confirmed notification subscription state. */
+#accountScreen #accountPushNotificationButton[role="switch"]{position:relative;display:block;box-sizing:border-box;flex-shrink:0;width:54px;min-width:54px;height:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:12px;background:transparent;box-shadow:none;cursor:pointer;touch-action:manipulation}
+#accountScreen #accountPushNotificationButton[role="switch"]::before{content:"";position:absolute;left:1px;top:7px;width:52px;height:30px;border-radius:999px;background:#d7ccd3;transition:background .18s ease}
+#accountScreen #accountPushNotificationButton[role="switch"]::after{content:"";position:absolute;left:5px;top:11px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #35202b26;transition:transform .18s ease}
+#accountScreen #accountPushNotificationButton[role="switch"][aria-checked="true"]::before{background:#941765}
+#accountScreen #accountPushNotificationButton[role="switch"][aria-checked="true"]::after{transform:translateX(22px)}
+#accountScreen #accountPushNotificationButton[role="switch"]:disabled{opacity:.45;cursor:default}
+#accountScreen #accountPushNotificationButton[role="switch"][aria-busy="true"]{opacity:.65;cursor:wait}
+#accountScreen #accountPushNotificationButton[role="switch"]:focus-visible{outline:2px solid #8f145f;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){#accountScreen #accountPushNotificationButton[role="switch"]::before,#accountScreen #accountPushNotificationButton[role="switch"]::after{transition:none}}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260924-37"></script>
+  <script src="./app-dialogs.js?v=20260924-38"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-37"></script>
-  <script src="./config.js?v=20260924-37"></script>
-  <script src="./app-update.js?v=20260924-37"></script>
+  <script src="./school-runtime.js?v=20260924-38"></script>
+  <script src="./config.js?v=20260924-38"></script>
+  <script src="./app-update.js?v=20260924-38"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4745,15 +4745,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-37">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-37">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-37">
-<script defer src="./test-setup.js?v=20260924-37"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-37">
-<script defer src="./wrong-review.js?v=20260924-37"></script>
-<script defer src="./vocab-selection.js?v=20260924-37"></script>
-<script defer src="./personal-dialogs.js?v=20260924-37"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-37">
+<link rel="stylesheet" href="./test-setup.css?v=20260924-38">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-38">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-38">
+<script defer src="./test-setup.js?v=20260924-38"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-38">
+<script defer src="./wrong-review.js?v=20260924-38"></script>
+<script defer src="./vocab-selection.js?v=20260924-38"></script>
+<script defer src="./personal-dialogs.js?v=20260924-38"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-38">
 </head>
 
 <body>
@@ -5556,7 +5556,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             <span>선생님 시험이 출제되면 이 기기로 알려드려요.</span>
             <small id="accountPushNotificationStatus">현재 상태를 확인하는 중입니다.</small>
           </div>
-          <button type="button" id="accountPushNotificationButton" onclick="toggleStudentPushNotifications_()">알림 켜기</button>
+          <button type="button" id="accountPushNotificationButton" role="switch" aria-checked="false" aria-label="시험 알림" aria-describedby="accountPushNotificationStatus" data-hsm-icon-ready="1" disabled onclick="toggleStudentPushNotifications_()"></button>
         </div>
 
         <div class="hsm-password-card">
@@ -13364,7 +13364,12 @@ google.script.run
       ['pushNotificationButton', 'accountPushNotificationButton'].forEach(function (id) {
         const button = document.getElementById(id);
         if (!button) return;
-        button.textContent = enabled ? '알림 끄기' : '알림 켜기';
+        if (id === 'accountPushNotificationButton') {
+          button.setAttribute('aria-checked', String(Boolean(enabled)));
+          button.setAttribute('aria-busy', 'false');
+        } else {
+          button.textContent = enabled ? '알림 끄기' : '알림 켜기';
+        }
         button.disabled = Boolean(disabled);
       });
     }
@@ -13397,7 +13402,10 @@ google.script.run
       if (!currentStudent || !currentLoginToken) return;
       ['pushNotificationButton', 'accountPushNotificationButton'].forEach(function (id) {
         const button = document.getElementById(id);
-        if (button) button.disabled = true;
+        if (button) {
+          button.disabled = true;
+          if (id === 'accountPushNotificationButton') button.setAttribute('aria-busy', 'true');
+        }
       });
       getPushRegistration_().then(function (registration) {
         return registration.pushManager.getSubscription().then(function (subscription) {
@@ -16209,7 +16217,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260924-37"></script>
+<script src="./ui-icons.js?v=20260924-38"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
