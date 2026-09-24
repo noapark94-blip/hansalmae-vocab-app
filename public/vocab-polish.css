@@ -25,3 +25,7 @@
   #vocabScreen .vocab-header h2{font-size:23px}
   #vocabScreen #hsmVocabSheets button{font-size:13px}
 }
+
+#vocabScreen #vocabDay[hidden]{display:none!important}
+#vocabScreen #hsmPickvocabDay{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;margin:0;padding:12px 14px;border:1px solid #e8dce3;border-radius:12px;background:#fff;color:#382430;font-size:16px;text-align:left;box-shadow:none}
+#vocabScreen #hsmPickvocabDay:disabled{color:#9c8e96;background:#faf7f9}

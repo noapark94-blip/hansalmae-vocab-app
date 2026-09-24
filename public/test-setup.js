@@ -52,7 +52,7 @@
         b.setAttribute('aria-pressed', String(selected));
       });
     });
-    ['startDay','endDay'].forEach(function (id) {
+    ['startDay','endDay','vocabDay'].forEach(function (id) {
       var trigger = $('hsmPick' + id), select = $(id); if (!trigger) return;
       trigger.textContent = select.value ? 'Day ' + select.value + ' ⌄' : '불러오는 중…';
       trigger.disabled = select.disabled || !select.options.length;
@@ -61,11 +61,14 @@
   function closeDays() { $('hsmDayPicker').close(); }
   function renderDays() {
     var select = $(activeDay), grid = $('hsmDayGrid'); grid.replaceChildren();
-    $('hsmDayTitle').textContent = activeDay === 'startDay' ? '시작 Day 선택' : '마지막 Day 선택';
+    var vocabulary = activeDay === 'vocabDay';
+    $('hsmDayTitle').textContent = vocabulary ? '학습할 Day 선택' : activeDay === 'startDay' ? '시작 Day 선택' : '마지막 Day 선택';
+    $('hsmDayHint').textContent = vocabulary ? '원하는 Day를 누르면 해당 단어장이 열립니다.' : '시작일과 마지막 날을 포함해 출제합니다.';
+    $('hsmDayAll').hidden = vocabulary;
     Array.from(select.options).forEach(function (option) {
       var b = button(option.value, function () {
         select.value = option.value;
-        if (Number($('startDay').value) > Number($('endDay').value)) {
+        if (!vocabulary && Number($('startDay').value) > Number($('endDay').value)) {
           $(activeDay === 'startDay' ? 'endDay' : 'startDay').value = option.value;
         }
         select.dispatchEvent(new Event('change', {bubbles:true})); sync(); closeDays();
@@ -97,12 +100,12 @@
     ['sheetName','vocabSheetName'].forEach(function(id){$(id).addEventListener('change',function(){picked[id]=this.value;sync();});});
     $('questionMode').addEventListener('change',sync);
     var dialog = document.createElement('dialog'); dialog.id = 'hsmDayPicker'; dialog.setAttribute('aria-labelledby','hsmDayTitle');
-    dialog.innerHTML = '<div class="hsm-day-head"><h2 id="hsmDayTitle"></h2><button type="button" id="hsmDayClose">닫기</button></div><p>시작일과 마지막 날을 포함해 출제합니다.</p><div id="hsmDayGrid"></div><button type="button" id="hsmDayAll">전체 범위 선택</button>';
+    dialog.innerHTML = '<div class="hsm-day-head"><h2 id="hsmDayTitle"></h2><button type="button" id="hsmDayClose">닫기</button></div><p id="hsmDayHint">시작일과 마지막 날을 포함해 출제합니다.</p><div id="hsmDayGrid"></div><button type="button" id="hsmDayAll">전체 범위 선택</button>';
     document.body.appendChild(dialog); $('hsmDayClose').onclick = closeDays;
     dialog.addEventListener('close',function(){if(returnFocus)returnFocus.focus();});
     dialog.addEventListener('click',function(e){if(e.target===dialog){var r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeDays();}});
     $('hsmDayAll').onclick=function(){var start=$('startDay'),end=$('endDay');start.selectedIndex=0;end.selectedIndex=end.options.length-1;sync();closeDays();};
-    ['startDay','endDay'].forEach(function(id){var select=$(id);select.hidden=true;var b=button('',function(){activeDay=id;returnFocus=b;renderDays();dialog.showModal();var selected=$('hsmDayGrid').querySelector('[aria-pressed="true"]');if(selected)selected.focus();});b.id='hsmPick'+id;b.className='hsm-day-trigger';b.setAttribute('aria-label',id==='startDay'?'시작 Day 선택':'마지막 Day 선택');select.insertAdjacentElement('afterend',b);screen.querySelector('label[for="'+id+'"]').htmlFor=b.id;select.addEventListener('change',sync);});
+    ['startDay','endDay','vocabDay'].forEach(function(id){var select=$(id);if(!select)return;select.hidden=true;var b=button('',function(){activeDay=id;returnFocus=b;renderDays();dialog.showModal();var selected=$('hsmDayGrid').querySelector('[aria-pressed="true"]');if(selected)selected.focus();});b.id='hsmPick'+id;b.className='hsm-day-trigger';b.setAttribute('aria-haspopup','dialog');b.setAttribute('aria-controls','hsmDayPicker');b.setAttribute('aria-label',id==='vocabDay'?'학습할 Day 선택':id==='startDay'?'시작 Day 선택':'마지막 Day 선택');select.insertAdjacentElement('afterend',b);document.querySelector('label[for="'+id+'"]').htmlFor=b.id;select.addEventListener('change',sync);new MutationObserver(sync).observe(select,{childList:true,attributes:true,attributeFilter:['disabled']});});
     $('startDay').closest('.row').classList.add('hsm-setup-range');
     window.addEventListener('hsm:test-days',sync);
     var student = typeof currentStudent !== 'undefined' ? currentStudent : null;
