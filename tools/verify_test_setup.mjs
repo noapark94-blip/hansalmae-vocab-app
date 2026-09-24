@@ -36,7 +36,7 @@ assert.equal(el('wrongTestQuestionCount').value,'30');
 w.eval('var currentTestContext=null;');
 w.getSelectedWrongTestWords=()=>Array.from({length:6},(_,i)=>({word:'word'+i,meaning:'meaning'+i,day:1,example:i<2?'example':''}));
 w.eval(html.slice(html.indexOf('    function getWrongTestQuestionLimit()'),html.indexOf('    function setWrongNotebookFilter(')));
-let started=null,alerts=[];w.createQuestions=(words,options)=>{started=options;};w.alert=message=>alerts.push(message);
+let started=null,alerts=[];w.createQuestions=(words,options)=>{started=options;};w.HSMDialog={alert:(...a)=>w.alert(...a),confirm:async(...a)=>w.confirm(...a),prompt:async(...a)=>w.prompt(...a)};w.alert=message=>alerts.push(message);
 el('wrongTestQuestionMode').value='engToKor';el('wrongTestQuestionCount').value='30';
 w.startWrongAnswerTest();assert.equal(started,null);assert.equal(el('wrongTestQuestionCount').value,'6');assert.equal(alerts.length,1);
 w.startWrongAnswerTest();assert.equal(started.requestedCount,6);assert.equal(started.noRepeat,true);
@@ -114,7 +114,7 @@ w.close();
 const noteDom=new JSDOM('<div id="wrongNotebookLoading"></div><div id="wrongNotebookSummary"></div><div id="wrongNotebookPreview"></div><div id="wrongNotebookScreen"></div>'+wrongSection,{runScripts:'outside-only',url:'https://example.test'});
 const nw=noteDom.window,nd=nw.document;
 nw.eval('var currentLoginToken="student-a",currentStudent={studentId:"a"},wrongNotebookWords=[];');
-nw.renderWrongNotebook=()=>{};nw.scrollTo=()=>{};nw.alert=message=>{throw Error(message);};
+nw.renderWrongNotebook=()=>{};nw.scrollTo=()=>{};nw.HSMDialog={alert:(...a)=>nw.alert(...a),confirm:async(...a)=>nw.confirm(...a),prompt:async(...a)=>nw.prompt(...a)};nw.alert=message=>{throw Error(message);};
 nw.eval(html.slice(html.indexOf('    function showWrongTestSetup('),html.indexOf('    function startWrongAnswerTest()')));
 const fast=html.split('<script id="hsm-wrong-notebook-fast-v4">')[1].split('</script>')[0];nw.eval(fast);
 const immediate=html.split('<script id="hsm-wrong-note-immediate-refresh">')[1].split('</script>')[0];nw.eval(immediate);
@@ -137,3 +137,4 @@ nw.hsmFetchLatestWrongNotebook_();nw.eval('currentLoginToken="student-b"');noteP
 assert.equal(nw.readWrongNotebookSnapshot_().activeCount,8);
 noteDom.window.close();
 console.log('PASS saved wrong answers update snapshot; stale/account-switched reads ignored; two-word categories remain visible');
+

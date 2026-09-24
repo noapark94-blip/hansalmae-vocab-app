@@ -191,7 +191,7 @@
       document.getElementById('hsmSvWords').value = wordsToText(data.words || []);
       document.getElementById('hsmSvStudents').innerHTML = teacherStudentsHtml();
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (e) { alert(e.message); }
+    } catch (e) { HSMDialog.alert(e.message); }
   }
 
   async function saveTeacherBook() {
@@ -207,23 +207,23 @@
         words: words,
         studentIds: Array.from(state.teacher.selectedStudents)
       });
-      alert('수행평가 단어장을 저장했습니다.\n단어 ' + result.wordCount + '개 · 학생 ' + result.studentCount + '명');
+      HSMDialog.alert('수행평가 단어장을 저장했습니다.\n단어 ' + result.wordCount + '개 · 학생 ' + result.studentCount + '명');
       state.teacher.editingBookId = '';
       state.teacher.selectedStudents.clear();
       await loadTeacherSetup();
-    } catch (e) { alert(e.message); } finally { button.disabled = false; }
+    } catch (e) { HSMDialog.alert(e.message); } finally { button.disabled = false; }
   }
 
   async function deleteTeacherBook(id) {
-    if (!confirm('이 수행평가 단어장을 삭제할까요?\n학생에게서도 함께 사라집니다.')) return;
+    if (!(await HSMDialog.confirm('이 수행평가 단어장을 삭제할까요?\n학생에게서도 함께 사라집니다.'))) return;
     try { await call('teacherDeleteBook', teacherToken(), { bookId: id }); await loadTeacherSetup(); }
-    catch (e) { alert(e.message); }
+    catch (e) { HSMDialog.alert(e.message); }
   }
 
   async function openTeacherExamDialog(bookId) {
     try {
       var data = await call('teacherGetBook', teacherToken(), { bookId: bookId });
-      if ((data.words || []).length < 4) { alert('공식 시험을 만들려면 단어가 최소 4개 필요합니다.'); return; }
+      if ((data.words || []).length < 4) { HSMDialog.alert('공식 시험을 만들려면 단어가 최소 4개 필요합니다.'); return; }
       var overlay = document.createElement('div');
       overlay.className = 'hsm-sv-overlay';
       overlay.innerHTML = '<div class="hsm-sv-modal"><div class="hsm-sv-modal-head"><h2>수행평가 공식시험 출제</h2><button type="button" class="hsm-sv-close">닫기</button></div><div class="hsm-sv-card">' +
@@ -250,12 +250,12 @@
             allowRetake: Boolean(overlay.querySelector('#hsmSvExamRetake') && overlay.querySelector('#hsmSvExamRetake').checked),
             givePoint: Boolean(overlay.querySelector('#hsmSvExamPoint') && overlay.querySelector('#hsmSvExamPoint').checked)
           });
-          alert('수행평가 공식시험을 출제했습니다.\n' + result.questionCount + '문제 · ' + result.targetCount + '명');
+          HSMDialog.alert('수행평가 공식시험을 출제했습니다.\n' + result.questionCount + '문제 · ' + result.targetCount + '명');
           overlay.remove();
           if (typeof window.loadExamList === 'function') window.loadExamList();
-        } catch (e) { alert(e.message); btn.disabled = false; }
+        } catch (e) { HSMDialog.alert(e.message); btn.disabled = false; }
       };
-    } catch (e) { alert(e.message); }
+    } catch (e) { HSMDialog.alert(e.message); }
   }
 
   function installTeacher() {
@@ -380,3 +380,4 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
+

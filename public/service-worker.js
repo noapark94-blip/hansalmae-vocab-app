@@ -1,10 +1,12 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260924-23';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260924-24';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
 };
 
 const REQUIRED_ASSETS = [
+  versioned('./app-dialogs.js'),
+  versioned('./app-dialogs.css'),
   versioned('./personal-dialogs.js'),
   './',
   './index.html',

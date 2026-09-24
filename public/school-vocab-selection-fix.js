@@ -68,7 +68,7 @@
   }
 
   function saveToBook(book,items,sourceButton,modal){
-    var t=token();if(!t){alert('로그인 정보를 확인하지 못했습니다. 앱을 다시 열어주세요.');return;}
+    var t=token();if(!t){HSMDialog.alert('로그인 정보를 확인하지 못했습니다. 앱을 다시 열어주세요.');return;}
     sourceButton.disabled=true;
     var list=modal.querySelector('.hsm-sp-list');list.innerHTML='<div class="hsm-sp-loading">중복 단어를 확인하는 중입니다.</div>';
     google.script.run
@@ -78,21 +78,21 @@
         var addedKeys=new Set();
         var fresh=items.filter(function(item){var k=normalizeWord(item.word);if(!k||seen.has(k)||addedKeys.has(k))return false;addedKeys.add(k);return true;});
         var skipped=items.length-fresh.length;
-        if(!fresh.length){sourceButton.disabled=false;modal.hidden=true;alert('선택한 단어는 이미 「'+(book.bookName||'선택한 단어장')+'」에 모두 저장되어 있습니다.\n중복 단어 '+skipped+'개는 추가하지 않았습니다.');return;}
+        if(!fresh.length){sourceButton.disabled=false;modal.hidden=true;HSMDialog.alert('선택한 단어는 이미 「'+(book.bookName||'선택한 단어장')+'」에 모두 저장되어 있습니다.\n중복 단어 '+skipped+'개는 추가하지 않았습니다.');return;}
         list.innerHTML='<div class="hsm-sp-loading">'+fresh.length+'개 단어를 저장하는 중입니다.</div>';
         google.script.run
-          .withSuccessHandler(function(saveResult){sourceButton.disabled=false;modal.hidden=true;var saved=Number(saveResult&&saveResult.savedCount);if(!Number.isFinite(saved))saved=fresh.length;var duplicate=skipped+Number(saveResult&&saveResult.duplicateCount||0);alert('「'+(book.bookName||'선택한 단어장')+'」에 '+saved+'개를 추가했습니다.'+(duplicate?'\n중복 단어 '+duplicate+'개는 제외했습니다.':''));try{if(typeof loadPersonalVocabularyPreview==='function')loadPersonalVocabularyPreview();}catch(_){ }})
-          .withFailureHandler(function(error){sourceButton.disabled=false;modal.hidden=true;alert('단어 저장 중 오류가 발생했습니다.\n'+(error&&error.message?error.message:error));})
+          .withSuccessHandler(function(saveResult){sourceButton.disabled=false;modal.hidden=true;var saved=Number(saveResult&&saveResult.savedCount);if(!Number.isFinite(saved))saved=fresh.length;var duplicate=skipped+Number(saveResult&&saveResult.duplicateCount||0);HSMDialog.alert('「'+(book.bookName||'선택한 단어장')+'」에 '+saved+'개를 추가했습니다.'+(duplicate?'\n중복 단어 '+duplicate+'개는 제외했습니다.':''));try{if(typeof loadPersonalVocabularyPreview==='function')loadPersonalVocabularyPreview();}catch(_){ }})
+          .withFailureHandler(function(error){sourceButton.disabled=false;modal.hidden=true;HSMDialog.alert('단어 저장 중 오류가 발생했습니다.\n'+(error&&error.message?error.message:error));})
           .addPersonalVocabularyBatchToBook(t,book.bookId,fresh);
       })
-      .withFailureHandler(function(error){sourceButton.disabled=false;modal.hidden=true;alert('단어장 내용을 확인하지 못했습니다.\n'+(error&&error.message?error.message:error));})
+      .withFailureHandler(function(error){sourceButton.disabled=false;modal.hidden=true;HSMDialog.alert('단어장 내용을 확인하지 못했습니다.\n'+(error&&error.message?error.message:error));})
       .getPersonalVocabularyByBook(t,book.bookId);
   }
 
   function openBookPicker(items,button){
-    if(!items.length){alert('나만의 단어장에 추가할 단어를 선택해주세요.');return;}
-    if(!window.google||!google.script||!google.script.run){alert('저장 기능을 불러오지 못했습니다. 앱을 다시 열고 시도해주세요.');return;}
-    var t=token();if(!t){alert('로그인 정보를 확인하지 못했습니다. 앱을 다시 열어주세요.');return;}
+    if(!items.length){HSMDialog.alert('나만의 단어장에 추가할 단어를 선택해주세요.');return;}
+    if(!window.google||!google.script||!google.script.run){HSMDialog.alert('저장 기능을 불러오지 못했습니다. 앱을 다시 열고 시도해주세요.');return;}
+    var t=token();if(!t){HSMDialog.alert('로그인 정보를 확인하지 못했습니다. 앱을 다시 열어주세요.');return;}
     var modal=ensurePicker(),list=modal.querySelector('.hsm-sp-list'),desc=modal.querySelector('.hsm-sp-desc');
     desc.textContent=items.length+'개 단어를 저장할 나만의 단어장을 선택하세요. 같은 영어 단어는 자동으로 제외됩니다.';
     list.innerHTML='<div class="hsm-sp-loading">단어장 목록을 불러오는 중입니다.</div>';modal.hidden=false;
@@ -102,7 +102,7 @@
         if(!books.length){list.innerHTML='<div class="hsm-sp-loading">아직 만든 나만의 단어장이 없습니다.<br>나만의 단어장에서 먼저 단어장을 만들어주세요.</div>';return;}
         list.innerHTML='';books.forEach(function(book){var b=document.createElement('button');b.type='button';b.className='hsm-sp-book';b.innerHTML='<div class="hsm-sp-name">'+esc(book.bookName||'단어장')+'</div><div class="hsm-sp-meta">'+Number(book.wordCount||0)+'개 저장됨</div>';b.onclick=function(){saveToBook(book,items,button,modal);};list.appendChild(b);});
       })
-      .withFailureHandler(function(error){modal.hidden=true;alert('나만의 단어장 목록을 불러오지 못했습니다.\n'+(error&&error.message?error.message:error));})
+      .withFailureHandler(function(error){modal.hidden=true;HSMDialog.alert('나만의 단어장 목록을 불러오지 못했습니다.\n'+(error&&error.message?error.message:error));})
       .getVocabularyBooks(t);
   }
 

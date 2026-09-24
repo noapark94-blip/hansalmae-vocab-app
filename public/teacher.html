@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-24">
+  <script src="./app-dialogs.js?v=20260924-24"></script>
   <meta charset="UTF-8" />
   <title>한살매 선생님 시험 관리</title>
   <meta name="description" content="한살매입시전문학원 선생님용 단어시험 출제 및 학생 응시 현황 관리">
@@ -1223,7 +1225,7 @@
 
 </style>
 <link rel="stylesheet" href="./ui-icons.css?v=1">
-<link rel="stylesheet" href="./teacher-modern.css?v=20260924-16">
+<link rel="stylesheet" href="./teacher-modern.css?v=20260924-24">
 </head>
 <body>
   <main class="app">
@@ -1523,8 +1525,8 @@ protect	보호하다"></textarea>
     </div>
   </div>
 
-  <script src="./config.js?v=20260924-16"></script>
-  <script src="./app-update.js?v=20260924-16"></script>
+  <script src="./config.js?v=20260924-24"></script>
+  <script src="./app-update.js?v=20260924-24"></script>
   <script>
     const API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -1821,20 +1823,20 @@ protect	보호하다"></textarea>
 
     async function resetStudentPassword(studentId, studentName) {
       const suggested = 'Hsm' + String(Math.floor(100000 + Math.random() * 900000));
-      const password = window.prompt(
+      const password = (await HSMDialog.prompt(
         `${studentName} 학생에게 전달할 임시 비밀번호를 입력하세요.\n8자 이상이어야 하며 기존 비밀번호는 확인할 수 없습니다.`,
         suggested
-      );
+      ));
       if (password === null) return;
       if (String(password).length < 8) {
         showToast('임시 비밀번호는 8자 이상이어야 합니다.', 'error');
         return;
       }
-      if (!window.confirm(`${studentName} 학생의 비밀번호를 새 임시 비밀번호로 초기화할까요?`)) return;
+      if (!(await HSMDialog.confirm(`${studentName} 학생의 비밀번호를 새 임시 비밀번호로 초기화할까요?`))) return;
       try {
         setLoading(true, '비밀번호를 초기화하는 중입니다.');
         const result = await apiCall('teacherResetStudentPassword', studentId, password);
-        window.alert(`${result.message}\n\n임시 비밀번호: ${password}\n학생에게 안전하게 전달해주세요.`);
+        HSMDialog.alert(`${result.message}\n\n임시 비밀번호: ${password}\n학생에게 안전하게 전달해주세요.`);
       } catch (error) {
         showToast(error.message, 'error');
       } finally {
@@ -2060,9 +2062,9 @@ protect	보호하다"></textarea>
         const payload = getPayload();
         validatePayload(payload);
 
-        const ok = window.confirm(
+        const ok = (await HSMDialog.confirm(
           `${payload.title}\n\n선택한 내용으로 시험을 생성할까요?`
-        );
+        ));
         if (!ok) return;
 
         setLoading(true, '시험을 생성하는 중입니다.');
@@ -2308,10 +2310,10 @@ protect	보호하다"></textarea>
     }
 
     async function requestRetakeAllFromList(examId, title) {
-      const ok = window.confirm(
+      const ok = (await HSMDialog.confirm(
         `'${title || '선택한 시험'}' 대상 학생 전체에게 재응시 알림을 보낼까요?\n\n` +
         '기존 최고점과 응시 기록은 유지되며, 요청 후 72시간 동안 응시할 수 있습니다.'
-      );
+      ));
 
       if (!ok) return;
 
@@ -2335,11 +2337,11 @@ protect	보호하다"></textarea>
     }
 
     async function requestRetakeBelow70FromList(examId, title) {
-      const ok = window.confirm(
+      const ok = (await HSMDialog.confirm(
         `'${title || '선택한 시험'}'에서 최고점이 70점 미만인 학생에게\n` +
         '재응시 알림을 보낼까요?\n\n' +
         '70점 이상 학생과 미응시 학생은 제외됩니다.'
-      );
+      ));
 
       if (!ok) return;
 
@@ -2429,11 +2431,11 @@ protect	보호하다"></textarea>
     }
 
     async function cancelExam(examId, title) {
-      const ok = window.confirm(
+      const ok = (await HSMDialog.confirm(
         `"${title || '이 시험'}"의 출제를 취소하시겠습니까?\n\n` +
         '학생 시험 목록과 읽지 않은 알림에서 즉시 사라집니다.\n' +
         '이미 제출된 시험 결과는 보존됩니다.'
-      );
+      ));
 
       if (!ok) return;
 
@@ -2450,11 +2452,11 @@ protect	보호하다"></textarea>
     }
 
     async function deleteExam(examId, title) {
-      const ok = window.confirm(
+      const ok = (await HSMDialog.confirm(
         `"${title || '이 시험'}"을 시험 목록에서 완전히 삭제할까요?\n\n` +
         '시험 문제, 학생 배정 및 알림이 함께 삭제됩니다.\n' +
         '이미 제출된 학생의 성적 기록은 보존됩니다.'
-      );
+      ));
 
       if (!ok) return;
 
@@ -2471,16 +2473,16 @@ protect	보호하다"></textarea>
     }
 
     async function deleteAllExams() {
-      const first = window.confirm(
+      const first = (await HSMDialog.confirm(
         '선생님 시험 목록을 전부 삭제할까요?\n\n' +
         '모든 시험 문제, 학생 배정 및 시험 알림이 함께 삭제됩니다.\n' +
         '이미 제출된 학생의 성적 기록은 보존됩니다.'
-      );
+      ));
       if (!first) return;
 
-      const second = window.confirm(
+      const second = (await HSMDialog.confirm(
         '정말 전체 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
-      );
+      ));
       if (!second) return;
 
       try {
@@ -2605,10 +2607,10 @@ protect	보호하다"></textarea>
     async function requestRetakeStudent(studentId, studentName) {
       if (!currentStatusExamId || !studentId) return;
 
-      const ok = window.confirm(
+      const ok = (await HSMDialog.confirm(
         `${studentName || '선택한 학생'}에게 재응시 알림을 보낼까요?\n\n` +
         '기존 최고점과 응시 기록은 유지됩니다.'
-      );
+      ));
 
       if (!ok) return;
 
@@ -2631,10 +2633,10 @@ protect	보호하다"></textarea>
     async function requestRetakeAll() {
       if (!currentStatusExamId) return;
 
-      const ok = window.confirm(
+      const ok = (await HSMDialog.confirm(
         '시험 대상 학생 전체에게 재응시 알림을 보낼까요?\n\n' +
         '기존 최고점과 응시 기록은 유지됩니다.'
-      );
+      ));
 
       if (!ok) return;
 
@@ -2656,10 +2658,10 @@ protect	보호하다"></textarea>
     async function requestRetakeBelow70() {
       if (!currentStatusExamId) return;
 
-      const ok = window.confirm(
+      const ok = (await HSMDialog.confirm(
         '최고점이 70점 미만인 학생에게 재응시 알림을 보낼까요?\n\n' +
         '70점 이상 학생과 미응시 학생은 제외됩니다.'
-      );
+      ));
 
       if (!ok) return;
 
@@ -2681,9 +2683,9 @@ protect	보호하다"></textarea>
 
     async function sendReminder(examId, skipConfirm = false) {
       if (!skipConfirm) {
-        const ok = window.confirm(
+        const ok = (await HSMDialog.confirm(
           '완료하지 않은 학생에게 앱 내부 알림을 다시 보낼까요?'
-        );
+        ));
         if (!ok) return;
       }
 
@@ -2713,8 +2715,8 @@ protect	보호하다"></textarea>
       });
     }
 
-    function teacherLogout() {
-      const ok = window.confirm('선생님 페이지에서 로그아웃할까요?');
+    async function teacherLogout() {
+      const ok = (await HSMDialog.confirm('선생님 페이지에서 로그아웃할까요?'));
       if (!ok) return;
 
       try {
@@ -2837,3 +2839,4 @@ protect	보호하다"></textarea>
   <script src="./ui-icons.js?v=1"></script>
 </body>
 </html>
+

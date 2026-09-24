@@ -22,7 +22,7 @@ async function verifyTeacher() {
   });
   const { window } = dom;
   window.sessionStorage.setItem('hansalmaeTeacherToken', 'teacher-test');
-  window.alert = () => {};
+  window.HSMDialog={alert:(...a)=>window.alert(...a),confirm:async(...a)=>window.confirm(...a),prompt:async(...a)=>window.prompt(...a)};window.alert = () => {};
   window.confirm = () => true;
   window.HANSALMAE_CONFIG = { apiUrl: 'https://example.supabase.co/functions/v1/api' };
   const requests = [];
@@ -86,7 +86,7 @@ async function verifyStudent() {
   });
   const { window } = dom;
   window.localStorage.setItem('hansalmaeStudentToken', 'student-test');
-  window.alert = () => {};
+  window.HSMDialog={alert:(...a)=>window.alert(...a),confirm:async(...a)=>window.confirm(...a),prompt:async(...a)=>window.prompt(...a)};window.alert = () => {};
   const confirms = [];
   window.confirm = (message) => { confirms.push(message); return false; };
   window.HANSALMAE_CONFIG = { apiUrl: 'https://example.supabase.co/functions/v1/api' };
@@ -159,7 +159,7 @@ async function verifySchoolVocabExit() {
   });
   const { window } = dom;
   window.localStorage.setItem('hansalmaeStudentToken', 'student-test');
-  window.alert = () => {};
+  window.HSMDialog={alert:(...a)=>window.alert(...a),confirm:async(...a)=>window.confirm(...a),prompt:async(...a)=>window.prompt(...a)};window.alert = () => {};
   let allowExit = false;
   const confirms = [];
   window.confirm = (message) => { confirms.push(message); return allowExit; };
@@ -189,13 +189,16 @@ async function verifySchoolVocabExit() {
   await wait(20);
   click(window, window.document.querySelector('#hsmSchoolStartMixed'));
   click(window, window.document.querySelector('.hsm-school-back'));
+  await wait(0);
   assert.equal(window.document.querySelector('#hsmSchoolStudentPage').hidden, false, '종료 취소 시 수행평가 시험이 유지되어야 합니다.');
   assert.ok(window.document.querySelector('.hsm-school-test-wrap'));
   assert.match(confirms[0], /현재 시험을 그만둘까요/);
   click(window, window.document.querySelector('#outsideNav'));
+  await wait(0);
   assert.equal(window.document.querySelector('#hsmSchoolStudentPage').hidden, false, '하단 탭에서도 종료 취소 시 시험이 유지되어야 합니다.');
   allowExit = true;
   click(window, window.document.querySelector('.hsm-school-back'));
+  await wait(0);
   assert.equal(window.document.querySelector('#hsmSchoolStudentPage').hidden, true, '종료 확인 시 수행평가 시험을 닫아야 합니다.');
   assert.deepEqual(errors, []);
   dom.window.close();
@@ -205,3 +208,4 @@ await verifyTeacher();
 await verifyStudent();
 await verifySchoolVocabExit();
 console.log('school content UI integration: PASS');
+

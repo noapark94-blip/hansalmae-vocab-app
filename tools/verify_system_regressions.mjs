@@ -7,7 +7,7 @@ const wait = ms => new Promise(r=>setTimeout(r,ms));
 function fixture(html, logged=true) {
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  const dom=new JSDOM('<!doctype html><html><head></head><body>'+html+'</body></html>',{url:'https://example.test/index.html',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
- const w=dom.window;w.alert=()=>{};w.confirm=()=>false;
+ const w=dom.window;w.HSMDialog={alert:(...a)=>w.alert(...a),confirm:async(...a)=>w.confirm(...a),prompt:async(...a)=>w.prompt(...a)};w.alert=()=>{};w.confirm=()=>false;
  // Dispose observers and animation callbacks before tearing down the DOM.
  const observers=[],frames=new Set(),Observer=w.MutationObserver,raf=w.requestAnimationFrame.bind(w),close=w.close.bind(w);
  w.MutationObserver=class extends Observer{constructor(cb){super(cb);observers.push(this);}};

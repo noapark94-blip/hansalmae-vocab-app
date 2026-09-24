@@ -38,7 +38,7 @@
       p.querySelectorAll('input[data-hsm-sv-student]').forEach(function(input){input.checked=selected.has(String(input.getAttribute('data-hsm-sv-student')||''));});
       var title=document.getElementById('hsmSvTitle');
       if(title){title.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){try{title.focus({preventScroll:true});}catch(_){title.focus();}},350);}
-    }catch(e){alert(e.message);}
+    }catch(e){HSMDialog.alert(e.message);}
   }
   async function saveEdit(){
     var p=panel();if(!p)return;
@@ -55,11 +55,11 @@
         words:parseWords((document.getElementById('hsmSvWords')||{}).value||''),
         studentIds:Array.from(p.querySelectorAll('input[data-hsm-sv-student]:checked')).map(function(input){return input.getAttribute('data-hsm-sv-student');})
       });
-      alert('수행평가 단어장을 수정했습니다.\n단어 '+Number(result.wordCount||0)+'개 · 학생 '+Number(result.studentCount||0)+'명');
+      HSMDialog.alert('수행평가 단어장을 수정했습니다.\n단어 '+Number(result.wordCount||0)+'개 · 학생 '+Number(result.studentCount||0)+'명');
       setEditMode('');window.hsmTeacherDirty_=false;
       var tab=Array.from(document.querySelectorAll('.tab-btn')).find(function(b){return /수행평가\s*단어장/.test(b.textContent||'');});
       if(tab) tab.click();
-    }catch(e){alert(e.message);if(save)save.disabled=false;}
+    }catch(e){HSMDialog.alert(e.message);if(save)save.disabled=false;}
   }
 
   document.addEventListener('click',function(event){
@@ -81,3 +81,4 @@
     if(fresh&&p){setEditMode('');}
   },true);
 })();
+

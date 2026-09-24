@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-24">
+  <script src="./app-dialogs.js?v=20260924-24"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2665,9 +2667,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-23"></script>
-  <script src="./config.js?v=20260924-23"></script>
-  <script src="./app-update.js?v=20260924-23"></script>
+  <script src="./school-runtime.js?v=20260924-24"></script>
+  <script src="./config.js?v=20260924-24"></script>
+  <script src="./app-update.js?v=20260924-24"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -2739,7 +2741,7 @@
         sessionTerminationHandled = true;
         window.setTimeout(function () {
           if (typeof clearLoginState === 'function') clearLoginState();
-          alert(error.message || '로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
+          HSMDialog.alert(error.message || '로그인 정보가 만료되었습니다. 다시 로그인해주세요.');
         }, 0);
       }
 
@@ -4744,14 +4746,14 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-23">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-23">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-23">
-<script defer src="./test-setup.js?v=20260924-23"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-23">
-<script defer src="./wrong-review.js?v=20260924-23"></script>
-<script defer src="./vocab-selection.js?v=20260924-23"></script>
-<script defer src="./personal-dialogs.js?v=20260924-23"></script>
+<link rel="stylesheet" href="./test-setup.css?v=20260924-24">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-24">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-24">
+<script defer src="./test-setup.js?v=20260924-24"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-24">
+<script defer src="./wrong-review.js?v=20260924-24"></script>
+<script defer src="./vocab-selection.js?v=20260924-24"></script>
+<script defer src="./personal-dialogs.js?v=20260924-24"></script>
 </head>
 
 <body>
@@ -6484,7 +6486,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     /**
      * 진행 중인 시험을 발견하면 이어볼지 묻습니다.
      */
-    function handleSavedTestProgress_(savedData) {
+    async function handleSavedTestProgress_(savedData) {
       if (
         !savedData ||
         !Array.isArray(savedData.questions) ||
@@ -6506,21 +6508,11 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       const remainingCount =
         savedData.questions.length - savedIndex;
 
-      const message =
-        '진행 중인 시험이 있습니다.\n\n' +
-        '현재 ' + (savedIndex + 1) +
-        '번 문제부터 이어서 볼 수 있습니다.\n' +
-        '남은 문제: ' + remainingCount + '개\n\n' +
-        '이어서 시험을 볼까요?';
-
-      if (confirm(message)) {
-        resumeSavedTest(savedData);
-        return;
-      }
-
-      if (confirm('기존 시험을 삭제하고 새 시험을 시작할까요?')) {
-        clearTestProgress();
-      }
+      if (await HSMDialog.confirm({
+        title: '풀던 시험을 이어갈까요?',
+        message: (savedIndex + 1) + '번 문제부터 · ' + remainingCount + '문제 남음',
+        action: '이어서 풀기', cancel: '나중에'
+      })) resumeSavedTest(savedData);
     }
 
 
@@ -6711,7 +6703,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .value = studentId;
 
       if (!studentId) {
-        alert('학생 아이디를 입력해주세요.');
+        HSMDialog.alert('학생 아이디를 입력해주세요.');
         return;
       }
 
@@ -6809,22 +6801,22 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         !passwordConfirm ||
         !signupCode
       ) {
-        alert('회원가입 정보를 모두 입력해주세요.');
+        HSMDialog.alert('회원가입 정보를 모두 입력해주세요.');
         return;
       }
 
       if (!signupIdChecked || signupCheckedId !== studentId) {
-        alert('학생 아이디 중복 확인을 먼저 해주세요.');
+        HSMDialog.alert('학생 아이디 중복 확인을 먼저 해주세요.');
         return;
       }
 
       if (password !== passwordConfirm) {
-        alert('비밀번호가 일치하지 않습니다.');
+        HSMDialog.alert('비밀번호가 일치하지 않습니다.');
         return;
       }
 
       if (password.length < 6) {
-        alert('비밀번호는 6자 이상 입력해주세요.');
+        HSMDialog.alert('비밀번호는 6자 이상 입력해주세요.');
         return;
       }
 
@@ -6855,7 +6847,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
               resetIdCheckState();
             }
 
-            alert(
+            HSMDialog.alert(
               result && result.message
                 ? result.message
                 : '회원가입하지 못했습니다.'
@@ -6864,7 +6856,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             return;
           }
 
-          alert(result.message);
+          HSMDialog.alert(result.message);
 
           document
             .getElementById('studentId')
@@ -6885,7 +6877,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             .getElementById('signupMessage')
             .textContent = '';
 
-          alert(
+          HSMDialog.alert(
             '회원가입 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -7004,7 +6996,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           .trim();
 
       if (!studentId || !password) {
-        alert('학생 아이디와 비밀번호를 입력해주세요.');
+        HSMDialog.alert('학생 아이디와 비밀번호를 입력해주세요.');
         return;
       }
 
@@ -7039,7 +7031,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             }
 
             document.getElementById('studentPassword').value = '';
-            alert(result && result.message ? result.message : '로그인하지 못했습니다.');
+            HSMDialog.alert(result && result.message ? result.message : '로그인하지 못했습니다.');
             return;
           }
 
@@ -7152,7 +7144,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           currentStudent.mustChangePassword = false;
           savePersistentStudentLogin_(currentLoginToken, currentStudent);
           document.getElementById('forcedPasswordScreen').classList.add('hidden');
-          alert(result && result.message ? result.message : '비밀번호가 변경되었습니다.');
+          HSMDialog.alert(result && result.message ? result.message : '비밀번호가 변경되었습니다.');
           openMainApp(currentStudent);
           claimAttendanceBonusInBackground_();
         })
@@ -7187,7 +7179,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
           if (!result || !result.success) {
             document.getElementById('studentPassword').value = '';
-            alert(result && result.message ? result.message : '로그인하지 못했습니다.');
+            HSMDialog.alert(result && result.message ? result.message : '로그인하지 못했습니다.');
             return;
           }
 
@@ -7490,7 +7482,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       }
 
       google.script.run
-        .withSuccessHandler(function (result) {
+        .withSuccessHandler(async function (result) {
           const unreadCount =
             Number(
               result &&
@@ -7547,7 +7539,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           message +=
             '\n\n지금 알림을 확인할까요?';
 
-          if (confirm(message)) {
+          if ((await HSMDialog.confirm(message))) {
             showStudentNotifications();
           }
         })
@@ -7957,7 +7949,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       if (testScreen) testScreen.classList.add('hidden');
     }
 
-    function moveFromTestWithConfirm_(moveFunction) {
+    async function moveFromTestWithConfirm_(moveFunction) {
       if (typeof moveFunction !== 'function') return;
 
       if (!isNormalTestInProgress_()) {
@@ -7965,11 +7957,11 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         return;
       }
 
-      const shouldMove = window.confirm(
+      const shouldMove = (await HSMDialog.confirm(
         '시험이 진행 중입니다.\n\n' +
         '다른 메뉴로 이동하면 현재 시험이 중단되며, 진행 중인 시험 기록도 삭제됩니다.\n\n' +
         '정말 이동하시겠습니까?'
-      );
+      ));
 
       if (!shouldMove) return;
 
@@ -8212,7 +8204,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             moreButton.textContent = '시험 기록 더보기';
           }
 
-          alert(
+          HSMDialog.alert(
             '학습 기록을 불러오는 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -8260,7 +8252,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .textContent = '';
 
       if (!data || !data.success) {
-        alert(
+        HSMDialog.alert(
           data && data.message
             ? data.message
             : '학습 기록을 불러오지 못했습니다.'
@@ -8457,7 +8449,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             button.disabled = false;
           }
 
-          alert(
+          HSMDialog.alert(
             result && result.message
               ? result.message
               : '나만의 단어장에 저장했습니다.'
@@ -8470,7 +8462,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             button.disabled = false;
           }
 
-          alert(
+          HSMDialog.alert(
             '단어를 저장하는 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -8496,7 +8488,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         });
 
       if (!item) {
-        alert('저장할 단어를 찾지 못했습니다.');
+        HSMDialog.alert('저장할 단어를 찾지 못했습니다.');
         return;
       }
 
@@ -8546,7 +8538,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             .textContent = '';
 
           if (!result || !result.success) {
-            alert('나만의 단어장을 불러오지 못했습니다.');
+            HSMDialog.alert('나만의 단어장을 불러오지 못했습니다.');
             return;
           }
 
@@ -8571,7 +8563,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             .getElementById('personalVocabularyLoading')
             .textContent = '';
 
-          alert(
+          HSMDialog.alert(
             '나만의 단어장을 불러오는 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -8858,7 +8850,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         getSelectedPersonalRows_();
 
       if (!selectedRows.length) {
-        alert('이동할 단어를 선택해주세요.');
+        HSMDialog.alert('이동할 단어를 선택해주세요.');
         return;
       }
 
@@ -8877,7 +8869,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           );
 
         if (!otherBooks.length) {
-          alert('이동할 다른 단어장이 없습니다.');
+          HSMDialog.alert('이동할 다른 단어장이 없습니다.');
           return;
         }
 
@@ -8889,23 +8881,23 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
-    function deleteSelectedPersonalWords_() {
+    async function deleteSelectedPersonalWords_() {
       const selectedRows =
         getSelectedPersonalRows_();
 
       if (!selectedRows.length) {
-        alert(
+        HSMDialog.alert(
           '삭제할 단어를 선택해주세요.'
         );
         return;
       }
 
       if (
-        !confirm(
+        !(await HSMDialog.confirm(
           '선택한 ' +
           selectedRows.length +
           '개 단어를 삭제할까요?'
-        )
+        ))
       ) {
         return;
       }
@@ -8914,7 +8906,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .withSuccessHandler(function (
           result
         ) {
-          alert(
+          HSMDialog.alert(
             result &&
             result.message
               ? result.message
@@ -8928,7 +8920,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .withFailureHandler(function (
           error
         ) {
-          alert(
+          HSMDialog.alert(
             error && error.message
               ? error.message
               : error
@@ -8946,7 +8938,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         getSelectedPersonalRows_();
 
       if (checkedRows.length === 0) {
-        alert('공유할 단어를 먼저 선택해주세요.');
+        HSMDialog.alert('공유할 단어를 먼저 선택해주세요.');
         return;
       }
 
@@ -8958,7 +8950,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         });
 
       if (selectedWords.length === 0) {
-        alert('선택한 단어를 찾지 못했습니다.');
+        HSMDialog.alert('선택한 단어를 찾지 못했습니다.');
         return;
       }
 
@@ -8997,7 +8989,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           loadPersonalVocabularyPreview();
         })
         .withFailureHandler(function (error) {
-          alert(
+          HSMDialog.alert(
             '암기 상태 변경 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -9014,8 +9006,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
-    function removePersonalWord(rowNumber) {
-      if (!confirm('이 단어를 나만의 단어장에서 삭제할까요?')) {
+    async function removePersonalWord(rowNumber) {
+      if (!(await HSMDialog.confirm('이 단어를 나만의 단어장에서 삭제할까요?'))) {
         return;
       }
 
@@ -9025,7 +9017,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           loadPersonalVocabularyPreview();
         })
         .withFailureHandler(function (error) {
-          alert(
+          HSMDialog.alert(
             '단어 삭제 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -9082,7 +9074,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           });
 
       if (available.length === 0) {
-        alert(
+        HSMDialog.alert(
           '같은 단어 종류의 암기할 단어가 최소 4개 있어야 시험을 볼 수 있습니다.'
         );
         return;
@@ -9146,12 +9138,12 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         });
 
       if (words.length < 4) {
-        alert('출제 가능한 단어가 최소 4개 필요합니다.');
+        HSMDialog.alert('출제 가능한 단어가 최소 4개 필요합니다.');
         return;
       }
 
       if (!Number.isInteger(count) || count < 1) {
-        alert('문제 수를 1 이상 입력해주세요.');
+        HSMDialog.alert('문제 수를 1 이상 입력해주세요.');
         return;
       }
 
@@ -9325,7 +9317,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
     function startSmartReviewTest() {
       if (smartReviewWords.length < 4) {
-        alert('추천 단어가 최소 4개 있어야 시험을 볼 수 있습니다.');
+        HSMDialog.alert('추천 단어가 최소 4개 있어야 시험을 볼 수 있습니다.');
         return;
       }
 
@@ -9337,7 +9329,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         )].filter(Boolean);
 
       if (sheetNames.length > 1) {
-        alert(
+        HSMDialog.alert(
           '스마트 복습 시험은 현재 같은 단어 종류끼리만 가능합니다. 추천 목록에서 한 종류가 4개 이상 쌓이면 시험을 볼 수 있습니다.'
         );
         return;
@@ -9425,7 +9417,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             .textContent = '';
 
           if (!result || !result.success) {
-            alert(
+            HSMDialog.alert(
               result && result.message
                 ? result.message
                 : '오답노트를 불러오지 못했습니다.'
@@ -9452,7 +9444,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             .getElementById('wrongNotebookLoading')
             .textContent = '';
 
-          alert(
+          HSMDialog.alert(
             '오답노트를 불러오는 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -9477,7 +9469,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         });
 
       if (activeWords.length === 0) {
-        alert(
+        HSMDialog.alert(
           '복습할 오답이 아직 없습니다.'
         );
         return;
@@ -9519,7 +9511,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           });
 
       if (availableSheets.length === 0) {
-        alert(
+        HSMDialog.alert(
           '같은 단어 종류에 복습할 오답이 최소 4개 있어야 합니다.'
         );
         return;
@@ -9628,7 +9620,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           .value;
 
       if (words.length < 4) {
-        alert(
+        HSMDialog.alert(
           '선택한 단어 종류의 복습할 오답이 최소 4개 있어야 합니다.'
         );
         return;
@@ -9638,7 +9630,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         !Number.isInteger(requestedCount) ||
         requestedCount < 1
       ) {
-        alert('문제 수를 1 이상 입력해주세요.');
+        HSMDialog.alert('문제 수를 1 이상 입력해주세요.');
         return;
       }
 
@@ -9648,14 +9640,14 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           return item.example;
         }).length === 0
       ) {
-        alert('예문이 입력된 오답 단어가 없습니다.');
+        HSMDialog.alert('예문이 입력된 오답 단어가 없습니다.');
         return;
       }
 
       const limit = getWrongTestQuestionLimit();
       if (requestedCount > limit) {
         updateWrongTestAvailableCount();
-        alert('최대 ' + limit + '문제까지 출제할 수 있습니다.');
+        HSMDialog.alert('최대 ' + limit + '문제까지 출제할 수 있습니다.');
         return;
       }
 
@@ -10068,12 +10060,12 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
-    function deleteSelectedMasteredWrongWords_() {
+    async function deleteSelectedMasteredWrongWords_() {
       if (
         wrongNotebookFilter !==
         'mastered'
       ) {
-        alert(
+        HSMDialog.alert(
           '복습 완료 탭에서 삭제할 단어를 선택해주세요.'
         );
         return;
@@ -10083,18 +10075,18 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         getSelectedWrongRows_();
 
       if (!selectedRows.length) {
-        alert(
+        HSMDialog.alert(
           '삭제할 복습 완료 단어를 선택해주세요.'
         );
         return;
       }
 
       if (
-        !confirm(
+        !(await HSMDialog.confirm(
           '선택한 복습 완료 단어 ' +
           selectedRows.length +
           '개를 삭제할까요?'
-        )
+        ))
       ) {
         return;
       }
@@ -10103,7 +10095,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .withSuccessHandler(function (
           result
         ) {
-          alert(
+          HSMDialog.alert(
             result &&
             result.message
               ? result.message
@@ -10117,7 +10109,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .withFailureHandler(function (
           error
         ) {
-          alert(
+          HSMDialog.alert(
             error && error.message
               ? error.message
               : error
@@ -10137,7 +10129,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       google.script.run
         .withSuccessHandler(function (result) {
           if (!result || !result.success) {
-            alert(
+            HSMDialog.alert(
               result && result.message
                 ? result.message
                 : '암기 상태를 변경하지 못했습니다.'
@@ -10180,7 +10172,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             '개';
         })
         .withFailureHandler(function (error) {
-          alert(
+          HSMDialog.alert(
             '암기 상태를 변경하는 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -10223,13 +10215,13 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
-    function deleteMasteredWrongWord_(
+    async function deleteMasteredWrongWord_(
       rowNumber
     ) {
       if (
-        !confirm(
+        !(await HSMDialog.confirm(
           '이 복습 완료 단어를 오답노트에서 삭제할까요?'
-        )
+        ))
       ) {
         return;
       }
@@ -10242,7 +10234,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             !result ||
             !result.success
           ) {
-            alert(
+            HSMDialog.alert(
               result &&
               result.message
                 ? result.message
@@ -10279,7 +10271,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .withFailureHandler(function (
           error
         ) {
-          alert(
+          HSMDialog.alert(
             error && error.message
               ? error.message
               : error
@@ -10292,7 +10284,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
-    function deleteAllMasteredWrongWords_() {
+    async function deleteAllMasteredWrongWords_() {
       const masteredCount =
         wrongNotebookWords.filter(
           function (item) {
@@ -10301,18 +10293,18 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         ).length;
 
       if (masteredCount < 1) {
-        alert(
+        HSMDialog.alert(
           '삭제할 복습 완료 단어가 없습니다.'
         );
         return;
       }
 
       if (
-        !confirm(
+        !(await HSMDialog.confirm(
           '복습 완료 단어 ' +
           masteredCount +
           '개를 모두 삭제할까요?'
-        )
+        ))
       ) {
         return;
       }
@@ -10325,7 +10317,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             !result ||
             !result.success
           ) {
-            alert(
+            HSMDialog.alert(
               result &&
               result.message
                 ? result.message
@@ -10340,7 +10332,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .withFailureHandler(function (
           error
         ) {
-          alert(
+          HSMDialog.alert(
             error && error.message
               ? error.message
               : error
@@ -10481,7 +10473,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             return;
           }
 
-          alert(
+          HSMDialog.alert(
             '순위를 불러오는 중 오류가 발생했습니다.\n' +
             (error && error.message ? error.message : error)
           );
@@ -11311,7 +11303,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         getCheckedWords();
 
       if (checkedWords.length === 0) {
-        alert('공유할 단어를 먼저 체크해주세요.');
+        HSMDialog.alert('공유할 단어를 먼저 체크해주세요.');
         return;
       }
 
@@ -11388,7 +11380,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         navigator.clipboard
           .writeText(text)
           .then(function () {
-            alert(
+            HSMDialog.alert(
               '체크한 단어가 복사되었습니다.\n카카오톡이나 메모장에 붙여넣어 주세요.'
             );
           })
@@ -11419,25 +11411,25 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
       document.body.removeChild(textarea);
 
-      alert(
+      HSMDialog.alert(
         '체크한 단어가 복사되었습니다.\n카카오톡이나 메모장에 붙여넣어 주세요.'
       );
     }
 
 
-    function clearCurrentChecks() {
+    async function clearCurrentChecks() {
       const checkedWords =
         getCheckedWords();
 
       if (checkedWords.length === 0) {
-        alert('현재 Day에 체크된 단어가 없습니다.');
+        HSMDialog.alert('현재 Day에 체크된 단어가 없습니다.');
         return;
       }
 
       const confirmed =
-        confirm(
+        (await HSMDialog.confirm(
           '현재 Day의 체크를 모두 해제할까요?'
-        );
+        ));
 
       if (!confirmed) {
         return;
@@ -11491,22 +11483,22 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         );
 
       if (!studentName) {
-        alert('학생 이름을 입력해주세요.');
+        HSMDialog.alert('학생 이름을 입력해주세요.');
         return;
       }
 
       if (!sheetName) {
-        alert('단어 종류를 선택해주세요.');
+        HSMDialog.alert('단어 종류를 선택해주세요.');
         return;
       }
 
       if (!startDay || !endDay) {
-        alert('Day 범위를 선택해주세요.');
+        HSMDialog.alert('Day 범위를 선택해주세요.');
         return;
       }
 
       if (startDay > endDay) {
-        alert(
+        HSMDialog.alert(
           '시작 Day가 마지막 Day보다 클 수 없습니다.'
         );
 
@@ -11517,7 +11509,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         !Number.isInteger(requestedCount) ||
         requestedCount < 1
       ) {
-        alert('문제 수를 1 이상 입력해주세요.');
+        HSMDialog.alert('문제 수를 1 이상 입력해주세요.');
         return;
       }
 
@@ -11557,7 +11549,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         '';
 
       if (!words || !words.length || (words.length < 4 && !(options && options.distractorWords && options.distractorWords.length >= 4))) {
-        alert(
+        HSMDialog.alert(
           '선택한 범위에 단어가 4개 이상 있어야 합니다.'
         );
 
@@ -11650,11 +11642,11 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
       if (availableTypes.length === 0) {
         if (questionMode === 'example') {
-          alert(
+          HSMDialog.alert(
             '선택한 범위에 예문이 입력된 단어가 없습니다.'
           );
         } else {
-          alert(
+          HSMDialog.alert(
             '선택한 범위에서 출제할 수 있는 문제가 없습니다.'
           );
         }
@@ -12058,8 +12050,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
-    function stopFreeTest() {
-      if (!confirm('현재 시험을 그만둘까요?\n지금까지의 진행 내용은 삭제됩니다.')) return;
+    async function stopFreeTest() {
+      if (!(await HSMDialog.confirm('현재 시험을 그만둘까요?\n지금까지의 진행 내용은 삭제됩니다.'))) return;
 
       freeTestStopped = true;
       clearTestProgress();
@@ -12298,7 +12290,7 @@ google.script.run
     hsmRefreshWrongNotebookImmediately_();
   })
   .withFailureHandler(function (error) {
-    alert(
+    HSMDialog.alert(
       '시험 결과 저장 중 오류가 발생했습니다.\n' +
       (
         error && error.message
@@ -12458,7 +12450,7 @@ google.script.run
       document.getElementById('loginMessage').textContent =
         '';
 
-      alert(
+      HSMDialog.alert(
         '오류가 발생했습니다.\n' +
         (
           error && error.message
@@ -12473,7 +12465,7 @@ google.script.run
       document.getElementById('vocabLoading').textContent =
         '';
 
-      alert(
+      HSMDialog.alert(
         '오류가 발생했습니다.\n' +
         (
           error && error.message
@@ -12491,7 +12483,7 @@ google.script.run
       document.getElementById('loadingText').textContent =
         '';
 
-      alert(
+      HSMDialog.alert(
         '오류가 발생했습니다.\n' +
         (
           error && error.message
@@ -12522,7 +12514,7 @@ google.script.run
       google.script.run
         .withSuccessHandler(function (result) {
           const token = currentLoginToken;
-          alert(result && result.message ? result.message : '비밀번호가 변경되었습니다.');
+          HSMDialog.alert(result && result.message ? result.message : '비밀번호가 변경되었습니다.');
           clearLoginState();
           if (token) google.script.run.studentLogout(token);
         })
@@ -12533,7 +12525,7 @@ google.script.run
     }
 
     function showPasswordResetGuide_() {
-      alert('기존 비밀번호는 보안상 누구도 확인할 수 없습니다.\n선생님께 학생 아이디를 알려주고 임시 비밀번호 초기화를 요청하세요.');
+      HSMDialog.alert('기존 비밀번호는 보안상 누구도 확인할 수 없습니다.\n선생님께 학생 아이디를 알려주고 임시 비밀번호 초기화를 요청하세요.');
     }
 
 
@@ -12567,7 +12559,7 @@ google.script.run
       const isAndroid = /android/i.test(navigator.userAgent);
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       if (isStandalone) {
-        alert('이미 앱으로 설치되어 있습니다.');
+        HSMDialog.alert('이미 앱으로 설치되어 있습니다.');
         return;
       }
       if (isIos) {
@@ -12657,7 +12649,7 @@ google.script.run
           if (typeof onComplete === 'function') onComplete();
         })
         .withFailureHandler(function (error) {
-          alert('단어장 목록을 불러오지 못했습니다.\n' + (error && error.message ? error.message : error));
+          HSMDialog.alert('단어장 목록을 불러오지 못했습니다.\n' + (error && error.message ? error.message : error));
         })
         .getVocabularyBooks(currentLoginToken);
     }
@@ -12690,11 +12682,11 @@ google.script.run
       loadSelectedPersonalBookWords();
     }
 
-    function createNewPersonalBook(callback) {
-      const name = prompt('새 단어장 이름을 입력하세요.');
+    async function createNewPersonalBook(callback) {
+      const name = (await HSMDialog.prompt('새 단어장 이름을 입력하세요.'));
       if (name === null) return;
       if (!String(name).trim()) {
-        alert('단어장 이름을 입력해주세요.');
+        HSMDialog.alert('단어장 이름을 입력해주세요.');
         return;
       }
       google.script.run
@@ -12706,37 +12698,37 @@ google.script.run
           });
         })
         .withFailureHandler(function (error) {
-          alert(error && error.message ? error.message : error);
+          HSMDialog.alert(error && error.message ? error.message : error);
         })
         .createVocabularyBook(currentLoginToken, String(name).trim());
     }
 
-    function renameCurrentPersonalBook() {
+    async function renameCurrentPersonalBook() {
       if (!selectedPersonalBookId) {
-        alert('이름을 변경할 단어장을 먼저 만들어주세요.');
+        HSMDialog.alert('이름을 변경할 단어장을 먼저 만들어주세요.');
         return;
       }
       const current = personalVocabularyBooks.find(function (b) { return b.bookId === selectedPersonalBookId; });
-      const name = prompt('새 단어장 이름을 입력하세요.', current ? current.bookName : '');
+      const name = (await HSMDialog.prompt('새 단어장 이름을 입력하세요.', current ? current.bookName : ''));
       if (name === null) return;
       google.script.run
         .withSuccessHandler(function () { loadPersonalBooks(loadSelectedPersonalBookWords); })
-        .withFailureHandler(function (error) { alert(error && error.message ? error.message : error); })
+        .withFailureHandler(function (error) { HSMDialog.alert(error && error.message ? error.message : error); })
         .renameVocabularyBook(currentLoginToken, selectedPersonalBookId, String(name).trim());
     }
 
-    function deleteCurrentPersonalBook() {
+    async function deleteCurrentPersonalBook() {
       if (!selectedPersonalBookId) return;
       const current = personalVocabularyBooks.find(function (b) { return b.bookId === selectedPersonalBookId; });
       const count = current ? Number(current.wordCount || 0) : 0;
-      if (!confirm('「' + (current ? current.bookName : '이 단어장') + '」을 삭제할까요?\n안의 단어 ' + count + '개도 함께 삭제됩니다.')) return;
+      if (!(await HSMDialog.confirm('「' + (current ? current.bookName : '이 단어장') + '」을 삭제할까요?\n안의 단어 ' + count + '개도 함께 삭제됩니다.'))) return;
       google.script.run
         .withSuccessHandler(function () {
           selectedPersonalBookId = '';
           loadPersonalBooks(loadSelectedPersonalBookWords);
           loadPersonalVocabularyPreview();
         })
-        .withFailureHandler(function (error) { alert(error && error.message ? error.message : error); })
+        .withFailureHandler(function (error) { HSMDialog.alert(error && error.message ? error.message : error); })
         .deleteVocabularyBook(currentLoginToken, selectedPersonalBookId);
     }
 
@@ -12760,7 +12752,7 @@ google.script.run
       google.script.run
         .withSuccessHandler(function (result) {
           if (button) button.disabled = false;
-          alert(result && result.message ? result.message : '단어장에 저장했습니다.');
+          HSMDialog.alert(result && result.message ? result.message : '단어장에 저장했습니다.');
           loadPersonalVocabularyPreview();
           if (document.getElementById('personalVocabularyScreen') && !document.getElementById('personalVocabularyScreen').classList.contains('hidden')) {
             selectedPersonalBookId = bookId;
@@ -12769,7 +12761,7 @@ google.script.run
         })
         .withFailureHandler(function (error) {
           if (button) button.disabled = false;
-          alert('단어 저장 중 오류가 발생했습니다.\n' + (error && error.message ? error.message : error));
+          HSMDialog.alert('단어 저장 중 오류가 발생했습니다.\n' + (error && error.message ? error.message : error));
         })
         .addPersonalVocabularyToBook(currentLoginToken, bookId, item);
     }
@@ -12819,7 +12811,7 @@ google.script.run
         })
         .withFailureHandler(function (error) {
           if (loading) loading.textContent = '';
-          alert('단어를 불러오지 못했습니다.\n' + (error && error.message ? error.message : error));
+          HSMDialog.alert('단어를 불러오지 못했습니다.\n' + (error && error.message ? error.message : error));
         })
         .getPersonalVocabularyByBook(currentLoginToken, selectedPersonalBookId);
     }
@@ -12855,24 +12847,24 @@ google.script.run
       });
     }
 
-    function movePersonalWord(rowNumber) {
+    async function movePersonalWord(rowNumber) {
       const others = personalVocabularyBooks.filter(function (b) { return b.bookId !== selectedPersonalBookId; });
       if (!others.length) {
-        alert('이동하려면 다른 단어장을 하나 더 만들어주세요.');
+        HSMDialog.alert('이동하려면 다른 단어장을 하나 더 만들어주세요.');
         return;
       }
       let message = '이동할 단어장을 선택하세요.\n\n';
       others.forEach(function (book, index) { message += (index + 1) + '. ' + book.bookName + '\n'; });
-      const answer = prompt(message, '1');
+      const answer = (await HSMDialog.prompt(message, '1'));
       if (answer === null) return;
       const index = Number(answer) - 1;
       if (!Number.isInteger(index) || index < 0 || index >= others.length) {
-        alert('올바른 번호를 입력해주세요.');
+        HSMDialog.alert('올바른 번호를 입력해주세요.');
         return;
       }
       google.script.run
         .withSuccessHandler(function () { loadPersonalBooks(loadSelectedPersonalBookWords); })
-        .withFailureHandler(function (error) { alert(error && error.message ? error.message : error); })
+        .withFailureHandler(function (error) { HSMDialog.alert(error && error.message ? error.message : error); })
         .movePersonalVocabularyToBook(currentLoginToken, rowNumber, others[index].bookId);
     }
 
@@ -13014,7 +13006,7 @@ google.script.run
         })
         .withFailureHandler(function (error) {
           document.getElementById('teacherExamHomeLoading').textContent = '';
-          alert('시험 목록을 불러오지 못했습니다.\n' + (error && error.message ? error.message : error));
+          HSMDialog.alert('시험 목록을 불러오지 못했습니다.\n' + (error && error.message ? error.message : error));
         })
         .studentGetAssignedExams(currentLoginToken);
       window.scrollTo(0, 0);
@@ -13051,16 +13043,16 @@ google.script.run
       });
     }
 
-    function startAssignedTeacherExam(examId, isRetake) {
+    async function startAssignedTeacherExam(examId, isRetake) {
       if (!currentStudent || !currentStudent.studentId) return;
-      if (isRetake === true && !confirm(
+      if (isRetake === true && !(await HSMDialog.confirm(
         '이미 완료한 시험입니다. 재응시할까요?\n' +
         '재응시는 최고점만 갱신되며 경험치와 포인트는 추가 지급되지 않습니다.'
-      )) return;
+      ))) return;
       google.script.run
         .withSuccessHandler(function (result) {
           if (!result || !result.success) {
-            alert(result && result.message ? result.message : '시험을 시작하지 못했습니다.');
+            HSMDialog.alert(result && result.message ? result.message : '시험을 시작하지 못했습니다.');
             return;
           }
           teacherExamSession = {
@@ -13077,7 +13069,7 @@ google.script.run
           renderTeacherExamQuestion_();
         })
         .withFailureHandler(function (error) {
-          alert('시험 시작 중 오류가 발생했습니다.\n' + (error && error.message ? error.message : error));
+          HSMDialog.alert('시험 시작 중 오류가 발생했습니다.\n' + (error && error.message ? error.message : error));
         })
         .studentStartTeacherExam(currentLoginToken, examId);
     }
@@ -13124,9 +13116,9 @@ google.script.run
       saveAssignedTeacherExamProgress_();
     }
 
-    function stopAssignedTeacherExam_() {
+    async function stopAssignedTeacherExam_() {
       if (!teacherExamSession || !currentStudent) return;
-      if (!confirm('선생님 시험을 그만둘까요?\n저장된 답안과 진행 상태가 삭제됩니다.')) return;
+      if (!(await HSMDialog.confirm('선생님 시험을 그만둘까요?\n저장된 답안과 진행 상태가 삭제됩니다.'))) return;
 
       const examId = teacherExamSession.exam.examId;
       google.script.run
@@ -13137,7 +13129,7 @@ google.script.run
           showTeacherExamHome();
         })
         .withFailureHandler(function (error) {
-          alert('시험을 그만두는 중 오류가 발생했습니다.\n' + (error && error.message ? error.message : error));
+          HSMDialog.alert('시험을 그만두는 중 오류가 발생했습니다.\n' + (error && error.message ? error.message : error));
         })
         .studentStopTeacherExam(currentLoginToken, examId);
     }
@@ -13164,17 +13156,17 @@ google.script.run
 
     let teacherExamSubmitting_ = false;
 
-    function submitAssignedTeacherExam_() {
+    async function submitAssignedTeacherExam_() {
       if (!teacherExamSession || !currentStudent) return;
 
       if (teacherExamSubmitting_) {
-        alert('시험을 제출하고 있습니다. 잠시만 기다려주세요.');
+        HSMDialog.alert('시험을 제출하고 있습니다. 잠시만 기다려주세요.');
         return;
       }
       const unanswered = teacherExamSession.questions.filter(function (q) {
         return !String(teacherExamAnswers[q.questionId] || '').trim();
       }).length;
-      if (unanswered > 0 && !confirm('아직 답하지 않은 문제가 ' + unanswered + '개 있습니다. 그래도 제출할까요?')) return;
+      if (unanswered > 0 && !(await HSMDialog.confirm('아직 답하지 않은 문제가 ' + unanswered + '개 있습니다. 그래도 제출할까요?'))) return;
       const answers = teacherExamSession.questions.map(function (q) {
         return { questionId: q.questionId, answer: String(teacherExamAnswers[q.questionId] || '') };
       });
@@ -13234,7 +13226,7 @@ google.script.run
             button.disabled = false;
           });
 
-          alert(
+          HSMDialog.alert(
             '시험 제출 중 오류가 발생했습니다.\n' +
             (error && error.message ? error.message : error)
           );
@@ -13282,10 +13274,10 @@ google.script.run
     function saveTeacherReviewWord_(button) {
       try {
         const item = JSON.parse(decodeURIComponent(button.getAttribute('data-word') || ''));
-        if (!item.english) { alert('저장할 단어 정보가 없습니다.'); return; }
+        if (!item.english) { HSMDialog.alert('저장할 단어 정보가 없습니다.'); return; }
         saveToPersonalVocabulary(item, button);
       } catch (error) {
-        alert('단어 정보를 읽지 못했습니다.');
+        HSMDialog.alert('단어 정보를 읽지 못했습니다.');
       }
     }
 
@@ -13308,7 +13300,7 @@ google.script.run
         })
         .withFailureHandler(function (error) {
           document.getElementById('studentNotificationLoading').textContent = '';
-          alert('알림을 불러오지 못했습니다.\n' + (error && error.message ? error.message : error));
+          HSMDialog.alert('알림을 불러오지 못했습니다.\n' + (error && error.message ? error.message : error));
         })
         .studentGetNotifications(currentLoginToken);
       window.scrollTo(0, 0);
@@ -13466,18 +13458,18 @@ google.script.run
           else showStudentNotifications();
         })
         .withFailureHandler(function (error) {
-          alert(error && error.message ? error.message : error);
+          HSMDialog.alert(error && error.message ? error.message : error);
         })
         .studentMarkNotificationRead(currentLoginToken, notificationId);
     }
 
-    function deleteStudentNotification_(
+    async function deleteStudentNotification_(
       notificationId
     ) {
       if (
-        !confirm(
+        !(await HSMDialog.confirm(
           '이 읽은 알림을 삭제할까요?'
-        )
+        ))
       ) {
         return;
       }
@@ -13492,7 +13484,7 @@ google.script.run
         .withFailureHandler(function (
           error
         ) {
-          alert(
+          HSMDialog.alert(
             error && error.message
               ? error.message
               : error
@@ -13505,11 +13497,11 @@ google.script.run
     }
 
 
-    function deleteAllReadNotifications_() {
+    async function deleteAllReadNotifications_() {
       if (
-        !confirm(
+        !(await HSMDialog.confirm(
           '읽은 알림을 모두 삭제할까요?'
-        )
+        ))
       ) {
         return;
       }
@@ -13525,7 +13517,7 @@ google.script.run
             result &&
             Number(result.deletedCount) === 0
           ) {
-            alert(
+            HSMDialog.alert(
               '삭제할 읽은 알림이 없습니다.'
             );
           }
@@ -13536,7 +13528,7 @@ google.script.run
         .withFailureHandler(function (
           error
         ) {
-          alert(
+          HSMDialog.alert(
             error && error.message
               ? error.message
               : error
@@ -13907,7 +13899,7 @@ google.script.run
         !Array.isArray(items) ||
         !items.length
       ) {
-        alert(
+        HSMDialog.alert(
           '저장할 단어를 선택해주세요.'
         );
         return;
@@ -13936,7 +13928,7 @@ google.script.run
         .withSuccessHandler(function (
           result
         ) {
-          alert(
+          HSMDialog.alert(
             result &&
             result.message
               ? result.message
@@ -13969,7 +13961,7 @@ google.script.run
         .withFailureHandler(function (
           error
         ) {
-          alert(
+          HSMDialog.alert(
             '단어를 일괄 저장하는 중 오류가 발생했습니다.\n' +
             (
               error && error.message
@@ -13994,7 +13986,7 @@ google.script.run
         });
 
       if (!selected.length) {
-        alert(
+        HSMDialog.alert(
           '단어 왼쪽 네모칸에서 저장할 단어를 선택해주세요.'
         );
         return;
@@ -14044,7 +14036,7 @@ google.script.run
         );
 
       if (!checked.length) {
-        alert(
+        HSMDialog.alert(
           '오답 단어 왼쪽 네모칸에서 저장할 단어를 선택해주세요.'
         );
         return;
@@ -14320,7 +14312,7 @@ google.script.run
           loading.textContent = '';
         }
 
-        alert(
+        HSMDialog.alert(
           '단어를 불러오지 못했습니다.\n' +
           (
             error && error.message
@@ -14464,7 +14456,7 @@ google.script.run
       getSelectedPersonalRows_();
 
     if (selectedRows.length < 4) {
-      alert(
+      HSMDialog.alert(
         '단어 선택하기를 누른 뒤 시험 볼 단어를 4개 이상 체크해주세요.'
       );
       return;
@@ -14480,7 +14472,7 @@ google.script.run
       );
 
     if (selectedWords.length < 4) {
-      alert(
+      HSMDialog.alert(
         '시험 볼 단어를 4개 이상 선택해주세요.'
       );
       return;
@@ -14930,20 +14922,20 @@ google.script.run
   }
 
 
-  function createBookFromPicker_() {
+  async function createBookFromPicker_() {
     const mode = personalBookPickerMode_;
     const payload = personalBookPickerPayload_;
     const sourceButton =
       personalBookPickerButton_;
 
-    const name = prompt(
+    const name = (await HSMDialog.prompt(
       '새 단어장 이름을 입력하세요.'
-    );
+    ));
 
     if (name === null) return;
 
     if (!String(name).trim()) {
-      alert('단어장 이름을 입력해주세요.');
+      HSMDialog.alert('단어장 이름을 입력해주세요.');
       return;
     }
 
@@ -14980,7 +14972,7 @@ google.script.run
         }
       })
       .withFailureHandler(function (error) {
-        alert(
+        HSMDialog.alert(
           error && error.message
             ? error.message
             : error
@@ -15026,7 +15018,7 @@ google.script.run
 
     google.script.run
       .withSuccessHandler(function (result) {
-        alert(
+        HSMDialog.alert(
           result && result.message
             ? result.message
             : '선택한 단어를 이동했습니다.'
@@ -15040,7 +15032,7 @@ google.script.run
         );
       })
       .withFailureHandler(function (error) {
-        alert(
+        HSMDialog.alert(
           error && error.message
             ? error.message
             : error
@@ -15703,9 +15695,9 @@ google.script.run
       const r=await call('equipStudentEmblem',[currentLoginToken,id]);
       if(!r||!r.success)throw new Error(r&&r.message||'장착 실패');
       await load(true);
-      alert(r.message||'엠블럼을 장착했습니다.');
+      HSMDialog.alert(r.message||'엠블럼을 장착했습니다.');
     }catch(e){
-      alert(e&&e.message?e.message:String(e));
+      HSMDialog.alert(e&&e.message?e.message:String(e));
     }
   }
   function open(){document.getElementById('hsmEmblemModal').classList.remove('hidden');load(true)} function close(){document.getElementById('hsmEmblemModal').classList.add('hidden')}
@@ -16124,7 +16116,7 @@ google.script.run
   window.hsmOpenHomeFromMenu_ = function () {
     const teacherScreen = document.getElementById('teacherExamTakingScreen');
     if (teacherExamSession && teacherScreen && !teacherScreen.classList.contains('hidden')) {
-      alert('진행 중인 선생님 시험을 먼저 제출하거나 그만둔 뒤 홈으로 이동해주세요.');
+      HSMDialog.alert('진행 중인 선생님 시험을 먼저 제출하거나 그만둔 뒤 홈으로 이동해주세요.');
       return;
     }
     if (typeof moveFromTestWithConfirm_ === 'function') {

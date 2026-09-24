@@ -1,0 +1,49 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+const source=name=>fs.readFileSync(new URL('../public/'+name,import.meta.url),'utf8');
+const dom=new JSDOM('<button id="origin">열기</button>',{url:'https://example.test',runScripts:'outside-only'});
+const w=dom.window,d=w.document;
+w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
+w.HTMLDialogElement.prototype.close=function(){this.open=false;};
+w.eval(source('app-dialogs.js'));
+const tick=()=>new Promise(r=>setTimeout(r,0));
+const cancel=()=>d.querySelector('.hsm-app-dialog [data-cancel]').click();
+const accept=()=>d.querySelector('.hsm-app-dialog form').dispatchEvent(new w.Event('submit',{cancelable:true,bubbles:true}));
+d.querySelector('#origin').focus();
+let first=w.HSMDialog.confirm('이 단어를 삭제할까요?');
+assert.equal(d.activeElement.textContent,'취소');
+assert.equal(await w.HSMDialog.confirm('이 단어를 삭제할까요?'),false,'duplicate click must not execute a second delete');
+d.querySelector('dialog').dispatchEvent(new w.Event('click',{bubbles:true}));
+assert.ok(d.querySelector('dialog').open,'backdrop must not confirm');
+cancel();assert.equal(await first,false);assert.equal(d.activeElement.id,'origin');
+first=w.HSMDialog.prompt('새 단어장 이름을 입력하세요.');
+accept();assert.ok(d.querySelector('dialog').open);assert.equal(d.querySelector('input').getAttribute('aria-invalid'),'true');
+d.querySelector('input').value='<img src=x onerror=alert(1)>';accept();assert.equal(await first,'<img src=x onerror=alert(1)>');
+const a=w.HSMDialog.alert('긴이름'.repeat(100));const b=w.HSMDialog.prompt('다음 입력');
+assert.equal(d.querySelectorAll('dialog').length,1);accept();await a;
+d.querySelector('dialog').dispatchEvent(new w.Event('cancel',{cancelable:true}));assert.equal(await b,null);
+const html=source('index.html');
+function load(from,to){const start=html.indexOf(from);assert.ok(start>=0);const end=html.indexOf(to,start);assert.ok(end>start);w.eval(html.slice(start,end));}
+let moved=0,stopped=0,resumed=0;
+w.isNormalTestInProgress_=()=>true;w.stopNormalTestForMenuMove_=()=>stopped++;
+load('    async function moveFromTestWithConfirm_', '    function showTestHome');
+let pending=w.moveFromTestWithConfirm_(()=>moved++);assert.equal(moved,0);cancel();await pending;assert.equal(stopped,0);
+pending=w.moveFromTestWithConfirm_(()=>moved++);accept();await pending;assert.equal(moved,1);assert.equal(stopped,1);
+w.clearTestProgress=()=>assert.fail('later must preserve the saved exam');w.resumeSavedTest=()=>resumed++;
+load('    async function handleSavedTestProgress_', '    /**');
+pending=w.handleSavedTestProgress_({questions:[1,2,3],currentIndex:1});assert.match(d.querySelector('dialog').textContent,/2번 문제부터 · 2문제 남음/);cancel();await pending;assert.equal(resumed,0);assert.equal(d.querySelector('dialog'),null);
+pending=w.handleSavedTestProgress_({questions:[1,2,3],currentIndex:1});accept();await pending;assert.equal(resumed,1);
+// Destructive teacher action must pass both independent confirmations.
+const teacher=source('teacher.html');const start=teacher.indexOf('    async function deleteAllExams()');const end=teacher.indexOf('\n    async function ',start+10);
+w.eval(teacher.slice(start,end));let api=0;w.setLoading=()=>{};w.showToast=()=>{};w.loadExams=async()=>{};
+w.api=async()=>{api++;return {};};
+// Cancellation is checked before any API or loading state is touched.
+pending=w.deleteAllExams();cancel();await pending;assert.equal(api,0);
+pending=w.deleteAllExams();accept();await tick();assert.ok(d.querySelector('dialog'));cancel();await pending;assert.equal(api,0);
+w.close();
+// No app-owned browser alerts/confirms/prompts remain (install prompt is browser-owned).
+for(const name of fs.readdirSync(new URL('../public/',import.meta.url)).filter(n=>n.endsWith('.js')||['index.html','teacher.html'].includes(n))){
+ const text=source(name);assert.ok(!/(?<![\w.])(?:window\.)?(?:alert|confirm|prompt)\s*\(/.test(text),name+' still uses a native dialog');
+}
+console.log('PASS real dialogs: cancel/accept, safe text, input validation, queue, duplicate prevention, exam exit/resume and teacher double confirmation');

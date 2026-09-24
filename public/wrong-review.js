@@ -38,7 +38,7 @@
   window.startWrongAnswerTest=async function(){
     if(busy)return;
     const token=currentLoginToken,words=getSelectedWrongTestWords(),mode=$('wrongTestQuestionMode').value,count=Number($('wrongTestQuestionCount').value),limit=getWrongTestQuestionLimit();
-    if(!Number.isInteger(count)||count<1||count>limit){updateWrongTestAvailableCount();alert('문제 수는 1~'+limit+'개로 선택해주세요.');return;}
+    if(!Number.isInteger(count)||count<1||count>limit){updateWrongTestAvailableCount();HSMDialog.alert('문제 수는 1~'+limit+'개로 선택해주세요.');return;}
     busy=true;updateWrongTestAvailableCount();
     try{
       const names=[...new Set(words.map(w=>w.sheetName))];
@@ -94,7 +94,7 @@
       const rows=getSelectedWrongRows_();if(!rows.length)return;
       const token=currentLoginToken;const button=$('hsmSelectedMaster');button.disabled=true;
       try{for(const row of rows){const result=await call('setWrongWordMastered',token,row,wrongNotebookFilter!=='mastered');if(!result||!result.success)throw Error(result?.message||'상태 변경 실패');}if(token===currentLoginToken){exitWrongSelectionMode_();hsmRefreshWrongNotebookImmediately_();}}
-      catch(error){alert(error.message||error);if(token===currentLoginToken)hsmRefreshWrongNotebookImmediately_();}finally{button.disabled=false;closeMenu();}
+      catch(error){HSMDialog.alert(error.message||error);if(token===currentLoginToken)hsmRefreshWrongNotebookImmediately_();}finally{button.disabled=false;closeMenu();}
     };
     function closeMenu(){if(menu.open)menu.close();}
     document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
@@ -120,3 +120,4 @@
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
+

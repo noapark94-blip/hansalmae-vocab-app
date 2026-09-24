@@ -7,7 +7,7 @@
   function normalize(v){return String(v||'').replace(/\s+/g,' ').trim();}
   function schoolPage(){return document.getElementById('hsmSchoolStudentPage');}
   function isOpen(){var page=schoolPage();return !!(page && !page.hidden);}
-  function closeSchoolPageForNav(){
+  async function closeSchoolPageForNav(){
     var page=schoolPage();
     if(!page || page.hidden)return true;
     if(typeof window.hsmRequestCloseSchoolVocabPage_==='function')return window.hsmRequestCloseSchoolVocabPage_();
@@ -19,7 +19,7 @@
     return true;
   }
 
-  document.addEventListener('click',function(event){
+  document.addEventListener('click',async function(event){
     if(!isOpen())return;
     var target=event.target && event.target.closest ? event.target.closest('button,a,[role="button"]') : null;
     if(!target || target.closest('#hsmSchoolStudentPage'))return;
@@ -27,14 +27,12 @@
     var aria=normalize(target.getAttribute && (target.getAttribute('aria-label')||target.getAttribute('title')));
     var label=NAV_LABELS.find(function(x){return text===x || aria===x || text.endsWith(x);});
     if(!label)return;
-    if(closeSchoolPageForNav()===false){
-      event.preventDefault();
-      event.stopPropagation();
-      if(event.stopImmediatePropagation)event.stopImmediatePropagation();
-    }
+    event.preventDefault();
+    event.stopPropagation();
+    if(event.stopImmediatePropagation)event.stopImmediatePropagation();
+    if(await closeSchoolPageForNav()) target.click();
   },true);
 
-  window.addEventListener('popstate',function(){
-    if(location.hash!=='#school-vocab' && isOpen())closeSchoolPageForNav();
-  });
+
 })();
+

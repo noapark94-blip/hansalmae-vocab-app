@@ -3,8 +3,8 @@ const html=readFileSync('public/index.html','utf8');
 const a=html.indexOf('id="wrongNotebookScreen"'),b=html.indexOf('<!-- 나만의 단어장 화면 -->',a);
 const dom=new JSDOM('<div '+html.slice(a,b),{runScripts:'outside-only',url:'https://example.test'});const w=dom.window,d=w.document,$=id=>d.getElementById(id);
 w.eval('var wrongNotebookWords=[],wrongSelectionMode_=false,wrongNotebookFilter="active",currentLoginToken="a",currentTestContext={};');
-w.scrollTo=()=>{};w.alert=message=>{throw Error(message);};
-w.eval(html.slice(html.indexOf('    function getSelectedWrongRows_()'),html.indexOf('    function deleteSelectedMasteredWrongWords_')));
+w.scrollTo=()=>{};w.HSMDialog={alert:(...a)=>w.alert(...a),confirm:async(...a)=>w.confirm(...a),prompt:async(...a)=>w.prompt(...a)};w.alert=message=>{throw Error(message);};
+w.eval(html.slice(html.indexOf('    function getSelectedWrongRows_()'),html.indexOf('    async function deleteSelectedMasteredWrongWords_')));
 w.batchSaveCheckedWrongWords_=()=>{};w.hsmRefreshWrongNotebookImmediately_=()=>{};
 w.renderWrongNotebook=()=>{};
 w.eval(readFileSync('public/wrong-review.js','utf8'));d.dispatchEvent(new w.Event('DOMContentLoaded'));
@@ -45,3 +45,4 @@ assert.equal($('hsmReviewMore').hidden,true);
 $('wrongNotebookScreen').classList.remove('hidden');w.exitWrongSelectionMode_();
 assert.equal($('hsmReviewMore').hidden,true);assert.equal($('wrongSelectionModeButton').hidden,false);assert.equal($('wrongTestOpenButton').textContent,'복습할 오답 시험보기');assert.equal($('wrongTestOpenButton').disabled,false);
 await new Promise(r=>w.setTimeout(r,0));dom.window.close();console.log('PASS mixed categories, source preservation, selected-only single word, example availability, failed lookup and empty selection');
+
