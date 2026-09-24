@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-21"></script>
-  <script src="./config.js?v=20260924-21"></script>
-  <script src="./app-update.js?v=20260924-21"></script>
+  <script src="./school-runtime.js?v=20260924-22"></script>
+  <script src="./config.js?v=20260924-22"></script>
+  <script src="./app-update.js?v=20260924-22"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4730,13 +4730,14 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-21">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-21">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-21">
-<script defer src="./test-setup.js?v=20260924-21"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-21">
-<script defer src="./wrong-review.js?v=20260924-21"></script>
-<script defer src="./vocab-selection.js?v=20260924-21"></script>
+<link rel="stylesheet" href="./test-setup.css?v=20260924-22">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-22">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-22">
+<script defer src="./test-setup.js?v=20260924-22"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-22">
+<script defer src="./wrong-review.js?v=20260924-22"></script>
+<script defer src="./vocab-selection.js?v=20260924-22"></script>
+<script defer src="./personal-dialogs.js?v=20260924-22"></script>
 </head>
 
 <body>
@@ -5903,7 +5904,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
         <div class="book-manager">
           <label class="personal-visually-hidden" for="personalBookSelect">내 단어장</label>
-          <select id="personalBookSelect" onchange="changePersonalBook()"></select>
+          <select id="personalBookSelect" onchange="changePersonalBook()" hidden aria-hidden="true" tabindex="-1"></select>
+          <button type="button" id="personalBookPickerButton" data-hsm-icon-ready="1" aria-haspopup="dialog" onclick="openPersonalBookChoice()"><span>단어장 선택</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button>
           <details class="book-management">
             <summary aria-label="단어장 관리">관리</summary>
             <div class="book-action-row">

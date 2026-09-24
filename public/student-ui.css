@@ -153,3 +153,29 @@
 #personalVocabularyScreen .book-action-row .danger-button{position:relative;margin-top:5px;color:#a34e65}
 #personalVocabularyScreen .book-action-row .danger-button::before{content:"";position:absolute;top:-3px;left:8px;right:8px;height:1px;background:#eee7ec}
 #personalVocabularyScreen .book-action-row .danger-button:hover{background:#fff5f7}
+#personalVocabularyScreen #personalBookSelect[hidden]{display:none!important}
+#personalVocabularyScreen #personalBookPickerButton{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:1;min-width:0;min-height:44px;margin:0;padding:10px 12px;border:1px solid #e8dce3;border-radius:12px;background:#fff;color:#302730;font-size:15px;font-weight:500;text-align:left;box-shadow:none;transform:none}
+#personalBookPickerButton span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#personalBookPickerButton svg{width:16px;height:16px;flex:0 0 16px;fill:none;stroke:#877983;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#personalBookDialog{box-sizing:border-box;width:calc(100% - 32px);max-width:380px;max-height:calc(100dvh - 48px);margin:auto;padding:24px;border:1px solid #eee5eb;border-radius:20px;background:#fff;color:#392b34;box-shadow:0 18px 64px #29132029;overflow:auto;overscroll-behavior:contain}
+#personalBookDialog::backdrop{background:rgba(34,22,30,.36);backdrop-filter:blur(3px)}
+#personalBookDialog form{margin:0}
+#personalBookDialog h2{margin:0 0 8px;padding:0;color:#482237;font-size:21px;line-height:1.35;font-weight:700;letter-spacing:-.03em;text-align:left}
+#personalBookDialog .book-dialog-description{margin:0 0 20px;font-size:13px;line-height:1.6;color:#887481;white-space:pre-wrap;overflow-wrap:anywhere}
+#personalBookDialog label{display:block;margin:0 0 7px;font-size:12px;font-weight:600;color:#786370}
+#personalBookDialog input{box-sizing:border-box;width:100%;min-height:46px;margin:0;padding:11px 12px;border:1px solid #deced8;border-radius:10px;background:#fff;font-size:16px;color:#392b34;outline:none}
+#personalBookDialog input:focus{border-color:#9b4479;box-shadow:0 0 0 3px #f5e9f1}
+#personalBookDialog button{box-sizing:border-box;min-height:44px;margin:0;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:600;line-height:20px;box-shadow:none;transform:none!important}
+#personalBookDialog .book-dialog-actions{display:flex;gap:8px;margin-top:22px}
+#personalBookDialog .book-dialog-actions button{flex:1;width:0;border:1px solid #e8dfe5;background:#fff;color:#796773}
+#personalBookDialog .book-dialog-actions [data-submit]{background:#8f145f;border-color:#8f145f;color:#fff}
+#personalBookDialog .book-dialog-actions [data-submit].is-danger{background:#ac435f;border-color:#ac435f}
+#personalBookDialog [hidden]{display:none!important}
+#personalBookDialog .book-dialog-error{margin:10px 0 0;font-size:12px;line-height:1.5;color:#a43e59;overflow-wrap:anywhere}
+#personalBookDialog .book-dialog-option{display:flex!important;align-items:center;gap:8px;width:100%;margin:0 0 7px;border:1px solid #ede5ea;background:#fff;color:#55434e;text-align:left}
+#personalBookDialog .book-dialog-option>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}
+#personalBookDialog .book-dialog-option small{color:#95838e;font-size:12px;font-weight:400}
+#personalBookDialog .book-dialog-option[aria-pressed=true]{border-color:#d8b2c9;background:#fbf3f8;color:#8f145f}
+#personalBookDialog .book-dialog-check{width:16px;flex:0 0 16px;text-align:center}
+#personalBookDialog button:focus-visible{outline:2px solid #8f145f;outline-offset:2px}
+#personalBookDialog button:disabled{opacity:.55;cursor:wait}
