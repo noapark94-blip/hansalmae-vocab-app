@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-45"></script>
+  <script src="./app-dialogs.js?v=20260925-46"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-45"></script>
-  <script src="./config.js?v=20260925-45"></script>
-  <script src="./app-update.js?v=20260925-45"></script>
+  <script src="./school-runtime.js?v=20260925-46"></script>
+  <script src="./config.js?v=20260925-46"></script>
+  <script src="./app-update.js?v=20260925-46"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4745,15 +4745,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-45">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-45">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-45">
-<script defer src="./test-setup.js?v=20260925-45"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-45">
-<script defer src="./wrong-review.js?v=20260925-45"></script>
-<script defer src="./vocab-selection.js?v=20260925-45"></script>
-<script defer src="./personal-dialogs.js?v=20260925-45"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-45">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-46">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-46">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-46">
+<script defer src="./test-setup.js?v=20260925-46"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-46">
+<script defer src="./wrong-review.js?v=20260925-46"></script>
+<script defer src="./vocab-selection.js?v=20260925-46"></script>
+<script defer src="./personal-dialogs.js?v=20260925-46"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-46">
 </head>
 
 <body>
@@ -6031,25 +6031,17 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           </div>
         </div>
 
-        <label for="smartReviewCount">추천 단어 수</label>
-        <select id="smartReviewCount" onchange="loadSmartReview()">
-          <option value="10">10개</option>
-          <option value="20" selected>20개</option>
-          <option value="30">30개</option>
-          <option value="50">50개</option>
-        </select>
-
-        <div class="personal-toolbar">
-          <button id="smartReviewStartButton" onclick="startSmartReviewTest()">
-            추천 단어 시험보기
-          </button>
-
-          <button
-            class="secondary-button"
-            onclick="showMyPage()"
-          >
-            내 학습으로 돌아가기
-          </button>
+        <div class="smart-review-controls">
+          <div class="smart-review-count">
+            <label for="smartReviewCount">추천 단어 수</label>
+            <select id="smartReviewCount" onchange="loadSmartReview()">
+              <option value="10">10개</option>
+              <option value="20" selected>20개</option>
+              <option value="30">30개</option>
+              <option value="50">50개</option>
+            </select>
+          </div>
+          <button id="smartReviewStartButton" onclick="startSmartReviewTest()">추천 단어 시험보기</button>
         </div>
 
         <div
@@ -9311,7 +9303,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             .textContent =
             '오늘 복습 추천 ' +
             smartReviewWords.length +
-            '개 · 자주 틀린 단어를 우선 추천합니다.';
+            '개 · 자주 틀린 단어부터 복습해요.';
 
           document.getElementById("smartReviewStartButton").disabled = smartReviewWords.length < 4;
           renderSmartReview();
@@ -9346,42 +9338,27 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
       smartReviewWords.forEach(function (item, index) {
         const card = document.createElement('div');
-        card.className = 'personal-item';
-
+        card.className = 'personal-item smart-review-item';
+        const source = [
+          String(item.sheetName || '').replace(/DB$/i, ''),
+          Number(item.day) > 0 ? 'Day ' + Number(item.day) : ''
+        ].filter(Boolean).join(' · ');
         card.innerHTML =
-          '<div class="personal-item-top">' +
-            '<div class="personal-word">' +
-              (index + 1) +
-              '. ' +
-              escapeHtml(item.word) +
-            '</div>' +
-            '<div class="personal-meta">' +
-              escapeHtml(item.sheetName || '') +
-              ' · Day ' +
-              Number(item.day || 0) +
-            '</div>' +
-          '</div>' +
-          '<div class="wrong-note-meaning">' +
-            escapeHtml(item.meaning || '') +
-          '</div>' +
-          '<div class="smart-review-reason">' +
+          '<div class="smart-review-card-meta"><span class="personal-meta">' +
+            escapeHtml(source) +
+          '</span><span class="smart-review-reason">' +
             escapeHtml(item.reason || '복습 추천') +
-          '</div>' +
-          (
-            item.example
-              ? '<div class="wrong-note-example">' +
-                  escapeHtml(item.example) +
-                '</div>'
-              : ''
-          ) +
-          (
-            item.translation
-              ? '<div class="wrong-note-translation">' +
-                  escapeHtml(item.translation) +
-                '</div>'
-              : ''
-          );
-
+          '</span></div>' +
+          '<div class="personal-word"><span class="smart-review-number">' +
+            String(index + 1).padStart(2, '0') +
+          '</span><span>' + escapeHtml(item.word) + '</span></div>' +
+          '<div class="wrong-note-meaning">' + escapeHtml(item.meaning || '') + '</div>' +
+          (item.example || item.translation
+            ? '<div class="smart-review-example">' +
+                (item.example ? '<div class="wrong-note-example">' + escapeHtml(item.example) + '</div>' : '') +
+                (item.translation ? '<div class="wrong-note-translation">' + escapeHtml(item.translation) + '</div>' : '') +
+              '</div>'
+            : '');
         list.appendChild(card);
       });
     }
@@ -16273,7 +16250,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-45"></script>
+<script src="./ui-icons.js?v=20260925-46"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

@@ -394,3 +394,29 @@ body.collection-open{overflow:hidden}
  #rankingScreen .ranking-name{font-size:15px}
  #rankingScreen .ranking-point strong{font-size:19px}
 }
+
+/* Smart review: compact controls and a clear word-first reading order. */
+#smartReviewScreen .wrong-note-header{margin-bottom:18px}
+#smartReviewScreen #smartReviewSummary{margin-top:8px;font-size:13px;line-height:1.65;color:#8a7482;word-break:keep-all;overflow-wrap:anywhere}
+#smartReviewScreen .smart-review-controls{display:grid;gap:12px;margin:0 0 22px}
+#smartReviewScreen .smart-review-count{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border:1px solid #eee5eb;border-radius:14px;background:#fcf9fb}
+#smartReviewScreen .smart-review-count label{margin:0;color:#7d6574;font-size:13px;font-weight:500}
+#smartReviewScreen #smartReviewCount{width:92px;min-width:0;min-height:40px;margin:0;padding:8px 10px;border:1px solid #e8dce4;border-radius:10px;background-color:#fff;color:#64364f;font-size:16px;font-weight:600}
+#smartReviewScreen #smartReviewStartButton{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;margin:0;padding:12px 14px;border:0;border-radius:13px;background:#8f145f;color:white;font-size:14px;font-weight:600;line-height:1.5;box-shadow:none;transform:none}
+#smartReviewScreen #smartReviewStartButton:disabled{background:#eee7ec;color:#a18c99;cursor:default}
+#smartReviewScreen #smartReviewStartButton .hsm-ui-icon{width:18px;height:18px}
+#smartReviewScreen #smartReviewList{display:grid;gap:12px}
+#smartReviewScreen .smart-review-item{min-width:0;margin:0;padding:17px 16px;border:1px solid #eae1e7;border-radius:16px;background:#fff;box-shadow:none}
+#smartReviewScreen .smart-review-card-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+#smartReviewScreen .personal-meta{min-width:0;font-size:11px;line-height:1.5;color:#a08d99;word-break:keep-all;overflow-wrap:anywhere}
+#smartReviewScreen .smart-review-reason{display:inline-block;margin:0;padding:3px 7px;border:0;border-radius:6px;background:#f7edf3;color:#986180;font-size:10px;font-weight:500;line-height:1.5}
+#smartReviewScreen .personal-word{display:flex;align-items:baseline;gap:9px;margin:0;color:#422b39;font-size:21px;font-weight:700;line-height:1.4;overflow-wrap:anywhere}
+#smartReviewScreen .personal-word>span:last-child{min-width:0}
+#smartReviewScreen .smart-review-number{flex-shrink:0;color:#b69caa;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums}
+#smartReviewScreen .wrong-note-meaning{margin:6px 0 0 24px;color:#675560;font-size:15px;line-height:1.6;overflow-wrap:anywhere}
+#smartReviewScreen .smart-review-example{margin-top:14px;padding:12px;border-radius:10px;background:#faf7f9}
+#smartReviewScreen .wrong-note-example{margin:0;padding:0;border:0;color:#66535f;font-size:13px;line-height:1.7;overflow-wrap:anywhere}
+#smartReviewScreen .wrong-note-translation{margin:5px 0 0;padding:0;color:#9b8895;font-size:12px;line-height:1.65;overflow-wrap:anywhere}
+#smartReviewScreen #smartReviewLoading{margin:10px 0;font-size:13px;line-height:1.6}
+#smartReviewScreen #smartReviewLoading:empty{display:none}
+#smartReviewScreen button:focus-visible,#smartReviewScreen select:focus-visible{outline:2px solid #a43b81;outline-offset:3px}
