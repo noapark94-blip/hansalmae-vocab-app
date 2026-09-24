@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260924-38"></script>
+  <script src="./app-dialogs.js?v=20260924-39"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-38"></script>
-  <script src="./config.js?v=20260924-38"></script>
-  <script src="./app-update.js?v=20260924-38"></script>
+  <script src="./school-runtime.js?v=20260924-39"></script>
+  <script src="./config.js?v=20260924-39"></script>
+  <script src="./app-update.js?v=20260924-39"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4745,15 +4745,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-38">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-38">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-38">
-<script defer src="./test-setup.js?v=20260924-38"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-38">
-<script defer src="./wrong-review.js?v=20260924-38"></script>
-<script defer src="./vocab-selection.js?v=20260924-38"></script>
-<script defer src="./personal-dialogs.js?v=20260924-38"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-38">
+<link rel="stylesheet" href="./test-setup.css?v=20260924-39">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-39">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-39">
+<script defer src="./test-setup.js?v=20260924-39"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-39">
+<script defer src="./wrong-review.js?v=20260924-39"></script>
+<script defer src="./vocab-selection.js?v=20260924-39"></script>
+<script defer src="./personal-dialogs.js?v=20260924-39"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-39">
 </head>
 
 <body>
@@ -15600,12 +15600,10 @@ google.script.run
 </div>
 
 
-<div id="hsmEmblemModal" class="hsm-emblem-modal hidden" aria-hidden="true">
+<div id="hsmEmblemModal" class="hsm-emblem-modal hidden" role="dialog" aria-modal="true" aria-labelledby="hsmCollectionTitle" aria-hidden="true">
   <div class="hsm-emblem-panel">
-    <div class="hsm-emblem-panel-head"><h3>엠블럼 도감</h3><button class="hsm-emblem-close" type="button" onclick="HSMEmblems.close()">닫기</button></div>
-    <div id="hsmEmblemSummary" class="subtitle" style="margin:0 0 10px"></div>
-    <div class="hsm-emblem-guide">
-      <strong>랭킹 엠블럼 지급 기준</strong>
+    <div class="hsm-collection-header"><div class="hsm-emblem-panel-head"><div><h3 id="hsmCollectionTitle">내 컬렉션</h3><div id="hsmEmblemSummary"></div></div><button class="hsm-emblem-close" data-hsm-icon-ready="1" type="button" aria-label="컬렉션 닫기" onclick="HSMEmblems.close()">×</button></div><div class="hsm-collection-filters" role="group" aria-label="엠블럼 필터"><button type="button" data-filter="all" data-hsm-icon-ready="1" aria-pressed="true" onclick="HSMEmblems.filter('all')">전체</button><button type="button" data-filter="owned" data-hsm-icon-ready="1" aria-pressed="false" onclick="HSMEmblems.filter('owned')">보유</button><button type="button" data-filter="locked" data-hsm-icon-ready="1" aria-pressed="false" onclick="HSMEmblems.filter('locked')">미획득</button></div></div>
+    <details class="hsm-emblem-guide"><summary>랭킹 엠블럼 획득 안내</summary>
       <ul class="hsm-emblem-rule-list">
         <li>월간 랭킹 엠블럼은 한국시간 기준 월말 최종 순위가 확정된 후 지급됩니다.</li>
         <li>중학생은 중등단어 부문만 인정됩니다.</li>
@@ -15614,14 +15612,15 @@ google.script.run
         <li>고등단어 1위 후 수능단어 1위는 연속 1위로 인정되지 않습니다.</li>
       </ul>
       획득한 엠블럼은 언제든 원하는 것으로 바꿔 장착할 수 있습니다.
-    </div>
+    </details>
     <div id="hsmEmblemGrid" class="hsm-emblem-grid"></div>
   </div>
 </div>
 
 <script id="hsmEmblemPlugin">
 (function(){
-  const api={data:null,loading:false};
+  const api={data:null,loading:false,filter:"all",equipping:false};
+  let returnFocus=null,detailReturn=null;
   function esc(v){return String(v==null?'':v).replace(/[&<>'"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[s]));}
   function call(name,args){return new Promise((resolve,reject)=>{google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name].apply(google.script.run,args||[]);});}
   function ensureCard(){
@@ -15650,47 +15649,38 @@ google.script.run
 
     renderGrid();
   }
+  function progressMarkup(e){
+    const percent=Math.max(0,Math.min(100,Number(e.progressPercent)||0));
+    return '<div class="collection-progress"><span>'+esc(e.progressLabel||'획득까지')+'</span><strong>'+percent+'%</strong><div><i style="width:'+percent+'%"></i></div></div>';
+  }
   function renderGrid(){
-    const d=api.data;
-    if(!d)return;
-    const summary=document.getElementById('hsmEmblemSummary');
-    const grid=document.getElementById('hsmEmblemGrid');
-
-    if(summary){
-      summary.innerHTML='<strong style="color:#8f145f">획득 가능한 엠블럼 '+Number(d.totalCount||0)+'개</strong> · 현재 획득 '+Number(d.acquiredCount||0)+' / '+Number(d.totalCount||0)+' · Lv.'+Number(d.currentLevel||1);
+    const d=api.data;if(!d)return;
+    document.getElementById('hsmEmblemSummary').textContent=Number(d.acquiredCount||0)+' / '+Number(d.totalCount||0)+'개 수집 · Lv.'+Number(d.currentLevel||1);
+    document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===api.filter)));
+    const grid=document.getElementById('hsmEmblemGrid');grid.replaceChildren();
+    const list=(d.emblems||[]).filter(e=>api.filter==='all'||(api.filter==='owned'?e.owned:!e.owned));
+    list.forEach(e=>{
+      const card=document.createElement('button');card.type='button';card.className='collection-tile'+(e.equipped?' equipped':'')+(!e.owned?' locked':'');card.dataset.hsmIconReady='1';
+      card.setAttribute('aria-label',e.emblemName+' · '+(e.equipped?'장착 중':e.owned?'보유':'미획득')+' · 상세 보기');
+      card.innerHTML='<span class="collection-state">'+(e.equipped?'✓ 장착 중':e.owned?'보유':'미획득')+'</span><img src="'+esc(e.imagePath)+'" alt=""><span class="collection-name">'+esc(e.emblemName)+'</span>'+(!e.owned?'<span class="collection-condition">'+esc(e.conditionText||'조건 달성 시 획득')+'</span>'+progressMarkup(e):'');
+      card.onclick=()=>showDetail(e.emblemId);grid.appendChild(card);
+    });
+    if(!list.length)grid.innerHTML='<p class="collection-empty">해당하는 엠블럼이 아직 없어요.</p>';
+  }
+  function filter(value){api.filter=value;renderGrid();}
+  function showDetail(id){
+    const e=(api.data&&api.data.emblems||[]).find(e=>e.emblemId===id);if(!e)return;
+    let dialog=document.getElementById('hsmCollectionDetail');
+    if(!dialog){
+      dialog=document.createElement('dialog');dialog.id='hsmCollectionDetail';dialog.setAttribute('aria-labelledby','hsmCollectionDetailTitle');document.body.appendChild(dialog);
+      dialog.addEventListener('close',()=>{if(detailReturn&&detailReturn.isConnected)detailReturn.focus();else document.querySelector('.hsm-emblem-close').focus();});
     }
-
-    if(!grid)return;
-
-    grid.innerHTML=(d.emblems||[]).map(function(e){
-      const owned=Boolean(e.owned);
-      const equipped=Boolean(e.equipped);
-      const status=equipped
-        ? '<span class="hsm-emblem-status owned">장착 중</span>'
-        : owned
-          ? '<span class="hsm-emblem-status owned">획득 완료</span>'
-          : '<span class="hsm-emblem-status" data-hsm-icon="lock">잠금</span>';
-
-      const button=owned&&!equipped
-        ? '<button class="hsm-emblem-equip" type="button" onclick="HSMEmblems.equip(\''+esc(e.emblemId)+'\')">이 엠블럼 장착하기</button>'
-        : '';
-
-      const progressPercent=Math.max(0,Math.min(100,Number(e.progressPercent||0)));
-      const progress=
-        '<div class="hsm-emblem-progress" aria-label="'+esc(e.progressLabel||'진행률')+'">'+
-          '<div class="hsm-emblem-progress-head"><span>'+esc(e.progressLabel||'진행 중')+'</span><span class="hsm-emblem-progress-percent">'+progressPercent+'%</span></div>'+
-          '<div class="hsm-emblem-progress-track"><span class="hsm-emblem-progress-fill" style="width:'+progressPercent+'%"></span></div>'+
-        '</div>';
-
-      return '<div class="hsm-emblem-item '+(!owned?'locked ':'owned ')+(equipped?'equipped':'')+'">'+
-        status+
-        '<img src="'+esc(e.imagePath)+'" alt="'+esc(e.emblemName)+'">'+
-        '<div class="hsm-emblem-name">'+esc(e.emblemName)+'</div>'+
-        '<div class="hsm-emblem-condition">획득 조건: '+esc(e.conditionText||'조건 달성 시 획득')+'</div>'+
-        progress+
-        button+
-      '</div>';
-    }).join('');
+    detailReturn=document.activeElement;
+    dialog.innerHTML='<button type="button" class="collection-detail-close" data-hsm-icon-ready="1" aria-label="상세 닫기">×</button><img class="collection-detail-image" src="'+esc(e.imagePath)+'" alt=""><h3 id="hsmCollectionDetailTitle">'+esc(e.emblemName)+'</h3><p>'+esc(e.conditionText||'조건 달성 시 획득')+'</p>'+(!e.owned?progressMarkup(e):'')+'<p class="collection-detail-message" role="status"></p><button type="button" class="collection-detail-action" data-hsm-icon-ready="1">'+(e.equipped?'현재 장착 중':e.owned?'장착하기':'아직 획득하지 못했어요')+'</button>';
+    dialog.querySelector('.collection-detail-close').onclick=()=>dialog.close();
+    const action=dialog.querySelector('.collection-detail-action');action.disabled=!e.owned||e.equipped;
+    action.onclick=()=>equip(id);
+    if(!dialog.open)dialog.showModal();
   }
   async function load(force){
     ensureCard();
@@ -15728,18 +15718,46 @@ google.script.run
   }
 
   async function equip(id){
+    if(api.equipping)return;
+    api.equipping=true;
+    const dialog=document.getElementById('hsmCollectionDetail');
+    const action=dialog&&dialog.querySelector('.collection-detail-action');
+    const message=dialog&&dialog.querySelector('.collection-detail-message');
+    if(action){action.disabled=true;action.textContent='장착 중…';}
     try{
       if(!currentLoginToken)throw new Error('로그인 정보가 없습니다. 다시 로그인해주세요.');
       const r=await call('equipStudentEmblem',[currentLoginToken,id]);
       if(!r||!r.success)throw new Error(r&&r.message||'장착 실패');
+      if(api.data){api.data.emblems.forEach(e=>e.equipped=e.emblemId===id);api.data.equippedEmblem=api.data.emblems.find(e=>e.emblemId===id);apply(api.data);}
+      if(dialog&&dialog.open){action.textContent='현재 장착 중';message.textContent='엠블럼을 장착했어요.';}
+      else HSMDialog.alert(r.message||'엠블럼을 장착했습니다.');
       await load(true);
-      HSMDialog.alert(r.message||'엠블럼을 장착했습니다.');
     }catch(e){
-      HSMDialog.alert(e&&e.message?e.message:String(e));
-    }
+      if(dialog&&dialog.open){message.textContent=e.message||String(e);action.disabled=false;action.textContent='다시 장착하기';}
+      else HSMDialog.alert(e.message||String(e));
+    }finally{api.equipping=false;}
   }
-  function open(){document.getElementById('hsmEmblemModal').classList.remove('hidden');load(true)} function close(){document.getElementById('hsmEmblemModal').classList.add('hidden')}
-  window.HSMEmblems={load,open,close,equip};
+  function open(){
+    returnFocus=document.activeElement;api.filter='all';
+    const modal=document.getElementById('hsmEmblemModal');modal.classList.remove('hidden');modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('collection-open');modal.querySelector('.hsm-emblem-panel').scrollTop=0;modal.querySelector('.hsm-emblem-close').focus();renderGrid();load(true);
+  }
+  function close(){
+    const modal=document.getElementById('hsmEmblemModal');modal.classList.add('hidden');modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('collection-open');if(returnFocus&&returnFocus.isConnected)returnFocus.focus();
+  }
+  document.addEventListener('keydown',function(event){
+    const modal=document.getElementById('hsmEmblemModal');const detail=document.getElementById('hsmCollectionDetail');
+    if(modal.classList.contains('hidden')||(detail&&detail.open))return;
+    if(event.key==='Escape'){event.preventDefault();close();}
+    if(event.key==='Tab'){
+      const items=Array.from(modal.querySelectorAll('button:not(:disabled),summary'));
+      const first=items[0],last=items[items.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    }
+  });
+  window.HSMEmblems={load,open,close,equip,filter,showDetail};
   document.addEventListener('DOMContentLoaded',()=>{ensureCard();setTimeout(()=>load(false),500)});
   const oldMain=window.openMainApp;if(typeof oldMain==='function')window.openMainApp=function(){const r=oldMain.apply(this,arguments);setTimeout(()=>load(true),250);return r};
   const oldMy=window.showMyPage;if(typeof oldMy==='function')window.showMyPage=function(){const r=oldMy.apply(this,arguments);ensureCard();setTimeout(()=>load(false),150);return r};
@@ -16217,7 +16235,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260924-38"></script>
+<script src="./ui-icons.js?v=20260924-39"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
