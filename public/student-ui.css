@@ -255,3 +255,8 @@
 #myPageScreen #myHistoryMoreButton::after{content:"";display:inline-block;width:5px;height:5px;margin:0 0 3px 8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg)}
 #myPageScreen #myHistoryMoreButton:hover{background:#faf5f8}
 #myPageScreen #myHistoryMoreButton:focus-visible{outline:2px solid #8f145f;outline-offset:2px}
+
+/* Keep Korean words intact in the level guide, including its narrow heading. */
+#levelGuideModal .level-guide-header>div{min-width:0;flex:1}
+#levelGuideModal .level-guide-close{flex-shrink:0}
+#levelGuideModal .subtitle,#levelGuideModal .level-guide-section p,#levelGuideModal .level-guide-rules li,#levelGuideModal .level-guide-current-title,#levelGuideModal .level-guide-current-meta{word-break:keep-all;overflow-wrap:break-word;white-space:normal}
