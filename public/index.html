@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260924-42"></script>
+  <script src="./app-dialogs.js?v=20260924-43"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-42"></script>
-  <script src="./config.js?v=20260924-42"></script>
-  <script src="./app-update.js?v=20260924-42"></script>
+  <script src="./school-runtime.js?v=20260924-43"></script>
+  <script src="./config.js?v=20260924-43"></script>
+  <script src="./app-update.js?v=20260924-43"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4745,15 +4745,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-42">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-42">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-42">
-<script defer src="./test-setup.js?v=20260924-42"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-42">
-<script defer src="./wrong-review.js?v=20260924-42"></script>
-<script defer src="./vocab-selection.js?v=20260924-42"></script>
-<script defer src="./personal-dialogs.js?v=20260924-42"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-42">
+<link rel="stylesheet" href="./test-setup.css?v=20260924-43">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-43">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-43">
+<script defer src="./test-setup.js?v=20260924-43"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-43">
+<script defer src="./wrong-review.js?v=20260924-43"></script>
+<script defer src="./vocab-selection.js?v=20260924-43"></script>
+<script defer src="./personal-dialogs.js?v=20260924-43"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-43">
 </head>
 
 <body>
@@ -6084,7 +6084,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           이번 달 순위를 불러오는 중입니다.
         </div>
 
-        <div class="ranking-tabs">
+        <div class="ranking-tabs" role="group" aria-label="랭킹 부문">
           <button
             id="middleRankingButton"
             class="ranking-tab active"
@@ -6120,13 +6120,14 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           class="ranking-list"
         ></div>
 
-        <div class="ranking-rule">
-          <strong>포인트 획득 기준</strong><br>
+        <details class="ranking-rule">
+          <summary>포인트는 어떻게 쌓이나요?</summary><div class="ranking-rule-content">
           30~49문제: 80점 10P · 90점 15P · 100점 20P<br>
           50~79문제: 80점 20P · 90점 30P · 100점 40P<br>
           80~99문제: 80점 30P · 90점 45P · 100점 60P<br>
           100문제 이상: 80점 50P · 90점 70P · 100점 100P
-        </div>
+          </div>
+        </details>
       </div>
 
     </div>
@@ -10575,6 +10576,9 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         csatButton.classList.add('active');
       }
 
+      [middleButton, highButton, csatButton].forEach(function (button) {
+        button.setAttribute('aria-pressed', String(button.classList.contains('active')));
+      });
       renderRanking(
         monthlyRankingData[category] || []
       );
@@ -10609,83 +10613,29 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             ? 'ranking-item top-three'
             : 'ranking-item';
 
-        let medal =
-          student.rank + '위';
-
-        if (student.rank <= 3) {
-          medal =
-            '<span class="hsm-rank-medal hsm-rank-medal-' +
-            student.rank +
-            '">' +
-            student.rank +
-            '</span>';
-        }
-
+        const rank = Number(student.rank) || 0;
+        const isMe = Boolean(currentStudent && currentStudent.studentId &&
+          String(student.studentId || '') === String(currentStudent.studentId));
+        item.classList.toggle('ranking-first', rank === 1);
+        item.classList.toggle('ranking-self', isMe);
+        const crown = rank === 1 ? '<svg class="ranking-crown" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 5 4 4-7 4 7 5-4-2 12H5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>' : '';
         item.innerHTML =
-          '<div class="ranking-medal">' +
-            medal +
-          '</div>' +
-
-          '<div class="ranking-main">' +
-            '<div class="ranking-top-row">' +
-              '<div class="ranking-name">' +
-                escapeHtml(student.name) +
-              '</div>' +
-              '<div class="ranking-point">' +
-                student.points +
-                'P' +
-              '</div>' +
-            '</div>' +
-
-            '<div class="ranking-profile-row">' +
-              '<div class="hsm-ranking-emblem-wrap' +
-                (rankingEmblem.imagePath
-                  ? ' is-clickable'
-                  : '') +
-                '" role="' +
-                (rankingEmblem.imagePath
-                  ? 'button'
-                  : 'img') +
-                '" tabindex="' +
-                (rankingEmblem.imagePath
-                  ? '0'
-                  : '-1') +
-                '" aria-label="' +
-                escapeHtml(
-                  rankingEmblem.emblemName
-                    ? student.name + ' 학생의 ' +
-                      rankingEmblem.emblemName +
-                      ' 엠블럼 크게 보기'
-                    : '장착 엠블럼 없음'
-                ) +
-                '">' +
-                (rankingEmblem.imagePath
-                  ? '<img class="hsm-ranking-emblem" src="' +
-                      escapeHtml(rankingEmblem.imagePath) +
-                      '" alt="' +
-                      escapeHtml(rankingEmblem.emblemName || '장착 엠블럼') +
-                      '">'
-                  : '<div class="hsm-ranking-emblem-placeholder">—</div>') +
-              '</div>' +
-
-              '<div class="ranking-info hsm-ranking-info">' +
-                '<div class="ranking-level-title">' +
-                  'Lv.' +
-                  Number(student.level || 1) +
-                  ' · ' +
-                  escapeHtml(student.title || '단어병아리') +
-                '</div>' +
-
-                '<div class="ranking-detail">' +
-                  '시험 ' +
-                  student.testCount +
-                  '회 · PERFECT ' +
-                  student.perfectCount +
-                  '회' +
-                '</div>' +
-              '</div>' +
-            '</div>' +
-          '</div>';
+          '<div class="ranking-medal" aria-label="' + rank + '위">' + crown +
+            '<span class="ranking-position ranking-position-' + rank + '">' + rank + '</span></div>' +
+          '<div class="hsm-ranking-emblem-wrap">' +
+            (rankingEmblem.imagePath ? '<img class="hsm-ranking-emblem" src="' +
+              escapeHtml(rankingEmblem.imagePath) + '" alt="' +
+              escapeHtml(rankingEmblem.emblemName || '장착 엠블럼') + '">' :
+              '<span class="hsm-ranking-emblem-placeholder">—</span>') + '</div>' +
+          '<div class="ranking-info hsm-ranking-info">' +
+            '<div class="ranking-name">' + escapeHtml(student.name) +
+              (isMe ? '<span class="ranking-me">나</span>' : '') + '</div>' +
+            '<div class="ranking-level-title">Lv.' + Number(student.level || 1) +
+              ' · ' + escapeHtml(student.title || '단어병아리') + '</div>' +
+            '<div class="ranking-detail">시험 ' + Number(student.testCount || 0) +
+              '회 · 만점 ' + Number(student.perfectCount || 0) + '회</div></div>' +
+          '<div class="ranking-point"><strong>' + Number(student.points || 0) +
+            '</strong><span>P</span></div>';
 
         if (rankingEmblem.imagePath) {
           item.classList.add(
@@ -16240,7 +16190,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260924-42"></script>
+<script src="./ui-icons.js?v=20260924-43"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

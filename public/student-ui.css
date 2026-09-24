@@ -353,3 +353,44 @@ body.collection-open{overflow:hidden}
 @media(max-width:360px){#hsmEmblemModal .hsm-emblem-panel{padding-right:12px;padding-left:12px}#hsmEmblemModal .hsm-collection-header{margin:0 -12px;padding-left:12px;padding-right:12px}#hsmEmblemModal .collection-tile img{height:108px}}
 
 #hsmCollectionDetail.is-unowned .collection-detail-image{opacity:.38;filter:grayscale(1)}
+
+/* Monthly ranking: emblem-led rows with a single champion accent. */
+#mainApp #rankingScreen .ranking-tabs{display:flex;gap:4px;padding:4px;background:#f5f0f4;border-radius:14px;margin-bottom:20px}
+#mainApp #rankingScreen .ranking-tab{min-width:0;min-height:42px;padding:10px 8px;border:0;border-radius:10px;background:transparent;color:#806d7b;box-shadow:none;font-size:14px}
+#mainApp #rankingScreen .ranking-tab.active{background:#8f145f;color:#fff;box-shadow:0 2px 6px #65144614}
+#rankingScreen .ranking-list{display:grid;gap:0;margin-top:0}
+#rankingScreen .ranking-item{display:grid;grid-template-columns:22px 56px minmax(0,1fr) auto;align-items:center;gap:10px;margin:0;padding:20px 4px;border:0;border-bottom:1px solid #eee8ed;border-radius:0;background:#fff;box-shadow:none;transform:none}
+#rankingScreen .ranking-item.ranking-first{padding:20px 12px;margin-bottom:8px;border:1px solid #eee2cd;border-radius:18px;background:linear-gradient(120deg,#fff9ee,#fffdf8)}
+#rankingScreen .ranking-item.ranking-self{background:#faf2f8;border-radius:14px;padding-left:10px;padding-right:10px}
+#rankingScreen .ranking-item.ranking-self.ranking-first{border-color:#d9b6cc}
+#rankingScreen .ranking-medal{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:auto;min-width:0;font-size:15px;color:#8b7c87;font-weight:600}
+#rankingScreen .ranking-crown{width:20px;height:20px;color:#b88a32}
+#rankingScreen .ranking-position-1{color:#a77723}
+#rankingScreen .ranking-position-2{color:#798795}
+#rankingScreen .ranking-position-3{color:#ad7b59}
+#rankingScreen .hsm-ranking-emblem-wrap{width:56px;height:64px;min-width:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+#rankingScreen .hsm-ranking-emblem{width:100%;height:100%;object-fit:contain}
+#rankingScreen .ranking-first .hsm-ranking-emblem-wrap{height:78px}
+#rankingScreen .ranking-info{min-width:0}
+#rankingScreen .ranking-name{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:17px;font-weight:750;line-height:1.4;color:#30252d;word-break:keep-all;overflow-wrap:anywhere}
+#rankingScreen .ranking-level-title{margin-top:4px;font-size:11px;font-weight:500;color:#8b607c;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+#rankingScreen .ranking-detail{margin-top:5px;font-size:10px;line-height:1.6;color:#92868f;word-break:keep-all;overflow-wrap:anywhere}
+#rankingScreen .ranking-point{display:flex;align-items:baseline;gap:2px;margin:0;max-width:86px;text-align:right;color:#6d3257;line-height:1.2;overflow-wrap:anywhere}
+#rankingScreen .ranking-point strong{min-width:0;font-size:22px;font-weight:750;font-variant-numeric:tabular-nums}
+#rankingScreen .ranking-point>span{font-size:10px;font-weight:500}
+#rankingScreen .ranking-first .ranking-point{color:#ad7d29}
+#rankingScreen .ranking-me{padding:2px 5px;border-radius:5px;background:#8f145f;color:white;font-size:9px;font-weight:600;line-height:1.4}
+#mainApp #rankingScreen .ranking-rule{margin-top:24px;padding:0 12px;border:0;border-radius:12px;background:#faf7f9;color:#82727d}
+#rankingScreen .ranking-rule summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:48px;cursor:pointer;list-style:none;font-size:12px;font-weight:500}
+#rankingScreen .ranking-rule summary::-webkit-details-marker{display:none}
+#rankingScreen .ranking-rule summary::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);flex-shrink:0}
+#rankingScreen .ranking-rule[open] summary::after{transform:rotate(225deg)}
+#rankingScreen .ranking-rule-content{padding:0 0 14px;font-size:11px;line-height:2;word-break:keep-all;overflow-wrap:anywhere}
+#rankingScreen .ranking-item:focus-visible,#rankingScreen summary:focus-visible,#rankingScreen .ranking-tab:focus-visible{outline:2px solid #a43b81;outline-offset:3px}
+@media(max-width:360px){
+ #rankingScreen .ranking-item{grid-template-columns:18px 44px minmax(0,1fr) auto;gap:7px}
+ #rankingScreen .hsm-ranking-emblem-wrap{width:44px;height:56px}
+ #rankingScreen .ranking-item.ranking-first{padding:16px 8px}
+ #rankingScreen .ranking-name{font-size:15px}
+ #rankingScreen .ranking-point strong{font-size:19px}
+}
