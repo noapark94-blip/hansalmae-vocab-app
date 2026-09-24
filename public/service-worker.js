@@ -1,4 +1,4 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260924-16';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260924-17';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
@@ -166,4 +166,5 @@ self.addEventListener('fetch', function (event) {
     return cached || networkRequest;
   }));
 });
+
 

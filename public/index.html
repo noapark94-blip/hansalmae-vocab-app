@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-16"></script>
-  <script src="./config.js?v=20260924-16"></script>
-  <script src="./app-update.js?v=20260924-16"></script>
+  <script src="./school-runtime.js?v=20260924-17"></script>
+  <script src="./config.js?v=20260924-17"></script>
+  <script src="./app-update.js?v=20260924-17"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4730,13 +4730,13 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-16">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-16">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-16">
-<script defer src="./test-setup.js?v=20260924-16"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-16">
-<script defer src="./wrong-review.js?v=20260924-16"></script>
-<script defer src="./vocab-selection.js?v=20260924-16"></script>
+<link rel="stylesheet" href="./test-setup.css?v=20260924-17">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-17">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-17">
+<script defer src="./test-setup.js?v=20260924-17"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-17">
+<script defer src="./wrong-review.js?v=20260924-17"></script>
+<script defer src="./vocab-selection.js?v=20260924-17"></script>
 </head>
 
 <body>
@@ -5902,84 +5902,35 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         </div>
 
         <div class="book-manager">
-          <div class="book-select-row">
-            <div>
-              <label for="personalBookSelect">내 단어장</label>
-              <select id="personalBookSelect" onchange="changePersonalBook()"></select>
+          <label class="personal-visually-hidden" for="personalBookSelect">내 단어장</label>
+          <select id="personalBookSelect" onchange="changePersonalBook()"></select>
+          <details class="book-management">
+            <summary aria-label="단어장 관리">관리</summary>
+            <div class="book-action-row">
+              <button type="button" class="secondary-button" onclick="createNewPersonalBook()">＋ 새 단어장</button>
+              <button type="button" class="secondary-button" onclick="renameCurrentPersonalBook()">이름 변경</button>
+              <button type="button" class="danger-button" onclick="deleteCurrentPersonalBook()">단어장 삭제</button>
             </div>
-            <button onclick="createNewPersonalBook()">＋ 새 단어장</button>
-          </div>
-          <details class="book-management"><summary>단어장 관리</summary>
-          <div class="book-action-row">
-            <button class="secondary-button" onclick="renameCurrentPersonalBook()">이름 변경</button>
-            <button class="danger-button" onclick="deleteCurrentPersonalBook()">단어장 삭제</button>
-          </div></details>
+          </details>
         </div>
 
-        <div class="personal-toolbar personal-main-toolbar">
-          <button onclick="showPersonalTestSetup()">
-            선택 단어 시험보기
-          </button>
-
-          <button
-            id="personalSelectionModeButton"
-            type="button"
-            class="secondary-button"
-            onclick="togglePersonalSelectionMode_()"
-          >
-            선택
-          </button>
-        </div>
-
-        <p id="personalTestSelectionHint" role="status" aria-live="polite">시험 볼 단어를 4개 이상 선택해주세요.</p>
-
-        <div
-          id="personalBulkToolbar"
-          class="personal-bulk-toolbar hidden"
-        >
-          <button
-            id="personalSelectAllButton"
-            type="button"
-            class="secondary-button"
-            onclick="toggleSmartPersonalSelectAll_()"
-          >
-            전체 선택
-          </button>
-
-          <div class="personal-bulk-count">
-            <strong id="personalSelectedCount">0</strong>개 선택
+        <div class="personal-selection-panel">
+          <div class="personal-toolbar personal-main-toolbar">
+            <div class="personal-bulk-count hidden" id="personalSelectionCount" role="status" aria-live="polite">
+              <strong id="personalSelectedCount">0</strong>개 선택
+            </div>
+            <button id="personalSelectAllButton" type="button" class="secondary-button hidden" onclick="toggleSmartPersonalSelectAll_()">전체 선택</button>
+            <button id="personalSelectionModeButton" type="button" class="secondary-button" aria-expanded="false" aria-controls="personalVocabularyList personalBulkToolbar" onclick="togglePersonalSelectionMode_()">단어 선택하기</button>
           </div>
-
-          <button
-            type="button"
-            onclick="shareSelectedPersonalWords()"
-          >
-            공유
-          </button>
-
-          <button
-            type="button"
-            class="secondary-button"
-            onclick="moveSelectedPersonalWords_()"
-          >
-            이동
-          </button>
-
-          <button
-            type="button"
-            class="danger-button"
-            onclick="deleteSelectedPersonalWords_()"
-          >
-            삭제
-          </button>
-
-          <button
-            type="button"
-            class="secondary-button"
-            onclick="exitPersonalSelectionMode_()"
-          >
-            취소
-          </button>
+          <div id="personalBulkToolbar" class="personal-bulk-toolbar hidden">
+            <button id="personalTestButton" type="button" onclick="showPersonalTestSetup()" disabled>선택 단어 시험보기</button>
+            <div id="personalSelectionActions" class="personal-selection-actions hidden">
+              <button type="button" class="secondary-button" onclick="shareSelectedPersonalWords()">공유</button>
+              <button type="button" class="secondary-button" onclick="moveSelectedPersonalWords_()">이동</button>
+              <button type="button" class="danger-button" onclick="deleteSelectedPersonalWords_()">삭제</button>
+            </div>
+          </div>
+          <p id="personalTestSelectionHint" role="status" aria-live="polite"></p>
         </div>
 
         <div
@@ -8729,17 +8680,22 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       const selected = getSelectedPersonalRows_().length;
       const total = personalVocabularyWords.length;
       hint.textContent = total < 4
-        ? '현재 단어장에 단어가 ' + total + '개 있어요. 시험을 보려면 4개 이상 필요해요.'
+        ? '시험은 단어 4개부터 가능해요.'
         : selected >= 4
-          ? selected + '개 선택 · 선택한 단어로 시험을 시작할 수 있어요.'
-          : '시험 볼 단어를 4개 이상 선택해주세요. 현재 ' + selected + '개 선택' + (selected ? ' · ' + (4 - selected) + '개 더 선택' : '');
+          ? selected + '개 단어로 시험을 볼 수 있어요.'
+          : '시험 볼 단어를 ' + (4 - selected) + '개 더 선택해주세요.';
+      hint.classList.toggle('hidden', !personalSelectionMode_ && total >= 4);
       hint.classList.toggle('is-ready', selected >= 4);
+      const testButton = document.getElementById('personalTestButton');
+      if (testButton) testButton.disabled = selected < 4;
     }
 
     function togglePersonalSelectionMode_() {
-      personalSelectionMode_ =
-        !personalSelectionMode_;
-
+      if (personalSelectionMode_) {
+        exitPersonalSelectionMode_();
+        return;
+      }
+      personalSelectionMode_ = true;
       applyPersonalSelectionMode_();
     }
 
@@ -8781,7 +8737,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         modeButton.textContent =
           personalSelectionMode_
             ? '선택 종료'
-            : '선택';
+            : '단어 선택하기';
+        modeButton.setAttribute('aria-expanded', String(personalSelectionMode_));
 
         modeButton.classList.toggle(
           'active-selection-mode',
@@ -8798,6 +8755,9 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           personalSelectionMode_
         );
 
+      document.getElementById('personalSelectionCount')?.classList.toggle('hidden', !personalSelectionMode_);
+      document.getElementById('personalSelectAllButton')?.classList.toggle('hidden', !personalSelectionMode_);
+      document.querySelector('#personalVocabularyScreen .personal-selection-panel')?.classList.toggle('is-selecting', personalSelectionMode_);
       updatePersonalBulkToolbar_();
     }
 
@@ -8807,6 +8767,10 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       const selectedRows =
         getSelectedPersonalRows_();
 
+      document.getElementById('personalSelectionActions')?.classList.toggle('hidden', !personalSelectionMode_ || !selectedRows.length);
+      document.querySelectorAll('#personalVocabularyList .personal-item').forEach(function(card) {
+        card.classList.toggle('is-selected', Boolean(card.querySelector('.personal-share-check:checked')));
+      });
       const count =
         document.getElementById(
           'personalSelectedCount'
@@ -12703,7 +12667,10 @@ google.script.run
     }
 
     function changePersonalBook() {
+      exitPersonalSelectionMode_();
       selectedPersonalBookId = document.getElementById('personalBookSelect').value;
+      personalVocabularyWords = [];
+      renderPersonalVocabulary();
       loadSelectedPersonalBookWords();
     }
 
@@ -12845,7 +12812,7 @@ google.script.run
       const list = document.getElementById('personalVocabularyList');
       list.innerHTML = '';
       if (!personalVocabularyBooks.length) {
-        list.innerHTML = '<div class="empty-message">아직 만든 단어장이 없습니다.<br>위의 ＋ 새 단어장 버튼을 눌러주세요.</div>';
+        list.innerHTML = '<div class="empty-message">아직 만든 단어장이 없습니다.<br>관리에서 ＋ 새 단어장을 눌러주세요.</div>';
         return;
       }
       if (!personalVocabularyWords.length) {
@@ -14359,6 +14326,7 @@ google.script.run
         'personalVocabularyList'
       );
 
+    const selectedRows = new Set(getSelectedPersonalRows_());
     list.innerHTML = '';
     updatePersonalTestHint_();
 
@@ -14366,9 +14334,10 @@ google.script.run
       list.innerHTML =
         '<div class="empty-message">' +
         '아직 만든 단어장이 없습니다.<br>' +
-        '위의 ＋ 새 단어장 버튼을 눌러주세요.' +
+        '관리에서 ＋ 새 단어장을 눌러주세요.' +
         '</div>';
 
+      applyPersonalSelectionMode_();
       return;
     }
 
@@ -14378,6 +14347,7 @@ google.script.run
         '이 단어장에는 아직 저장한 단어가 없습니다.' +
         '</div>';
 
+      applyPersonalSelectionMode_();
       return;
     }
 
@@ -14464,6 +14434,7 @@ google.script.run
             '</div>' +
           '</div>';
 
+        card.querySelector('.personal-share-check').checked = selectedRows.has(Number(item.rowNumber));
         list.appendChild(card);
       }
     );
@@ -14478,7 +14449,7 @@ google.script.run
 
     if (selectedRows.length < 4) {
       alert(
-        '선택 버튼을 누른 뒤 시험 볼 단어를 4개 이상 체크해주세요.'
+        '단어 선택하기를 누른 뒤 시험 볼 단어를 4개 이상 체크해주세요.'
       );
       return;
     }
@@ -14542,6 +14513,16 @@ google.script.run
 
 <script id="hsm-personal-test-selection-helper">
   (function () {
+    const management = document.querySelector('#personalVocabularyScreen .book-management');
+    document.addEventListener('click', function (event) {
+      if (management && (!management.contains(event.target) || event.target.closest('button'))) management.open = false;
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && management && management.open) {
+        management.open = false;
+        management.querySelector('summary').focus();
+      }
+    });
     const original = window.showPersonalTestSetup;
     window.showPersonalTestSetup = function () {
       const selected = getSelectedPersonalRows_();

@@ -80,3 +80,41 @@
  .hsm-launcher-home,#hsmSchoolStudentPage,#hsmSchoolContentPage{padding-top:max(56px,calc(env(safe-area-inset-top,0px) + 16px))!important}
 }
 @media(prefers-reduced-motion:reduce){#mainApp *,#hsmSchoolStudentPage *,#hsmSchoolContentPage *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+
+/* Personal vocabulary: compact book controls and contextual selection. */
+#personalVocabularyScreen .personal-visually-hidden{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+#personalVocabularyScreen .book-manager{display:flex;align-items:center;gap:8px;padding:0;margin:16px 0 12px;border:0;background:none}
+#personalVocabularyScreen #personalBookSelect{flex:1;min-width:0;width:0;min-height:44px;margin:0;padding:10px 12px;border-radius:12px;font-size:15px}
+#personalVocabularyScreen .book-management{position:relative;flex:none;margin:0}
+#personalVocabularyScreen .book-management>summary{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border:1px solid #e8dce3;border-radius:12px;background:#fff;color:#78636e;font-size:13px;font-weight:600;list-style:none}
+#personalVocabularyScreen .book-management>summary::-webkit-details-marker{display:none}
+#personalVocabularyScreen .book-management[open]>summary{background:#f8f0f5;color:#8f145f}
+#personalVocabularyScreen .book-action-row{position:absolute;right:0;top:calc(100% + 6px);z-index:45;display:grid;grid-template-columns:1fr;gap:4px;width:180px;padding:6px;margin:0;background:#fff;border:1px solid #eadfe5;border-radius:14px;box-shadow:0 8px 24px #40112d18}
+#personalVocabularyScreen .book-action-row button{border:0;background:#fff;text-align:left;padding:10px 12px;box-shadow:none}
+#personalVocabularyScreen .book-action-row button:hover{background:#faf5f8}
+#personalVocabularyScreen .book-action-row .danger-button{border:0;background:#fff;color:#a13755}
+#personalVocabularyScreen .personal-selection-panel{margin-bottom:12px;border:1px solid #eadfe5;border-radius:14px;overflow:hidden;background:#fff}
+#personalVocabularyScreen .personal-main-toolbar{display:flex!important;align-items:center;gap:6px;margin:0;padding:6px}
+#personalVocabularyScreen .personal-main-toolbar button{flex:none;width:auto;min-width:0;min-height:40px;margin:0;padding:8px 10px;font-size:13px;border:0;border-radius:9px;box-shadow:none;background:transparent;color:#78636e}
+#personalVocabularyScreen .personal-main-toolbar #personalSelectionModeButton{margin-left:auto;color:#8f145f}
+#personalVocabularyScreen .personal-selection-panel:not(.is-selecting) #personalSelectionModeButton{width:100%;margin:0;text-align:center}
+#personalVocabularyScreen .personal-main-toolbar .personal-bulk-count{order:0;justify-content:flex-start;flex:1;min-width:0;padding:0 6px;font-size:13px;white-space:nowrap}
+#personalVocabularyScreen .personal-main-toolbar #personalSelectAllButton{color:#8f145f}
+#personalVocabularyScreen .personal-bulk-toolbar{position:static;display:flex;flex-direction:column;gap:8px;margin:0;padding:0 10px 10px;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none}
+#personalVocabularyScreen .personal-bulk-toolbar #personalTestButton{width:100%;min-height:44px;margin:0;padding:10px 12px;border-radius:10px;font-size:14px}
+#personalVocabularyScreen #personalTestButton:disabled{background:#f0eaee;color:#998b95;cursor:default;box-shadow:none;opacity:1}
+#personalVocabularyScreen .personal-selection-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+#personalVocabularyScreen .personal-selection-actions button{min-width:0;width:100%;min-height:40px;padding:8px;font-size:13px;background:#fff;border:1px solid #eadfe5;color:#78636e;box-shadow:none;border-radius:10px}
+#personalVocabularyScreen .personal-selection-actions .danger-button{color:#a13755;border-color:#eedde3;background:#fff}
+#personalVocabularyScreen #personalTestSelectionHint{margin:0;padding:0 12px 10px;border:0;background:none;border-radius:0;color:#8a7a84;font-size:12px;line-height:1.5}
+#personalVocabularyScreen #personalTestSelectionHint.is-ready{color:#8f145f}
+#personalVocabularyScreen .personal-book-label{display:none}
+#personalVocabularyScreen .personal-item{margin-top:8px;padding:14px;border-radius:14px;transition:border-color .15s,background .15s}
+#personalVocabularyScreen .personal-item.is-selected{border-color:#dba6c5;background:#fffafd}
+#personalVocabularyScreen .personal-item-top{align-items:flex-start;gap:8px}
+#personalVocabularyScreen .personal-word{font-size:21px;overflow-wrap:anywhere}
+#personalVocabularyScreen .personal-meta{font-size:11px;line-height:1.5;color:#998b95}
+#personalVocabularyScreen .hidden{display:none!important}
+#personalVocabularyScreen .hsm-cover-toolbar{margin:10px 0;padding:6px;border-radius:12px;box-shadow:none}
+#personalVocabularyScreen .personal-compact-check:focus-within span{outline:2px solid #8f145f;outline-offset:3px}
