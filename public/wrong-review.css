@@ -42,3 +42,21 @@
 #wrongNotebookScreen #wrongBulkToolbar{margin:10px 0!important}
 #wrongNotebookScreen #hsmReviewMore{min-width:40px;min-height:44px;padding:4px!important;font-size:22px!important}
 #wrongNotebookScreen #wrongActiveFilter .hsm-ui-icon{display:none!important}
+
+/* Compact selection controls, with stable spacing at mobile widths. */
+#wrongNotebookScreen .wrong-note-header{margin-bottom:0!important}
+#wrongNotebookScreen #wrongNotebookSummary{margin:4px 0 0!important;font-size:14px!important;line-height:1.5}
+#wrongNotebookScreen #wrongTestOpenButton{height:auto!important;min-height:48px!important;padding:13px 12px!important;margin:18px 0 0!important;border-radius:14px!important;font-size:15px!important;line-height:1.4;box-shadow:none!important}
+#wrongNotebookScreen #wrongTestOpenButton:disabled{background:#f0e9ee!important;color:#897482!important;opacity:1!important}
+#wrongNotebookScreen.hsm-selecting .wrong-selection-entry{display:none!important}
+#wrongNotebookScreen #wrongBulkToolbar{padding:4px 8px!important;margin:8px 0 12px!important;border:1px solid #eee4eb!important;border-radius:12px!important;background:#faf7f9!important}
+#wrongNotebookScreen .hsm-selection-line{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto 36px;gap:4px!important;min-height:44px;margin:0!important;padding:0!important}
+#wrongNotebookScreen .hsm-selection-line>span{grid-column:1;grid-row:1;text-align:left;padding-left:4px;font-size:12px!important;white-space:nowrap;color:#806b78}
+#wrongNotebookScreen #wrongSelectedCount{color:#8f145f;font-size:14px;font-weight:700}
+#wrongNotebookScreen #wrongSelectAllButton{grid-column:2;grid-row:1}
+#wrongNotebookScreen #hsmSelectionCancel{grid-column:3;grid-row:1;color:#806b78!important;font-weight:500!important}
+#wrongNotebookScreen .hsm-selection-line button{padding:8px!important;min-height:44px!important;font-size:12px!important;white-space:nowrap;border-radius:8px!important}
+#wrongNotebookScreen #hsmReviewMore{grid-column:4;grid-row:1;min-width:36px!important;width:36px!important;padding:0!important;font-size:20px!important}
+#wrongNotebookScreen .hsm-selection-line .hsm-ui-icon{display:none!important}
+#wrongNotebookScreen .hsm-selection-line button:focus-visible{outline:2px solid #8f145f!important;outline-offset:1px}
+#wrongNotebookScreen .hsm-selection-line button:active{background:#f0e5ec!important}

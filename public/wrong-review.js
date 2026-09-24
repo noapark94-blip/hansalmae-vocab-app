@@ -75,6 +75,7 @@
     const menu=document.createElement('dialog');menu.id='hsmReviewActions';menu.setAttribute('aria-labelledby','hsmReviewActionsTitle');
     menu.innerHTML='<div class="hsm-review-sheet-head"><h2 id="hsmReviewActionsTitle">선택한 단어</h2><button type="button" id="hsmReviewClose" aria-label="작업 메뉴 닫기">닫기</button></div><div class="hsm-review-menu"><button type="button" id="hsmSelectedSave">단어장에 저장</button><button type="button" id="hsmSelectedMaster">복습 완료</button><button type="button" id="wrongDeleteSelectedButton">삭제</button></div>';
     document.body.appendChild(menu);
+    $('hsmSelectionCancel').dataset.hsmIconReady='1';
     $('hsmSelectionCancel').onclick=exitWrongSelectionMode_;
     $('hsmReviewMore').onclick=()=>{if(getSelectedWrongRows_().length)menu.showModal();};
     $('hsmReviewClose').onclick=closeMenu;
