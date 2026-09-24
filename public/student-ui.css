@@ -140,3 +140,9 @@
  #personalVocabularyScreen .personal-main-toolbar button{padding-left:7px;padding-right:7px;font-size:12px}
  #personalVocabularyScreen .personal-main-toolbar .personal-bulk-count{font-size:12px}
 }
+
+/* Keep both selection actions on the same text baseline, including touch focus. */
+#personalVocabularyScreen .personal-selection-panel.is-selecting .personal-main-toolbar button{display:inline-flex!important;align-items:center;justify-content:center;box-sizing:border-box;height:44px;min-height:44px;padding:0 10px;border:0;font-family:inherit;font-size:13px;font-weight:600;line-height:20px;vertical-align:middle;transform:none!important}
+#personalVocabularyScreen .personal-selection-panel.is-selecting #personalSelectionModeButton{font-weight:600;line-height:20px}
+#personalVocabularyScreen .personal-selection-panel.is-selecting .personal-bulk-count{min-height:44px;line-height:20px;align-items:center}
+@media(max-width:360px){#personalVocabularyScreen .personal-selection-panel.is-selecting .personal-main-toolbar button{padding:0 7px;font-size:12px}}
