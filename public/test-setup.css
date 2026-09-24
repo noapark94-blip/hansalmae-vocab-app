@@ -48,3 +48,6 @@
 @media(max-width:650px){#wrongTestSetupScreen{padding:20px 16px!important}#wrongTestSetupScreen .hsm-setup-choices button{font-size:13px!important}}
 
 #wrongTestSetupScreen .hsm-wrong-counts{grid-template-columns:repeat(auto-fit,minmax(70px,1fr))}
+
+#wrongTestSetupScreen #hsmWrongSheets{grid-template-columns:1fr}
+#wrongTestSetupScreen #hsmWrongSheets button:disabled{opacity:1!important;background:#f7f5f6!important;color:#847781!important;border-style:dashed!important;cursor:not-allowed}

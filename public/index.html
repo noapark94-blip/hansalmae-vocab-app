@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-6"></script>
-  <script src="./config.js?v=20260924-6"></script>
-  <script src="./app-update.js?v=20260924-6"></script>
+  <script src="./school-runtime.js?v=20260924-7"></script>
+  <script src="./config.js?v=20260924-7"></script>
+  <script src="./app-update.js?v=20260924-7"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4730,10 +4730,10 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-6">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-6">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-6">
-<script defer src="./test-setup.js?v=20260924-6"></script>
+<link rel="stylesheet" href="./test-setup.css?v=20260924-7">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-7">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-7">
+<script defer src="./test-setup.js?v=20260924-7"></script>
 </head>
 
 <body>
@@ -9487,15 +9487,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
 
 
-    function showWrongTestSetup() {
+    function showWrongTestSetup(refreshOnly) {
       const activeWords =
         wrongNotebookWords.filter(function (item) {
           return !item.mastered;
         });
 
-      if (activeWords.length < 4) {
+      if (activeWords.length === 0) {
         alert(
-          '복습할 오답이 최소 4개 있어야 시험을 볼 수 있습니다.'
+          '복습할 오답이 아직 없습니다.'
         );
         return;
       }
@@ -9503,6 +9503,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       const sheetSelect =
         document.getElementById('wrongTestSheetName');
 
+      const previousSheet = sheetSelect.value;
       const sheetMap = {};
 
       activeWords.forEach(function (item) {
@@ -9532,9 +9533,6 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         Object.keys(sheetMap)
           .map(function (key) {
             return sheetMap[key];
-          })
-          .filter(function (item) {
-            return item.count >= 4;
           });
 
       if (availableSheets.length === 0) {
@@ -9550,9 +9548,13 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         const option = document.createElement('option');
         option.value = item.rawName;
         option.textContent =
-          item.label + ' (' + item.count + '개)';
+          item.label + ' (' + item.count + '개)' + (item.count < 4 ? ' · 4개부터 시험 가능' : '');
+        option.disabled = item.count < 4;
         sheetSelect.appendChild(option);
       });
+
+      const selected = Array.from(sheetSelect.options).find(function(o){return o.value === previousSheet && !o.disabled;}) || Array.from(sheetSelect.options).find(function(o){return !o.disabled;});
+      sheetSelect.value = selected ? selected.value : '';
 
       document
         .getElementById('wrongNotebookScreen')
@@ -9565,7 +9567,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         .remove('hidden');
 
       updateWrongTestAvailableCount();
-      window.scrollTo(0, 0);
+      if (!refreshOnly) window.scrollTo(0, 0);
     }
 
 
@@ -9611,13 +9613,14 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
     function updateWrongTestAvailableCount() {
       const limit = getWrongTestQuestionLimit();
+      document.querySelector('#wrongTestSetupScreen .wrong-test-button-row button').disabled = getSelectedWrongTestWords().length < 4 || limit < 1;
       const countInput = document.getElementById('wrongTestQuestionCount');
       countInput.max = String(limit);
       if (!Number(countInput.value) || Number(countInput.value) > limit) {
         countInput.value = Math.min(30, limit);
       }
       document.getElementById('wrongTestAvailableText').textContent =
-        '최대 ' + limit + '문제 · 같은 단어는 한 번씩만 출제됩니다.';
+        limit ? '최대 ' + limit + '문제 · 같은 단어는 한 번씩만 출제됩니다.' : '출제 가능한 단어가 없습니다. 같은 종류의 오답 4개 이상과 선택한 유형을 확인해주세요.';
       window.dispatchEvent(new Event('hsm:wrong-count'));
     }
 
@@ -14150,73 +14153,32 @@ google.script.run
     } catch (_error) {}
   }
 
+  var hsmWrongNotebookRequest_ = 0;
+  function hsmFetchLatestWrongNotebook_(onFailure) {
+    const token = currentLoginToken;
+    const request = ++hsmWrongNotebookRequest_;
+    if (!token) return;
+    google.script.run.withSuccessHandler(function(result) {
+      if (request !== hsmWrongNotebookRequest_ || token !== currentLoginToken) return;
+      if (!result || !result.success) {
+        if (onFailure) onFailure(new Error(result && result.message || '오답노트를 불러오지 못했습니다.'));
+        return;
+      }
+      applyWrongNotebookResult_(result);
+      document.getElementById('wrongNotebookLoading').textContent = '';
+      if (!document.getElementById('wrongTestSetupScreen').classList.contains('hidden')) showWrongTestSetup(true);
+    }).withFailureHandler(function(error) {
+      if (request !== hsmWrongNotebookRequest_ || token !== currentLoginToken) return;
+      if (onFailure) onFailure(error);
+    }).getWrongNotebook(token);
+  }
   function hsmRefreshWrongNotebookImmediately_() {
     hsmClearWrongNotebookBrowserCache_();
-
-    if (!currentLoginToken) {
-      return;
-    }
-
-    google.script.run
-      .withSuccessHandler(function (result) {
-        if (!result || !result.success) {
-          return;
-        }
-
-        wrongNotebookWords =
-          Array.isArray(result.words)
-            ? result.words
-            : [];
-
-        const preview =
-          document.getElementById(
-            'wrongNotebookPreview'
-          );
-
-        if (preview) {
-          preview.textContent =
-            '복습할 오답 ' +
-            Number(result.activeCount || 0) +
-            '개 · 복습 완료 ' +
-            Number(result.masteredCount || 0) +
-            '개';
-        }
-
-        const screen =
-          document.getElementById(
-            'wrongNotebookScreen'
-          );
-
-        if (
-          screen &&
-          !screen.classList.contains('hidden')
-        ) {
-          const summary =
-            document.getElementById(
-              'wrongNotebookSummary'
-            );
-
-          if (summary) {
-            summary.textContent =
-              '복습할 오답 ' +
-              Number(result.activeCount || 0) +
-              '개 · 복습 완료 ' +
-              Number(result.masteredCount || 0) +
-              '개';
-          }
-
-          renderWrongNotebook();
-        }
-      })
-      .withFailureHandler(function (error) {
-        console.error(
-          '오답노트 즉시 갱신 실패',
-          error
-        );
-      })
-      .getWrongNotebook(
-        currentLoginToken
-      );
+    try { localStorage.removeItem('hsmWrongNotebookSnapshotV4'); } catch (_) {}
+    hsmFetchLatestWrongNotebook_(function(error) {
+      document.getElementById('wrongNotebookLoading').textContent = '최신 오답을 불러오지 못했습니다. 오답노트를 다시 열어주세요.';
+      console.error('오답노트 즉시 갱신 실패', error);
+    });
   }
 </script>
 
@@ -14748,34 +14710,9 @@ google.script.run
         '오답노트를 불러오는 중입니다.';
     }
 
-    google.script.run
-      .withSuccessHandler(function (
-        result
-      ) {
-        loading.textContent = '';
-        applyWrongNotebookResult_(
-          result
-        );
-      })
-      .withFailureHandler(function (
-        error
-      ) {
-        loading.textContent = '';
-
-        if (!snapshot) {
-          alert(
-            '오답노트를 불러오지 못했습니다.\n' +
-            (
-              error && error.message
-                ? error.message
-                : error
-            )
-          );
-        }
-      })
-      .getWrongNotebook(
-        currentLoginToken
-      );
+    hsmFetchLatestWrongNotebook_(function(error) {
+      loading.textContent = '최신 오답을 불러오지 못했습니다. 다시 열어주세요.';
+    });
 
     window.scrollTo(0, 0);
   }

@@ -38,7 +38,7 @@
         var b = button(names && names[o.value] || o.textContent.trim().replace(/DB(?=\s*\(|$)/i, ''), function () {
           select.value = o.value; select.dispatchEvent(new Event('change', {bubbles:true})); sync();
         });
-        b.dataset.value = o.value; group.appendChild(b);
+        b.disabled = o.disabled; b.dataset.value = o.value; group.appendChild(b);
       });
       sync();
     }
