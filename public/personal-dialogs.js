@@ -6,9 +6,10 @@
     dialog = document.createElement('dialog');
     dialog.id = 'personalBookDialog';
     dialog.setAttribute('aria-labelledby', 'personalBookDialogTitle');
-    dialog.innerHTML = '<form novalidate><h2 id="personalBookDialogTitle"></h2><p class="book-dialog-description"></p><div class="book-dialog-body"></div><p class="book-dialog-error" role="alert" hidden></p><div class="book-dialog-actions"><button type="button" data-cancel data-hsm-icon-ready="1">취소</button><button type="submit" data-submit data-hsm-icon-ready="1">확인</button></div></form>';
+    dialog.innerHTML = '<form novalidate><div class="book-dialog-header"><h2 id="personalBookDialogTitle"></h2><button type="button" class="book-dialog-close" data-close data-hsm-icon-ready="1" aria-label="닫기" hidden>×</button></div><p class="book-dialog-description"></p><div class="book-dialog-body"></div><p class="book-dialog-error" role="alert" hidden></p><div class="book-dialog-actions"><button type="button" data-cancel data-hsm-icon-ready="1">취소</button><button type="submit" data-submit data-hsm-icon-ready="1">확인</button></div></form>';
     document.body.appendChild(dialog);
     dialog.querySelector('[data-cancel]').onclick = close;
+    dialog.querySelector('[data-close]').onclick = close;
     dialog.addEventListener('cancel', function (event) {
       if (dialog.dataset.busy === 'true') event.preventDefault();
     });
@@ -38,6 +39,8 @@
     const submit = d.querySelector('[data-submit]');
     submit.textContent = options.action || '확인';
     submit.hidden = !!options.list;
+    d.querySelector('[data-close]').hidden = !options.list;
+    d.querySelector('.book-dialog-actions').hidden = !!options.list;
     submit.classList.toggle('is-danger', !!options.danger);
     d.querySelectorAll('button').forEach(b => { b.disabled = false; });
     d.querySelector('form').onsubmit = async function (event) {

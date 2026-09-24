@@ -466,3 +466,9 @@ body.collection-open{overflow:hidden}
 #mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions>button:focus-visible{outline:2px solid #a43b81!important;outline-offset:2px}
 #mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions>button:disabled{opacity:.5;cursor:wait}
 #mainApp #wrongNotebookList.selection-mode .hsm-unified-word .wrong-note-actions{display:none!important}
+
+/* Book choice: compact title row with a dedicated dismiss button. */
+#personalBookDialog .book-dialog-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+#personalBookDialog .book-dialog-header h2{flex:1;min-width:0;margin:0;align-self:center;overflow-wrap:anywhere}
+#personalBookDialog .book-dialog-close{flex:0 0 40px;width:40px;min-height:40px;height:40px;padding:0;border:0;border-radius:50%;background:#f6f1f5;color:#897584;font-size:26px;font-weight:400;line-height:1;display:flex;align-items:center;justify-content:center}
+#personalBookDialog .book-dialog-close:active{background:#eee3eb}
