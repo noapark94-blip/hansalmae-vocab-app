@@ -11,17 +11,17 @@
 #wrongNotebookScreen #wrongBulkToolbar.hidden{display:none!important}
 @media(max-width:650px){#wrongNotebookScreen.hsm-selecting{padding-bottom:100px!important}.hsm-review-dock{position:fixed;left:12px;right:12px;bottom:calc(var(--hsm-mobile-nav-height,72px) + env(safe-area-inset-bottom,0px) + 8px);z-index:90;margin:0;box-shadow:0 6px 24px #32132618}}
 /* Keep fixed controls outside animated cards: transforms change their containing block. */
-#wrongNotebookScreen .wrong-note-header{display:flex!important;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px!important}
-#wrongNotebookScreen .wrong-note-header>div:first-child{min-width:0}
+#wrongNotebookScreen .wrong-note-header{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px!important}
+#wrongNotebookScreen .wrong-note-header>div:first-child{min-width:0;flex:1}
 #wrongNotebookScreen #wrongSelectionModeButton{border:1px solid #e6d9e1!important;border-radius:10px!important;background:#fff!important;min-width:58px;padding:8px 12px!important}
 #wrongNotebookScreen [hidden],#hsmReviewDock[hidden],#hsmReviewActions [hidden]{display:none!important}
 #wrongNotebookScreen .wrong-note-filter{background:#f5eff3;border-radius:13px;padding:4px;gap:4px!important}
 #wrongNotebookScreen .wrong-note-filter>button{background:transparent!important;border:0!important;box-shadow:none!important;color:#816c78!important;border-radius:10px!important;font-weight:600}
 #wrongNotebookScreen .wrong-note-filter>button.active{background:#fff!important;color:#8f145f!important;box-shadow:0 2px 7px #3213260b!important}
 .hsm-selection-line{gap:12px;margin:0}.hsm-selection-line>span{flex:1;text-align:center}
-#wrongNotebookScreen .wrong-note-actions{display:flex!important;gap:8px!important;margin-top:14px!important}
+#wrongNotebookScreen .wrong-note-actions{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;gap:8px!important;margin-top:14px!important}
 #wrongNotebookScreen .wrong-note-actions>button{flex:1;min-width:0;width:auto!important;min-height:40px!important;padding:8px!important;margin:0!important;border:1px solid #eadde5!important;border-radius:10px!important;font-size:13px!important;background:#fbf6f9!important;color:#855070!important;box-shadow:none!important}
-#wrongNotebookScreen .wrong-note-actions .section-icon,#wrongNotebookScreen .wrong-note-actions svg{display:none!important}
+#wrongNotebookScreen .wrong-note-actions .section-icon,#wrongNotebookScreen .wrong-note-actions .hsm-ui-icon{display:none!important}
 #wrongNotebookScreen #wrongNotebookList.selection-mode .wrong-note-actions{display:none!important}
 #hsmReviewDock{position:fixed;top:auto!important;bottom:18px;left:50%;right:auto;width:min(560px,calc(100% - 24px));transform:translateX(-50%);box-sizing:border-box;z-index:950;display:flex;gap:10px;margin:0;padding:10px;border-radius:16px;box-shadow:0 4px 24px #32132622}
 #hsmReviewDock #hsmReviewMore{flex:0 0 46px;min-height:46px;padding:0;margin:0!important;background:#f5eff3;color:#8f145f;border:0;border-radius:11px;font-size:24px!important;box-shadow:none}
