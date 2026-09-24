@@ -16,20 +16,29 @@
     const bar=document.createElement('div');bar.id='hsmVocabSelectionBar';
     bar.innerHTML='<span aria-live="polite"><strong id="hsmVocabSelectedCount">0</strong>개 선택</span><button type="button" id="hsmVocabSelectAll" data-hsm-icon-ready="1">전체 선택</button><button type="button" id="hsmVocabSelectCancel" data-hsm-icon-ready="1">취소</button>';
     filter.before(entry,bar);
-    filter.querySelector('span').textContent='선택한 단어만';
+    const panel=document.createElement('div');panel.id='hsmVocabSelectionPanel';
+    bar.before(panel);panel.append(bar,filter,actions);
+    filter.hidden=true;
+    const toggle=document.createElement('button');toggle.type='button';toggle.id='hsmVocabOnlySelected';
+    toggle.dataset.hsmIconReady='1';toggle.textContent='선택한 단어만';
+    toggle.setAttribute('aria-pressed','false');
+    actions.prepend(toggle);
+    toggle.onclick=function(){only.checked=!only.checked;renderVocabulary();};
     save.dataset.hsmIconReady='1';share.dataset.hsmIconReady='1';share.textContent='공유';
     function sync(){
       const count=getCheckedWords().length;
       if(!count)only.checked=false;
       screen.classList.toggle('hsm-vocab-selecting',selecting);
-      entry.hidden=selecting;bar.hidden=!selecting;
-      filter.hidden=!selecting||!count;actions.hidden=!selecting||!count;
+      entry.hidden=selecting;bar.hidden=!selecting;panel.hidden=!selecting;
+      filter.hidden=true;actions.hidden=!selecting||!count;
+      toggle.setAttribute('aria-pressed',String(only.checked));
       entry.disabled=!vocabWords.length;
       document.getElementById('hsmVocabSelectedCount').textContent=count;
       const all=document.getElementById('hsmVocabSelectAll');
       all.textContent=count&&count===vocabWords.length?'전체 해제':'전체 선택';
       all.disabled=!vocabWords.length;
-      save.textContent='선택한 '+count+'개 저장';
+      save.textContent='단어장 저장';
+      save.setAttribute('aria-label','선택한 '+count+'개 단어장 저장');
       document.getElementById('vocabCount').textContent='전체 '+vocabWords.length+'개 · 선택한 단어 '+count+'개';
     }
     const render=window.renderVocabulary;

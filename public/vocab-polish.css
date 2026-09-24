@@ -45,3 +45,12 @@
 #vocabScreen .vocab-actions{grid-template-columns:minmax(0,2fr) minmax(0,1fr);margin:0 0 12px!important}
 #vocabScreen .vocab-actions button:first-child{grid-column:auto}
 #vocabScreen .vocab-actions .hsm-ui-icon,#hsmVocabSelectionBar .hsm-ui-icon{display:none!important}
+
+/* One compact panel: selection status above, filter and actions below. */
+#vocabScreen #hsmVocabSelectionPanel{padding:6px 10px;margin:0 0 12px;border:1px solid #eee4eb;border-radius:14px;background:#faf7f9}
+#vocabScreen #hsmVocabSelectionPanel #hsmVocabSelectionBar{padding:0;margin:0;border:0;border-radius:0;background:transparent;min-height:44px}
+#vocabScreen #hsmVocabSelectionPanel .vocab-actions{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1.1fr) minmax(44px,.6fr)!important;gap:6px;margin:0!important;padding:6px 0 4px;border-top:1px solid #eee4eb}
+#vocabScreen #hsmVocabSelectionPanel .vocab-actions button{grid-column:auto!important;min-height:44px!important;margin:0!important;padding:8px 5px!important;border-radius:9px!important;font-size:12px!important;line-height:1.35;box-shadow:none!important}
+#vocabScreen #hsmVocabOnlySelected{border:1px solid #e6d9e1!important;background:#fff!important;color:#806b78!important;font-weight:500!important}
+#vocabScreen #hsmVocabOnlySelected[aria-pressed=true]{background:#f4e3ed!important;border-color:#a52c74!important;color:#8f145f!important;box-shadow:inset 0 0 0 1px #a52c74!important}
+#vocabScreen #hsmVocabSelectionPanel .vocab-actions .hsm-ui-icon{display:none!important}
