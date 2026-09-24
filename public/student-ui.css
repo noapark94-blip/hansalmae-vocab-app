@@ -1,0 +1,82 @@
+/* Shared student surfaces, with mobile controls sized independently of text inputs. */
+#mainApp{--hsm-page-gap:16px}
+#mainApp>.card{padding:24px;border-radius:22px;box-shadow:0 6px 22px rgba(70,29,53,.045)}
+#mainApp>.card>h2,#mainApp .vocab-header h2,#mainApp .wrong-note-header h2{margin:0 0 8px;text-align:left;font-size:24px;line-height:1.3;letter-spacing:-.035em}
+#mainApp>.card>.subtitle{text-align:left;margin:0 0 20px;font-size:14px;line-height:1.6;color:#78636e}
+#mainApp .wrong-note-header,#mainApp .vocab-header{margin-bottom:16px}
+#mainApp input[type=checkbox]{box-sizing:border-box;width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important;flex:0 0 22px;accent-color:#8f145f}
+#mainApp input[type=radio]{min-height:20px;width:20px;height:20px;accent-color:#8f145f}
+#mainApp button:focus-visible,#hsmSchoolStudentPage button:focus-visible,#hsmSchoolContentPage button:focus-visible{outline:3px solid #8f145f!important;outline-offset:3px}
+#mainApp .empty-message{padding:28px 16px;border:1px dashed #e8dce3;border-radius:16px;background:#fcfafb;font-size:14px;line-height:1.7;color:#78636e}
+#mainApp .loading:empty{display:none}
+#mainApp .my-section-title{margin:22px 0 12px;font-size:16px}
+#myPageScreen .learning-shortcuts{gap:10px}
+#myPageScreen .learning-shortcuts .learning-shortcut{padding:16px 38px 16px 16px!important;min-height:0!important;border:1px solid #eadfe5!important;border-radius:16px!important;box-shadow:none!important;background:#fff!important}
+#myPageScreen .learning-shortcuts .shortcut-title{font-size:17px!important;margin:0 0 7px!important;gap:8px!important;line-height:1.35!important}
+#myPageScreen .learning-shortcuts .shortcut-description{font-size:13px!important;line-height:1.5!important;margin:0 0 7px!important;color:#78636e!important;word-break:keep-all;overflow-wrap:anywhere}
+#myPageScreen .learning-shortcuts .shortcut-count{font-size:13px!important;line-height:1.45!important;margin:0!important;color:#8f145f!important}
+#myPageScreen .learning-shortcuts .section-icon{width:26px!important;height:26px!important;flex:0 0 26px!important}
+#myPageScreen .learning-shortcuts .section-icon svg{width:26px!important;height:26px!important}
+#myPageScreen .experience-card,#myPageScreen .hsm-emblem-card{padding:16px;border-radius:16px;box-shadow:none}
+#myPageScreen .my-summary{gap:8px;margin:16px 0}
+#myPageScreen .my-summary-card{padding:14px 10px;border-radius:14px;box-shadow:none}
+#myPageScreen .my-summary-value{font-size:25px}
+#personalVocabularyScreen .book-manager{padding:12px;margin:12px 0 16px;background:#fcfafb;border:1px solid #eadfe5;border-radius:16px}
+#personalVocabularyScreen .book-select-row{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}
+#personalVocabularyScreen .book-select-row>div{min-width:0}
+#personalVocabularyScreen .book-select-row label{font-size:13px;margin:0 0 7px}
+#personalVocabularyScreen .book-select-row select{margin:0;min-height:44px;padding:9px 10px;font-size:16px}
+#personalVocabularyScreen .book-select-row>button{width:auto;min-width:0;min-height:44px;padding:9px 10px;font-size:13px;background:#fff;color:#8f145f;border:1px solid #e8dce3}
+#personalVocabularyScreen .book-management{margin-top:8px}
+#personalVocabularyScreen .book-management>summary{cursor:pointer;padding:10px 2px;font-size:13px;color:#78636e}
+#personalVocabularyScreen .book-action-row{margin-top:2px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#personalVocabularyScreen .book-action-row button{width:100%;min-height:44px;padding:9px;font-size:13px}
+#personalVocabularyScreen .book-action-row .danger-button{background:#fff4f6;color:#a13755;border:1px solid #efdce1}
+#personalVocabularyScreen .personal-book-label{background:#f8eef4;color:#8f145f;font-size:12px;margin-bottom:8px}
+#personalVocabularyScreen .personal-item,#wrongNotebookScreen .wrong-note-item{border-radius:16px;box-shadow:none;margin-top:10px;padding:16px}
+#mainApp .wrong-note-actions button,#mainApp .personal-item-actions button{min-height:44px;border-radius:12px;font-size:13px}
+#mainApp .ranking-tabs,#mainApp .wrong-note-filter{gap:8px}
+#mainApp .ranking-tabs button,#mainApp .wrong-note-filter button{min-height:44px;font-size:14px;border-radius:12px;margin:0}
+#mainApp .ranking-rule{font-size:13px;line-height:1.8;padding:14px;border-radius:14px;background:#faf7f9}
+#accountScreen .account-push-card,#accountScreen .hsm-password-card{padding:16px;border-radius:16px;background:#fcfafb;box-shadow:none}
+#accountScreen .account-push-copy span,#accountScreen .account-push-copy small{line-height:1.6;overflow-wrap:anywhere}
+#mainApp .teacher-exam-card,#mainApp .student-notification-card{border-radius:16px;box-shadow:none;padding:16px}
+#mainApp .topbar-title{flex-wrap:wrap;row-gap:3px!important}
+#mainApp .topbar-title #hsmGlobalBackButton{position:static!important;flex:0 0 36px;width:36px!important;min-width:36px!important;min-height:36px!important;height:36px;margin:0 3px 0 0!important;padding:0!important;display:inline-flex;align-items:center;justify-content:center;background:#fff!important;border:1px solid #eadfe5!important;border-radius:10px!important;color:#8f145f!important;box-shadow:none!important;backdrop-filter:none;font-size:25px!important}
+#mainApp .topbar-title #hsmGlobalBackButton.hidden{display:none!important}
+#startScreen #hsmSetupModes>button:last-child{grid-column:1/-1}
+#vocabScreen .vocab-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#vocabScreen .filter-check{min-height:44px;padding:10px 12px;gap:10px}
+.hsm-launcher-home .hsm-launcher-tile-copy span{word-break:keep-all;overflow-wrap:anywhere;line-height:1.45}
+.hsm-launcher-home .hsm-launcher-hero{background:linear-gradient(125deg,#72174e,#a02b74)!important;box-shadow:0 8px 24px #5b173f12!important}
+.hsm-launcher-home .hsm-launcher-hero::after{opacity:.45}
+.hsm-launcher-home .hsm-launcher-tile{box-shadow:none!important}
+@media(max-width:650px){
+ body.hsm-student-app-open{padding-top:calc(12px + env(safe-area-inset-top,0px))!important}
+ #mainApp>.card{padding:20px 16px!important;border-radius:20px;margin-bottom:16px}
+ #mainApp>.card>h2,#mainApp .vocab-header h2,#mainApp .wrong-note-header h2{font-size:23px!important}
+ #mainApp>.card>.subtitle{margin-bottom:16px!important;font-size:13px!important}
+ #mainApp .topbar{padding:8px 10px!important}
+ #mainApp .topbar-title{display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:7px!important;justify-content:stretch!important}
+ #mainApp .topbar-title #hsmGlobalBackButton{grid-column:1;grid-row:1/3;min-height:40px!important;height:40px}
+ #mainApp .topbar-title>span:first-of-type{grid-column:2;grid-row:1;font-size:14px!important}
+ #mainApp .topbar-title #loggedInStudent{grid-column:2;grid-row:2;font-size:11px!important;margin:0!important}
+ #mainApp .topbar-title #loggedInExperience{grid-column:3;grid-row:1/3;margin:0!important;font-size:11px!important;max-width:125px;white-space:normal;line-height:1.4;text-align:right}
+ #myPageScreen .my-section-title{margin-top:18px}
+ #myPageScreen .learning-shortcuts{grid-template-columns:1fr!important}
+ #mainApp .personal-main-toolbar button,#mainApp #wrongTestOpenButton{min-height:46px;font-size:14px}
+ .hsm-launcher-home .hsm-launcher-tile{min-height:118px!important;padding:14px!important;border-radius:18px!important}
+ .hsm-launcher-home .hsm-launcher-icon{width:36px!important;height:36px!important}
+ .hsm-launcher-home .hsm-launcher-tile-copy{padding-top:9px}
+ .hsm-launcher-home .hsm-launcher-tile-copy strong{font-size:15px}
+ .hsm-launcher-home .hsm-launcher-tile-copy span{font-size:12px}
+ .hsm-launcher-home .hsm-launcher-hero{padding:18px!important;border-radius:20px!important}
+ #hsmSchoolStudentPage .hsm-school-action-row{gap:8px}
+ #hsmSchoolStudentPage .hsm-school-action-row button{min-height:44px!important}
+ #hsmSchoolStudentPage .hsm-school-word-mean{overflow-wrap:anywhere}
+}
+@media(max-width:650px) and (display-mode:standalone){
+ body.hsm-student-app-open{padding-top:max(56px,calc(env(safe-area-inset-top,0px) + 12px))!important}
+ .hsm-launcher-home,#hsmSchoolStudentPage,#hsmSchoolContentPage{padding-top:max(56px,calc(env(safe-area-inset-top,0px) + 16px))!important}
+}
+@media(prefers-reduced-motion:reduce){#mainApp *,#hsmSchoolStudentPage *,#hsmSchoolContentPage *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

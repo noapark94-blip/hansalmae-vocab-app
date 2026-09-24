@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-2"></script>
-  <script src="./config.js?v=20260924-2"></script>
-  <script src="./app-update.js?v=20260924-2"></script>
+  <script src="./school-runtime.js?v=20260924-3"></script>
+  <script src="./config.js?v=20260924-3"></script>
+  <script src="./app-update.js?v=20260924-3"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4730,9 +4730,10 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-2">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-2">
-<script defer src="./test-setup.js?v=20260924-2"></script>
+<link rel="stylesheet" href="./test-setup.css?v=20260924-3">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-3">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-3">
+<script defer src="./test-setup.js?v=20260924-3"></script>
 </head>
 
 <body>
@@ -5063,6 +5064,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
       <div class="topbar">
         <div class="topbar-title">
+          <button id="hsmGlobalBackButton" type="button" class="hsm-global-back hidden" onclick="hsmGoBack_()" aria-label="뒤로가기">‹</button>
           <span>한살매 보카</span>
           <span
             id="loggedInStudent"
@@ -5904,10 +5906,11 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             </div>
             <button onclick="createNewPersonalBook()">＋ 새 단어장</button>
           </div>
+          <details class="book-management"><summary>단어장 관리</summary>
           <div class="book-action-row">
             <button class="secondary-button" onclick="renameCurrentPersonalBook()">이름 변경</button>
             <button class="danger-button" onclick="deleteCurrentPersonalBook()">단어장 삭제</button>
-          </div>
+          </div></details>
         </div>
 
         <div class="personal-toolbar personal-main-toolbar">
@@ -14094,14 +14097,7 @@ google.script.run
     }
 </script>
 
-  <button
-    id="hsmGlobalBackButton"
-    type="button"
-    class="hsm-global-back hidden"
-    onclick="hsmGoBack_()"
-  >
-    ← 뒤로가기
-  </button>
+
 
 
 <script id="hsm-wrong-note-immediate-refresh">
