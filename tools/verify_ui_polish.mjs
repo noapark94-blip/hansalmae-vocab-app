@@ -91,3 +91,18 @@ assert.equal(pd.querySelector('#personalSelectedCount').textContent,'0');
 assert.equal(pd.querySelector('#personalTestButton').disabled,true);
 personalDom.window.close();
 console.log('PASS personal selection actions, select all/clear, refresh, exit and empty book');
+
+// Reproduce the mobile column rule that previously stretched the selection bar.
+const personalStyleDom=new JSDOM('<style>.personal-toolbar{display:flex;flex-direction:column}.hsm-icon-label{justify-content:center}</style><style>'+source('student-ui.css')+'</style><main id="mainApp">'+personalMarkup+'</main>',{url:'https://example.test'});
+const psw=personalStyleDom.window,psd=psw.document;
+const barStyle=psw.getComputedStyle(psd.querySelector('.personal-main-toolbar'));
+assert.equal(barStyle.flexDirection,'row');
+assert.equal(barStyle.flexWrap,'nowrap');
+assert.equal(barStyle.minHeight,'44px');
+assert.equal(psw.getComputedStyle(psd.querySelector('.personal-selection-panel')).borderTopWidth,'0px');
+const menuButton=psd.querySelector('.book-action-row button');menuButton.classList.add('hsm-icon-label');
+assert.equal(psw.getComputedStyle(menuButton).justifyContent,'flex-start');
+assert.equal(psw.getComputedStyle(menuButton).marginTop,'0px');
+assert.equal(psw.getComputedStyle(psd.querySelector('.book-action-row')).width,'164px');
+personalStyleDom.window.close();
+console.log('PASS personal mobile toolbar stays horizontal; compact menu alignment and spacing');
