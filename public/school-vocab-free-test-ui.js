@@ -65,11 +65,11 @@
     if(back&&heading){back.textContent='‹ 목록';back.classList.add('hsm-school-list-back');card.insertBefore(back,heading);}
     var dialog=document.createElement('dialog');
     dialog.id='hsmSchoolExamDialog';dialog.setAttribute('aria-labelledby','hsmSchoolExamTitle');
-    dialog.innerHTML='<div class="hsm-school-dialog-head"><h3 id="hsmSchoolExamTitle">시험 설정</h3><button type="button" class="hsm-school-dialog-close" aria-label="닫기" data-hsm-icon-ready="1">×</button></div>';
+    dialog.innerHTML='<div class="hsm-school-dialog-head"><h3 id="hsmSchoolExamTitle" tabindex="-1" autofocus>시험 설정</h3><button type="button" class="hsm-school-dialog-close" aria-label="닫기" data-hsm-icon-ready="1">×</button></div>';
     setup.parentNode.insertBefore(dialog,setup);dialog.appendChild(setup);setup.classList.add('open');
     var trigger=b.querySelector('#hsmSchoolTestButton');
     trigger.setAttribute('aria-haspopup','dialog');trigger.setAttribute('aria-controls',dialog.id);
-    trigger.onclick=function(){syncScope();syncSegments();if(!dialog.open)dialog.showModal();};
+    trigger.onclick=function(){syncScope();syncSegments();if(!dialog.open){dialog.showModal();dialog.querySelector('#hsmSchoolExamTitle').focus({preventScroll:true});}};
     dialog.querySelector('.hsm-school-dialog-close').onclick=function(){dialog.close();};
     dialog.addEventListener('close',function(){if(trigger.isConnected)trigger.focus({preventScroll:true});});
     dialog.addEventListener('click',function(e){if(e.target!==dialog)return;var r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();});
