@@ -331,7 +331,7 @@ body.collection-open{overflow:hidden}
 #hsmEmblemModal .collection-state{align-self:flex-end;padding:3px 7px;border-radius:999px;background:#f5edf2;color:#925075;font-size:10px;font-weight:600;line-height:1.4}
 #hsmEmblemModal .collection-tile.locked .collection-state{background:#f1eff2;color:#8d8490}
 #hsmEmblemModal .collection-tile img{width:100%;height:126px;object-fit:contain;margin:9px 0;opacity:1;filter:none}
-#hsmEmblemModal .collection-tile.locked img{opacity:.78;filter:grayscale(.45)}
+#hsmEmblemModal .collection-tile.locked img{opacity:.38;filter:grayscale(1)}
 #hsmEmblemModal .collection-name{font-size:14px;font-weight:650;line-height:1.45;word-break:keep-all;overflow-wrap:anywhere}
 #hsmEmblemModal .collection-condition{margin-top:5px;font-size:11px;font-weight:400;line-height:1.5;color:#8d7e87;word-break:keep-all;overflow-wrap:anywhere}
 .collection-progress{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 6px;width:100%;margin-top:12px;text-align:left;font-size:10px;font-weight:400;line-height:1.4;color:#917c8a}
