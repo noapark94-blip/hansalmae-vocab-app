@@ -22,6 +22,7 @@
     window.scrollTo(0,0);
   };
   window.hsmUnmountSchoolStudy_=function(){
+    if(!embeddedSnapshot)return;
     document.body.classList.remove('hsm-school-study-open');
     if(embeddedSnapshot)embeddedSnapshot.forEach(function(el){el.classList.remove('hidden');});
     embeddedSnapshot=null;
