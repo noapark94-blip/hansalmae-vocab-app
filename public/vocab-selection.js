@@ -20,7 +20,7 @@
     bar.before(panel);panel.append(bar,filter,actions);
     filter.hidden=true;
     const toggle=document.createElement('button');toggle.type='button';toggle.id='hsmVocabOnlySelected';
-    toggle.dataset.hsmIconReady='1';toggle.textContent='선택한 단어만';
+    toggle.dataset.hsmIconReady='1';toggle.textContent='선택만 보기';
     toggle.setAttribute('aria-pressed','false');
     actions.prepend(toggle);
     toggle.onclick=function(){only.checked=!only.checked;renderVocabulary();};
