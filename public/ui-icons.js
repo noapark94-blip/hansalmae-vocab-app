@@ -110,6 +110,7 @@
 
   function decorateElement(element) {
     if (!element || element.nodeType !== 1) return;
+    if (element.closest('#personalBookPickerModal') && !element.classList.contains('hsm-picker-book-icon')) return;
     if (keepOwnHeadingIconOnly(element)) return;
     if (element.dataset.hsmIconReady === '1') return;
     if (element.closest('.hsm-mobile-nav')) {
@@ -166,3 +167,4 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 })();
+

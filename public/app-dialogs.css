@@ -26,3 +26,24 @@ dialog.hsm-app-dialog [hidden]{display:none!important}
 /* Keep text and controls on one shared left edge, independent of page styles. */
 dialog.hsm-app-dialog .hsm-dialog-validation{text-align:left;padding:0}
 dialog.hsm-app-dialog form>*,dialog.hsm-app-dialog .hsm-dialog-field>*{box-sizing:border-box;max-width:100%}
+
+/* Book destination picker: one icon, a readable left-aligned list, above navigation. */
+#personalBookPickerModal{z-index:200100}
+#personalBookPickerModal .hsm-picker-sheet{box-sizing:border-box;width:min(calc(100% - 24px),440px);max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);margin:12px;padding:12px 20px max(20px,env(safe-area-inset-bottom));border:1px solid #eee5eb;border-radius:24px;background:#fff;box-shadow:0 20px 70px #30102026;overscroll-behavior:contain}
+#personalBookPickerModal .hsm-picker-handle{width:32px;height:4px;margin:0 auto 20px;background:#e2d7df}
+#personalBookPickerModal .hsm-picker-header{gap:12px;margin:0 0 20px;align-items:flex-start}
+#personalBookPickerModal .hsm-picker-header>div{flex:1;min-width:0}
+#personalBookPickerModal h3{display:block;margin:0;font-size:20px;font-weight:750;line-height:1.4;letter-spacing:-.4px;text-align:left;word-break:keep-all;overflow-wrap:anywhere}
+#personalBookPickerModal .hsm-picker-header p{margin:7px 0 0;font-size:13px;line-height:1.6;text-align:left;word-break:keep-all;overflow-wrap:anywhere}
+#personalBookPickerModal .hsm-picker-close{flex:0 0 40px;display:grid;place-items:center;width:40px;min-width:40px;height:40px;min-height:40px;background:#f6f2f5;color:#816a7a;font-size:25px;font-weight:400;border:0;transform:none}
+#personalBookPickerModal .hsm-picker-list{gap:8px}
+#personalBookPickerModal .hsm-picker-book{box-sizing:border-box;display:grid!important;grid-template-columns:36px minmax(0,1fr) 16px;gap:12px;min-height:72px;margin:0;padding:14px;border:1px solid #eee6ec;border-radius:14px;background:#fff;text-align:left;box-shadow:none;transform:none}
+#personalBookPickerModal .hsm-picker-book:hover{background:#fcf7fa;border-color:#d9bccd}
+#personalBookPickerModal .hsm-picker-book-icon{width:36px;height:36px;border-radius:11px;background:#f7eef4;color:#962465}
+#personalBookPickerModal .hsm-picker-book-icon .hsm-ui-icon{width:20px;height:20px}
+#personalBookPickerModal .hsm-picker-book-name{font-size:15px;font-weight:650;line-height:1.5;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;text-overflow:clip}
+#personalBookPickerModal .hsm-picker-book-meta{margin-top:3px;font-size:12px;font-weight:400;line-height:1.4;color:#96858f}
+#personalBookPickerModal .hsm-picker-book-arrow{font-size:22px;font-weight:400;text-align:right;color:#b69baa}
+#personalBookPickerModal button>.hsm-ui-icon{display:none!important}
+#personalBookPickerModal .hsm-picker-new-book{margin-top:14px;min-height:46px;height:auto;padding:12px;border:0;border-radius:12px;background:#f7eff4;color:#8f145f;font-size:14px;font-weight:650;line-height:1.5;white-space:normal;word-break:keep-all;box-shadow:none;transform:none}
+#personalBookPickerModal .hsm-picker-cancel{margin:8px 0 0;min-height:44px;padding:10px;background:transparent;border:0;color:#96858f;font-size:13px;font-weight:500;box-shadow:none}

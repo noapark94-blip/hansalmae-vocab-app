@@ -71,3 +71,23 @@ for (const page of ['index.html','teacher.html']) {
  dialog.querySelector('[data-cancel]').click();await decision;win.close();
 }
 console.log('PASS student/teacher page CSS cascade: title/body/label alignment, label spacing and input sizing');
+
+// Destination picker must keep exactly one book icon after automatic decoration.
+{
+ const markup=html.slice(html.indexOf('  <div\n    id="personalBookPickerModal"'),html.indexOf('<script id="hsm-book-picker-script-v3">'));
+ const frame=new JSDOM(markup,{url:'https://example.test',runScripts:'outside-only'}),win=frame.window;
+ win.escapeHtml=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;');
+ win.eval(html.match(/<script id="hsm-book-picker-script-v3">([\s\S]*?)<\/script>/)[1]);
+ win.eval(source('ui-icons.js'));
+ win.openPersonalBookPicker_([{bookId:'one',bookName:'아주 긴 단어장 이름 '.repeat(6),wordCount:3}],{mode:'saveBatch',payload:[{word:'test'}]});
+ await new Promise(r=>setTimeout(r,20));
+ const row=win.document.querySelector('.hsm-picker-book');
+ assert.equal(row.querySelectorAll('.hsm-ui-icon').length,1);
+ assert.equal(row.classList.contains('hsm-icon-label'),false);
+ assert.equal(row.querySelector('.hsm-picker-book-meta').textContent,'3개 단어');
+ let saved;win.saveBatchToPersonalBook_=(id,words)=>{saved={id,words};};
+ row.click();assert.equal(saved.id,'one');assert.equal(saved.words.length,1);
+ assert.ok(win.document.querySelector('#personalBookPickerModal').classList.contains('hidden'));
+ win.close();
+}
+console.log('PASS destination picker icon decoration and selected-book save flow');
