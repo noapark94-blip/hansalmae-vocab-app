@@ -39,11 +39,11 @@
   function root(){var r=document.getElementById('hsmSchoolStudentPage');if(!r){r=document.createElement('section');r.id='hsmSchoolStudentPage';r.hidden=true;document.body.appendChild(r);}return r;}
   function head(title,sub){return '<div class="hsm-school-page-inner"><div class="hsm-school-page-head"><button class="hsm-school-back" type="button" aria-label="뒤로가기">‹</button><div><div class="hsm-school-page-title">'+esc(title)+'</div>'+(sub?'<div class="hsm-school-page-sub">'+esc(sub)+'</div>':'')+'</div></div><div id="hsmSchoolPageBody"></div></div>';}
   window.hsmOpenSchoolVocabPage_=openPage;
-  function openPage(){var r=root();state.previousHash=location.hash;r.innerHTML=head('학교 수행평가 단어장','선생님이 배정한 학교 단어장');r.hidden=false;document.documentElement.style.overflow='hidden';history.pushState({hsmSchoolVocabPage:true},'',location.href.split('#')[0]+'#school-vocab');r.querySelector('.hsm-school-back').onclick=requestClosePage;loadBooks();}
+  function openPage(){var r=root();state.previousHash=location.hash;r.innerHTML=head('학교 수행평가 단어장','선생님이 배정한 학교 단어장');r.hidden=false;if(window.hsmMountSchoolStudy_)window.hsmMountSchoolStudy_(r);history.pushState({hsmSchoolVocabPage:true},'',location.href.split('#')[0]+'#school-vocab');r.querySelector('.hsm-school-back').onclick=requestClosePage;loadBooks();}
   function isTestActive(){var r=root();return!r.hidden&&!!r.querySelector('.hsm-school-test-wrap,.hsm-school-free-card');}
   async function confirmTestExit(){return!isTestActive()||(await HSMDialog.confirm('현재 시험을 그만둘까요?\n지금까지의 진행 내용은 삭제됩니다.'));}
   async function requestClosePage(){if(!(await confirmTestExit()))return false;closePage();return true;}
-  function closePage(){window.dispatchEvent(new Event('hsm:school-test-close'));var r=root();r.hidden=true;document.documentElement.style.overflow='';state.test=null;if(location.hash==='#school-vocab'){history.replaceState({},'',location.pathname+location.search+(state.previousHash||''));}}
+  function closePage(){window.dispatchEvent(new Event('hsm:school-test-close'));var r=root();r.hidden=true;if(window.hsmUnmountSchoolStudy_)window.hsmUnmountSchoolStudy_();document.documentElement.style.overflow='';state.test=null;if(location.hash==='#school-vocab'){history.replaceState({},'',location.pathname+location.search+(state.previousHash||''));}}
   window.hsmRequestCloseSchoolVocabPage_=requestClosePage;
   window.hsmSchoolVocabList_=loadBooks;
   window.hsmSchoolVocabBook_=function(){return state.book;};

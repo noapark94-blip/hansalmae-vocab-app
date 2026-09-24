@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-60"></script>
+  <script src="./app-dialogs.js?v=20260925-61"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-60"></script>
-  <script src="./config.js?v=20260925-60"></script>
-  <script src="./app-update.js?v=20260925-60"></script>
+  <script src="./school-runtime.js?v=20260925-61"></script>
+  <script src="./config.js?v=20260925-61"></script>
+  <script src="./app-update.js?v=20260925-61"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4746,15 +4746,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-60">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-60">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-60">
-<script defer src="./test-setup.js?v=20260925-60"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-60">
-<script defer src="./wrong-review.js?v=20260925-60"></script>
-<script defer src="./vocab-selection.js?v=20260925-60"></script>
-<script defer src="./personal-dialogs.js?v=20260925-60"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-60">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-61">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-61">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-61">
+<script defer src="./test-setup.js?v=20260925-61"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-61">
+<script defer src="./wrong-review.js?v=20260925-61"></script>
+<script defer src="./vocab-selection.js?v=20260925-61"></script>
+<script defer src="./personal-dialogs.js?v=20260925-61"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-61">
 </head>
 
 <body>
@@ -16275,7 +16275,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-60"></script>
+<script src="./ui-icons.js?v=20260925-61"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
@@ -16351,6 +16351,19 @@ body #hsmSchoolContentPage .hsm-ct-translation{background:#faf6f9;color:#71616c;
 @media(max-width:360px){body #hsmSchoolStudentPage .hsm-school-book,body #hsmSchoolContentPage .hsm-ct-book{grid-template-columns:minmax(0,1fr)}body #hsmSchoolStudentPage .hsm-school-open,body #hsmSchoolContentPage .hsm-ct-open{justify-self:start}}
 </style>
 
+
+<style id="hsm-school-embedded-layout">
+body #mainApp #hsmSchoolStudentPage.hsm-embedded-study,body #mainApp #hsmSchoolContentPage.hsm-embedded-study{position:relative!important;inset:auto!important;z-index:auto!important;overflow:visible!important;width:100%;max-width:none;padding:24px!important;background:#fff!important;color:inherit;margin:0 0 20px;box-sizing:border-box}
+body #mainApp .hsm-embedded-study[hidden]{display:none!important}
+body #mainApp .hsm-embedded-study .hsm-school-page-inner,body #mainApp .hsm-embedded-study .hsm-ct-inner{width:100%;max-width:none}
+body #mainApp .hsm-embedded-study .hsm-school-page-head,body #mainApp .hsm-embedded-study .hsm-ct-head{padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;margin:0 0 24px!important}
+body #mainApp .hsm-embedded-study .hsm-school-back,body #mainApp .hsm-embedded-study .hsm-ct-back{display:none!important}
+body #mainApp .hsm-embedded-study .hsm-school-page-title,body #mainApp .hsm-embedded-study .hsm-ct-title{font-size:26px!important;font-weight:800;line-height:1.35}
+body #mainApp .hsm-embedded-study .hsm-school-page-sub,body #mainApp .hsm-embedded-study .hsm-ct-sub{margin-top:10px;font-size:14px}
+body #mainApp .hsm-embedded-study #hsmSchoolPageBody>.hsm-school-card,body #mainApp .hsm-embedded-study #hsmContentBody>.hsm-ct-card{border:0!important;border-radius:0!important;padding:0!important;margin:0!important;box-shadow:none!important}
+body.hsm-school-study-open #mainApp #hsmGlobalBackButton{display:inline-flex!important}
+@media(max-width:600px){body #mainApp #hsmSchoolStudentPage.hsm-embedded-study,body #mainApp #hsmSchoolContentPage.hsm-embedded-study{padding:20px 16px!important}}
+</style>
 </body>
 </html>
 
