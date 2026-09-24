@@ -30,7 +30,7 @@
   }
   function choices(select, id, names) {
     var group = document.createElement('div'); group.id = id; group.className = 'hsm-setup-choices';
-    group.setAttribute('role', 'group'); group.setAttribute('aria-label', id === 'hsmSetupSheets' ? '단어 종류' : '문제 유형');
+    group.setAttribute('role', 'group'); group.setAttribute('aria-label', id === 'hsmSetupSheets' || id === 'hsmVocabSheets' ? '단어 종류' : '문제 유형');
     select.insertAdjacentElement('afterend', group); select.hidden = true;
     function render() {
       group.replaceChildren();
@@ -45,7 +45,7 @@
     new MutationObserver(render).observe(select, {childList:true}); render();
   }
   function sync() {
-    [['hsmSetupSheets','sheetName'],['hsmSetupModes','questionMode'],['hsmSetupCounts','questionCount']].forEach(function (pair) {
+    [['hsmSetupSheets','sheetName'],['hsmVocabSheets','vocabSheetName'],['hsmSetupModes','questionMode'],['hsmSetupCounts','questionCount']].forEach(function (pair) {
       var group = $(pair[0]), select = $(pair[1]); if (!group || !select) return;
       group.querySelectorAll('button').forEach(function (b) {
         var selected = b.dataset.value === select.value || (b.dataset.value === 'custom' && !['10','20','30'].includes(select.value));
@@ -81,6 +81,7 @@
     screen.querySelector('.subtitle').insertAdjacentElement('afterend', profile);
     $('studentName').hidden = true; screen.querySelector('label[for="studentName"]').hidden = true;
     choices($('sheetName'), 'hsmSetupSheets');
+    choices($('vocabSheetName'), 'hsmVocabSheets');
     choices($('questionMode'), 'hsmSetupModes', {engToKor:'영어 → 한글',korToEng:'한글 → 영어',mixed:'영한·한영 혼합',random:'랜덤 출제',example:'예문 문제'});
     var counts = document.createElement('div'); counts.id = 'hsmSetupCounts'; counts.className = 'hsm-setup-choices'; counts.setAttribute('role','group'); counts.setAttribute('aria-label','문제 수');
     var count = $('questionCount'); count.insertAdjacentElement('beforebegin',counts); count.hidden = true;

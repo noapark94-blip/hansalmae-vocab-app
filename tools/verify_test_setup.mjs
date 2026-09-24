@@ -20,10 +20,14 @@ for(const [grade,expected] of [['중1','중등'],['중3','중등'],['고1','고�
  assert.equal(el('questionCount').value,'30');
 }
 el('hsmSetupSheets').querySelector('[data-value="중등단어DB"]').click();
+el('hsmVocabSheets').querySelector('[data-value="중등단어DB"]').click();
+assert.equal(el('vocabSheetName').value,'중등단어DB');
+assert.equal(el('hsmVocabSheets').querySelector('[data-value="중등단어DB"]').getAttribute('aria-pressed'),'true');
 el('hsmSetupModes').querySelector('[data-value="mixed"]').click();
 el('hsmSetupCounts').querySelector('[data-value="20"]').click();
 w.hsmSetupApplyStudentDefaults_({studentId:'고3',grade:'고3'});
 assert.equal(el('sheetName').value,'중등단어DB');
+assert.equal(el('vocabSheetName').value,'중등단어DB');
 assert.equal(el('questionMode').value,'mixed');
 assert.equal(el('questionCount').value,'20');
 el('hsmSetupCounts').querySelector('[data-value="custom"]').click();
