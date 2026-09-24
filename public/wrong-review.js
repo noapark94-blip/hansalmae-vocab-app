@@ -115,7 +115,7 @@
       syncDock();
     };
     const originalRender=window.renderWrongNotebook;
-    window.renderWrongNotebook=function(){const rows=getSelectedWrongRows_();originalRender();screen.querySelectorAll('.wrong-batch-check').forEach(c=>{c.checked=rows.includes(Number(c.value));c.setAttribute('aria-label','단어 선택');});screen.querySelectorAll('.wrong-note-item').forEach(card=>{const example=card.querySelector('.wrong-note-example'),translation=card.querySelector('.wrong-note-translation');if(example||translation){const details=document.createElement('details');details.className='hsm-review-example';const summary=document.createElement('summary');summary.textContent='예문 보기';details.appendChild(summary);(example||translation).before(details);if(example)details.appendChild(example);if(translation)details.appendChild(translation);}});updateWrongBulkToolbar_();};
+    window.renderWrongNotebook=function(){const rows=getSelectedWrongRows_();originalRender();screen.querySelectorAll('.wrong-batch-check').forEach(c=>{c.checked=rows.includes(Number(c.value));c.setAttribute('aria-label','단어 선택');});updateWrongBulkToolbar_();};
     updateWrongBulkToolbar_();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
