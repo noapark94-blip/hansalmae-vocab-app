@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260924-29"></script>
+  <script src="./app-dialogs.js?v=20260924-30"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-29"></script>
-  <script src="./config.js?v=20260924-29"></script>
-  <script src="./app-update.js?v=20260924-29"></script>
+  <script src="./school-runtime.js?v=20260924-30"></script>
+  <script src="./config.js?v=20260924-30"></script>
+  <script src="./app-update.js?v=20260924-30"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4745,15 +4745,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-29">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-29">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-29">
-<script defer src="./test-setup.js?v=20260924-29"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-29">
-<script defer src="./wrong-review.js?v=20260924-29"></script>
-<script defer src="./vocab-selection.js?v=20260924-29"></script>
-<script defer src="./personal-dialogs.js?v=20260924-29"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-29">
+<link rel="stylesheet" href="./test-setup.css?v=20260924-30">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-30">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-30">
+<script defer src="./test-setup.js?v=20260924-30"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260924-30">
+<script defer src="./wrong-review.js?v=20260924-30"></script>
+<script defer src="./vocab-selection.js?v=20260924-30"></script>
+<script defer src="./personal-dialogs.js?v=20260924-30"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-30">
 </head>
 
 <body>
@@ -5661,22 +5661,22 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
         <div class="my-summary">
           <div class="my-summary-card">
-            <div class="my-summary-label">누적 시험</div>
+            <div class="my-summary-label"><span class="growth-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v4H9zM9 12h6m-6 4h4"/></svg></span>누적 시험</div>
             <div id="myTestCount" class="my-summary-value">0회</div>
           </div>
 
           <div class="my-summary-card">
-            <div class="my-summary-label">평균 점수</div>
+            <div class="my-summary-label"><span class="growth-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5m0 14h16M8 15l4-5 4 2 4-7"/></svg></span>평균 점수</div>
             <div id="myAverageScore" class="my-summary-value">0점</div>
           </div>
 
           <div class="my-summary-card">
-            <div class="my-summary-label">획득 포인트</div>
+            <div class="my-summary-label"><span class="growth-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 17V7h3a3 3 0 0 1 0 6h-3"/></svg></span>획득 포인트</div>
             <div id="myTotalPoint" class="my-summary-value">0P</div>
           </div>
 
           <div class="my-summary-card">
-            <div class="my-summary-label">만점 횟수</div>
+            <div class="my-summary-label"><span class="growth-stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z"/></svg></span>만점 횟수</div>
             <div id="myPerfectCount" class="my-summary-value">0회</div>
           </div>
         </div>
@@ -15611,16 +15611,18 @@ google.script.run
   function ensureCard(){
     const screen=document.getElementById('myPageScreen'); if(!screen||document.getElementById('hsmMyEmblemCard')) return;
     const xp=document.getElementById('myExperienceCard'); const card=document.createElement('div'); card.id='hsmMyEmblemCard'; card.className='hsm-emblem-card';
-    card.innerHTML='<div class="hsm-emblem-current"><img id="hsmCurrentEmblemImage" src="./images/emblems/title-chick.png" alt=""><div><div id="hsmCurrentEmblemName" class="hsm-emblem-current-name">단어병아리</div><div id="hsmCurrentEmblemSub" class="hsm-emblem-current-sub">보유 엠블럼을 불러오는 중입니다.</div></div></div><button type="button" class="hsm-emblem-open" data-hsm-icon-ready="1" onclick="HSMEmblems.open()">엠블럼 관리 ›</button>';
+    card.innerHTML='<div class="hsm-emblem-current"><img id="hsmCurrentEmblemImage" src="./images/emblems/title-chick.png" alt=""><div><span id="hsmCurrentEmblemBadge" class="hsm-emblem-equipped" hidden>장착 중</span><div id="hsmCurrentEmblemName" class="hsm-emblem-current-name">단어병아리</div><div id="hsmCurrentEmblemSub" class="hsm-emblem-current-sub">보유 엠블럼을 불러오는 중입니다.</div></div></div><button type="button" class="hsm-emblem-open" data-hsm-icon-ready="1" onclick="HSMEmblems.open()">엠블럼 관리 ›</button>';
     if(xp&&xp.parentNode) xp.parentNode.insertBefore(card,xp.nextSibling); else screen.appendChild(card);
   }
   function apply(data){
     if(!data||!data.success)return; api.data=data; ensureCard(); const eq=data.equippedEmblem;
     const img=document.getElementById('hsmCurrentEmblemImage'), name=document.getElementById('hsmCurrentEmblemName'), sub=document.getElementById('hsmCurrentEmblemSub');
+    const badge=document.getElementById('hsmCurrentEmblemBadge');
+    if(badge)badge.hidden=!eq;
     if(eq){
       if(img)img.src=eq.imagePath;
       if(name)name.textContent=eq.emblemName;
-      if(sub)sub.textContent='획득 '+Number(data.acquiredCount||0)+' / '+Number(data.totalCount||0)+' · 현재 장착 중';
+      if(sub)sub.textContent='획득 '+Number(data.acquiredCount||0)+' / '+Number(data.totalCount||0)+'개 수집';
     }else{
       if(name)name.textContent='장착한 엠블럼 없음';
       if(sub)sub.textContent='획득 '+Number(data.acquiredCount||0)+' / '+Number(data.totalCount||0)+' · 엠블럼을 선택해주세요.';
@@ -16199,7 +16201,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260924-29"></script>
+<script src="./ui-icons.js?v=20260924-30"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

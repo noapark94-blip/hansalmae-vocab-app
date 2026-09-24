@@ -195,24 +195,40 @@
 #myPageScreen .learning-shortcuts .learning-shortcut .shortcut-count{margin:0 0 0 43px!important;padding:0!important;font-size:12px!important;font-weight:550!important;line-height:1.5!important;color:#77556b!important;white-space:normal!important;overflow-wrap:anywhere}
 #myPageScreen .learning-shortcuts .learning-shortcut::after{right:14px!important;color:#b4a1ad!important;font-size:21px!important;font-weight:400!important}
 #myPageScreen .learning-shortcuts .learning-shortcut .shortcut-arrow{right:14px!important;color:#b4a1ad!important;font-size:21px!important}
-/* Growth and records: restrained progress, compact emblem and readable statistics. */
-#myPageScreen .experience-card{margin:0 0 12px!important;padding:18px!important;border:1px solid #e9dfe6!important;border-radius:16px!important;background:#fcfafc!important;box-shadow:none!important}
-#myPageScreen .experience-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
-#myPageScreen .experience-level{font-size:25px;font-weight:750;line-height:1.2;letter-spacing:-.6px;color:#872659}
-#myPageScreen .experience-title{min-width:0;font-size:13px;font-weight:550;line-height:1.5;text-align:right;color:#76556a;word-break:keep-all;overflow-wrap:anywhere}
-#myPageScreen .experience-progress-wrap{height:7px;margin:0;border-radius:999px;background:#eee5eb;overflow:hidden}
-#myPageScreen .experience-progress-bar{height:100%;border-radius:inherit;background:#a53a78}
-#myPageScreen .experience-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px 12px;margin-top:10px;font-size:12px;font-weight:400;line-height:1.5;color:#98828f}
-#myPageScreen .experience-card-guide{margin:12px 0 0;text-align:right;font-size:12px;font-weight:500;line-height:1.5;color:#8c647d}
-#myPageScreen #hsmMyEmblemCard{margin:0 0 12px;padding:16px;border:1px solid #eae3e8;border-radius:16px;background:#fff;box-shadow:none}
-#myPageScreen .hsm-emblem-current{gap:13px;min-width:0;align-items:center}
-#myPageScreen .hsm-emblem-current img{flex:0 0 56px;width:56px;height:56px;border-radius:14px;background:#faf7f9}
-#myPageScreen .hsm-emblem-current>div{min-width:0}
-#myPageScreen .hsm-emblem-current-name{font-size:17px;font-weight:650;line-height:1.5;letter-spacing:-.25px;color:#563449;word-break:keep-all;overflow-wrap:anywhere}
-#myPageScreen .hsm-emblem-current-sub{margin-top:3px;font-size:12px;font-weight:400;line-height:1.6;color:#99818f;word-break:keep-all;overflow-wrap:anywhere}
-#myPageScreen .hsm-emblem-open{display:block;width:auto;min-height:44px;margin:8px 0 -4px auto;padding:9px 2px 9px 12px;border:0;border-radius:8px;background:transparent;color:#8f316b;font-size:13px;font-weight:600;line-height:1.5;box-shadow:none;transform:none}
-#myPageScreen .hsm-emblem-open:hover{background:#fcf7fa}
-#myPageScreen .my-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 24px}
-#myPageScreen .my-summary-card{min-width:0;margin:0;padding:15px 16px;border:1px solid #ece5ea;border-radius:14px;background:#fff;text-align:left;box-shadow:none}
-#myPageScreen .my-summary-label{margin:0 0 7px;font-size:12px;font-weight:400;line-height:1.5;color:#96828f;word-break:keep-all}
-#myPageScreen .my-summary-value{margin:0;font-size:24px;font-weight:700;line-height:1.25;letter-spacing:-.5px;color:#573348;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+/* Growth and records: plum highlight, collectible emblem and quiet metric accents. */
+#myPageScreen .experience-card{position:relative;isolation:isolate;overflow:hidden;margin:0 0 14px!important;padding:22px!important;border:1px solid #e7cddd!important;border-radius:22px!important;background:linear-gradient(120deg,#fbf0f7 0%,#f4e1ee 100%)!important;box-shadow:0 6px 20px #76264f09!important}
+#myPageScreen .experience-card::before{content:"";position:absolute;z-index:-1;width:170px;height:170px;right:-55px;top:-80px;border:24px solid #ffffff55;border-radius:50%;pointer-events:none}
+#myPageScreen .experience-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 20px}
+#myPageScreen .experience-level{font-size:34px;font-weight:800;line-height:1.15;letter-spacing:-1px;color:#821555}
+#myPageScreen .experience-title{min-width:0;max-width:60%;padding:5px 10px;border:1px solid #ffffffa6;border-radius:999px;background:#ffffff80;font-size:12px;font-weight:650;line-height:1.5;text-align:center;color:#733154;word-break:keep-all;overflow-wrap:anywhere}
+#myPageScreen .experience-progress-wrap{height:9px;margin:0;border-radius:999px;background:#dfccda;overflow:hidden}
+#myPageScreen .experience-progress-bar{height:100%;border-radius:inherit;background:linear-gradient(90deg,#8f145f,#ce5a9e);box-shadow:0 0 8px #ab3e7920}
+#myPageScreen .experience-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:5px 12px;margin-top:10px;font-size:12px;font-weight:500;line-height:1.5;color:#795b6d}
+#myPageScreen .experience-card-guide{margin:14px 0 0;text-align:right;font-size:12px;font-weight:600;line-height:1.5;color:#854365}
+#myPageScreen #hsmMyEmblemCard{margin:0 0 16px;padding:18px;border:1px solid #eee2d8;border-radius:20px;background:linear-gradient(125deg,#fffaf2,#fff 75%);box-shadow:0 4px 16px #80533706}
+#myPageScreen .hsm-emblem-current{display:flex;gap:16px;min-width:0;align-items:center}
+#myPageScreen .hsm-emblem-current img{box-sizing:border-box;flex:0 0 76px;width:76px;height:76px;padding:4px;object-fit:contain;border:1px solid #f1e5d9;border-radius:22px;background:#fff;box-shadow:0 5px 14px #8e694412}
+#myPageScreen .hsm-emblem-current>div{min-width:0;flex:1}
+#myPageScreen .hsm-emblem-equipped{display:inline-flex;align-items:center;gap:4px;margin:0 0 5px;padding:3px 7px;border-radius:6px;background:#f4e8d4;color:#826027;font-size:10px;font-weight:650;line-height:1.4}
+#myPageScreen .hsm-emblem-equipped[hidden]{display:none!important}
+#myPageScreen .hsm-emblem-current-name{font-size:18px;font-weight:700;line-height:1.4;letter-spacing:-.4px;color:#563449;word-break:keep-all;overflow-wrap:anywhere}
+#myPageScreen .hsm-emblem-current-sub{margin-top:5px;font-size:12px;font-weight:400;line-height:1.6;color:#89737d;word-break:keep-all;overflow-wrap:anywhere}
+#myPageScreen .hsm-emblem-open{display:block;width:auto;min-height:44px;margin:14px 0 0 auto;padding:10px 14px;border:1px solid #e8d7e2;border-radius:12px;background:#fff;color:#853363;font-size:13px;font-weight:650;line-height:1.5;box-shadow:none;transform:none}
+#myPageScreen .hsm-emblem-open:hover{background:#faf0f6;border-color:#cfa5be}
+#myPageScreen .hsm-emblem-open:focus-visible{outline:2px solid #8f145f;outline-offset:3px}
+#myPageScreen .my-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 24px}
+#myPageScreen .my-summary-card{min-width:0;margin:0;padding:16px;border:1px solid #ece5ea;border-radius:17px;background:#fff;text-align:left;box-shadow:0 3px 12px #56253e04}
+#myPageScreen .my-summary-label{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:0 0 12px;font-size:12px;font-weight:500;line-height:1.5;color:#84727e;word-break:keep-all}
+#myPageScreen .growth-stat-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 27px;width:27px;height:27px;border-radius:9px;background:#f7edf4;color:#934573}
+#myPageScreen .growth-stat-icon svg{display:block;width:16px;height:16px}
+#myPageScreen .my-summary-card:nth-child(2) .growth-stat-icon{background:#eef2fa;color:#617cb3}
+#myPageScreen .my-summary-card:nth-child(3) .growth-stat-icon{background:#fcf4df;color:#a17b2f}
+#myPageScreen .my-summary-card:nth-child(4) .growth-stat-icon{background:#edf5f0;color:#527c65}
+#myPageScreen .my-summary-value{margin:0;font-size:28px;font-weight:750;line-height:1.2;letter-spacing:-.7px;color:#542e45;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+@media(max-width:360px){
+ #myPageScreen .experience-card{padding:18px!important}
+ #myPageScreen .hsm-emblem-current{gap:12px}
+ #myPageScreen .hsm-emblem-current img{flex-basis:64px;width:64px;height:64px}
+ #myPageScreen .hsm-emblem-current-name{font-size:16px}
+ #myPageScreen .my-summary-card{padding:13px}
+}
