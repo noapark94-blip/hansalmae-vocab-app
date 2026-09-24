@@ -136,3 +136,23 @@ bw.renameCurrentPersonalBook();assert.equal(dialog.querySelector('input').value,
 bw.deleteCurrentPersonalBook();assert.match(dialog.querySelector('.book-dialog-description').textContent,/5개/);const beforeDelete=calls.length;dialog.querySelector('[data-cancel]').click();assert.equal(calls.length,beforeDelete);
 bw.deleteCurrentPersonalBook();submit();await new Promise(r=>setTimeout(r,0));assert.equal(calls.at(-1).method,'deleteVocabularyBook');assert.equal(calls.at(-1).args[1],'two');assert.equal(dialog.open,false);
 bd.window.close();console.log('PASS custom book choice, safe text, cancel, validation, duplicate submit, retry and delete confirmation');
+
+// Late-added school cards and their old icon decorator must settle on the same style.
+{
+ const labels=['오답노트','나만의 단어장','스마트 복습'];
+ const frame=new JSDOM('<section id="myPageScreen"><div class="learning-shortcuts">'+labels.map(label=>'<button class="learning-shortcut"><div class="shortcut-title"><span class="section-icon"></span><span>'+label+'</span></div><p class="shortcut-description">설명</p><div class="shortcut-count">단어 5개</div></button>').join('')+'</div></section>',{url:'https://example.test',runScripts:'outside-only'});
+ const win=frame.window;const observers=[];const Original=win.MutationObserver;let changes=0;
+ win.MutationObserver=class extends Original{constructor(fn){super((...args)=>{changes++;if(changes>50){observers.forEach(o=>o.disconnect());return;}fn(...args);});observers.push(this);}};
+ win.eval(source('learning-shortcut-stable-layout.js'));win.eval(source('school-vocab-custom-icon.js'));
+ await new Promise(r=>setTimeout(r,20));
+ for(const [id,label]of [['hsmSchoolVocabShortcut','학교 수행평가'],['hsmSchoolContentShortcut','학교 내신 본문']]){
+  const copy=win.document.querySelector('.learning-shortcut').cloneNode(true);copy.id=id;copy.querySelector('.shortcut-title span:last-child').textContent=label;win.document.querySelector('.learning-shortcuts').appendChild(copy);
+ }
+ await new Promise(r=>setTimeout(r,30));
+ assert.equal(win.document.querySelectorAll('[data-learning-icon]').length,5);
+ assert.equal(win.document.querySelector('#hsmSchoolVocabShortcut svg').getAttribute('data-learning-icon'),'학교 수행평가');
+ assert.equal(win.document.querySelectorAll('.shortcut-count')[0].textContent,'단어 5개');
+ const settled=changes;await new Promise(r=>setTimeout(r,30));assert.equal(changes,settled);assert.ok(changes<50);
+ observers.forEach(o=>o.disconnect());win.close();
+}
+console.log('PASS unified learning shortcut icons, late school cards and stable observers');

@@ -185,3 +185,13 @@
 #personalBookDialog .book-dialog-body{min-width:0}
 #personalBookDialog input{min-width:0;max-width:100%;line-height:1.5}
 #personalBookDialog .book-dialog-option>span:first-child{white-space:normal;word-break:keep-all}
+/* My learning: quiet, consistent shortcuts with one-color line icons. */
+#myPageScreen .learning-shortcuts{gap:9px!important}
+#myPageScreen .learning-shortcuts .learning-shortcut{padding:15px 34px 15px 15px!important;border-color:#eae3e8!important;border-radius:15px!important;text-align:left!important}
+#myPageScreen .learning-shortcuts .learning-shortcut .shortcut-title{display:flex!important;align-items:center!important;gap:11px!important;margin:0 0 4px!important;font-size:17px!important;font-weight:650!important;color:#4d2941!important;line-height:1.4!important}
+#myPageScreen .learning-shortcuts .learning-shortcut .section-icon,#myPageScreen .learning-shortcuts .learning-shortcut .shortcut-icon{box-sizing:border-box;display:inline-flex!important;align-items:center;justify-content:center;width:32px!important;height:32px!important;flex:0 0 32px!important;margin:0!important;padding:6px!important;border:0!important;border-radius:10px!important;background:#f7f0f5!important;color:#8c426f!important;box-shadow:none!important}
+#myPageScreen .learning-shortcuts .learning-shortcut .section-icon svg,#myPageScreen .learning-shortcuts .learning-shortcut .shortcut-icon svg{width:20px!important;height:20px!important;display:block}
+#myPageScreen .learning-shortcuts .learning-shortcut .shortcut-description{margin:0 0 6px 43px!important;padding:0!important;font-size:12px!important;font-weight:400!important;line-height:1.55!important;color:#97838f!important}
+#myPageScreen .learning-shortcuts .learning-shortcut .shortcut-count{margin:0 0 0 43px!important;padding:0!important;font-size:12px!important;font-weight:550!important;line-height:1.5!important;color:#77556b!important;white-space:normal!important;overflow-wrap:anywhere}
+#myPageScreen .learning-shortcuts .learning-shortcut::after{right:14px!important;color:#b4a1ad!important;font-size:21px!important;font-weight:400!important}
+#myPageScreen .learning-shortcuts .learning-shortcut .shortcut-arrow{right:14px!important;color:#b4a1ad!important;font-size:21px!important}
