@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-58"></script>
+  <script src="./app-dialogs.js?v=20260925-59"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-58"></script>
-  <script src="./config.js?v=20260925-58"></script>
-  <script src="./app-update.js?v=20260925-58"></script>
+  <script src="./school-runtime.js?v=20260925-59"></script>
+  <script src="./config.js?v=20260925-59"></script>
+  <script src="./app-update.js?v=20260925-59"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4746,15 +4746,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-58">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-58">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-58">
-<script defer src="./test-setup.js?v=20260925-58"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-58">
-<script defer src="./wrong-review.js?v=20260925-58"></script>
-<script defer src="./vocab-selection.js?v=20260925-58"></script>
-<script defer src="./personal-dialogs.js?v=20260925-58"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-58">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-59">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-59">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-59">
+<script defer src="./test-setup.js?v=20260925-59"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-59">
+<script defer src="./wrong-review.js?v=20260925-59"></script>
+<script defer src="./vocab-selection.js?v=20260925-59"></script>
+<script defer src="./personal-dialogs.js?v=20260925-59"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-59">
 </head>
 
 <body>
@@ -4819,6 +4819,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         placeholder="비밀번호를 입력하세요"
         onkeydown="handleLoginEnter(event)"
       >
+
+      <label class="hsm-remember-id" for="rememberStudentId"><input type="checkbox" id="rememberStudentId"><span>아이디 기억하기</span></label>
 
       <button
         id="loginButton"
@@ -6944,6 +6946,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         return;
       }
 
+      hsmSaveRememberedId_();
       const loginButton =
         document.getElementById('loginButton');
 
@@ -12584,12 +12587,13 @@ google.script.run
 
       const button = document.getElementById('installAppButton');
       if (button) {
-        button.classList.remove('hidden');
+        hsmSyncInstallButton_();
       }
     });
 
     window.addEventListener('appinstalled', function () {
       deferredInstallPrompt = null;
+      window.hsmAppInstalledThisSession_ = true;
       const button = document.getElementById('installAppButton');
       if (button) {
         button.classList.add('hidden');
@@ -16271,7 +16275,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-58"></script>
+<script src="./ui-icons.js?v=20260925-59"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
@@ -16284,6 +16288,47 @@ google.script.run
     </div>
   </div>
 </div>
+
+<style id="hsm-login-preferences-style">
+#loginScreen .hsm-remember-id{display:flex;align-items:center;gap:9px;width:fit-content;min-height:44px;margin:4px 0 10px;padding:0;color:#786573;font-size:14px;font-weight:500;line-height:1.4;cursor:pointer}
+#loginScreen .hsm-remember-id input{appearance:auto;flex:0 0 18px;width:18px;height:18px;min-height:0;margin:0;padding:0;accent-color:#8f145f;box-shadow:none}
+#loginScreen #installAppButton[hidden]{display:none!important}
+#loginScreen #loginMessage:empty{display:none}
+@media(display-mode:standalone),(display-mode:fullscreen){#loginScreen #installAppButton{display:none!important}}
+</style>
+<script>
+function hsmSaveRememberedId_(){
+  try {
+    var check=document.getElementById('rememberStudentId');
+    var id=document.getElementById('studentId');
+    if(check.checked) localStorage.setItem('hsmRememberedStudentId',id.value.trim());
+    else localStorage.removeItem('hsmRememberedStudentId');
+  } catch(e) {}
+}
+function hsmSyncInstallButton_(){
+  var button=document.getElementById('installAppButton');
+  if(!button)return;
+  var installed=navigator.standalone===true || window.hsmAppInstalledThisSession_===true ||
+    window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches;
+  button.hidden=installed;
+  button.classList.toggle('hidden',installed);
+}
+(function(){
+  var check=document.getElementById('rememberStudentId'),id=document.getElementById('studentId');
+  try { var saved=localStorage.getItem('hsmRememberedStudentId');if(saved!==null){check.checked=true;id.value=saved;} }catch(e){}
+  check.addEventListener('change',hsmSaveRememberedId_);
+  id.addEventListener('input',function(){if(check.checked)hsmSaveRememberedId_();});
+  hsmSyncInstallButton_();
+  window.addEventListener('pageshow',hsmSyncInstallButton_);
+  window.addEventListener('appinstalled',hsmSyncInstallButton_);
+  ['standalone','fullscreen'].forEach(function(mode){
+    var media=window.matchMedia('(display-mode: '+mode+')');
+    if(media.addEventListener)media.addEventListener('change',hsmSyncInstallButton_);
+    else if(media.addListener)media.addListener(hsmSyncInstallButton_);
+  });
+})();
+</script>
+
 </body>
 </html>
 
