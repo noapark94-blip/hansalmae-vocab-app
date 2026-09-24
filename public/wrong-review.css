@@ -10,3 +10,27 @@
 #wrongNotebookScreen #wrongTestOpenButton{margin:16px 0 0!important;min-height:48px;font-size:16px!important}
 #wrongNotebookScreen #wrongBulkToolbar.hidden{display:none!important}
 @media(max-width:650px){#wrongNotebookScreen.hsm-selecting{padding-bottom:100px!important}.hsm-review-dock{position:fixed;left:12px;right:12px;bottom:calc(var(--hsm-mobile-nav-height,72px) + env(safe-area-inset-bottom,0px) + 8px);z-index:90;margin:0;box-shadow:0 6px 24px #32132618}}
+/* Keep fixed controls outside animated cards: transforms change their containing block. */
+#wrongNotebookScreen .wrong-note-header{display:flex!important;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px!important}
+#wrongNotebookScreen .wrong-note-header>div:first-child{min-width:0}
+#wrongNotebookScreen #wrongSelectionModeButton{border:1px solid #e6d9e1!important;border-radius:10px!important;background:#fff!important;min-width:58px;padding:8px 12px!important}
+#wrongNotebookScreen [hidden],#hsmReviewDock[hidden],#hsmReviewActions [hidden]{display:none!important}
+#wrongNotebookScreen .wrong-note-filter{background:#f5eff3;border-radius:13px;padding:4px;gap:4px!important}
+#wrongNotebookScreen .wrong-note-filter>button{background:transparent!important;border:0!important;box-shadow:none!important;color:#816c78!important;border-radius:10px!important;font-weight:600}
+#wrongNotebookScreen .wrong-note-filter>button.active{background:#fff!important;color:#8f145f!important;box-shadow:0 2px 7px #3213260b!important}
+.hsm-selection-line{gap:12px;margin:0}.hsm-selection-line>span{flex:1;text-align:center}
+#wrongNotebookScreen .wrong-note-actions{display:flex!important;gap:8px!important;margin-top:14px!important}
+#wrongNotebookScreen .wrong-note-actions>button{flex:1;min-width:0;width:auto!important;min-height:40px!important;padding:8px!important;margin:0!important;border:1px solid #eadde5!important;border-radius:10px!important;font-size:13px!important;background:#fbf6f9!important;color:#855070!important;box-shadow:none!important}
+#wrongNotebookScreen .wrong-note-actions .section-icon,#wrongNotebookScreen .wrong-note-actions svg{display:none!important}
+#wrongNotebookScreen #wrongNotebookList.selection-mode .wrong-note-actions{display:none!important}
+#hsmReviewDock{position:fixed;top:auto!important;bottom:18px;left:50%;right:auto;width:min(560px,calc(100% - 24px));transform:translateX(-50%);box-sizing:border-box;z-index:950;display:flex;gap:10px;margin:0;padding:10px;border-radius:16px;box-shadow:0 4px 24px #32132622}
+#hsmReviewDock #hsmReviewMore{flex:0 0 46px;min-height:46px;padding:0;margin:0!important;background:#f5eff3;color:#8f145f;border:0;border-radius:11px;font-size:24px!important;box-shadow:none}
+#hsmReviewDock #hsmSelectedExam{min-height:46px;border-radius:11px;font-size:15px!important}
+#hsmReviewActions{box-sizing:border-box;width:min(440px,calc(100% - 24px));max-height:80dvh;overflow:auto;border:1px solid #eadde5;border-radius:22px;padding:20px;background:white;color:#442335;box-shadow:0 18px 60px #32132633}
+#hsmReviewActions::backdrop{background:#29142166}
+.hsm-review-sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.hsm-review-sheet-head h2{margin:0!important;font-size:18px!important}.hsm-review-sheet-head button{width:auto;min-height:44px;margin:0;padding:8px 12px;border:0;background:#f6f0f4;color:#795267;border-radius:10px;font-size:14px;box-shadow:none}
+#hsmReviewActions .hsm-review-menu{position:static;width:auto;padding:0;border:0;box-shadow:none;display:grid;gap:8px}
+#hsmReviewActions .hsm-review-menu button{text-align:left;min-height:50px;padding:12px 16px!important;border-radius:12px;background:#faf6f9!important;font-size:15px!important}
+#hsmReviewActions #wrongDeleteSelectedButton{color:#a33348!important}
+#hsmReviewActions button:focus-visible,#hsmReviewDock button:focus-visible{outline:3px solid #8f145f!important;outline-offset:3px}
+@media(max-width:650px){#hsmReviewDock{bottom:calc(var(--hsm-mobile-nav-height,70px) + env(safe-area-inset-bottom,0px) + 8px);left:12px;right:12px;width:auto;transform:none}#hsmReviewActions{width:100%;max-width:100%;margin:auto 0 0;border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px))}#hsmReviewActions::before{content:'';display:block;width:34px;height:4px;margin:-6px auto 18px;border-radius:4px;background:#e4d8e0}}

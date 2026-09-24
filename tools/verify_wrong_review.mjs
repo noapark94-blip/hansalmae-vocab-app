@@ -21,4 +21,20 @@ w.hsmTestSelectedWrong_();assert.equal(w.getSelectedWrongTestWords().length,1);a
 $('wrongTestQuestionMode').value='example';w.updateWrongTestAvailableCount();assert.equal($('wrongTestQuestionCount').max,'0');assert.equal($('wrongTestSetupScreen').querySelector('.wrong-test-button-row button').disabled,true);
 $('wrongTestQuestionMode').value='engToKor';w.updateWrongTestAvailableCount();result=null;fail=true;await w.startWrongAnswerTest();assert.equal(result,null);assert.match($('wrongTestAvailableText').textContent,/offline/);
 w.clearWrongSelection_();assert.equal($('hsmSelectedSave').disabled,true);assert.equal($('hsmSelectedExam').disabled,true);
+// Selection dock must not inherit the animated card's positioning context.
+assert.equal($('hsmReviewDock').parentElement,d.body);
+w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
+w.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new w.Event('close'));};
+$('wrongNotebookScreen').classList.remove('hidden');
+w.wrongSelectionMode_=true;w.updateWrongBulkToolbar_();
+assert.equal($('hsmReviewDock').hidden,true);
+d.querySelector('.wrong-batch-check').checked=true;w.updateWrongBulkToolbar_();
+assert.equal($('hsmReviewDock').hidden,false);
+assert.equal($('wrongSelectionModeButton').hidden,true);
+$('hsmReviewMore').click();assert.equal($('hsmReviewActions').open,true);
+$('hsmReviewClose').click();assert.equal($('hsmReviewActions').open,false);
+$('wrongNotebookScreen').classList.add('hidden');await new Promise(r=>w.setTimeout(r,0));
+assert.equal($('hsmReviewDock').hidden,true);
+$('wrongNotebookScreen').classList.remove('hidden');w.exitWrongSelectionMode_();
+assert.equal($('hsmReviewDock').hidden,true);assert.equal($('wrongSelectionModeButton').hidden,false);
 await new Promise(r=>w.setTimeout(r,0));dom.window.close();console.log('PASS mixed categories, source preservation, selected-only single word, example availability, failed lookup and empty selection');
