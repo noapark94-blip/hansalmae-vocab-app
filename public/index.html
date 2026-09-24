@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260924-43"></script>
+  <script src="./app-dialogs.js?v=20260925-44"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-43"></script>
-  <script src="./config.js?v=20260924-43"></script>
-  <script src="./app-update.js?v=20260924-43"></script>
+  <script src="./school-runtime.js?v=20260925-44"></script>
+  <script src="./config.js?v=20260925-44"></script>
+  <script src="./app-update.js?v=20260925-44"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4745,15 +4745,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-43">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-43">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-43">
-<script defer src="./test-setup.js?v=20260924-43"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260924-43">
-<script defer src="./wrong-review.js?v=20260924-43"></script>
-<script defer src="./vocab-selection.js?v=20260924-43"></script>
-<script defer src="./personal-dialogs.js?v=20260924-43"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260924-43">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-44">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-44">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-44">
+<script defer src="./test-setup.js?v=20260925-44"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-44">
+<script defer src="./wrong-review.js?v=20260925-44"></script>
+<script defer src="./vocab-selection.js?v=20260925-44"></script>
+<script defer src="./personal-dialogs.js?v=20260925-44"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-44">
 </head>
 
 <body>
@@ -7504,11 +7504,6 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             return;
           }
 
-          sessionStorage.setItem(
-            popupKey,
-            'shown'
-          );
-
           const notifications =
             result &&
             Array.isArray(
@@ -7533,6 +7528,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           if (sessionStorage.getItem(popupKey) === 'shown') {
             return;
           }
+
+          sessionStorage.setItem(popupKey, 'shown');
 
           let message =
             '새로운 알림이 ' +
@@ -7856,13 +7853,77 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     };
 
 
-    function loadSheetNames() {
+    let sheetNamesLoading_ = false;
+    let sheetNamesAttempt_ = 0;
+    function setCatalogMessage_(message, retry) {
+      ['loadingText', 'vocabLoading'].forEach(function(id) {
+        const target = document.getElementById(id);
+        target.replaceChildren(document.createTextNode(message));
+        if (retry) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = '다시 불러오기';
+          button.style.cssText = 'width:auto;margin:8px 0 0 8px;padding:8px 12px;font-size:13px';
+          button.onclick = function() { loadSheetNames(); };
+          target.appendChild(button);
+        }
+      });
+    }
+
+    function loadSheetNames(retrying) {
+      if (sheetNamesLoading_) return;
+      sheetNamesLoading_ = true;
+      if (!retrying) sheetNamesAttempt_ = 0;
+      if (window.hsmSetupApplyStudentDefaults_) window.hsmSetupApplyStudentDefaults_(currentStudent);
+      setCatalogMessage_('단어 종류를 불러오는 중입니다.', false);
+      ['startDay', 'endDay', 'vocabDay'].forEach(function(id) {
+        const select = document.getElementById(id);
+        select.disabled = true;
+        select.dataset.loadState = 'loading';
+      });
+      document.getElementById('startButton').disabled = true;
+      window.dispatchEvent(new Event('hsm:test-days'));
       google.script.run
-        .withSuccessHandler(showSheetNames)
-        .withFailureHandler(showError)
+        .withSuccessHandler(function(names) {
+          sheetNamesLoading_ = false;
+          if (!Array.isArray(names) || !names.length || names.some(function(name) { return typeof name !== 'string' || !name.trim(); })) {
+            try { localStorage.removeItem('hsmApiCacheV2:getSheetNames|[]'); } catch (_) {}
+            catalogFailure_(new Error('단어 종류를 확인하지 못했습니다.'));
+            return;
+          }
+          showSheetNames(names);
+        })
+        .withFailureHandler(catalogFailure_)
         .getSheetNames();
     }
 
+    function catalogFailure_(error) {
+      sheetNamesLoading_ = false;
+      console.error('단어 종류 불러오기 실패', error);
+      if (sheetNamesAttempt_++ === 0 && navigator.onLine !== false) {
+        sheetNamesLoading_ = true;
+        setTimeout(function() { sheetNamesLoading_ = false; loadSheetNames(true); }, 1000);
+        return;
+      }
+      ['startDay', 'endDay', 'vocabDay'].forEach(function(id) {
+        const select = document.getElementById(id);
+        select.disabled = true;
+        select.dataset.loadState = 'error';
+      });
+      setCatalogMessage_('단어 목록을 불러오지 못했습니다.', true);
+      window.dispatchEvent(new Event('hsm:test-days'));
+    }
+
+    function ensureStudyCatalog_(vocabulary) {
+      if (!sheetNamesCache.length) {
+        loadSheetNames();
+      } else {
+        const select = document.getElementById(vocabulary ? 'vocabDay' : 'startDay');
+        if (!select.value && select.dataset.loadState !== 'loading') {
+          if (vocabulary) loadVocabDays(); else loadTestDays();
+        }
+      }
+    }
 
     function showSheetNames(sheetNames) {
       sheetNamesCache =
@@ -7979,6 +8040,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
     function showTestHome() {
+      ensureStudyCatalog_(false);
       hideExtraStudyScreens();
 
       [
@@ -8074,6 +8136,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
 
     function showVocabHome() {
+      ensureStudyCatalog_(true);
       hideExtraStudyScreens();
       document
         .getElementById('wrongNotebookScreen')
@@ -10885,26 +10948,46 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
 
     let testDaysRequestId = 0;
-    function loadTestDays() {
-      const requestId = ++testDaysRequestId;
-      const sheetName =
-        document.getElementById('sheetName').value;
-
-      if (!sheetName) {
-        return;
-      }
-
-      document.getElementById('loadingText').textContent =
-        'Day 목록을 불러오는 중입니다.';
-
-      ['startDay','endDay','startButton'].forEach(function(id){document.getElementById(id).disabled=true;});
+    function setDayLoading_(ids, state) {
+      ids.forEach(function(id) {
+        const select = document.getElementById(id);
+        select.dataset.loadState = state;
+        select.disabled = state !== 'ready';
+        if (state === 'loading') select.replaceChildren();
+      });
       window.dispatchEvent(new Event('hsm:test-days'));
-      google.script.run
-        .withSuccessHandler(function(days){if(requestId!==testDaysRequestId)return;showTestDays(days);document.getElementById('startDay').disabled=false;document.getElementById('endDay').disabled=false;document.getElementById('startButton').disabled=!days||!days.length;window.dispatchEvent(new Event('hsm:test-days'));})
-        .withFailureHandler(function(error){if(requestId!==testDaysRequestId)return;document.getElementById('loadingText').textContent='Day 목록을 불러오지 못했습니다. 단어 종류를 다시 선택해주세요.';})
-        .getDays(sheetName);
     }
 
+    function dayFailure_(vocabulary, error) {
+      setDayLoading_(vocabulary ? ['vocabDay'] : ['startDay','endDay'], 'error');
+      const target = document.getElementById(vocabulary ? 'vocabLoading' : 'loadingText');
+      target.replaceChildren(document.createTextNode('Day 목록을 불러오지 못했습니다.'));
+      const button = document.createElement('button');
+      button.type = 'button'; button.textContent = '다시 불러오기';
+      button.style.cssText = 'width:auto;margin:8px 0 0 8px;padding:8px 12px;font-size:13px';
+      button.onclick = vocabulary ? loadVocabDays : loadTestDays;
+      target.appendChild(button);
+      console.error('Day 불러오기 실패', error);
+    }
+
+    function loadTestDays() {
+      const requestId = ++testDaysRequestId;
+      const sheetName = document.getElementById('sheetName').value;
+      if (!sheetName) { ensureStudyCatalog_(false); return; }
+      document.getElementById('loadingText').textContent = 'Day 목록을 불러오는 중입니다.';
+      setDayLoading_(['startDay','endDay'], 'loading');
+      document.getElementById('startButton').disabled = true;
+      google.script.run
+        .withSuccessHandler(function(days) {
+          if (requestId !== testDaysRequestId) return;
+          if (!Array.isArray(days)) { dayFailure_(false, new Error('잘못된 Day 응답')); return; }
+          showTestDays(days);
+          setDayLoading_(['startDay','endDay'], days.length ? 'ready' : 'empty');
+          document.getElementById('startButton').disabled = !days.length;
+        })
+        .withFailureHandler(function(error) { if (requestId === testDaysRequestId) dayFailure_(false, error); })
+        .getDays(sheetName);
+    }
 
     function showTestDays(days) {
       const startSelect =
@@ -10950,23 +11033,23 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
+    let vocabDaysRequestId_ = 0;
     function loadVocabDays() {
-      const sheetName =
-        document.getElementById('vocabSheetName').value;
-
-      if (!sheetName) {
-        return;
-      }
-
-      document.getElementById('vocabLoading').textContent =
-        'Day 목록을 불러오는 중입니다.';
-
+      const requestId = ++vocabDaysRequestId_;
+      const sheetName = document.getElementById('vocabSheetName').value;
+      if (!sheetName) { ensureStudyCatalog_(true); return; }
+      document.getElementById('vocabLoading').textContent = 'Day 목록을 불러오는 중입니다.';
+      setDayLoading_(['vocabDay'], 'loading');
       google.script.run
-        .withSuccessHandler(showVocabDays)
-        .withFailureHandler(showVocabError)
+        .withSuccessHandler(function(days) {
+          if (requestId !== vocabDaysRequestId_) return;
+          if (!Array.isArray(days)) { dayFailure_(true, new Error('잘못된 Day 응답')); return; }
+          showVocabDays(days);
+          setDayLoading_(['vocabDay'], days.length ? 'ready' : 'empty');
+        })
+        .withFailureHandler(function(error) { if (requestId === vocabDaysRequestId_) dayFailure_(true, error); })
         .getDays(sheetName);
     }
-
 
     function showVocabDays(days) {
       const daySelect =
@@ -16190,7 +16273,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260924-43"></script>
+<script src="./ui-icons.js?v=20260925-44"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

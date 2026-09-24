@@ -54,7 +54,7 @@
     });
     ['startDay','endDay','vocabDay'].forEach(function (id) {
       var trigger = $('hsmPick' + id), select = $(id); if (!trigger) return;
-      trigger.textContent = select.value ? 'Day ' + select.value + ' ⌄' : '불러오는 중…';
+      trigger.textContent = select.dataset.loadState === 'error' ? '불러오기 실패' : select.dataset.loadState === 'empty' ? 'Day 없음' : select.value ? 'Day ' + select.value + ' ⌄' : '불러오는 중…';
       trigger.disabled = select.disabled || !select.options.length;
     });
   }
@@ -141,3 +141,4 @@
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
+
