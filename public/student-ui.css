@@ -476,3 +476,43 @@ body.collection-open{overflow:hidden}
 #personalVocabularyScreen .hsm-unified-word .hsm-word-meta{align-items:center!important;gap:4px 10px;margin-bottom:10px!important}
 #personalVocabularyScreen .hsm-unified-word .personal-meta{flex:1 1 auto}
 #personalVocabularyScreen .hsm-unified-word .hsm-word-added-date{flex:0 0 auto;margin-left:auto;color:#aa99a4;font-size:10px;line-height:1.5;white-space:nowrap}
+
+/* School book reading and selection controls. */
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study>h2{font-size:23px!important;line-height:1.35!important;letter-spacing:-.03em!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study>.hsm-school-meta{font-size:12px!important;margin-top:6px;line-height:1.6!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-list-back{display:block;width:auto!important;min-height:36px!important;margin:0 0 8px!important;padding:0 4px!important;border:0!important;background:transparent!important;color:#8d7383!important;font-size:12px!important;box-shadow:none!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-search-dock{display:block!important;position:static!important;margin:18px 0 10px!important;padding:0!important;border:0!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-search-dock input{box-sizing:border-box;width:100%!important;min-width:0!important;height:46px;margin:0!important;font-size:16px!important;border-radius:12px!important}
+#hsmSchoolStudentPage #hsmSchoolSearchStatus{font-size:11px!important;margin-top:6px!important;color:#97828f!important}
+#hsmSchoolStudentPage #hsmSchoolSearchStatus:empty{display:none!important}
+#hsmSchoolStudentPage #hsmSchoolSelectionToggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;margin:0 0 8px;padding:10px 13px;border:1px solid #e8dce5;border-radius:12px;background:#faf5f8;color:#883568;font-size:13px;font-weight:600;box-shadow:none}
+#hsmSchoolStudentPage #hsmSchoolSelectionToggle:after{content:'⌄';font-size:17px}
+#hsmSchoolStudentPage #hsmSchoolSelectionToggle[aria-expanded=true]:after{content:'⌃'}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study:not(.is-selecting) #hsmSchoolSelectBar,
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study:not(.is-selecting) .hsm-school-word-check{display:none!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study #hsmSchoolSelectBar{grid-template-columns:auto auto!important;padding:0 0 8px!important;margin:0!important;border:0!important;background:transparent!important;gap:6px!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study #hsmSchoolSelectAll{justify-self:end}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study #hsmSchoolAddPersonal{grid-column:1/-1!important;justify-self:stretch!important;width:100%!important;background:#f5eaf1!important;color:#8f145f!important;border:0!important;min-height:44px}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study #hsmSchoolAddPersonal[hidden]{display:none!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study:not(.is-selecting) .hsm-school-word-row{grid-template-columns:18px minmax(0,1fr)!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study:not(.is-selecting) .hsm-school-word-num{grid-column:1!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study:not(.is-selecting) .hsm-school-word-eng,
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study:not(.is-selecting) .hsm-school-word-mean{grid-column:2!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study.is-selecting .hsm-school-word-row{grid-template-columns:26px 18px minmax(0,1fr)!important;column-gap:8px!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-check{appearance:none!important;-webkit-appearance:none!important;width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;max-width:20px!important;padding:0!important;border:1.5px solid #cdbac6!important;border-radius:6px!important;background:#fff!important;box-shadow:none!important;cursor:pointer}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-check:checked{background:#8f145f!important;border-color:#8f145f!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='m5 10 3 3 7-7' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important}
+#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-study .hsm-school-word-row.is-selected{background:#fcf5fa!important;border-color:#d6b1c9!important}
+#hsmSchoolStudentPage #hsmSchoolExamDialog{box-sizing:border-box;width:calc(100% - 24px);max-width:440px;max-height:calc(100dvh - 32px);margin:auto auto 12px;padding:20px 18px max(20px,env(safe-area-inset-bottom));border:1px solid #ede1e8;border-radius:24px;background:#fff;box-shadow:0 20px 70px #31132433;overflow:auto;color:#422b39}
+#hsmSchoolExamDialog::backdrop{background:#281b254d;backdrop-filter:blur(4px)}
+#hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+#hsmSchoolStudentPage #hsmSchoolExamDialog h3{margin:0;font-size:21px;color:#55143d;text-align:left}
+#hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-dialog-close{flex:0 0 40px;width:40px!important;min-height:40px!important;height:40px;margin:0!important;padding:0!important;border:0!important;border-radius:50%!important;background:#f6f1f5!important;color:#897584!important;font-size:26px!important;font-weight:400!important}
+#hsmSchoolStudentPage #hsmSchoolExamDialog #hsmSchoolTestSetup{box-sizing:border-box;display:block;padding:0;border:0;background:#fff;box-shadow:none}
+#hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-native-setting{display:none!important}
+#hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-setup-grid{grid-template-columns:minmax(0,1fr)!important;gap:16px}
+#hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-segments{display:flex;gap:4px;padding:4px;border-radius:12px;background:#f5eff3}
+#hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-segments button{flex:1;min-width:0;min-height:42px!important;margin:0!important;padding:8px 4px!important;border:0!important;border-radius:9px!important;background:transparent!important;color:#8b7785!important;font-size:13px!important;font-weight:600!important;box-shadow:none!important;white-space:nowrap}
+#hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-segments button[aria-pressed=true]{background:#fff!important;color:#8f145f!important;box-shadow:0 2px 6px #46223709!important}
+#hsmSchoolStudentPage #hsmSchoolExamDialog #hsmSchoolSetupNotice{font-size:11px!important;line-height:1.6;color:#998391!important;margin:10px 0 18px}
+#hsmSchoolStudentPage #hsmSchoolExamDialog #hsmSchoolTestCount{box-sizing:border-box;font-size:16px;min-height:46px}
+#hsmSchoolStudentPage #hsmSchoolExamDialog #hsmSchoolStartNow{min-height:48px!important;margin-top:20px!important;font-weight:700!important}
