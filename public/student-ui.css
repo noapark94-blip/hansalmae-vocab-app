@@ -280,3 +280,23 @@
 #accountScreen #passwordChangeMessage{margin:10px 0 0;font-size:12px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
 #accountScreen #passwordChangeMessage:empty{display:none}
 #accountScreen button:focus-visible{outline:2px solid #8f145f;outline-offset:3px}
+
+/* Account settings: compact notification row and an open, quiet security form. */
+#accountScreen .account-setting-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 32px;width:32px;height:32px;border-radius:10px;background:#f4e7ef;color:#933e70}
+#accountScreen .account-setting-icon svg{display:block;width:18px;height:18px}
+#accountScreen .account-push-card{grid-template-columns:minmax(0,1fr) auto;gap:8px 10px;padding:15px 16px;margin:18px auto 24px;border-color:#eedfe8;border-radius:16px;background:linear-gradient(110deg,#fbf2f8,#fefbfd)}
+#accountScreen .account-push-copy{display:contents}
+#accountScreen .account-push-copy strong{grid-column:1;grid-row:1;display:flex;align-items:center;gap:9px;min-width:0;font-size:15px;font-weight:650}
+#accountScreen .account-push-copy strong>span:last-child{font:inherit;color:inherit;line-height:1.4;word-break:keep-all}
+#accountScreen .account-push-copy>span{grid-column:1/-1;font-size:12px;color:#796472}
+#accountScreen .account-push-copy>small{grid-column:1/-1;margin:0;font-size:11px;color:#96828e}
+#accountScreen #accountPushNotificationButton{grid-column:2;grid-row:1;align-self:center;min-width:0;min-height:44px;padding:8px 10px;border:0;border-radius:9px;background:#f1e3ec;font-size:12px;font-weight:600;color:#87375f}
+#accountScreen #accountPushNotificationButton .hsm-ui-icon{display:none}
+#accountScreen .hsm-password-card{padding:22px 0 0;border:0;border-top:1px solid #eee6eb;border-radius:0;background:transparent}
+#accountScreen .hsm-password-card h3{display:flex;align-items:center;gap:9px;margin:0 0 18px;font-size:16px}
+#accountScreen .hsm-password-card .account-setting-icon{background:#f3f0f4;color:#79647b}
+#accountScreen .hsm-password-card .account-field-label{margin:12px 0 6px;font-size:12px;color:#806b78}
+#accountScreen .hsm-password-card input{min-height:46px;padding:10px 12px;border-color:#e9e0e6;border-radius:10px;background:#fcfafb}
+#accountScreen .hsm-password-card input::placeholder{font-size:13px;color:#aa9ca5}
+#accountScreen .hsm-password-card>button{min-height:46px;margin-top:18px;border-radius:11px;background:linear-gradient(100deg,#8b1e5e,#a03978);font-size:13px}
+@media(max-width:350px){#accountScreen .account-push-card{padding:12px;column-gap:6px}#accountScreen .account-push-copy strong{font-size:14px;gap:6px}}
