@@ -46,3 +46,5 @@
 #wrongTestSetupScreen .wrong-test-button-row .secondary-button{background:transparent!important;border-color:transparent!important;color:#78636e!important;font-size:14px!important;box-shadow:none!important}
 #wrongTestSetupScreen button:focus-visible{outline:3px solid #8f145f!important;outline-offset:3px}
 @media(max-width:650px){#wrongTestSetupScreen{padding:20px 16px!important}#wrongTestSetupScreen .hsm-setup-choices button{font-size:13px!important}}
+
+#wrongTestSetupScreen .hsm-wrong-counts{grid-template-columns:repeat(auto-fit,minmax(70px,1fr))}

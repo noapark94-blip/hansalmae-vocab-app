@@ -93,9 +93,20 @@
       var wrongCount = $('wrongTestQuestionCount'), quick = document.createElement('div');
       quick.className = 'hsm-wrong-counts'; quick.setAttribute('role','group'); quick.setAttribute('aria-label','문제 수 빠른 선택');
       wrongCount.insertAdjacentElement('beforebegin',quick);
-      ['10','20','30'].forEach(function(value){var b=button(value+'개',function(){wrongCount.value=value;wrongCount.dispatchEvent(new Event('input',{bubbles:true}));});b.dataset.value=value;quick.appendChild(b);});
-      function syncWrongCount(){quick.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.value===wrongCount.value));});}
-      wrongCount.addEventListener('input',syncWrongCount);
+      function syncWrongCount(){
+        var limit = Number(wrongCount.max) || 0;
+        quick.replaceChildren();
+        ['10','20','30'].filter(function(v){return Number(v)<limit;}).concat(limit>0?[String(limit)]:[]).forEach(function(value){
+          var all = Number(value)===limit;
+          var b=button(all?'전체 '+value+'개':value+'개',function(){wrongCount.value=value;wrongCount.dispatchEvent(new Event('input',{bubbles:true}));});
+          b.dataset.value=value;b.setAttribute('aria-pressed',String(value===wrongCount.value));quick.appendChild(b);
+        });
+      }
+      wrongCount.addEventListener('input',function(){
+        var limit=Number(wrongCount.max);
+        if(Number(wrongCount.value)>limit)wrongCount.value=String(limit);
+        syncWrongCount();
+      });
       window.addEventListener('hsm:wrong-count',syncWrongCount); syncWrongCount();
     }
     var counts = document.createElement('div'); counts.id = 'hsmSetupCounts'; counts.className = 'hsm-setup-choices'; counts.setAttribute('role','group'); counts.setAttribute('aria-label','문제 수');

@@ -2665,9 +2665,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260924-5"></script>
-  <script src="./config.js?v=20260924-5"></script>
-  <script src="./app-update.js?v=20260924-5"></script>
+  <script src="./school-runtime.js?v=20260924-6"></script>
+  <script src="./config.js?v=20260924-6"></script>
+  <script src="./app-update.js?v=20260924-6"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4730,10 +4730,10 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260924-5">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260924-5">
-<link rel="stylesheet" href="./student-ui.css?v=20260924-5">
-<script defer src="./test-setup.js?v=20260924-5"></script>
+<link rel="stylesheet" href="./test-setup.css?v=20260924-6">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260924-6">
+<link rel="stylesheet" href="./student-ui.css?v=20260924-6">
+<script defer src="./test-setup.js?v=20260924-6"></script>
 </head>
 
 <body>
@@ -5840,7 +5840,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           문제 유형
         </label>
 
-        <select id="wrongTestQuestionMode">
+        <select id="wrongTestQuestionMode" onchange="updateWrongTestAvailableCount()">
           <option value="random">랜덤 출제</option>
           <option value="engToKor" selected>영어 → 한글만</option>
           <option value="korToEng">한글 → 영어만</option>
@@ -9602,28 +9602,22 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
-    function updateWrongTestAvailableCount() {
+    function getWrongTestQuestionLimit() {
       const words = getSelectedWrongTestWords();
-      const countInput =
-        document.getElementById('wrongTestQuestionCount');
+      return document.getElementById('wrongTestQuestionMode').value === 'example'
+        ? words.filter(function (item) { return item.example; }).length
+        : words.length;
+    }
 
-      if (words.length > 0) {
-        const recommended = Math.min(20, words.length);
-
-        if (
-          !Number(countInput.value) ||
-          Number(countInput.value) > words.length
-        ) {
-          countInput.value = recommended;
-        }
+    function updateWrongTestAvailableCount() {
+      const limit = getWrongTestQuestionLimit();
+      const countInput = document.getElementById('wrongTestQuestionCount');
+      countInput.max = String(limit);
+      if (!Number(countInput.value) || Number(countInput.value) > limit) {
+        countInput.value = Math.min(30, limit);
       }
-
-      document
-        .getElementById('wrongTestAvailableText')
-        .textContent =
-        '복습할 오답 ' +
-        words.length +
-        '개 · 문제 수를 늘리면 반복 출제됩니다.';
+      document.getElementById('wrongTestAvailableText').textContent =
+        '최대 ' + limit + '문제 · 같은 단어는 한 번씩만 출제됩니다.';
       window.dispatchEvent(new Event('hsm:wrong-count'));
     }
 
@@ -9672,6 +9666,13 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         return;
       }
 
+      const limit = getWrongTestQuestionLimit();
+      if (requestedCount > limit) {
+        updateWrongTestAvailableCount();
+        alert('최대 ' + limit + '문제까지 출제할 수 있습니다.');
+        return;
+      }
+
       const days =
         words
           .map(function (item) {
@@ -9691,7 +9692,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 
       createQuestions(words, {
         requestedCount: requestedCount,
-        questionMode: questionMode
+        questionMode: questionMode,
+        noRepeat: true
       });
     }
 
@@ -11681,7 +11683,11 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         questions = shuffleArray(availableTypes).slice(0, requestedCount);
       }
 
-      while (questions.length < requestedCount) {
+      if (options.noRepeat) {
+        questions = shuffleArray(availableTypes).slice(0, requestedCount);
+      }
+
+      while (!options.noRepeat && questions.length < requestedCount) {
         const shuffledRound =
           shuffleArray(availableTypes);
 

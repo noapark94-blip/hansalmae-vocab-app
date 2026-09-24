@@ -23,10 +23,35 @@ assert.equal(el('wrongTestSheetName').value,'high');assert.equal(changed,1);
 assert.equal(el('hsmWrongSheets').textContent.includes('DB'),false);
 el('hsmWrongModes').querySelector('[data-value="example"]').click();
 assert.equal(el('wrongTestQuestionMode').value,'example');
+el('wrongTestQuestionCount').max='6';el('wrongTestQuestionCount').value='6';
+w.dispatchEvent(new w.Event('hsm:wrong-count'));
+assert.equal(d.querySelector('.hsm-wrong-counts').textContent,'전체 6개');
+assert.equal(d.querySelector('.hsm-wrong-counts [aria-pressed="true"]').dataset.value,'6');
+el('wrongTestQuestionCount').value='30';el('wrongTestQuestionCount').dispatchEvent(new w.Event('input'));
+assert.equal(el('wrongTestQuestionCount').value,'6');
+el('wrongTestQuestionCount').max='35';w.dispatchEvent(new w.Event('hsm:wrong-count'));
 d.querySelector('.hsm-wrong-counts [data-value="30"]').click();
 assert.equal(el('wrongTestQuestionCount').value,'30');
-el('wrongTestQuestionCount').value='6';w.dispatchEvent(new w.Event('hsm:wrong-count'));
-assert.equal(d.querySelectorAll('.hsm-wrong-counts [aria-pressed="true"]').length,0);
+// Exercise the actual start handler, including bypassing the input event.
+w.eval('var currentTestContext=null;');
+w.getSelectedWrongTestWords=()=>Array.from({length:6},(_,i)=>({word:'word'+i,meaning:'meaning'+i,day:1,example:i<2?'example':''}));
+w.eval(html.slice(html.indexOf('    function getWrongTestQuestionLimit()'),html.indexOf('    function setWrongNotebookFilter(')));
+let started=null,alerts=[];w.createQuestions=(words,options)=>{started=options;};w.alert=message=>alerts.push(message);
+el('wrongTestQuestionMode').value='engToKor';el('wrongTestQuestionCount').value='30';
+w.startWrongAnswerTest();assert.equal(started,null);assert.equal(el('wrongTestQuestionCount').value,'6');assert.equal(alerts.length,1);
+w.startWrongAnswerTest();assert.equal(started.requestedCount,6);assert.equal(started.noRepeat,true);
+el('wrongTestQuestionMode').value='example';w.updateWrongTestAvailableCount();
+assert.equal(el('wrongTestQuestionCount').max,'2');assert.equal(el('wrongTestQuestionCount').value,'2');
+w.startWrongAnswerTest();assert.equal(started.requestedCount,2);
+// Run the question builder through question generation, before screen effects.
+const builder=html.slice(html.indexOf('    function createQuestions(words, options) {'),html.indexOf('      currentIndex = 0;',html.indexOf('    function createQuestions(words, options) {')))+'return questions; }';
+w.eval('var allWords=[],questions=[];');w.shuffleArray=items=>Array.from(items).reverse();w.eval(builder);
+for(const mode of ['engToKor','korToEng','mixed','random','example']){
+ const words=w.getSelectedWrongTestWords();
+ const generated=w.createQuestions(words,{requestedCount:mode==='example'?2:6,questionMode:mode,noRepeat:true});
+ assert.equal(generated.length,mode==='example'?2:6);
+ assert.equal(new Set(generated.map(q=>q.data.word)).size,generated.length);
+}
 for(const [grade,expected] of [['중1','중등'],['중3','중등'],['고1','고등'],['고2','고등'],['고3','수능']]){
  w.hsmSetupApplyStudentDefaults_({studentId:grade,studentName:'테스트',grade});
  assert.equal(el('sheetName').value,expected+'단어DB');
