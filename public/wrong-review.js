@@ -64,12 +64,14 @@
     $('wrongTestSetupScreen').querySelector('.wrong-test-guide').textContent='전체 오답을 섞어서 복습하거나, 필요한 종류만 골라보세요. 한 단어부터 시험 볼 수 있어요.';
     $('wrongTestSetupScreen').querySelector('label[for="wrongTestSheetName"]').textContent='출제 범위';
     $('wrongTestQuestionCount').addEventListener('input',updateWrongTestAvailableCount);
-    const entry=screen.querySelector('.wrong-selection-entry');screen.querySelector('.wrong-note-header').appendChild(entry);
+    const entry=screen.querySelector('.wrong-selection-entry');$('wrongTestOpenButton').insertAdjacentElement('afterend',entry);
     $('wrongSelectionModeButton').onclick=()=>{if(wrongSelectionMode_)exitWrongSelectionMode_();else toggleWrongSelectionMode_();};
     $('wrongBulkToolbar').innerHTML='<div class="hsm-selection-line"><button type="button" id="wrongSelectAllButton">전체 선택</button><span><strong id="wrongSelectedCount">0</strong>개 선택</span><button type="button" id="hsmSelectionCancel">취소</button></div>';
-    const dock=document.createElement('div');dock.id='hsmReviewDock';dock.className='hsm-review-dock';dock.hidden=true;
-    dock.innerHTML='<button type="button" id="hsmSelectedExam">선택한 단어 시험보기</button><button type="button" id="hsmReviewMore" aria-label="선택한 단어 작업" aria-haspopup="dialog" aria-controls="hsmReviewActions">⋯</button>';
-    document.body.appendChild(dock);
+    entry.insertAdjacentElement('afterend',$('wrongBulkToolbar'));
+    const more=document.createElement('button');more.id='hsmReviewMore';more.type='button';more.textContent='⋯';more.setAttribute('aria-label','선택한 단어 작업');more.setAttribute('aria-haspopup','dialog');more.setAttribute('aria-controls','hsmReviewActions');more.hidden=true;
+    $('wrongBulkToolbar').querySelector('.hsm-selection-line').appendChild(more);
+    $('wrongTestOpenButton').onclick=()=>{if(wrongSelectionMode_)hsmTestSelectedWrong_();else showWrongTestSetup();};
+    $('wrongActiveFilter').dataset.hsmIconReady='1';$('wrongActiveFilter').textContent='복습할 오답';
     const menu=document.createElement('dialog');menu.id='hsmReviewActions';menu.setAttribute('aria-labelledby','hsmReviewActionsTitle');
     menu.innerHTML='<div class="hsm-review-sheet-head"><h2 id="hsmReviewActionsTitle">선택한 단어</h2><button type="button" id="hsmReviewClose" aria-label="작업 메뉴 닫기">닫기</button></div><div class="hsm-review-menu"><button type="button" id="hsmSelectedSave">단어장에 저장</button><button type="button" id="hsmSelectedMaster">복습 완료</button><button type="button" id="wrongDeleteSelectedButton">삭제</button></div>';
     document.body.appendChild(menu);
@@ -77,15 +79,14 @@
     $('hsmReviewMore').onclick=()=>{if(getSelectedWrongRows_().length)menu.showModal();};
     $('hsmReviewClose').onclick=closeMenu;
     menu.addEventListener('click',e=>{if(e.target===menu){const r=menu.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeMenu();}});
-    menu.addEventListener('close',()=>{if(!dock.hidden)$('hsmReviewMore').focus();});
+    menu.addEventListener('close',()=>{if(!more.hidden)$('hsmReviewMore').focus();});
     function syncDock(){
       const show=wrongSelectionMode_&&getSelectedWrongRows_().length>0&&!screen.classList.contains('hidden')&&!$('mainApp')?.classList.contains('hidden');
-      dock.hidden=!show;if(!show)closeMenu();
+      more.hidden=!show;if(!show)closeMenu();
     }
     new MutationObserver(syncDock).observe(screen,{attributes:true,attributeFilter:['class']});
     if($('mainApp'))new MutationObserver(syncDock).observe($('mainApp'),{attributes:true,attributeFilter:['class']});
     $('wrongSelectAllButton').onclick=toggleSmartWrongSelectAll_;
-    $('hsmSelectedExam').onclick=hsmTestSelectedWrong_;
     $('hsmSelectedSave').onclick=()=>{batchSaveCheckedWrongWords_();closeMenu();};
     $('wrongDeleteSelectedButton').onclick=()=>{deleteSelectedMasteredWrongWords_();closeMenu();};
     $('hsmSelectedMaster').onclick=async()=>{
@@ -100,10 +101,11 @@
     window.updateWrongBulkToolbar_=function(){
       oldUpdate();const rows=getSelectedWrongRows_(),checks=[...screen.querySelectorAll('.wrong-batch-check')],all=checks.length&&checks.every(c=>c.checked);
       $('wrongSelectAllButton').disabled=!checks.length;$('wrongSelectAllButton').textContent=all?'전체 해제':'전체 선택';
-      $('wrongSelectionModeButton').textContent='선택';
+      $('wrongSelectionModeButton').textContent='단어 선택하기';
       $('wrongSelectionModeButton').hidden=wrongSelectionMode_;
-      $('hsmSelectedExam').textContent=rows.length?rows.length+'개 시험보기':'단어를 선택해주세요';
-      ['hsmSelectedExam','hsmSelectedSave','hsmSelectedMaster'].forEach(id=>$(id).disabled=!rows.length);
+      $('wrongTestOpenButton').textContent=wrongSelectionMode_?(rows.length?'선택한 '+rows.length+'개만 시험보기':'시험 볼 단어를 선택해주세요'):'복습할 오답 시험보기';
+      $('wrongTestOpenButton').disabled=wrongSelectionMode_&&!rows.length;
+      ['hsmSelectedSave','hsmSelectedMaster'].forEach(id=>$(id).disabled=!rows.length);
       $('hsmSelectedMaster').textContent=wrongNotebookFilter==='mastered'?'복습할 오답으로':'복습 완료';
       $('wrongDeleteSelectedButton').disabled=!rows.length||wrongNotebookFilter!=='mastered';
       screen.classList.toggle('hsm-selecting',wrongSelectionMode_);
