@@ -1,0 +1,25 @@
+#startScreen.hsm-test-setup{max-width:720px;margin-left:auto;margin-right:auto;padding:24px!important;border-radius:22px}
+#startScreen.hsm-test-setup [hidden]{display:none!important}
+#startScreen.hsm-test-setup h2{text-align:left;margin:0 0 7px!important;font-size:25px!important}
+#startScreen.hsm-test-setup>.subtitle{text-align:left;margin:0 0 12px!important;font-size:14px;color:#78636e}
+.hsm-setup-student{font-size:13px;font-weight:650;color:#8f145f;padding:8px 12px;background:#fbf2f7;border-radius:10px;display:inline-block;margin-bottom:4px}
+#startScreen.hsm-test-setup label{margin:20px 0 9px!important;font-size:14px!important;font-weight:700}
+#startScreen .hsm-setup-choices{display:grid;gap:8px;grid-template-columns:repeat(3,minmax(0,1fr))}
+#startScreen .hsm-setup-choices button,#startScreen .hsm-day-trigger{box-sizing:border-box;width:100%!important;min-width:0;min-height:46px;margin:0!important;padding:11px 8px!important;border:1px solid #e8dce3!important;border-radius:12px!important;background:#fff!important;color:#69535f!important;font-family:inherit;font-size:14px;font-weight:600;line-height:1.4;box-shadow:none!important;white-space:normal}
+#startScreen .hsm-setup-choices button[aria-pressed=true]{background:#f9eaf3!important;border-color:#a52c74!important;color:#851553!important;box-shadow:inset 0 0 0 1px #a52c74!important}
+#startScreen #hsmSetupModes{grid-template-columns:repeat(2,minmax(0,1fr))}
+#startScreen #hsmSetupCounts{grid-template-columns:repeat(4,minmax(0,1fr))}
+#startScreen .hsm-setup-range{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px!important}
+#startScreen .hsm-day-trigger{text-align:left;padding:12px 14px!important;font-size:16px!important}
+#startScreen #questionCount{margin-top:10px;min-height:46px;font-size:16px}
+#startScreen #startButton{min-height:50px;margin:24px 0 12px!important;border-radius:14px!important;font-size:16px!important}
+#startScreen button:focus-visible,#hsmDayPicker button:focus-visible{outline:3px solid #8f145f;outline-offset:3px}
+#hsmDayPicker{box-sizing:border-box;width:min(440px,calc(100% - 24px));max-height:80dvh;border:1px solid #ecdee6;border-radius:22px;padding:20px;background:#fff;color:#382430;box-shadow:0 20px 70px #32132633}
+#hsmDayPicker::backdrop{background:#28131f66}
+.hsm-day-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.hsm-day-head h2{font-size:20px!important;margin:0!important;text-align:left!important}
+#hsmDayPicker p{font-size:13px;color:#78636e;line-height:1.5;margin:12px 0}
+#hsmDayPicker button{width:auto;margin:0;min-height:44px;padding:9px;border:1px solid #e8dce3;border-radius:10px;background:#fff;color:#69535f;font-size:14px;box-shadow:none}
+#hsmDayGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;max-height:48dvh;overflow:auto;padding:4px}
+#hsmDayGrid button[aria-pressed=true]{background:#8f145f;color:white;border-color:#8f145f}
+#hsmDayPicker #hsmDayAll{width:100%;margin-top:14px;background:#fbf2f7;color:#8f145f}
+@media(max-width:650px){body.hsm-student-app-open{padding-top:max(12px,env(safe-area-inset-top))!important}#startScreen.hsm-test-setup{padding:20px 16px!important;margin-bottom:24px}#startScreen .hsm-setup-choices button{font-size:13px!important}#hsmDayPicker{margin:auto auto 0;width:100%;max-height:85dvh;border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}}
