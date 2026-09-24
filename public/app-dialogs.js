@@ -27,7 +27,7 @@
     d.className = 'hsm-app-dialog';
     d.setAttribute('aria-labelledby', id + '-title');
     d.setAttribute('aria-describedby', id + '-message');
-    d.innerHTML = '<form novalidate><div class="hsm-dialog-mark" aria-hidden="true"></div><h2 tabindex="-1" autofocus data-hsm-icon-ready="1"></h2><p class="hsm-dialog-message"></p><div class="hsm-dialog-field" hidden><label></label><input autocomplete="off"><p class="hsm-dialog-validation" role="alert" hidden></p></div><div class="hsm-dialog-actions"><button type="button" data-cancel data-hsm-icon-ready="1"></button><button type="submit" data-accept data-hsm-icon-ready="1"></button></div></form>';
+    d.innerHTML = '<form novalidate><div class="hsm-dialog-mark" aria-hidden="true"></div><h2 data-hsm-icon-ready="1"></h2><p class="hsm-dialog-message"></p><div class="hsm-dialog-field" hidden><label></label><input autocomplete="off"><p class="hsm-dialog-validation" role="alert" hidden></p></div><div class="hsm-dialog-actions"><button type="button" data-cancel data-hsm-icon-ready="1"></button><button type="submit" data-accept data-hsm-icon-ready="1"></button></div></form>';
     d.querySelector('.hsm-dialog-mark').textContent = o.kind === 'prompt' ? '＋' : o.danger ? '!' : '✓';
     d.querySelector('h2').id = id + '-title';d.querySelector('h2').textContent = o.title;
     var message = d.querySelector('.hsm-dialog-message'); message.id = id + '-message'; message.textContent = o.message || '';message.hidden = !o.message;
@@ -59,7 +59,7 @@
     };
     document.body.appendChild(d);d.showModal();
     if (o.kind === 'prompt') { input.focus();input.select(); }
-    else d.querySelector('h2').focus({preventScroll:true});
+    else (o.kind === 'confirm' ? cancel : accept).focus();
   }
   function request(kind, value, initial) {
     var options = settings(kind, value, initial), key = JSON.stringify(options);
