@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-46"></script>
+  <script src="./app-dialogs.js?v=20260925-47"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-46"></script>
-  <script src="./config.js?v=20260925-46"></script>
-  <script src="./app-update.js?v=20260925-46"></script>
+  <script src="./school-runtime.js?v=20260925-47"></script>
+  <script src="./config.js?v=20260925-47"></script>
+  <script src="./app-update.js?v=20260925-47"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4745,15 +4745,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-46">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-46">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-46">
-<script defer src="./test-setup.js?v=20260925-46"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-46">
-<script defer src="./wrong-review.js?v=20260925-46"></script>
-<script defer src="./vocab-selection.js?v=20260925-46"></script>
-<script defer src="./personal-dialogs.js?v=20260925-46"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-46">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-47">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-47">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-47">
+<script defer src="./test-setup.js?v=20260925-47"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-47">
+<script defer src="./wrong-review.js?v=20260925-47"></script>
+<script defer src="./vocab-selection.js?v=20260925-47"></script>
+<script defer src="./personal-dialogs.js?v=20260925-47"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-47">
 </head>
 
 <body>
@@ -9808,7 +9808,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         return;
       }
 
-      filtered.forEach(function (item) {
+      filtered.forEach(function (item, index) {
         const card =
           document.createElement('div');
 
@@ -9904,6 +9904,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
             '</div>' +
           '</div>';
 
+        hsmUnifyWordCard_(card, index, 'wrong');
         list.appendChild(card);
       });
 
@@ -11145,6 +11146,48 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
     }
 
 
+
+    // Reuse the existing nodes so selection, saving and word-cover handlers stay attached.
+    function hsmUnifyWordCard_(card, index, kind, sourceText) {
+      card.classList.add('hsm-unified-word');
+      const content = card.querySelector('.word-content,.wrong-note-select-content,.personal-card-content');
+      if (!content) return;
+      const title = content.querySelector('.word-title,.wrong-note-top,.personal-item-top');
+      if (!title) return;
+      title.classList.add('hsm-word-heading');
+      const header = document.createElement('div');
+      header.className = 'hsm-word-meta';
+      let source = content.querySelector(kind === 'wrong' ? '.wrong-note-source' : '.personal-meta');
+      if (!source) {
+        source = document.createElement('span');
+        source.className = 'hsm-word-source';
+        source.textContent = sourceText || '';
+      }
+      // Only strip the storage suffix from visible source labels.
+      const walker = document.createTreeWalker(source, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) walker.currentNode.nodeValue = walker.currentNode.nodeValue.replace(/DB(?=\s|·|$)/gi, '');
+      header.appendChild(source);
+      const badge = content.querySelector(kind === 'wrong' ? '.wrong-note-meta' : '.personal-book-label');
+      if (badge) header.appendChild(badge);
+      const save = title.querySelector('.word-save-button');
+      if (save) header.appendChild(save);
+      content.insertBefore(header, content.firstChild);
+      let number = title.querySelector('.word-number');
+      if (!number) number = document.createElement('span');
+      number.classList.add('hsm-word-number');
+      number.textContent = String(index + 1).padStart(2, '0');
+      title.insertBefore(number, title.firstChild);
+      const example = content.querySelector('.word-example,.wrong-note-example');
+      const translation = content.querySelector('.word-translation,.wrong-note-translation');
+      if ((example || translation) && !content.querySelector('.word-details')) {
+        const box = document.createElement('div');
+        box.className = 'hsm-word-example';
+        content.insertBefore(box, example || translation);
+        if (example) box.appendChild(example);
+        if (translation) box.appendChild(translation);
+      }
+    }
+
     function renderVocabulary() {
       const wordList =
         document.getElementById('wordList');
@@ -11297,6 +11340,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         card.appendChild(checkWrap);
         card.appendChild(content);
 
+        hsmUnifyWordCard_(card, index, 'vocab', document.getElementById('vocabSheetName').value.replace(/DB$/i, '') + ' · Day ' + Number(word.day || document.getElementById('vocabDay').value));
         wordList.appendChild(card);
       });
 
@@ -14418,7 +14462,7 @@ google.script.run
       );
 
     personalVocabularyWords.forEach(
-      function (item) {
+      function (item, index) {
         const card =
           document.createElement('div');
 
@@ -14489,6 +14533,7 @@ google.script.run
           '</div>';
 
         card.querySelector('.personal-share-check').checked = selectedRows.has(Number(item.rowNumber));
+        hsmUnifyWordCard_(card, index, 'personal');
         list.appendChild(card);
       }
     );
@@ -16250,7 +16295,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-46"></script>
+<script src="./ui-icons.js?v=20260925-47"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

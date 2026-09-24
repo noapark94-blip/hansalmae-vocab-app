@@ -226,7 +226,9 @@
       meta.dataset.hsmWrongMetaPolished = '1';
       var card = meta.closest('.wrong-note-item');
       var meaning = card && card.querySelector('.wrong-note-meaning');
-      if (meaning && meaning.nextElementSibling !== meta) meaning.insertAdjacentElement('afterend', meta);
+      var header = card && card.querySelector('.hsm-word-meta');
+      if (header) { if (meta.parentElement !== header) header.appendChild(meta); }
+      else if (meaning && meaning.nextElementSibling !== meta) meaning.insertAdjacentElement('afterend', meta);
     });
   }
 

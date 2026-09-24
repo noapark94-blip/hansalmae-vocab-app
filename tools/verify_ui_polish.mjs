@@ -9,9 +9,9 @@ const search=d.querySelector('#hsmSchoolWordSearch');search.value='delta';search
 const scope=d.querySelector('#hsmSchoolTestScope');scope.value='selected';scope.dispatchEvent(new w.Event('change'));assert.equal(d.querySelector('#hsmSchoolTestCount').max,'2');d.querySelector('#hsmSchoolTestCount').value='1';d.querySelector('#hsmSchoolStartNow').click();assert.match(d.querySelector('.question').textContent,/^(alpha|beta|뜻0|뜻1)$/);assert.equal(d.querySelectorAll('[data-answer]').length,4);dom.window.close();
 console.log('PASS selected scope only draws selected questions; distractors use full book; search preserves selections');
 const statusDom=new JSDOM('<button id="hsmSchoolVocabShortcut"><div class="shortcut-count">不</div></button>',{url:'https://example.test',runScripts:'outside-only'});const s=statusDom.window;s.localStorage.setItem('hansalmaeStudentToken','fixture');s.HANSALMAE_CONFIG={apiUrl:'https://example.test/api'};s.fetch=async()=>({ok:true,json:async()=>({success:true,result:[{wordCount:200}]})});s.eval(source('school-vocab-shortcut-status.js'));s.dispatchEvent(new s.Event('hsm:student-session'));await new Promise(r=>setTimeout(r,20));assert.equal(s.document.querySelector('.shortcut-count').textContent,'배정 단어장 1개 · 단어 200개');statusDom.window.close();console.log('PASS school shortcut refreshes after login');
-const html=source('index.html'),render=html.slice(html.indexOf('    function renderVocabulary() {'),html.indexOf('    function getCheckedWords()'));
+const html=source('index.html'),render=html.slice(html.indexOf('    function hsmUnifyWordCard_('),html.indexOf('    function getCheckedWords()'));
 const cards=new JSDOM('<select id="vocabSheetName"><option>Book</option></select><input id="showCheckedOnly" type="checkbox"><div id="wordList"></div><div id="vocabCount"></div>',{url:'https://example.test',runScripts:'outside-only'});const c=cards.window;c.vocabWords=[{word:'alpha',meaning:'뜻',day:1,example:'Example',translation:'해석'},{word:'beta',meaning:'뜻2',day:1}];c.isWordChecked=()=>false;c.escapeHtml=v=>String(v);c.eval(render);c.renderVocabulary();assert.equal(c.document.querySelectorAll('details').length,1);assert.equal(c.document.querySelector('details').open,false);c.document.querySelector('details').open=true;c.renderVocabulary();assert.equal(c.document.querySelector('details').open,true);assert.match(c.document.querySelector('.word-check').getAttribute('aria-label'),/alpha/);assert.equal(c.document.querySelector('.word-example').textContent,'Example');assert.equal(c.document.querySelector('.word-translation').textContent,'해석');let savedPayload;c.saveToPersonalVocabulary=(item,button)=>{savedPayload={item,button};};
-const bookmark=c.document.querySelector('.word-title .word-bookmark');assert.ok(bookmark);assert.equal(bookmark.querySelectorAll('svg').length,1);bookmark.click();assert.equal(savedPayload.item.word,'alpha');assert.equal(savedPayload.button,bookmark);
+const bookmark=c.document.querySelector('.hsm-word-meta .word-bookmark');assert.ok(bookmark);assert.equal(bookmark.querySelectorAll('svg').length,1);bookmark.click();assert.equal(savedPayload.item.word,'alpha');assert.equal(savedPayload.button,bookmark);
 let saveRequest;c.currentLoginToken='fixture';c.HSMDialog={alert:()=>{}};c.loadPersonalVocabularyPreview=()=>{};
 c.google={script:{get run(){return {withSuccessHandler(fn){this.ok=fn;return this;},withFailureHandler(fn){this.fail=fn;return this;},addPersonalVocabularyToBook(){saveRequest=this;}};}}};
 c.eval(html.slice(html.indexOf('    function saveItemToSelectedBook('),html.indexOf('    function saveToPersonalVocabulary(',html.indexOf('    function saveItemToSelectedBook('))));
@@ -72,6 +72,7 @@ pw.personalSelectionMode_=false;pw.selectedPersonalBookId='one';
 pw.personalVocabularyBooks=[{bookId:'one',bookName:'Book'}];
 pw.personalVocabularyWords=[1,2,3,4,5].map(rowNumber=>({rowNumber,word:'word'+rowNumber,meaning:'meaning'}));
 pw.escapeHtml=value=>String(value);
+pw.eval(html.slice(html.indexOf('    function hsmUnifyWordCard_('),html.indexOf('    function renderVocabulary() {')));
 pw.eval(html.slice(html.indexOf('    function getSelectedPersonalRows_()'),html.indexOf('    function moveSelectedPersonalWords_()')));
 pw.eval(html.slice(html.indexOf('  function renderPersonalVocabulary()'),html.indexOf('  function showPersonalTestSetup()',html.indexOf('  function renderPersonalVocabulary()'))));
 pw.renderPersonalVocabulary();
@@ -156,3 +157,4 @@ bd.window.close();console.log('PASS custom book choice, safe text, cancel, valid
  observers.forEach(o=>o.disconnect());win.close();
 }
 console.log('PASS unified learning shortcut icons, late school cards and stable observers');
+
