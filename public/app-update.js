@@ -5,7 +5,7 @@
   window.__HANSALMAE_APP_UPDATE_COORDINATOR__ = true;
 
   var BUILD_VERSION = String(
-    window.HANSALMAE_BUILD_VERSION || '20260924-22'
+    window.HANSALMAE_BUILD_VERSION || '20260924-23'
   );
   var RELOAD_GUARD_KEY = 'hsmAppUpdateReloadGuard';
   var UPDATED_TO_KEY = 'hsmAppUpdatedTo';
@@ -16,13 +16,14 @@
   var registrationRef = null;
 
   try {
-    reloadGuardActive =
-      sessionStorage.getItem(RELOAD_GUARD_KEY) === BUILD_VERSION;
+    var guardTime = Number(sessionStorage.getItem(RELOAD_GUARD_KEY));
+    reloadGuardActive = guardTime > 0 && Date.now() - guardTime < 10000;
     if (reloadGuardActive) {
       window.setTimeout(function () {
         reloadGuardActive = false;
         try { sessionStorage.removeItem(RELOAD_GUARD_KEY); } catch (_error) {}
-      }, 5000);
+        applyUpdateWhenSafe();
+      }, Math.max(0, 10000 - (Date.now() - guardTime)));
     }
   } catch (_error) {}
 
@@ -35,6 +36,8 @@
   }
 
   function isTestInProgress() {
+    if (typeof window.hsmHasPendingApiRequests_ === 'function' && window.hsmHasPendingApiRequests_()) return true;
+    if (document.querySelector('dialog[open]')) return true;
     if(document.querySelector('[data-hsm-save-pending]')||window.hsmTeacherDirty_)return true;
     if (isVisible(document.getElementById('testScreen'))) return true;
     if (isVisible(document.getElementById('teacherExamTakingScreen'))) return true;
@@ -105,14 +108,14 @@
     if (reloadGuardActive) return;
     reloadGuardActive = true;
     try {
-      sessionStorage.setItem(RELOAD_GUARD_KEY, BUILD_VERSION);
+      sessionStorage.setItem(RELOAD_GUARD_KEY, String(Date.now()));
       sessionStorage.setItem(UPDATED_TO_KEY, BUILD_VERSION);
     } catch (_error) {}
     window.location.reload();
   }
 
   function applyUpdateWhenSafe() {
-    if (!updatePending) return;
+    if (!updatePending || reloadGuardActive) return;
     if (isTestInProgress()) {
       showToast('진행 중인 작업을 마치면 최신 버전이 적용됩니다.', 2600);
       if (!pendingTimer) {
@@ -144,8 +147,10 @@
   function registerServiceWorker() {
     if (!('serviceWorker' in navigator)) return;
 
+    var hadController = Boolean(navigator.serviceWorker.controller);
     navigator.serviceWorker.addEventListener('controllerchange', function () {
-      if (reloadGuardActive) return;
+      // The first installation claims the current page; it is not an update.
+      if (!hadController) { hadController = true; return; }
       updatePending = true;
       applyUpdateWhenSafe();
     });

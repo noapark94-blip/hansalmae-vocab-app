@@ -62,10 +62,50 @@ const anchor='<button class="learning-shortcut" id="personal"><span class="short
 // Update coordinator defers reload while replacement test is visible.
 {
  const f=fixture('<section id="hsmSchoolStudentPage"><div class="hsm-school-free-card"></div></section>');const {w}=f;let controllerChange;
- Object.defineProperty(w.navigator,'serviceWorker',{value:{addEventListener:(name,cb)=>{controllerChange=cb;},register:()=>Promise.resolve({update:()=>Promise.resolve(),addEventListener:()=>{}})}});
+ Object.defineProperty(w.navigator,'serviceWorker',{value:{controller:{},addEventListener:(name,cb)=>{controllerChange=cb;},register:()=>Promise.resolve({update:()=>Promise.resolve(),addEventListener:()=>{}})}});
  f.load('app-update.js');await wait(20);controllerChange();await wait(20);assert.match(w.document.querySelector('#hsmAppUpdateToast').textContent,/작업을 마치면/);assert.equal(f.errors.length,0);
  f.dom.window.close();console.log('PASS update waits during actual school test');
 }
 // Parse inline scripts too; main app is not covered by the older feature-only suite.
 for(const file of ['index.html','teacher.html'])for(const m of source(file).matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi))if(m[1].trim())new vm.Script(m[1],{filename:file});
 console.log('PASS all inline scripts parse');
+
+
+// Updates wait for active requests/dialogs; first install never reloads.
+for (const mode of ['request', 'dialog', 'first-install', 'guard']) {
+ const f=fixture(mode==='dialog'?'<dialog open></dialog>':'');const {w}=f;
+ let change, tick, guardEnd, reloads=0, busy=mode==='request';
+ w.hsmHasPendingApiRequests_=()=>busy;
+ w.__reload=()=>{reloads++;};
+ w.setInterval=fn=>{tick=fn;return 1;};w.clearInterval=()=>{};
+ if(mode==='guard') {
+  w.sessionStorage.setItem('hsmAppUpdateReloadGuard',String(Date.now()));
+  const timer=w.setTimeout.bind(w);w.setTimeout=(fn,ms)=>{if(ms>9000){guardEnd=fn;return 1;}return timer(fn,ms);};
+ }
+ Object.defineProperty(w.navigator,'serviceWorker',{value:{controller:mode==='first-install'?null:{},addEventListener:(_,fn)=>{change=fn;},register:async()=>({update:async()=>{},addEventListener:()=>{}})}});
+ w.eval(source('app-update.js').replace('window.location.reload();','window.__reload();'));
+ await wait(10);change();assert.equal(reloads,0,mode);
+ if(mode==='request'){busy=false;tick();assert.equal(reloads,1);}
+ if(mode==='dialog'){w.document.querySelector('dialog').removeAttribute('open');tick();assert.equal(reloads,1);}
+ if(mode==='guard'){guardEnd();assert.equal(reloads,1);}
+ w.close();
+}
+console.log('PASS update request/dialog deferral, first install and cross-build reload guard');
+
+// Real API adapter: read retry, persistent failure and no write replay.
+const adapter=[...source('index.html').matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).find(s=>s.includes('function installGoogleScriptRunAdapter'));
+for(const mode of ['recovered','failed','write']) {
+ const f=fixture('');const {w}=f;let calls=0;
+ w.currentStudent=null;w.currentRefreshToken='';w.currentLoginToken='';
+ const timer=w.setTimeout.bind(w);w.setTimeout=(fn,ms)=>timer(fn,ms===600?1:ms);
+ w.fetch=async()=>{calls++;if(mode!=='recovered'||calls===1)throw new w.TypeError('Load failed');return {ok:true,status:200,text:async()=>JSON.stringify({success:true,result:['Day 1']})};};
+ w.eval(adapter);
+ const result=new Promise(resolve=>w.google.script.run.withSuccessHandler(value=>resolve({value})).withFailureHandler(error=>resolve({error}))[mode==='write'?'renameVocabularyBook':'getSheetNames']());
+ assert.equal(w.hsmHasPendingApiRequests_(),true);
+ const outcome=await result;
+ assert.equal(calls,mode==='write'?1:2);
+ assert.equal(w.hsmHasPendingApiRequests_(),false);
+ if(mode==='recovered')assert.equal(outcome.value[0],'Day 1');else assert.equal(outcome.error.message,'Load failed');
+ w.close();
+}
+console.log('PASS transient read recovery, real failure visibility and no duplicate writes');
