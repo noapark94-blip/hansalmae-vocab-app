@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-52"></script>
+  <script src="./app-dialogs.js?v=20260925-53"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-52"></script>
-  <script src="./config.js?v=20260925-52"></script>
-  <script src="./app-update.js?v=20260925-52"></script>
+  <script src="./school-runtime.js?v=20260925-53"></script>
+  <script src="./config.js?v=20260925-53"></script>
+  <script src="./app-update.js?v=20260925-53"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4746,15 +4746,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-52">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-52">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-52">
-<script defer src="./test-setup.js?v=20260925-52"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-52">
-<script defer src="./wrong-review.js?v=20260925-52"></script>
-<script defer src="./vocab-selection.js?v=20260925-52"></script>
-<script defer src="./personal-dialogs.js?v=20260925-52"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-52">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-53">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-53">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-53">
+<script defer src="./test-setup.js?v=20260925-53"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-53">
+<script defer src="./wrong-review.js?v=20260925-53"></script>
+<script defer src="./vocab-selection.js?v=20260925-53"></script>
+<script defer src="./personal-dialogs.js?v=20260925-53"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-53">
 </head>
 
 <body>
@@ -5919,7 +5919,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         <div class="book-manager">
           <label class="personal-visually-hidden" for="personalBookSelect">내 단어장</label>
           <select id="personalBookSelect" onchange="changePersonalBook()" hidden aria-hidden="true" tabindex="-1"></select>
-          <button type="button" id="personalBookPickerButton" data-hsm-icon-ready="1" aria-haspopup="dialog" onclick="openPersonalBookChoice()"><span>단어장 선택</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button>
+          <button type="button" id="personalBookPickerButton" data-hsm-icon-ready="1" aria-haspopup="dialog" onclick="openPersonalBookChoice()"><span class="personal-book-picker-label">단어장 선택</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></svg></button>
           <details class="book-management">
             <summary aria-label="단어장 관리">관리</summary>
             <div class="book-action-row">
@@ -11161,6 +11161,18 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       const walker = document.createTreeWalker(source, NodeFilter.SHOW_TEXT);
       while (walker.nextNode()) walker.currentNode.nodeValue = walker.currentNode.nodeValue.replace(/DB(?=\s|·|$)/gi, '');
       header.appendChild(source);
+      if (kind === 'personal') {
+        const lineBreak = source.querySelector('br');
+        if (lineBreak) {
+          const date = document.createElement('span');
+          date.className = 'hsm-word-added-date';
+          date.setAttribute('aria-label', '추가 날짜');
+          while (lineBreak.nextSibling) date.appendChild(lineBreak.nextSibling);
+          lineBreak.remove();
+          if (date.textContent.trim()) header.appendChild(date);
+        }
+        if (!source.textContent.trim()) source.remove();
+      }
       const badge = content.querySelector(kind === 'wrong' ? '.wrong-note-meta' : '.personal-book-label');
       if (badge) header.appendChild(badge);
       const save = title.querySelector('.word-save-button');
@@ -16293,7 +16305,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-52"></script>
+<script src="./ui-icons.js?v=20260925-53"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">

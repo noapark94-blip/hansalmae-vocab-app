@@ -104,7 +104,7 @@
     originalRender.apply(this, arguments);
     const select = document.getElementById('personalBookSelect');
     const button = document.getElementById('personalBookPickerButton');
-    if (button && select) button.querySelector('span').textContent = select.selectedOptions[0]?.textContent || '단어장 선택';
+    if (button && select) button.querySelector('.personal-book-picker-label').textContent = select.selectedOptions[0]?.textContent || '단어장 선택';
   };
   window.openPersonalBookChoice = function () {
     const view = open({ title: '단어장 선택', description: '공부할 단어장을 골라주세요.', list: true });
