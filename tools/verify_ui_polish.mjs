@@ -115,7 +115,7 @@ assert.equal(psw.getComputedStyle(psd.querySelector('.book-action-row')).width,'
 personalStyleDom.window.close();
 console.log('PASS personal mobile toolbar stays horizontal; compact menu alignment and spacing');
 
-const bd=new JSDOM('<select id="personalBookSelect"></select><button id="personalBookPickerButton"><span></span></button>',{url:'https://example.test',runScripts:'outside-only'});
+const bd=new JSDOM('<select id="personalBookSelect"></select><button id="personalBookPickerButton"><span class="personal-book-picker-label"></span></button>',{url:'https://example.test',runScripts:'outside-only'});
 const bw=bd.window;let calls=[],nextError=null,changes=0;
 bw.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
 bw.HTMLDialogElement.prototype.close=function(){this.open=false;this.dispatchEvent(new bw.Event('close'));};
