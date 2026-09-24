@@ -47,3 +47,27 @@ for(const name of fs.readdirSync(new URL('../public/',import.meta.url)).filter(n
  const text=source(name);assert.ok(!/(?<![\w.])(?:window\.)?(?:alert|confirm|prompt)\s*\(/.test(text),name+' still uses a native dialog');
 }
 console.log('PASS real dialogs: cancel/accept, safe text, input validation, queue, duplicate prevention, exam exit/resume and teacher double confirmation');
+
+// Include each real page's stylesheet cascade, not only the isolated component.
+for (const page of ['index.html','teacher.html']) {
+ const markup=source(page);
+ const head=markup.slice(markup.indexOf('<head>')+6,markup.indexOf('</head>'))
+  .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'')
+  .replace(/<link\b[^>]*>/gi,tag=>{
+   const href=tag.match(/href="\.\/([^"?]+)(?:\?[^" ]*)?"/);
+   return /rel="stylesheet"/.test(tag)&&href?'<style>'+source(href[1])+'</style>':'';
+  });
+ const frame=new JSDOM('<!doctype html><html><head>'+head+'</head><body></body></html>',{url:'https://example.test',runScripts:'outside-only'});
+ const win=frame.window;
+ win.HTMLDialogElement.prototype.showModal=function(){this.open=true;};win.HTMLDialogElement.prototype.close=function(){this.open=false;};
+ win.eval(source('app-dialogs.js'));
+ const decision=win.HSMDialog.prompt({title:'매우 긴 단어장 이름을 입력해주세요',message:'긴 설명 '.repeat(40),label:'단어장 이름'});
+ const dialog=win.document.querySelector('dialog');
+ for(const selector of ['h2','.hsm-dialog-message','label'])assert.equal(win.getComputedStyle(dialog.querySelector(selector)).textAlign,'left',page+' '+selector);
+ assert.equal(win.getComputedStyle(dialog.querySelector('label')).marginTop,'0px');
+ assert.equal(win.getComputedStyle(dialog.querySelector('h2')).paddingLeft,'0px');
+ assert.equal(win.getComputedStyle(dialog.querySelector('input')).boxSizing,'border-box');
+ assert.equal(win.getComputedStyle(dialog.querySelector('[data-accept]')).textAlign,'center');
+ dialog.querySelector('[data-cancel]').click();await decision;win.close();
+}
+console.log('PASS student/teacher page CSS cascade: title/body/label alignment, label spacing and input sizing');

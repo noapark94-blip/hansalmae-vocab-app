@@ -3,16 +3,16 @@ dialog.hsm-app-dialog{box-sizing:border-box;width:calc(100% - 40px);max-width:40
 dialog.hsm-app-dialog::backdrop{background:rgba(35,21,32,.38);backdrop-filter:blur(3px)}
 dialog.hsm-app-dialog form{display:block;margin:0;min-width:0}
 dialog.hsm-app-dialog .hsm-dialog-mark{display:grid;place-items:center;width:38px;height:38px;margin:0 0 16px;border-radius:13px;background:#f6edf3;color:#8f145f;font-size:22px;font-weight:700}
-dialog.hsm-app-dialog h2{margin:0;color:#431333;font-size:21px;line-height:1.4;font-weight:750;letter-spacing:-.5px;overflow-wrap:anywhere;word-break:keep-all}
-dialog.hsm-app-dialog .hsm-dialog-message{margin:12px 0 0;color:#766975;font-size:15px;font-weight:400;line-height:1.7;white-space:pre-line;overflow-wrap:anywhere;word-break:keep-all}
+dialog.hsm-app-dialog h2{display:block;text-align:left;padding:0;width:100%;min-width:0;margin:0;color:#431333;font-size:21px;line-height:1.4;font-weight:750;letter-spacing:-.5px;overflow-wrap:anywhere;word-break:keep-all}
+dialog.hsm-app-dialog .hsm-dialog-message{text-align:left;padding:0;min-width:0;margin:12px 0 0;color:#766975;font-size:15px;font-weight:400;line-height:1.7;white-space:pre-line;overflow-wrap:anywhere;word-break:keep-all}
 dialog.hsm-app-dialog .hsm-dialog-field{margin-top:20px;min-width:0}
-dialog.hsm-app-dialog label{display:block;margin-bottom:8px;color:#6a5364;font-size:13px;font-weight:650}
-dialog.hsm-app-dialog input{box-sizing:border-box;display:block;width:100%;min-width:0;max-width:100%;height:48px;padding:11px 13px;border:1px solid #ded1dc;border-radius:12px;background:#fcfafc;color:#30232d;font:inherit;font-size:16px;outline:none}
+dialog.hsm-app-dialog label{display:block;text-align:left;margin:0 0 8px;padding:0;color:#6a5364;font-size:13px;font-weight:650}
+dialog.hsm-app-dialog input{box-sizing:border-box;display:block;width:100%;min-width:0;max-width:100%;min-height:48px;height:auto;margin:0;line-height:1.5;padding:11px 13px;border:1px solid #ded1dc;border-radius:12px;background:#fcfafc;color:#30232d;font:inherit;font-size:16px;outline:none}
 dialog.hsm-app-dialog input:focus{border-color:#961967;box-shadow:0 0 0 3px #96196712}
 dialog.hsm-app-dialog .hsm-dialog-validation{margin:8px 0 0;color:#b33458;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
 dialog.hsm-app-dialog .hsm-dialog-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:26px}
 dialog.hsm-app-dialog .hsm-dialog-actions.is-single{grid-template-columns:minmax(0,1fr)}
-dialog.hsm-app-dialog button{box-sizing:border-box;display:flex;align-items:center;justify-content:center;min-width:0;width:100%;min-height:46px;height:auto;margin:0;padding:12px 10px;border:1px solid transparent;border-radius:12px;background:#f3eef2;color:#705a6b;font:inherit;font-size:15px;font-weight:700;line-height:1.4;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;box-shadow:none;cursor:pointer}
+dialog.hsm-app-dialog button{box-sizing:border-box;display:flex;align-items:center;justify-content:center;min-width:0;width:100%;min-height:46px;height:auto;margin:0;padding:12px 10px;border:1px solid transparent;border-radius:12px;background:#f3eef2;color:#705a6b;font:inherit;font-size:15px;font-weight:700;line-height:1.4;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;box-shadow:none;transform:none;text-align:center;cursor:pointer}
 dialog.hsm-app-dialog button[data-accept]{background:#8f145f;color:white}
 dialog.hsm-app-dialog button.is-danger{background:#fff1f4;color:#ae3154;border-color:#f1d6de}
 dialog.hsm-app-dialog button:focus-visible{outline:3px solid #bb80a8;outline-offset:3px}
@@ -22,3 +22,7 @@ dialog.hsm-app-dialog [hidden]{display:none!important}
 #personalBookDialog .book-dialog-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
 #personalBookDialog .book-dialog-actions button{min-width:0;height:auto;min-height:46px;white-space:normal}
 @media(max-width:360px){dialog.hsm-app-dialog{width:calc(100% - 28px);padding:21px;border-radius:20px}dialog.hsm-app-dialog h2{font-size:19px}dialog.hsm-app-dialog button{font-size:14px}}
+
+/* Keep text and controls on one shared left edge, independent of page styles. */
+dialog.hsm-app-dialog .hsm-dialog-validation{text-align:left;padding:0}
+dialog.hsm-app-dialog form>*,dialog.hsm-app-dialog .hsm-dialog-field>*{box-sizing:border-box;max-width:100%}

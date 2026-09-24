@@ -166,8 +166,8 @@
 #personalBookDialog input{box-sizing:border-box;width:100%;min-height:46px;margin:0;padding:11px 12px;border:1px solid #deced8;border-radius:10px;background:#fff;font-size:16px;color:#392b34;outline:none}
 #personalBookDialog input:focus{border-color:#9b4479;box-shadow:0 0 0 3px #f5e9f1}
 #personalBookDialog button{box-sizing:border-box;min-height:44px;margin:0;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:600;line-height:20px;box-shadow:none;transform:none!important}
-#personalBookDialog .book-dialog-actions{display:flex;gap:8px;margin-top:22px}
-#personalBookDialog .book-dialog-actions button{flex:1;width:0;border:1px solid #e8dfe5;background:#fff;color:#796773}
+#personalBookDialog .book-dialog-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:22px}
+#personalBookDialog .book-dialog-actions button{min-width:0;width:100%;text-align:center;border:1px solid #e8dfe5;background:#fff;color:#796773}
 #personalBookDialog .book-dialog-actions [data-submit]{background:#8f145f;border-color:#8f145f;color:#fff}
 #personalBookDialog .book-dialog-actions [data-submit].is-danger{background:#ac435f;border-color:#ac435f}
 #personalBookDialog [hidden]{display:none!important}
@@ -179,3 +179,9 @@
 #personalBookDialog .book-dialog-check{width:16px;flex:0 0 16px;text-align:center}
 #personalBookDialog button:focus-visible{outline:2px solid #8f145f;outline-offset:2px}
 #personalBookDialog button:disabled{opacity:.55;cursor:wait}
+
+#personalBookDialog form{min-width:0;text-align:left}
+#personalBookDialog .book-dialog-description,#personalBookDialog .book-dialog-error,#personalBookDialog label{text-align:left}
+#personalBookDialog .book-dialog-body{min-width:0}
+#personalBookDialog input{min-width:0;max-width:100%;line-height:1.5}
+#personalBookDialog .book-dialog-option>span:first-child{white-space:normal;word-break:keep-all}
