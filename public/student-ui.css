@@ -125,7 +125,7 @@
 #personalVocabularyScreen .personal-compact-check:focus-within span{outline:2px solid #8f145f;outline-offset:3px}
 
 #personalVocabularyScreen .book-action-row .hsm-ui-icon{width:16px;height:16px;flex:0 0 16px}
-#personalVocabularyScreen .book-action-row button:not(.hsm-icon-label){padding-left:34px}
+#personalVocabularyScreen .book-action-row .personal-menu-icon{display:block;width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 #personalVocabularyScreen .book-management>summary:focus-visible{outline:2px solid #8f145f;outline-offset:3px}
 #personalVocabularyScreen .personal-selection-panel.is-selecting{padding:8px 12px;border:1px solid #eee5eb;border-radius:12px;background:#fcfafb}
 #personalVocabularyScreen .personal-main-toolbar #personalSelectionModeButton.active-selection-mode{color:#78636e;font-weight:500}
@@ -146,3 +146,10 @@
 #personalVocabularyScreen .personal-selection-panel.is-selecting #personalSelectionModeButton{font-weight:600;line-height:20px}
 #personalVocabularyScreen .personal-selection-panel.is-selecting .personal-bulk-count{min-height:44px;line-height:20px;align-items:center}
 @media(max-width:360px){#personalVocabularyScreen .personal-selection-panel.is-selecting .personal-main-toolbar button{padding:0 7px;font-size:12px}}
+
+#personalVocabularyScreen .book-action-row{gap:0;padding:5px;border-radius:12px;border-color:#e9e2e7;box-shadow:0 8px 24px rgba(55,30,46,.09)}
+#personalVocabularyScreen .book-action-row button{height:40px;min-height:40px;padding:0 10px;gap:9px;color:#61535c;font-size:13px;line-height:20px;letter-spacing:-.02em;font-weight:500;transform:none!important}
+#personalVocabularyScreen .book-action-row button span{display:block;line-height:20px}
+#personalVocabularyScreen .book-action-row .danger-button{position:relative;margin-top:5px;color:#a34e65}
+#personalVocabularyScreen .book-action-row .danger-button::before{content:"";position:absolute;top:-3px;left:8px;right:8px;height:1px;background:#eee7ec}
+#personalVocabularyScreen .book-action-row .danger-button:hover{background:#fff5f7}
