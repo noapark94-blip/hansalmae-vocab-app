@@ -455,3 +455,14 @@ body.collection-open{overflow:hidden}
 #hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-word-mean{grid-column:2!important;grid-row:2!important;min-width:0!important;font-size:15px!important;font-weight:400!important;line-height:1.6!important;color:#675560;word-break:keep-all!important;overflow-wrap:anywhere!important}
 #hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-word-row:has(.hsm-school-word-check) .hsm-school-word-num{grid-column:2!important}
 #hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-word-row:has(.hsm-school-word-check) .hsm-school-word-eng,#hsmSchoolStudentPage #hsmSchoolPageBody .hsm-school-word-row:has(.hsm-school-word-check) .hsm-school-word-mean{grid-column:3!important}
+
+/* Wrong-word actions: a compact, consistent footer. */
+#mainApp #wrongNotebookList .hsm-unified-word.mastered{opacity:1}
+#mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:6px!important;margin:14px 0 0!important;padding:12px 0 0!important;border-top:1px solid #f0e8ee}
+#mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions>button{display:inline-flex!important;align-items:center;justify-content:center;flex:1 1 80px!important;width:auto!important;min-width:0!important;max-width:100%;min-height:44px!important;margin:0!important;padding:9px 8px!important;border:0!important;border-radius:10px!important;background:transparent!important;color:#8b6b7e!important;font-size:12px!important;font-weight:500!important;line-height:1.4!important;white-space:nowrap!important;box-shadow:none!important;transform:none!important}
+#mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions>button:first-child{background:#f5e9f1!important;color:#8f145f!important;font-weight:600!important}
+#mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions>button.delete-mastered-button{flex:0 0 44px!important;color:#ad7784!important}
+#mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions>button:active{background:#efe2eb!important}
+#mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions>button:focus-visible{outline:2px solid #a43b81!important;outline-offset:2px}
+#mainApp #wrongNotebookList .hsm-unified-word .wrong-note-actions>button:disabled{opacity:.5;cursor:wait}
+#mainApp #wrongNotebookList.selection-mode .hsm-unified-word .wrong-note-actions{display:none!important}
