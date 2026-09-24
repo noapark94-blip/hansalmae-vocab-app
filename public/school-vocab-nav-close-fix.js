@@ -6,8 +6,14 @@
   var NAV_LABELS=['테스트','단어장','내 학습','랭킹','더보기'];
   function normalize(v){return String(v||'').replace(/\s+/g,' ').trim();}
   function schoolPage(){return document.getElementById('hsmSchoolStudentPage');}
-  function isOpen(){var page=schoolPage();return !!(page && !page.hidden);}
+  function isOpen(){return ['hsmSchoolStudentPage','hsmSchoolContentPage'].some(function(id){var page=document.getElementById(id);return page&&!page.hidden;});}
+  var navigating=false;
   async function closeSchoolPageForNav(){
+    var content=document.getElementById('hsmSchoolContentPage');
+    if(content&&!content.hidden){
+      if(typeof window.hsmRequestCloseSchoolContentPage_!=='function')return false;
+      if(!(await window.hsmRequestCloseSchoolContentPage_()))return false;
+    }
     var page=schoolPage();
     if(!page || page.hidden)return true;
     if(typeof window.hsmRequestCloseSchoolVocabPage_==='function')return window.hsmRequestCloseSchoolVocabPage_();
@@ -22,15 +28,17 @@
   document.addEventListener('click',async function(event){
     if(!isOpen())return;
     var target=event.target && event.target.closest ? event.target.closest('button,a,[role="button"]') : null;
-    if(!target || target.closest('#hsmSchoolStudentPage'))return;
+    if(!target || target.closest('#hsmSchoolStudentPage,#hsmSchoolContentPage'))return;
     var text=normalize(target.textContent);
     var aria=normalize(target.getAttribute && (target.getAttribute('aria-label')||target.getAttribute('title')));
     var label=NAV_LABELS.find(function(x){return text===x || aria===x || text.endsWith(x);});
-    if(!label)return;
+    if(!label && !target.matches('[data-mobile-menu]'))return;
     event.preventDefault();
     event.stopPropagation();
     if(event.stopImmediatePropagation)event.stopImmediatePropagation();
-    if(await closeSchoolPageForNav()) target.click();
+    if(navigating)return;
+    navigating=true;
+    try{if(await closeSchoolPageForNav()) target.click();}finally{navigating=false;}
   },true);
 
 

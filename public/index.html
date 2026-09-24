@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-59"></script>
+  <script src="./app-dialogs.js?v=20260925-60"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-59"></script>
-  <script src="./config.js?v=20260925-59"></script>
-  <script src="./app-update.js?v=20260925-59"></script>
+  <script src="./school-runtime.js?v=20260925-60"></script>
+  <script src="./config.js?v=20260925-60"></script>
+  <script src="./app-update.js?v=20260925-60"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4746,15 +4746,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-59">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-59">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-59">
-<script defer src="./test-setup.js?v=20260925-59"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-59">
-<script defer src="./wrong-review.js?v=20260925-59"></script>
-<script defer src="./vocab-selection.js?v=20260925-59"></script>
-<script defer src="./personal-dialogs.js?v=20260925-59"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-59">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-60">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-60">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-60">
+<script defer src="./test-setup.js?v=20260925-60"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-60">
+<script defer src="./wrong-review.js?v=20260925-60"></script>
+<script defer src="./vocab-selection.js?v=20260925-60"></script>
+<script defer src="./personal-dialogs.js?v=20260925-60"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-60">
 </head>
 
 <body>
@@ -16275,7 +16275,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-59"></script>
+<script src="./ui-icons.js?v=20260925-60"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
@@ -16328,6 +16328,28 @@ function hsmSyncInstallButton_(){
   });
 })();
 </script>
+
+
+<style id="hsm-school-shared-layout">
+body #hsmSchoolStudentPage,body #hsmSchoolContentPage{padding:calc(16px + env(safe-area-inset-top)) 14px calc(110px + env(safe-area-inset-bottom));background:var(--hsm-bg,#f8f4f7)}
+body .hsm-school-page-inner,body .hsm-ct-inner{width:min(760px,100%);margin:0 auto}
+body #hsmSchoolStudentPage .hsm-school-page-head,body #hsmSchoolContentPage .hsm-ct-head{display:flex;align-items:center;gap:12px;padding:16px;margin:0 0 14px;border:1px solid #eadfe5;border-top:3px solid #ad4b89;border-radius:20px;background:#fff;box-shadow:none}
+body #hsmSchoolStudentPage .hsm-school-page-head>div,body #hsmSchoolContentPage .hsm-ct-head>div{min-width:0}
+body #hsmSchoolStudentPage .hsm-school-page-title,body #hsmSchoolContentPage .hsm-ct-title{font-size:23px!important;font-weight:800;line-height:1.35;letter-spacing:-.035em;color:#55143d;word-break:keep-all;overflow-wrap:break-word}
+body #hsmSchoolStudentPage .hsm-school-page-sub,body #hsmSchoolContentPage .hsm-ct-sub{font-size:13px;line-height:1.5;color:#857781;margin-top:4px}
+body #hsmSchoolStudentPage .hsm-school-back,body #hsmSchoolContentPage .hsm-ct-back{flex:0 0 44px;min-width:44px!important}
+body #hsmSchoolStudentPage .hsm-school-card,body #hsmSchoolContentPage .hsm-ct-card{padding:20px!important;border:1px solid #eadfe5;border-radius:20px;margin-bottom:14px;box-shadow:0 6px 20px rgba(70,29,53,.035)}
+body #hsmSchoolContentPage .hsm-ct-card>h2{font-size:23px;line-height:1.4;font-weight:800;word-break:keep-all;overflow-wrap:break-word}
+body #hsmSchoolStudentPage .hsm-school-note,body #hsmSchoolContentPage .hsm-ct-note{padding:0 0 14px;margin:0 0 14px;border-bottom:1px solid #f0e6eb;font-size:13px;line-height:1.65;color:#857781}
+body #hsmSchoolStudentPage .hsm-school-book,body #hsmSchoolContentPage .hsm-ct-book{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:16px;border:1px solid #eadfe5;border-radius:16px;align-items:center}
+body #hsmSchoolStudentPage .hsm-school-book h3,body #hsmSchoolContentPage .hsm-ct-book h3{font-size:17px!important;font-weight:750!important;line-height:1.45!important;word-break:keep-all;overflow-wrap:break-word}
+body #hsmSchoolStudentPage .hsm-school-meta,body #hsmSchoolContentPage .hsm-ct-meta{font-size:13px;line-height:1.6;color:#857781;overflow-wrap:break-word}
+body #hsmSchoolStudentPage .hsm-school-open,body #hsmSchoolContentPage .hsm-ct-open{min-width:0!important;min-height:44px!important;padding:10px 13px!important;border:0!important;border-radius:12px!important;background:#8f145f!important;font-size:13px!important;font-weight:650!important;white-space:nowrap;justify-self:end}
+body #hsmSchoolContentPage .hsm-ct-actions button{min-height:44px!important;border-radius:12px!important;font-size:14px!important;font-weight:650!important}
+body #hsmSchoolContentPage .hsm-ct-translation{background:#faf6f9;color:#71616c;font-weight:500}
+@media(max-width:600px){body #hsmSchoolStudentPage,body #hsmSchoolContentPage{padding-left:12px;padding-right:12px}body #hsmSchoolStudentPage .hsm-school-card,body #hsmSchoolContentPage .hsm-ct-card{padding:16px!important}}
+@media(max-width:360px){body #hsmSchoolStudentPage .hsm-school-book,body #hsmSchoolContentPage .hsm-ct-book{grid-template-columns:minmax(0,1fr)}body #hsmSchoolStudentPage .hsm-school-open,body #hsmSchoolContentPage .hsm-ct-open{justify-self:start}}
+</style>
 
 </body>
 </html>

@@ -34,6 +34,7 @@
   function openPage(){var r=root();state.previousHash=location.hash;state.previousOverflow=document.documentElement.style.overflow;r.innerHTML=shell('학교 내신 본문','청크 배열과 어형 변형 연습');r.hidden=false;document.documentElement.style.overflow='hidden';history.pushState({hsmSchoolContentPage:true},'',location.href.split('#')[0]+'#school-content');r.querySelector('.hsm-ct-back').onclick=requestClosePage;loadBooks();}
   function isTestActive(){var r=root();return!r.hidden&&!!r.querySelector('.hsm-content-study');}
   async function confirmTestExit(){return!isTestActive()||(await HSMDialog.confirm('현재 시험을 그만둘까요?\n지금까지의 진행 내용은 삭제됩니다.'));}
+  window.hsmRequestCloseSchoolContentPage_=requestClosePage;
   async function requestClosePage(){if(!(await confirmTestExit()))return false;closePage();return true;}
   function closePage(){var r=root();r.hidden=true;document.documentElement.style.overflow=state.previousOverflow||'';state.book=null;state.selected=[];state.pool=[];state.results=[];state.checked=false;if(location.hash==='#school-content')history.replaceState({},'',location.pathname+location.search+(state.previousHash||''));}
   function meta(book){return[book.schoolName,book.gradeLabel,book.textbook,book.unitLabel].filter(Boolean).join(' · ');}
