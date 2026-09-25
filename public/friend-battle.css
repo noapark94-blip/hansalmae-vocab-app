@@ -36,8 +36,8 @@
 
 /* One continuous match-intro card, scoped away from other learning shortcuts. */
 #myPageScreen #fbShortcut{
- display:block!important;position:relative!important;isolation:isolate;width:100%!important;
- padding:0!important;margin:0!important;overflow:hidden;border:1px solid #613752!important;
+ display:block!important;position:relative!important;isolation:isolate;width:95%!important;
+ padding:0!important;margin:0 auto!important;overflow:hidden;border:1px solid #613752!important;
  border-radius:24px!important;text-align:left!important;cursor:pointer;
  background:linear-gradient(115deg,#3c102e,#23102f)!important;
  color:#fff2d7;box-shadow:0 8px 24px #42103018!important;
