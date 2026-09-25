@@ -69,14 +69,14 @@
  function scoreboard(g){
   if(['finished','invited','ready'].includes(g.status)){
    const finished=g.status==='finished';
-   const player=(p,side)=>'<div class="fb-stage-player fb-'+side+(g.winner===p?.id?' is-winner':'')+'"><span class="fb-player-tag">'+(p?.id===g.me?'YOU':'RIVAL')+'</span>'+image(p)+'</div>';
+   const player=(p,side)=>'<div class="fb-stage-player fb-'+side+(g.winner===p?.id?' is-winner':'')+(g.status==='ready'&&(side==='host'?g.hostReady:g.guestReady)?' is-ready':'')+'"><span class="fb-player-tag">'+(p?.id===g.me?'YOU':'RIVAL')+'</span>'+image(p)+'</div>';
    const plate=(p,side)=>{
     const prepared=side==='host'?g.hostReady:g.guestReady;
     const status=g.status==='ready'?(prepared?'준비 완료':'준비 중'):side==='host'?'신청 완료':'수락 대기';
     const record=finished?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>'+((side==='host'?g.hostMs:g.guestMs)/1000).toFixed(1)+'<span>초</span>':'<span class="fb-status-dot '+(g.status==='ready'&&prepared?'is-ready':'')+'" aria-hidden="true"></span>'+status;
     return '<div class="fb-nameplate"><strong>'+esc(p?.name)+'</strong><small>'+record+'</small></div>';
    };
-   const center=finished?'<span>FINAL</span><div class="fb-score"><b data-score="host">'+g.hostScore+'</b><span>:</span><b data-score="guest">'+g.guestScore+'</b></div><small>정답 수</small>':'<span>WORD BATTLE</span><b class="fb-stage-vs">VS</b><small>'+(g.status==='ready'?'GET READY':'MATCH INVITE')+'</small>';
+   const center=finished?'<span>FINAL</span><div class="fb-score"><b data-score="host">'+g.hostScore+'</b><span>:</span><b data-score="guest">'+g.guestScore+'</b></div><small>정답 수</small>':'<b class="fb-stage-vs">VS</b>';
    return '<div class="fb-final-arena"><div class="fb-final-stage">'+player(g.host,'host')+'<div class="fb-final-score">'+center+'</div>'+player(g.guest,'guest')+'</div><div class="fb-nameplates">'+plate(g.host,'host')+plate(g.guest,'guest')+'</div></div>';
   }
 
@@ -111,8 +111,8 @@
   if(!active()||!game)return;const g=game,content=JSON.stringify({...g,serverNow:null,deadline:g.deadline});if(content===signature){tick();return;}signature=content;root.classList.remove('fb-lobby');root.classList.add('fb-game');root.classList.toggle('fb-finished',g.status==='finished');root.classList.toggle('fb-pregame',['invited','ready'].includes(g.status));root.classList.toggle('fb-closed',!['invited','ready','playing','finished'].includes(g.status));
   const mine=g.host?.id===g.me,ready=mine?g.hostReady:g.guestReady;
   let html='<div class="fb-section-head"><h2 class="fb-game-title">WORD BATTLE</h2>'+(live()?button('나가기','exit','','fb-text'):'')+'</div><p class="fb-sub">'+summary(g.settings)+'</p><div id="fbConnection" class="fb-connection" role="status"></div>'+(g.status==='finished'?resultHeading(g):'')+(['invited','ready','playing','finished'].includes(g.status)?scoreboard(g):'');
-  if(g.status==='invited')html+='<div class="fb-wait"><span class="fb-wait-label"><i aria-hidden="true"></i>'+(mine?'WAITING FOR RIVAL':'NEW CHALLENGE')+'</span><h3>'+(mine?'친구의 수락을 기다려요':'친구가 대전을 신청했어요')+'</h3><p>한 문제에 '+timeLimit(g.settings)+'초 · 총 '+questionCount(g.settings)+'문제<br>서로 준비되면 함께 시작해요.</p></div>'+(mine?'<p class="fb-note">2분 안에 수락하지 않으면 신청이 종료돼요.</p>':'<div class="fb-two">'+button('다음에 할게요','decline',g.id)+button('함께 대전하기','accept',g.id,'fb-primary')+'</div>');
-  else if(g.status==='ready')html+='<div class="fb-wait"><span class="fb-wait-label"><i aria-hidden="true"></i>GET READY</span><h3>'+(ready?'준비 완료!':'준비됐나요?')+'</h3><p>같은 문제, 각자의 실력.<br>둘 다 준비를 누르면 시작해요.</p><div class="fb-readiness"><span>'+(g.hostReady?'✓':'○')+' '+esc(g.host?.name)+'</span><span>'+(g.guestReady?'✓':'○')+' '+esc(g.guest?.name)+'</span></div></div><button class="fb-btn fb-primary fb-wide" data-action="ready" '+(ready?'disabled':'')+'>'+(ready?'친구의 준비를 기다려요':'준비 완료')+'</button>';
+  if(g.status==='invited')html+='<div class="fb-wait"><span class="fb-wait-dots" aria-hidden="true"><i></i><i></i><i></i></span><h3>'+(mine?'친구의 수락을 기다려요':'친구가 대전을 신청했어요')+'</h3><p>한 문제에 '+timeLimit(g.settings)+'초 · 총 '+questionCount(g.settings)+'문제<br>서로 준비되면 함께 시작해요.</p></div>'+(mine?'<p class="fb-note">2분 안에 수락하지 않으면 신청이 종료돼요.</p>':'<div class="fb-two">'+button('다음에 할게요','decline',g.id)+button('함께 대전하기','accept',g.id,'fb-primary')+'</div>');
+  else if(g.status==='ready')html+='<div class="fb-wait"><span class="fb-wait-dots" aria-hidden="true"><i></i><i></i><i></i></span><h3>'+(ready?'준비 완료!':'준비됐나요?')+'</h3><p>같은 문제, 각자의 실력.<br>둘 다 준비를 누르면 시작해요.</p><div class="fb-readiness"><span>'+(g.hostReady?'✓':'○')+' '+esc(g.host?.name)+'</span><span>'+(g.guestReady?'✓':'○')+' '+esc(g.guest?.name)+'</span></div></div><button class="fb-btn fb-primary fb-wide" data-action="ready" '+(ready?'disabled':'')+'>'+(ready?'친구의 준비를 기다려요':'준비 완료')+'</button>';
   else if(g.status==='playing'){
    const q=g.question;
    html+='<div class="fb-round"><span><small>ROUND</small> '+String(g.round+1).padStart(2,'0')+' / '+questionCount(g.settings)+'</span><span id="fbTimer" aria-live="off"></span></div><div class="fb-progress fb-time-track"><i id="fbTimeFill"></i></div>';
