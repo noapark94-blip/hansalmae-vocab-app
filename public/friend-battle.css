@@ -249,3 +249,39 @@
 @media(hover:hover){#friendBattleScreen .fb-lobby-tools .fb-manage-toggle:hover{background:#fff;color:#75415f}#friendBattleScreen .fb-lobby-tools .fb-add-toggle:hover{border-color:#c5a7bb}}
 @media(max-width:360px){#friendBattleScreen .fb-lobby-tools{gap:2px;padding:3px}#friendBattleScreen .fb-lobby-tools .fb-btn{gap:4px;padding:7px 7px;font-size:10px}#friendBattleScreen .fb-lobby-tools .fb-btn svg{width:14px;height:14px;flex-basis:14px}}
 @media(prefers-reduced-motion:reduce){#friendBattleScreen .fb-lobby-tools .fb-btn{transition:none}}
+/* Finished match: outcome, arena, rewards and replay form one compact result. */
+#friendBattleScreen.fb-finished{background:linear-gradient(165deg,#fff 35%,#fcf8fc);padding:20px 18px 22px}
+#friendBattleScreen.fb-finished .fb-game-title{font-size:15px!important;letter-spacing:.02em}
+#friendBattleScreen.fb-finished>.fb-sub{font-size:10px!important;color:#927e91}
+.fb-result-heading{text-align:center;padding:14px 0 18px}
+.fb-result-heading>span{font:700 9px/1.4 Arial,sans-serif;letter-spacing:3px;color:#998293}
+#friendBattleScreen .fb-result-heading h3{font:900 italic 52px/.95 Arial,sans-serif!important;letter-spacing:-2px;margin:9px 0 11px!important;color:#866688}
+#friendBattleScreen .fb-result-heading.is-win h3{color:#a07837;text-shadow:0 3px 0 #f3e4c5}
+#friendBattleScreen .fb-result-heading.is-draw h3{color:#6e7299}
+#friendBattleScreen .fb-result-heading p{font-size:11px;line-height:1.6;color:#8d788b;margin:0;word-break:keep-all}
+#friendBattleScreen.fb-finished .fb-arena{padding:24px 8px 20px;border-radius:18px;background:linear-gradient(0deg,#20112d55,#20112d22),url('./images/battle-result-arena-v1.webp') center/cover,#25142f;min-height:188px;box-shadow:0 12px 26px #31163719;border:1px solid #88709955}
+#friendBattleScreen.fb-finished .fb-arena:before{display:none}
+#friendBattleScreen.fb-finished .fb-arena .fb-avatar{width:86px;height:86px;filter:drop-shadow(0 7px 10px #0f041d88)}
+#friendBattleScreen.fb-finished .fb-fighter{gap:5px}
+#friendBattleScreen.fb-finished .fb-player-tag{font-size:8px;letter-spacing:2px;color:#e4d4ed}
+#friendBattleScreen.fb-finished .is-winner .fb-player-tag{color:#ffe3a8}
+#friendBattleScreen.fb-finished .is-winner .fb-avatar{filter:drop-shadow(0 0 12px #f8d39970)}
+#friendBattleScreen.fb-finished .fb-versus{font:700 9px/1.5 Arial,sans-serif;letter-spacing:2px;color:#e4cfa4;text-shadow:none}
+#friendBattleScreen.fb-finished .fb-score{gap:7px;justify-content:center;margin:6px 0}
+#friendBattleScreen.fb-finished .fb-score b{font-size:30px;color:#fff5de}
+#friendBattleScreen.fb-finished .fb-score>span{font-size:17px;color:#b6a1c4}
+#friendBattleScreen.fb-finished .fb-arena small{font-size:10px;color:#e0d2e9;font-variant-numeric:tabular-nums}
+#friendBattleScreen.fb-finished .fb-result{margin:14px 0}
+#friendBattleScreen.fb-finished .fb-result-stats{margin:0;padding:15px 8px;background:#f5f0f6;border:1px solid #eee5ef;border-radius:14px}
+#friendBattleScreen.fb-finished .fb-result-stats strong{font-size:23px;margin-top:5px;color:#614568}
+#friendBattleScreen.fb-finished .fb-result-stats small{font-size:10px}
+#friendBattleScreen.fb-finished .fb-rewards{margin:14px 0}
+#friendBattleScreen.fb-finished .fb-result-actions{margin-top:20px;grid-template-columns:1fr 1.45fr}
+#friendBattleScreen.fb-finished .fb-result-actions .fb-btn{min-height:48px;border-radius:12px;font-size:13px}
+#friendBattleScreen.fb-finished .fb-result-actions .fb-primary{background:linear-gradient(120deg,#f3dfb3,#dbb77a)!important;color:#503820!important;border:1px solid #d3b47d!important;box-shadow:0 5px 12px #ae854722!important}
+#friendBattleScreen.fb-finished .fb-result-actions .fb-primary span{margin-left:12px}
+#friendBattleScreen.fb-finished .fb-review{margin-top:18px;border-top:1px solid #ece3ed}
+#friendBattleScreen.fb-finished .fb-review summary{font-size:12px}
+#friendBattleScreen .fb-review-clear{text-align:center;font-size:11px;color:#938397;margin:20px 0 0}
+.fb-review-clear>span{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#eee8f1;color:#897296;margin-right:5px}
+@media(max-width:360px){#friendBattleScreen.fb-finished{padding:16px 12px 20px}#friendBattleScreen.fb-finished .fb-arena .fb-avatar{width:68px;height:68px}#friendBattleScreen.fb-finished .fb-score b{font-size:26px}}

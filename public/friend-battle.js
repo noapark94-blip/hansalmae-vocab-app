@@ -49,7 +49,7 @@
   return '<article class="fb-match-card"><div class="fb-match-top"><span class="fb-live-state">'+status+'</span><span>1 : 1 MATCH</span></div><div class="fb-match-players">'+player(home.me,'YOU')+'<b class="fb-lobby-vs">VS</b>'+player(b.opponent,'RIVAL')+'</div><div class="fb-match-chips"><span>'+esc(bookTitle(settings.title))+'</span>'+(settings.kind==='school'?'':'<span>Day '+esc(settings.start)+'–'+esc(settings.end)+'</span>')+'<span>'+questionCount(settings)+'문제</span><span>'+timeLimit(settings)+'초</span><span>'+esc(modes[settings.mode]||'')+'</span></div>'+button(incoming?'대전 신청 확인':b.status==='invited'?'대기실 입장':'대전 입장','room',b.id,'fb-match-enter')+'</article>';
  }
  function renderHome(){
-  root.classList.remove('fb-game');root.classList.add('fb-lobby');
+  root.classList.remove('fb-game','fb-finished');root.classList.add('fb-lobby');
   const focused=document.activeElement;if(focused&&root.contains(focused)&&focused.matches('input'))return;
   const searchOpen=!!root.querySelector('.fb-add-friend[open]'),searchValue=$('fbStudentId')?.value||'';
   const rulesOpen=!!root.querySelector('.fb-rules[open]');
@@ -67,8 +67,8 @@
    '<details class="fb-rules" '+(rulesOpen?'open':'')+'><summary>대전 규칙 안내</summary><p>정답 수로 승부하고, 동점이면 정답을 맞힌 총 시간으로 결정해요.</p><p>10문제 기준 WIN +5P · DRAW +3P · LOSE +1P. 경험치는 정답 1개당 +2 EXP, 완료 시 +5 EXP예요. 20·30문제는 포인트와 완료 경험치가 2·3배예요.</p><p>기존 월간 포인트와 누적 경험치에 합산돼요. 하루 100문제, 같은 친구와 하루 첫 3판까지 보상하며, 제한 시간에 따른 차이는 없어요. 한도가 남은 만큼 앞 문제부터 계산하고 비례 보상은 소수점 아래를 버려요. 날짜는 한국 시간 자정에 바뀌어요.</p><p>일반 단어장은 해당 단어장 순위에, 학교 수행평가는 학생 학년에 맞는 중등·고등 순위에 합산돼요. 중도 포기자는 보상이 없고, 상대는 이미 채점된 정답의 경험치만 받아요.</p></details>';
   }
  function scoreboard(g){
-  const fighter=(p,side)=>{const mine=p?.id===g.me,done=mine?g.answered:g.opponentAnswered;const status=g.status==='playing'?(g.revealUntil?'ROUND RESULT':!g.question?'READY':done?'선택 완료 ✓':'고르는 중…'):g.status==='ready'?((side==='host'?g.hostReady:g.guestReady)?'준비 완료 ✓':'준비 중'):mine?'PLAYER 1 · 나':'PLAYER 2 · 친구';return '<div class="fb-fighter fb-'+side+'"><span class="fb-player-tag">'+(mine?'YOU':'RIVAL')+'</span>'+image(p)+'<strong>'+esc(p?.name)+'</strong><small class="'+(done?'is-done':'')+'">'+status+'</small></div>';};
-  return '<div class="fb-scoreboard fb-arena">'+fighter(g.host,'host')+'<div class="fb-score-center"><span class="fb-versus">VS</span><div class="fb-score"><b data-score="host">'+g.hostScore+'</b><span>:</span><b data-score="guest">'+g.guestScore+'</b></div><small>WORD BATTLE</small></div>'+fighter(g.guest,'guest')+'</div>';
+  const fighter=(p,side)=>{const mine=p?.id===g.me,done=mine?g.answered:g.opponentAnswered;const status=g.status==='finished'?((side==='host'?g.hostMs:g.guestMs)/1000).toFixed(1)+'초':g.status==='playing'?(g.revealUntil?'ROUND RESULT':!g.question?'READY':done?'선택 완료 ✓':'고르는 중…'):g.status==='ready'?((side==='host'?g.hostReady:g.guestReady)?'준비 완료 ✓':'준비 중'):mine?'PLAYER 1 · 나':'PLAYER 2 · 친구';return '<div class="fb-fighter fb-'+side+(g.status==='finished'&&g.winner===p?.id?' is-winner':'')+'"><span class="fb-player-tag">'+(mine?'YOU':'RIVAL')+'</span>'+image(p)+'<strong>'+esc(p?.name)+'</strong><small class="'+(done?'is-done':'')+'">'+status+'</small></div>';};
+  return '<div class="fb-scoreboard fb-arena">'+fighter(g.host,'host')+'<div class="fb-score-center"><span class="fb-versus">'+(g.status==='finished'?'FINAL':'VS')+'</span><div class="fb-score"><b data-score="host">'+g.hostScore+'</b><span>:</span><b data-score="guest">'+g.guestScore+'</b></div><small>'+(g.status==='finished'?'정답 수':'WORD BATTLE')+'</small></div>'+fighter(g.guest,'guest')+'</div>';
  }
  function rewardPanel(g){
   const r=g.reward;
@@ -85,10 +85,19 @@
   if(info&&Number.isFinite(Number(info.remaining))){if(info.pairRemaining<=0)note='친선전 · 이 친구와 오늘의 3판 보상을 모두 받았어요.';else if(info.remaining<=0)note='친선전 · 오늘의 100문제 보상을 모두 받았어요.';else note+=' · 오늘 '+info.remaining+'문제 남음'+(info.remaining<count?' (앞 '+info.remaining+'문제만 보상)':'');}
   el.textContent=note;
  }
+ function resultHeading(g){
+  const outcome=!g.winner?'draw':g.winner===g.me?'win':'lose';
+  let detail=g.reason||(!g.winner?'정답 수와 풀이 시간이 같아요.':g.winner===g.me?'멋진 한 판, 승리는 나의 것!':'좋은 승부였어요. 다시 도전해볼까요?');
+  if(!g.reason&&g.winner&&g.hostScore===g.guestScore){
+   const delta=Math.abs(g.hostMs-g.guestMs)/1000;
+   detail='정답 수 동점 · '+(delta<0.1?'0.1초 미만':delta.toFixed(1)+'초')+' 차이로 결정됐어요.';
+  }
+  return '<div class="fb-result-heading is-'+outcome+'"><span>MATCH COMPLETE</span><h3>'+outcome.toUpperCase()+'</h3><p>'+esc(detail)+'</p></div>';
+ }
  function renderGame(){
-  if(!active()||!game)return;const g=game,content=JSON.stringify({...g,serverNow:null,deadline:g.deadline});if(content===signature){tick();return;}signature=content;root.classList.remove('fb-lobby');root.classList.add('fb-game');
+  if(!active()||!game)return;const g=game,content=JSON.stringify({...g,serverNow:null,deadline:g.deadline});if(content===signature){tick();return;}signature=content;root.classList.remove('fb-lobby');root.classList.add('fb-game');root.classList.toggle('fb-finished',g.status==='finished');
   const mine=g.host?.id===g.me,ready=mine?g.hostReady:g.guestReady;
-  let html='<div class="fb-section-head"><h2 class="fb-game-title">WORD BATTLE</h2>'+button(live()?'나가기':'친구 목록','exit','','fb-text')+'</div><p class="fb-sub">'+summary(g.settings)+'</p><div id="fbConnection" class="fb-connection" role="status"></div>'+scoreboard(g);
+  let html='<div class="fb-section-head"><h2 class="fb-game-title">WORD BATTLE</h2>'+button(live()?'나가기':'친구 목록','exit','','fb-text')+'</div><p class="fb-sub">'+summary(g.settings)+'</p><div id="fbConnection" class="fb-connection" role="status"></div>'+(g.status==='finished'?resultHeading(g):'')+scoreboard(g);
   if(g.status==='invited')html+='<div class="fb-wait"><span class="fb-orbit">'+icon+'</span><h3>'+(mine?'친구의 수락을 기다려요':'친구가 대전을 신청했어요')+'</h3><p>한 문제에 '+timeLimit(g.settings)+'초 · 총 '+questionCount(g.settings)+'문제<br>서로 준비되면 함께 시작해요.</p></div>'+(mine?'<p class="fb-note">2분 안에 수락하지 않으면 신청이 종료돼요.</p>':'<div class="fb-two">'+button('다음에 할게요','decline',g.id)+button('함께 대전하기','accept',g.id,'fb-primary')+'</div>');
   else if(g.status==='ready')html+='<div class="fb-wait"><h3>준비됐나요?</h3><p>같은 문제, 각자의 실력.<br>둘 다 준비를 누르면 시작해요.</p><div class="fb-readiness"><span>'+(g.hostReady?'✓':'○')+' '+esc(g.host?.name)+'</span><span>'+(g.guestReady?'✓':'○')+' '+esc(g.guest?.name)+'</span></div></div><button class="fb-btn fb-primary fb-wide" data-action="ready" '+(ready?'disabled':'')+'>'+(ready?'친구의 준비를 기다려요':'준비 완료')+'</button>';
   else if(g.status==='playing'){
@@ -98,7 +107,8 @@
    else html+='<p class="fb-prompt-label">'+(q.mode==='engToKor'?'알맞은 뜻을 골라주세요':'알맞은 영어를 골라주세요')+'</p><h3 class="fb-question">'+esc(q.prompt)+'</h3><div class="fb-options">'+q.options.map((o,i)=>'<button class="fb-option '+(q.correctId===o.id?'is-correct':g.choice===o.id?(q.correctId?'is-wrong':'is-picked'):'')+'" data-action="answer" data-id="'+esc(o.id)+'" '+(g.answered||q.correctId?'disabled':'')+'><span>'+String(i+1).padStart(2,'0')+'</span><b>'+esc(o.text)+'</b>'+(q.correctId===o.id?'<em aria-label="정답">✓</em>':g.choice===o.id?'<em aria-label="'+(q.correctId?'오답':'선택 완료')+'">'+(q.correctId?'×':'✓')+'</em>':'')+'</button>').join('')+'</div><p class="fb-answer-status" role="status">'+(q.correctId?(g.choice===q.correctId?'정답이에요!':'정답을 확인해보세요.') : g.answered?(g.opponentAnswered?'결과를 확인하고 있어요':'제출 완료 · 친구의 답을 기다려요'):g.opponentAnswered?'친구가 답을 제출했어요.':'정답을 고르면 바로 제출돼요.')+'</p>';
   }else if(g.status==='finished'){
    const score=mine?g.hostScore:g.guestScore,ms=mine?g.hostMs:g.guestMs,wrong=(g.review||[]).filter(w=>!w.correct);
-   html+='<div class="fb-result"><span class="fb-result-badge">'+(!g.winner?'좋은 승부였어요':g.winner===g.me?'이번 대전의 주인공':'함께 한 뼘 성장했어요')+'</span><h3>'+(!g.winner?'무승부':g.winner===g.me?'멋진 승리!':'다음 판에 도전해요')+'</h3>'+(g.reason?'<p>'+esc(g.reason)+'</p>':'')+'<div class="fb-result-stats"><div><small>내 정답</small><strong>'+score+'<em> / '+questionCount(g.settings)+'</em></strong></div><div><small>정답 풀이 시간</small><strong>'+(ms/1000).toFixed(1)+'<em>초</em></strong></div></div></div>'+rewardPanel(g)+'<div class="fb-two">'+button('친구 목록','exit')+button('한 판 더','rematch','','fb-primary')+'</div><details class="fb-review" '+(wrong.length?'open':'')+'><summary>다시 익힐 단어 <span>'+wrong.length+'개</span></summary>'+wrong.map(w=>'<article><strong>'+esc(w.word)+'</strong><p>'+esc(w.meaning)+'</p>'+(w.example?'<div>'+esc(w.example)+(w.translation?'<small>'+esc(w.translation)+'</small>':'')+'</div>':'')+'</article>').join('')+'</details>';
+   html+='<div class="fb-result"><div class="fb-result-stats"><div><small>내 정답</small><strong>'+score+'<em> / '+questionCount(g.settings)+'</em></strong></div><div><small>정답 풀이 시간</small><strong>'+(ms/1000).toFixed(1)+'<em>초</em></strong></div></div></div>'+rewardPanel(g)+'<div class="fb-two fb-result-actions">'+button('친구 목록','exit')+button('한 판 더 <span aria-hidden="true">↗</span>','rematch','','fb-primary')+'</div>'+(wrong.length?'<details class="fb-review"><summary>다시 익힐 단어 <span>'+wrong.length+'개</span></summary>'+wrong.map(w=>'<article><strong>'+esc(w.word)+'</strong><p>'+esc(w.meaning)+'</p>'+(w.example?'<div>'+esc(w.example)+(w.translation?'<small>'+esc(w.translation)+'</small>':'')+'</div>':'')+'</article>').join('')+'</details>':'<p class="fb-review-clear"><span aria-hidden="true">✓</span> 다시 익힐 단어가 없어요</p>');
+
   }else html+='<div class="fb-wait"><h3>대전이 종료됐어요</h3><p>'+esc(g.reason||(g.status==='declined'?'친구가 이번 신청을 사양했어요.':'다음에 다시 함께해요.'))+'</p></div>'+button('친구 목록으로','exit','','fb-primary fb-wide');
   root.innerHTML=html;tick();
  }
