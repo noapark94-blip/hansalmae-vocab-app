@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-76"></script>
+  <script src="./app-dialogs.js?v=20260925-77"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-76"></script>
-  <script src="./config.js?v=20260925-76"></script>
-  <script src="./app-update.js?v=20260925-76"></script>
+  <script src="./school-runtime.js?v=20260925-77"></script>
+  <script src="./config.js?v=20260925-77"></script>
+  <script src="./app-update.js?v=20260925-77"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4686,15 +4686,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-76">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-76">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-76">
-<script defer src="./test-setup.js?v=20260925-76"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-76">
-<script defer src="./wrong-review.js?v=20260925-76"></script>
-<script defer src="./vocab-selection.js?v=20260925-76"></script>
-<script defer src="./personal-dialogs.js?v=20260925-76"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-76">
+<link rel="stylesheet" href="./test-setup.css?v=20260925-77">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-77">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-77">
+<script defer src="./test-setup.js?v=20260925-77"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-77">
+<script defer src="./wrong-review.js?v=20260925-77"></script>
+<script defer src="./vocab-selection.js?v=20260925-77"></script>
+<script defer src="./personal-dialogs.js?v=20260925-77"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-77">
 <style id="hsm-ranking-refresh-polish">
 #rankingScreen #rankingLoading:empty{display:none;min-height:0;margin:0}
 #rankingScreen #rankingLoading{font-size:12px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
@@ -4705,8 +4705,9 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #rankingScreen[aria-busy=true] .ranking-tabs:after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#b9759e,transparent);background-size:200% 100%;animation:hsmRankingLoading 1.2s linear infinite}
 @keyframes hsmRankingLoading{to{background-position:-200% 0}}
 @media(prefers-reduced-motion:reduce){#rankingScreen .ranking-pull-refresh,#rankingScreen .ranking-pull-refresh-icon{transition:none}#rankingScreen .is-refreshing .ranking-pull-refresh-icon,#rankingScreen[aria-busy=true] .ranking-tabs:after{animation:none}}
-</style><link rel="stylesheet" href="./friend-battle.css?v=20260925-76">
-<script defer src="./friend-battle.js?v=20260925-76"></script>
+</style><link rel="stylesheet" href="./friend-battle.css?v=20260925-77">
+<script defer src="./friend-battle.js?v=20260925-77"></script>
+<link rel="stylesheet" href="./home-refresh.css?v=20260925-77">
 </head>
 
 <body>
@@ -5136,44 +5137,48 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           </header>
 
           <div class="hsm-launcher-hero">
-            <h1 id="hsmLauncherGreeting">WELCOME</h1>
-            <p>시험·복습·단어장을 한곳에서 바로 시작하세요.</p>
-            <button type="button" class="hsm-launcher-primary" onclick="hsmLauncherOpenFeature_('test')">오늘의 단어 학습 시작</button>
+            <h1 id="hsmLauncherGreeting">오늘도 한 걸음 성장해요</h1>
+            <p>한 단어씩, 차곡차곡 쌓이는 나의 실력.</p>
+            <button type="button" class="hsm-launcher-primary" onclick="hsmLauncherOpenFeature_('test')">오늘의 학습 시작 <span aria-hidden="true">→</span></button>
           </div>
 
+          <button type="button" id="hsmHomeBattle" aria-label="WORD BATTLE 친구와 대전 입장" onclick="hsmLauncherOpenFeature_('battle')">
+            <img src="./images/battle-home-v1.webp" width="1984" height="800" alt="" decoding="async">
+            <span class="hsm-home-battle-copy"><strong lang="en">WORD BATTLE</strong><span class="hsm-home-vs" aria-hidden="true">VS</span><span class="hsm-home-battle-cta">대전 입장 <span aria-hidden="true">→</span></span></span>
+          </button>
           <div class="hsm-launcher-section-title">학습 바로 시작</div>
 <div class="hsm-launcher-grid hsm-launcher-study-grid"><button type="button" class="hsm-launcher-tile" style="--tile-soft:#f8e2ee;--tile-color:#9a195f" onclick="hsmLauncherOpenFeature_('test')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M7 3h10a2 2 0 0 1 2 2v16l-7-3-7 3V5a2 2 0 0 1 2-2Z"/><path d="m9 10 2 2 4-5"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>단어 테스트</strong><span>범위와 유형을 골라 시험보기</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>단어 테스트</strong><span>범위·유형별 시험</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff0d8;--tile-color:#d18b13" onclick="hsmLauncherOpenFeature_('vocab')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5Z"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>단어장</strong><span>Day별 단어와 발음 확인하기</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>단어장</strong><span>Day별 단어·발음</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff0d8;--tile-color:#d18b13" onclick="hsmLauncherOpenFeature_('schoolVocab')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="m3 10 9-6 9 6v10H3Z"/><path d="M9 20v-6h6v6M8 10h8"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>학교 수행평가</strong><span>배정 단어 학습·연습시험</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>학교 수행평가</strong><span>학교 단어·연습시험</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#f0e8ff;--tile-color:#7551b8" onclick="hsmLauncherOpenFeature_('schoolContent')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6Z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg></span>
               <span class="hsm-launcher-tile-copy"><strong>학교 내신 본문</strong><span>청크 배열·어형 연습</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#e7f6f0;--tile-color:#27866a" onclick="hsmLauncherOpenFeature_('smart')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.74V19h8v-3.26A7 7 0 0 0 12 3Z"/><path d="M9 22h6"/><path d="m9 10 2 2 4-4"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>스마트 복습</strong><span>자주 틀린 단어부터 복습하기</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>스마트 복습</strong><span>틀린 단어 다시 익히기</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#f0e8ff;--tile-color:#7551b8" onclick="hsmLauncherOpenFeature_('teacherExam')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="m9 15 1.5 1.5L15 13"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>선생님 시험</strong><span>배정된 시험 확인하고 응시하기</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>선생님 시험</strong><span>배정된 시험 응시</span></span>
             </button></div>
 <div class="hsm-launcher-section-title">기록과 관리</div><div class="hsm-launcher-grid hsm-launcher-manage-grid"><button type="button" class="hsm-launcher-tile" style="--tile-soft:#e9efff;--tile-color:#456fc7" onclick="hsmLauncherOpenFeature_('mypage')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M22 19H2"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>내 학습</strong><span>점수·오답·경험치 살펴보기</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>내 학습</strong><span>오답·성장 기록</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#fff3cb;--tile-color:#c58b08" onclick="hsmLauncherOpenFeature_('ranking')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0Z"/><path d="M12 13v4"/><path d="M8 21h8"/><path d="M9 17h6"/><path d="M8 6H4v1a4 4 0 0 0 4 4"/><path d="M16 6h4v1a4 4 0 0 1-4 4"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>단어천재</strong><span>이달의 랭킹과 엠블럼 보기</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>단어천재</strong><span>이달의 랭킹</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#ffe7e9;--tile-color:#c44859" onclick="hsmLauncherOpenFeature_('notification')">
               <b id="hsmLauncherNotificationBadge" class="hsm-launcher-alert-badge hidden">0</b>
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>알림</strong><span>새 시험과 재시험 요청 확인하기</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>알림</strong><span>시험·재시험 소식</span></span>
             </button><button type="button" class="hsm-launcher-tile" style="--tile-soft:#eceff3;--tile-color:#566274" onclick="hsmLauncherOpenFeature_('account')">
               <span class="hsm-launcher-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
-              <span class="hsm-launcher-tile-copy"><strong>내 정보</strong><span>계정·비밀번호·푸시 알림 관리</span></span>
+              <span class="hsm-launcher-tile-copy"><strong>내 정보</strong><span>계정·알림 설정</span></span>
             </button></div>
           <div class="hsm-launcher-footer">HANSALMAE VOCAB · 오늘의 한 단어가 내일의 실력이 됩니다</div>
         </div>
@@ -16089,7 +16094,7 @@ google.script.run
 
 <script id="hsm-launcher-home-script">
 (function hsmLauncherHome() {
-  let launcherWelcomeText = 'WELCOME';
+  let launcherWelcomeText = '오늘도 한 걸음 성장해요';
   function launcher_() { return document.getElementById('hsmLauncherHome'); }
 
   function prepareLauncherWelcome_(student) {
@@ -16100,7 +16105,7 @@ google.script.run
       visited = localStorage.getItem(key) === '1';
       localStorage.setItem(key, '1');
     } catch (_error) {}
-    launcherWelcomeText = visited ? 'WELCOME BACK' : 'WELCOME';
+    launcherWelcomeText = visited ? '오늘도 한 걸음 성장해요' : '나의 단어 여정을 시작해요';
   }
 
   function syncLauncherStudent_() {
@@ -16173,6 +16178,7 @@ google.script.run
       mypage: window.showMyPage,
       ranking: window.showRankingHome,
       smart: window.showSmartReview,
+      battle: window.hsmOpenFriendBattle_,
       schoolVocab: function(){window.showMyPage();window.hsmOpenSchoolVocabPage_();},
       schoolContent: function(){window.showMyPage();window.hsmOpenSchoolContentPage_();},
       teacherExam: window.showTeacherExamHome,
@@ -16219,7 +16225,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-76"></script>
+<script src="./ui-icons.js?v=20260925-77"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
