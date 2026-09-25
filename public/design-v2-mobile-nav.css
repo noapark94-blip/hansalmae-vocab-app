@@ -156,7 +156,7 @@
     padding: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
-    background: rgba(35, 17, 29, 0.48) !important;
+    background: rgba(30, 24, 36, 0.30) !important;
     box-shadow: none !important;
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
@@ -165,17 +165,20 @@
   .hsm-mobile-more-sheet {
     position: relative;
     width: 100%;
-    padding: 8px 18px calc(20px + env(safe-area-inset-bottom, 0px));
+    padding: 10px 24px calc(18px + env(safe-area-inset-bottom, 0px));
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
     border-radius: 26px 26px 0 0;
     background: #fff;
-    box-shadow: 0 -24px 60px rgba(35, 17, 29, 0.22);
+    box-shadow: 0 -12px 48px rgba(35, 17, 29, 0.12);
     animation: hsmMobileSheetUp 0.24s cubic-bezier(.22, .78, .28, 1);
   }
 
   .hsm-mobile-more-handle {
     width: 38px;
     height: 4px;
-    margin: 0 auto 12px;
+    margin: 0 auto 18px;
     border-radius: 999px;
     background: #ded3d9;
   }
@@ -183,14 +186,16 @@
   .hsm-mobile-more-heading {
     display: flex;
     min-height: 42px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     align-items: center;
     justify-content: space-between;
   }
 
   .hsm-mobile-more-heading h2 {
     margin: 0;
-    font-size: 23px;
+    font-size: 22px;
+    color: #382c40;
+    letter-spacing: -.6px;
   }
 
   .hsm-mobile-more-close {
@@ -201,7 +206,7 @@
     padding: 0 !important;
     border: 0 !important;
     border-radius: 50% !important;
-    background: #f6eef2 !important;
+    background: #f7f5f8 !important;
     color: #604b57 !important;
     box-shadow: none !important;
     font-size: 27px !important;
@@ -211,27 +216,27 @@
 
   .hsm-mobile-more-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
   }
 
   .hsm-mobile-more-grid > button {
     position: relative;
     display: flex !important;
     min-width: 0 !important;
-    min-height: 76px !important;
+    min-height: 62px !important;
     margin: 0 !important;
-    padding: 14px !important;
-    border: 1px solid var(--hsm-line, #eadfe5) !important;
-    border-radius: 17px !important;
-    background: #fff9fc !important;
+    padding: 10px 4px !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: #fff !important;
     color: var(--hsm-text, #251b22) !important;
     box-shadow: none !important;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
+    gap: 14px;
     font-size: 15px !important;
-    font-weight: 750 !important;
+    font-weight: 650 !important;
   }
 
   .hsm-more-symbol {
@@ -249,13 +254,18 @@
   }
 
   .hsm-mobile-more-grid > .hsm-mobile-logout {
-    color: #8b4058 !important;
+    color: #8b6476 !important;
+    margin-top: 16px !important;
+    padding-top: 18px !important;
+    border-top: 1px solid #f0ebf0 !important;
+    border-radius: 0 !important;
+    font-size: 14px !important;
   }
 
   .hsm-mobile-more-grid .hsm-mobile-badge {
-    top: 9px;
-    right: 9px;
-    left: auto;
+    position: static;
+    margin-left: auto;
+    flex: 0 0 auto;
   }
 
   body.hsm-mobile-more-open {
@@ -266,4 +276,26 @@
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
   }
+}
+
+@media (max-width: 650px) {
+  #hsmMobileMore .hsm-mobile-more-grid .hsm-ui-icon,
+  #hsmMobileMore .hsm-more-symbol {
+    width: 38px; height: 38px; flex: 0 0 38px;
+    padding: 9px; border-radius: 13px;
+    background: #f5f1f7; color: #755583;
+  }
+  #hsmMobileMore .hsm-mobile-more-grid > button::after {
+    content: ''; width: 6px; height: 6px; flex: 0 0 6px;
+    border-top: 1.5px solid #b4aab9; border-right: 1.5px solid #b4aab9;
+    transform: rotate(45deg); margin-left: auto; margin-right: 6px;
+  }
+  #hsmMobileMore .hsm-mobile-more-grid > button:has(.hsm-mobile-badge:not(.hidden))::after { margin-left: 6px; }
+  #hsmMobileMore .hsm-mobile-more-grid > .hsm-mobile-logout::after { display: none; }
+  #hsmMobileMore .hsm-mobile-logout .hsm-ui-icon { background: transparent; color: #9a8190; }
+  #hsmMobileMore .hsm-mobile-more-grid > button:active { background: #f7f4f9 !important; }
+  #hsmMobileMore button:focus-visible { outline: 2px solid #9979ac; outline-offset: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hsm-mobile-more-sheet { animation: none; }
 }
