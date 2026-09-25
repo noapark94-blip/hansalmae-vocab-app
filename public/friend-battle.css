@@ -360,3 +360,7 @@
 .fb-challenge-sheet .fb-setup-opponent{padding:10px 12px;margin-bottom:15px}
 .fb-challenge-sheet .fb-count-field{margin-top:12px}
 .fb-challenge-sheet .fb-challenge-rules{margin-top:12px;padding:8px 11px}
+
+/* Compact book-name-only choices. */
+.fb-challenge-sheet .fb-source-cards .fb-btn{min-height:44px;padding:10px 6px;align-items:center;justify-content:center;gap:0}
+.fb-challenge-sheet .fb-source-cards strong{text-align:center;font-size:12px;line-height:1.5}
