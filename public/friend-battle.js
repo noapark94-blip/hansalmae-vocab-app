@@ -49,6 +49,7 @@
   return '<article class="fb-match-card"><div class="fb-match-top"><span class="fb-live-state">'+status+'</span><span>1 : 1 MATCH</span></div><div class="fb-match-players">'+player(home.me,'YOU')+'<b class="fb-lobby-vs">VS</b>'+player(b.opponent,'RIVAL')+'</div><div class="fb-match-chips"><span>'+esc(bookTitle(settings.title))+'</span>'+(settings.kind==='school'?'':'<span>Day '+esc(settings.start)+'–'+esc(settings.end)+'</span>')+'<span>'+questionCount(settings)+'문제</span><span>'+timeLimit(settings)+'초</span><span>'+esc(modes[settings.mode]||'')+'</span></div>'+button(incoming?'대전 신청 확인':b.status==='invited'?'대기실 입장':'대전 입장','room',b.id,'fb-match-enter')+'</article>';
  }
  function renderHome(){
+  stopIntro();
   root.classList.remove('fb-game','fb-finished','fb-pregame','fb-closed');root.classList.add('fb-lobby');
   const focused=document.activeElement;if(focused&&root.contains(focused)&&focused.matches('input'))return;
   const searchOpen=!!root.querySelector('.fb-add-friend[open]'),searchValue=$('fbStudentId')?.value||'';
@@ -66,14 +67,41 @@
    ((home?.battles||[]).some(b=>b.status==='finished')?'<div class="fb-section-head"><h3>최근 대전</h3><span class="fb-section-caption">MATCH HISTORY</span></div><div class="fb-history-list">'+home.battles.filter(b=>b.status==='finished').slice(0,5).map(b=>{const outcome=!b.winner?'draw':b.winner===home.me.id?'win':'lose';return '<button type="button" class="fb-history" data-action="room" data-id="'+esc(b.id)+'">'+image(b.opponent)+'<span class="fb-history-name">'+esc(b.opponent?.name||'친구')+'</span><span class="fb-history-result is-'+outcome+'">'+outcome.toUpperCase()+'</span><span aria-hidden="true">›</span></button>';}).join('')+'</div>':'')+
    '<details class="fb-rules" '+(rulesOpen?'open':'')+'><summary>대전 규칙 안내</summary><p>정답 수로 승부하고, 동점이면 정답을 맞힌 총 시간으로 결정해요.</p><p>10문제 기준 WIN +5P · DRAW +3P · LOSE +1P. 경험치는 정답 1개당 +2 EXP, 완료 시 +5 EXP예요. 20·30문제는 포인트와 완료 경험치가 2·3배예요.</p><p>기존 월간 포인트와 누적 경험치에 합산돼요. 하루 100문제, 같은 친구와 하루 첫 3판까지 보상하며, 제한 시간에 따른 차이는 없어요. 한도가 남은 만큼 앞 문제부터 계산하고 비례 보상은 소수점 아래를 버려요. 날짜는 한국 시간 자정에 바뀌어요.</p><p>일반 단어장은 해당 단어장 순위에, 학교 수행평가는 학생 학년에 맞는 중등·고등 순위에 합산돼요. 중도 포기자는 보상이 없고, 상대는 이미 채점된 정답의 경험치만 받아요.</p></details>';
   }
+ let introCleanup=null;
+ function stopIntro(){if(introCleanup)introCleanup();}
  function matchIntro(g){
   const remaining=new Date(g.roundAt).getTime()-(Date.now()+offset);
-  if(g.status!=='playing'||g.round!==0||g.question||lastIntroGame===g.id||remaining<1000||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
-  const target=root.querySelector('.fb-countdown');if(!target)return;
+  const eligible=g.status==='playing'&&g.round===0&&!g.question;
+  if(!eligible){stopIntro();return;}
+  if(introCleanup||lastIntroGame===g.id||remaining<1400||!Number.isFinite(remaining)||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  const countdown=root.querySelector('.fb-countdown'),board=root.querySelector('.fb-live-scoreboard');
+  const targets=['host','guest'].map(side=>board?.querySelector('.fb-'+side+' .fb-avatar'));
+  if(!countdown||targets.some(el=>!el)||typeof targets[0].animate!=='function')return;
   lastIntroGame=g.id;
+  const area=countdown.getBoundingClientRect(),bounds=board.getBoundingClientRect();
+  const centerX=area.left+area.width/2,centerY=area.top+Math.min(area.height/2,90);
   const intro=document.createElement('div');intro.className='fb-match-intro';intro.setAttribute('aria-hidden','true');
-  intro.innerHTML='<div class="fb-intro-player fb-intro-left">'+image(g.host)+'<strong>'+esc(g.host?.name)+'</strong></div><b>VS</b><div class="fb-intro-player fb-intro-right">'+image(g.guest)+'<strong>'+esc(g.guest?.name)+'</strong></div><i></i>';
-  target.appendChild(intro);setTimeout(()=>intro.remove(),850);
+  Object.assign(intro.style,{left:area.left+'px',top:bounds.top+'px',width:area.width+'px',height:Math.max(0,area.bottom-bounds.top)+'px'});
+  intro.innerHTML='<b>VS</b><i></i>';
+  for(const el of intro.children){el.style.left=(centerX-area.left)+'px';el.style.top=(centerY-bounds.top)+'px';}
+  document.body.appendChild(intro);root.classList.add('fb-intro-running');
+  const duration=1150,animations=[];
+  targets.forEach((target,i)=>{
+   const rect=target.getBoundingClientRect(),clone=target.cloneNode(true),direction=i===0?-1:1;
+   clone.className='fb-flight-avatar';Object.assign(clone.style,{left:(rect.left-area.left)+'px',top:(rect.top-bounds.top)+'px',width:rect.width+'px',height:rect.height+'px'});intro.appendChild(clone);
+   const dx=centerX+direction*48-(rect.left+rect.width/2),dy=centerY-(rect.top+rect.height/2);
+   const pose=(x,y,scale,angle)=>'translate('+x+'px,'+y+'px) scale('+scale+') rotate('+angle+'deg)';
+   animations.push(clone.animate([
+    {transform:pose(dx+direction*area.width*.55,dy,1.9,-direction*10),opacity:0,offset:0},
+    {transform:pose(dx-direction*8,dy,1.9,-direction*5),opacity:1,offset:.34},
+    {transform:pose(dx+direction*10,dy-4,1.85,direction*4),opacity:1,offset:.48},
+    {transform:pose(dx,dy,1.85,0),opacity:1,offset:.58,easing:'cubic-bezier(.22,.7,.25,1)'},
+    {transform:pose(0,0,1,0),opacity:1,offset:1}
+   ],{duration,easing:'linear',fill:'forwards'}));
+  });
+  const cleanup=()=>{clearTimeout(timer);animations.forEach(a=>a.cancel());intro.remove();root.classList.remove('fb-intro-running');window.removeEventListener('resize',cleanup);window.removeEventListener('scroll',cleanup);introCleanup=null;};
+  const timer=setTimeout(cleanup,duration);introCleanup=cleanup;
+  window.addEventListener('resize',cleanup,{once:true});window.addEventListener('scroll',cleanup,{once:true});
  }
  function scoreboard(g){
   if(['finished','invited','ready'].includes(g.status)){
@@ -134,7 +162,7 @@
   }else html+='<div class="fb-wait"><span class="fb-closed-icon" aria-hidden="true">✦</span><span class="fb-wait-label">MATCH CLOSED</span><h3>대전이 종료됐어요</h3><p>'+esc(g.reason||(g.status==='declined'?'친구가 이번 신청을 사양했어요.':'다음에 다시 함께해요.'))+'</p></div>'+button('뒤로가기','exit','','fb-primary fb-wide');
   root.innerHTML=html;tick();matchIntro(g);
  }
- function tick(){if(!active()||game?.status!=='playing')return;const now=Date.now()+offset,remaining=Math.max(0,(new Date(game.deadline)-now)/1000),waiting=now<new Date(game.roundAt);const timer=$('fbTimer'),count=$('fbCountdown'),fill=$('fbTimeFill');if(timer){timer.textContent=game.revealUntil?'정답 확인':waiting?'READY':Math.ceil(remaining)+'초';timer.classList.toggle('is-urgent',!waiting&&!game.revealUntil&&remaining<=3);}if(fill){fill.style.width=(game.revealUntil?0:Math.min(100,remaining/timeLimit(game.settings)*100))+'%';fill.classList.toggle('is-urgent',!waiting&&!game.revealUntil&&remaining<=3);}if(count){const value=waiting?String(Math.max(1,Math.ceil((new Date(game.roundAt)-now)/1000))):'START';if(count.textContent!==value){count.textContent=value;count.classList.remove('fb-pop');void count.offsetWidth;count.classList.add('fb-pop');}}}
+ function tick(){if(introCleanup&&!active())stopIntro();if(!active()||game?.status!=='playing')return;const now=Date.now()+offset,remaining=Math.max(0,(new Date(game.deadline)-now)/1000),waiting=now<new Date(game.roundAt);const timer=$('fbTimer'),count=$('fbCountdown'),fill=$('fbTimeFill');if(timer){timer.textContent=game.revealUntil?'정답 확인':waiting?'READY':Math.ceil(remaining)+'초';timer.classList.toggle('is-urgent',!waiting&&!game.revealUntil&&remaining<=3);}if(fill){fill.style.width=(game.revealUntil?0:Math.min(100,remaining/timeLimit(game.settings)*100))+'%';fill.classList.toggle('is-urgent',!waiting&&!game.revealUntil&&remaining<=3);}if(count){const value=waiting?String(Math.max(1,Math.ceil((new Date(game.roundAt)-now)/1000))):'START';if(count.textContent!==value){count.textContent=value;count.classList.remove('fb-pop');void count.offsetWidth;count.classList.add('fb-pop');}}}
  function closeModal(){if(!modal)return;const back=modal._back;modal.remove();modal=null;document.body.style.overflow=closeModal.overflow||'';if(back?.isConnected)back.focus({preventScroll:true});}
  function sheet(title,body){closeModal();const m=document.createElement('div');m.className='fb-overlay';m.innerHTML='<section class="fb-sheet" role="dialog" aria-modal="true" aria-labelledby="fbModalTitle" tabindex="-1"><div class="fb-section-head"><h2 id="fbModalTitle">'+esc(title)+'</h2>'+button('×','close','','fb-close')+'</div>'+body+'</section>';m.querySelector('[data-action="close"]').setAttribute('aria-label','닫기');m._back=document.activeElement;closeModal.overflow=document.body.style.overflow;document.body.style.overflow='hidden';document.body.appendChild(m);modal=m;m.addEventListener('click',e=>{if(e.target===m)closeModal();else handle(e);});m.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();if(!closeDayPicker())closeModal();}if(e.key==='Tab'){const nodes=[...m.querySelectorAll('button:not(:disabled),input,select')].filter(n=>n.getClientRects().length);const first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&(document.activeElement===first||document.activeElement===m.firstElementChild)){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}});m.firstElementChild.focus({preventScroll:true});}
  function closeDayPicker(){const panel=modal?.querySelector('.fb-day-picker');if(!panel)return false;const id=panel.dataset.target;panel.remove();modal.firstElementChild.classList.remove('fb-day-open');modal.querySelector('[data-action="day"][data-id="'+id+'"]').focus({preventScroll:true});return true;}
