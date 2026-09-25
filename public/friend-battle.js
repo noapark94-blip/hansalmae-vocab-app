@@ -44,7 +44,7 @@
  function matchCard(b){
   const incoming=b.status==='invited'&&b.guest===home.me.id;
   const status=b.status==='playing'?'대전 진행 중':b.status==='ready'?'준비 중':incoming?'대전 신청 도착':'수락 대기 중';
-  const player=(p,label)=>'<div class="fb-lobby-player"><small>'+label+'</small>'+image(p)+'<strong>'+esc(p?.name||'나')+'</strong></div>';
+  const player=(p,label)=>'<div class="fb-lobby-player"><small>'+label+'</small><div class="fb-lobby-podium">'+image(p)+'</div><strong>'+esc(p?.name||'나')+'</strong></div>';
   const settings=b.settings||{};
   return '<article class="fb-match-card"><div class="fb-match-top"><span class="fb-live-state">'+status+'</span><span>1 : 1 MATCH</span></div><div class="fb-match-players">'+player(home.me,'YOU')+'<b class="fb-lobby-vs">VS</b>'+player(b.opponent,'RIVAL')+'</div><div class="fb-match-chips"><span>'+esc(bookTitle(settings.title))+'</span>'+(settings.kind==='school'?'':'<span>Day '+esc(settings.start)+'–'+esc(settings.end)+'</span>')+'<span>'+questionCount(settings)+'문제</span><span>'+timeLimit(settings)+'초</span><span>'+esc(modes[settings.mode]||'')+'</span></div>'+button(incoming?'대전 신청 확인':b.status==='invited'?'대기실 입장':'대전 입장','room',b.id,'fb-match-enter')+'</article>';
  }

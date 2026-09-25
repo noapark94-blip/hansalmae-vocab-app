@@ -495,3 +495,21 @@
 #friendBattleScreen.fb-finished .fb-final-arena{margin-bottom:22px}
 #friendBattleScreen.fb-finished .fb-stage-player.is-winner .fb-player-tag{color:#b48e4b}
 @media(max-width:360px){#friendBattleScreen.fb-finished .fb-final-score .fb-score b{font-size:25px}}
+
+/* Open lobby stages, shared by incoming, waiting and active matches. */
+#friendBattleScreen .fb-match-card{padding:8px 0 20px;border:0;border-radius:0;background:#fff;color:#59455f;box-shadow:none;margin:10px 0 22px}
+#friendBattleScreen .fb-match-top{color:#aa9aaf;font-size:8px}
+#friendBattleScreen .fb-live-state{color:#967640}
+#friendBattleScreen .fb-match-players{margin:23px 0 20px;grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr)}
+#friendBattleScreen .fb-lobby-player small{color:#ac98b2;font-size:8px;letter-spacing:1.8px}
+#friendBattleScreen .fb-lobby-player strong{color:#4d3b56;font-size:14px;margin-top:20px;overflow-wrap:anywhere}
+#friendBattleScreen .fb-lobby-podium{position:relative;isolation:isolate;display:flex;justify-content:center;align-items:flex-end;width:min(116px,100%);height:100px;margin:8px auto 0}
+#friendBattleScreen .fb-lobby-podium .fb-avatar{position:relative;z-index:2;width:88px;height:92px;margin:0 0 -2px;object-fit:contain;filter:drop-shadow(0 4px 3px #68527326)}
+#friendBattleScreen .fb-lobby-podium:before{content:'';position:absolute;z-index:0;bottom:-12px;left:2%;width:96%;height:23px;border-radius:50%;background:linear-gradient(90deg,#e5deea,#f8f4f9 45%,#e1d6e7);box-shadow:0 10px 13px -8px #76578245,inset 0 -1px 0 #d6c9dd}
+#friendBattleScreen .fb-lobby-podium:after{content:'';position:absolute;z-index:1;bottom:-3px;left:2%;width:96%;height:20px;border-radius:50%;background:radial-gradient(ellipse,#dacdde55,transparent 62%),linear-gradient(150deg,#fffefa,#f3edf7);border:1px solid #dccaa95c;box-shadow:inset 0 1px 0 white,0 2px 0 #dbc7a94d}
+#friendBattleScreen .fb-lobby-vs{font:800 italic 25px/1 Arial,sans-serif;color:#b49965;text-shadow:none;transform:none}
+#friendBattleScreen .fb-match-chips{gap:5px;margin-bottom:18px}
+#friendBattleScreen .fb-match-chips>span{color:#95859c;background:#f7f4f8;border:0;border-radius:6px;padding:4px 7px;font-size:10px}
+#friendBattleScreen .fb-match-enter{min-height:46px;border:1px solid #e6d2aa;background:linear-gradient(115deg,#fbefd4,#edd29d);color:#634c37;border-radius:13px;box-shadow:inset 0 1px 0 #ffffff80,0 4px 12px #b79b6820;font-size:13px}
+#friendBattleScreen .fb-match-enter:active{transform:translateY(1px)}
+@media(max-width:360px){#friendBattleScreen .fb-lobby-podium{width:94px;height:90px}#friendBattleScreen .fb-lobby-podium .fb-avatar{width:78px;height:82px}}
