@@ -16,6 +16,8 @@ async function student(token:string){
 }
 async function rpc(name:string,args:any){const {data,error}=await admin.rpc(name,args);if(error)throw new Error(error.message);return data;}
 async function source(actor:string,target:string,p:any){
+ const count=p.count===undefined?10:Number(p.count);
+ if(![10,20,30].includes(count))throw new Error('문제 수는 10·20·30문제 중 선택해주세요.');
  const catalog=await rpc('battle_catalog',{p_actor:actor,p_target:target});
  const selected=catalog.find((x:any)=>x.id===str(p.source));if(!selected)throw new Error('두 학생이 이용할 수 있는 단어장을 선택해주세요.');
  let start=Number(p.start),end=Number(p.end);
@@ -27,7 +29,7 @@ async function source(actor:string,target:string,p:any){
   if(selected.kind!=='school')q=q.gte('day',start).lte('day',end);
   const {data,error}=await q;if(error)throw error;rows.push(...(data||[]));if(!data||data.length<1000)break;
  }
- return {questions:buildQuestions(rows,str(p.mode)),settings:{source:selected.id,kind:selected.kind,title:selected.title,start,end,mode:str(p.mode),count:10}};
+ return {questions:buildQuestions(rows,str(p.mode),count),settings:{source:selected.id,kind:selected.kind,title:selected.title,start,end,mode:str(p.mode),count}};
 }
 Deno.serve(async req=>{
  if(req.method==='OPTIONS')return new Response('ok',{headers:cors});

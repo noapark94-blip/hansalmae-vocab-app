@@ -26,3 +26,9 @@
 #friendBattleScreen h2{text-align:left!important}
 .fb-invite-notice{position:fixed;z-index:500;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:max-content!important;max-width:calc(100% - 32px);padding:12px 16px!important;margin:0!important;min-height:44px;border:1px solid #ead7e4;border-radius:16px;background:#fff;color:#8f145f;font:600 12px/1.6 sans-serif;box-shadow:0 6px 24px #4b24432b;cursor:pointer}
 .fb-invite-notice[hidden]{display:none!important}
+
+.fb-sheet .fb-count-field{border:0;padding:0;margin:20px 0 0;min-width:0}
+.fb-sheet .fb-count-field legend{font-size:13px;font-weight:650;color:#715968;margin-bottom:8px;padding:0}
+.fb-sheet .fb-count-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;background:#f5eff3;border-radius:14px}
+.fb-sheet .fb-count-options .fb-btn{width:100%;border:0;background:transparent;color:#998593;padding:10px 4px;white-space:nowrap}
+.fb-sheet .fb-count-options .fb-btn[aria-pressed="true"]{background:#fff;color:#901462;box-shadow:0 2px 8px #422f3d08}
