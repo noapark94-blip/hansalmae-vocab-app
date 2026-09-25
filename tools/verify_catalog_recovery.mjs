@@ -25,7 +25,7 @@ requests.shift().ok(['중등단어DB','고등단어DB','수능단어DB']);
 assert.equal(requests.length,2);assert.ok(requests.every(r=>r.sheet==='수능단어DB'));
 requests.shift().ok([1,2,3]);requests.shift().ok([1,2,3]);
 assert.equal(d.getElementById('startButton').disabled,false);
-assert.equal(d.getElementById('hsmPickvocabDay').textContent,'Day 1 ⌄');
+assert.equal(d.getElementById('hsmPickvocabDay').textContent,'Day 1');
 w.loadVocabDays();requests.shift().fail(new Error('timeout'));
 assert.equal(d.getElementById('hsmPickvocabDay').textContent,'불러오기 실패');
 d.querySelector('#vocabLoading button').click();requests.shift().ok([1,2]);
