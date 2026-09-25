@@ -15,7 +15,7 @@ begin
  begin perform public.battle_play(a,'accept',room);raise exception 'FAIL hostaccept';exception when others then if SQLERRM='FAIL hostaccept' then raise;end if;end;
  begin perform public.battle_play(a,'invite',null,jsonb_build_object('target',b,'questions',qs,'settings','{}'::jsonb));raise exception 'FAIL overlap';exception when others then if SQLERRM='FAIL overlap' then raise;end if;end;
  perform public.battle_play(b,'accept',room);perform public.battle_play(a,'ready',room);r:=public.battle_play(b,'ready',room);
- assert r->>'status'='playing';assert r->'question'='null'::jsonb,'countdown leak';
+ assert r->>'status'='playing';assert extract(epoch from((r->>'deadline')::timestamptz-(r->>'roundAt')::timestamptz))=10,'10 second deadline';assert r->'question'='null'::jsonb,'countdown leak';
  r:=public.battle_play(a,'answer',room,'{"round":0,"choice":"correct0"}');assert r->>'answered'='false','early answer';
  for i in 0..9 loop
   update public.word_battles set round_at=clock_timestamp()-interval '1 second' where id=room;
@@ -32,8 +32,8 @@ begin
  -- Second room: timeout and forfeit.
  r:=public.battle_play(a,'invite',null,jsonb_build_object('target',b,'questions',qs,'settings','{}'::jsonb));room:=(r->>'id')::uuid;
  perform public.battle_play(b,'accept',room);perform public.battle_play(a,'ready',room);perform public.battle_play(b,'ready',room);
- update public.word_battles set round_at=clock_timestamp()-interval '21 seconds' where id=room;
- r:=public.battle_play(a,'poll',room);assert r->'revealUntil'<>'null'::jsonb;assert (r->>'hostScore')::int=0;
+ update public.word_battles set round_at=clock_timestamp()-interval '11 seconds' where id=room;
+ r:=public.battle_play(a,'answer',room,'{"round":0,"choice":"correct0"}');assert r->>'answered'='false','late answer must be rejected';assert r->'revealUntil'<>'null'::jsonb;assert (r->>'hostScore')::int=0;
  r:=public.battle_play(b,'leave',room);assert (r->>'winner')::uuid=a;
  perform public.battle_social(a,'block',b);
  assert jsonb_array_length(public.battle_social(a,'home')->'friends')=0;

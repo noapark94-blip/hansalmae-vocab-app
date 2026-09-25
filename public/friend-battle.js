@@ -58,7 +58,7 @@
   if(!active()||!game)return;const g=game,content=JSON.stringify({...g,serverNow:null,deadline:g.deadline});if(content===signature){tick();return;}signature=content;
   const mine=g.host?.id===g.me,ready=mine?g.hostReady:g.guestReady;
   let html='<div class="fb-section-head"><h2>단어 대전</h2>'+button(live()?'나가기':'친구 목록','exit','','fb-text')+'</div><p class="fb-sub">'+summary(g.settings)+'</p><div id="fbConnection" class="fb-connection" role="status"></div>'+scoreboard(g);
-  if(g.status==='invited')html+='<div class="fb-wait"><span class="fb-orbit">'+icon+'</span><h3>'+(mine?'친구의 수락을 기다려요':'친구가 대전을 신청했어요')+'</h3><p>한 문제에 20초 · 총 10문제<br>서로 준비되면 함께 시작해요.</p></div>'+(mine?'<p class="fb-note">2분 안에 수락하지 않으면 신청이 종료돼요.</p>':'<div class="fb-two">'+button('다음에 할게요','decline',g.id)+button('함께 대전하기','accept',g.id,'fb-primary')+'</div>');
+  if(g.status==='invited')html+='<div class="fb-wait"><span class="fb-orbit">'+icon+'</span><h3>'+(mine?'친구의 수락을 기다려요':'친구가 대전을 신청했어요')+'</h3><p>한 문제에 10초 · 총 10문제<br>서로 준비되면 함께 시작해요.</p></div>'+(mine?'<p class="fb-note">2분 안에 수락하지 않으면 신청이 종료돼요.</p>':'<div class="fb-two">'+button('다음에 할게요','decline',g.id)+button('함께 대전하기','accept',g.id,'fb-primary')+'</div>');
   else if(g.status==='ready')html+='<div class="fb-wait"><h3>준비됐나요?</h3><p>같은 문제, 각자의 실력.<br>둘 다 준비를 누르면 시작해요.</p><div class="fb-readiness"><span>'+(g.hostReady?'✓':'○')+' '+esc(g.host?.name)+'</span><span>'+(g.guestReady?'✓':'○')+' '+esc(g.guest?.name)+'</span></div></div><button class="fb-btn fb-primary fb-wide" data-action="ready" '+(ready?'disabled':'')+'>'+(ready?'친구의 준비를 기다려요':'준비 완료')+'</button>';
   else if(g.status==='playing'){
    const q=g.question;
