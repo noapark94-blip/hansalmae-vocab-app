@@ -66,7 +66,7 @@
 #startScreen .hsm-day-trigger{min-height:46px;font-size:15px!important;font-weight:550;border-color:#e9dfe6!important;border-radius:12px!important}
 #startScreen #hsmSetupModes{gap:8px}
 #startScreen #hsmSetupModes button{position:relative;min-height:46px;font-size:13px!important;font-weight:550;padding:11px 24px!important;border-color:#e9dfe6!important;border-radius:11px!important;box-shadow:none!important}
-#startScreen #hsmSetupModes button[data-value=example]{grid-column:1/-1}
+#startScreen #hsmSetupModes button[data-value=example]{grid-column:1}
 #startScreen #hsmSetupModes button[aria-pressed=true]{background:#faf3f8!important;border-color:#d5a6c3!important;color:#8f145f!important;box-shadow:none!important}
 #startScreen #hsmSetupModes button[aria-pressed=true]:after{content:'✓';position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:12px}
 #startScreen #hsmSetupSummary{margin:22px 0 9px;text-align:center;font-size:11px;line-height:1.7;color:#97818f;word-break:keep-all;overflow-wrap:anywhere}
