@@ -128,9 +128,7 @@
 #friendBattleScreen.fb-lobby{padding:18px!important}
 #friendBattleScreen .fb-lobby-banner{position:relative;overflow:hidden;border-radius:17px;min-height:154px;background:#26112c url('./images/battle-home-v1.webp') center/cover no-repeat;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 7px 20px #46163612}
 #friendBattleScreen .fb-lobby-title{padding:16px 0;color:#fff2d0;text-shadow:0 2px 8px #170c27}
-#friendBattleScreen .fb-lobby-title>span{font-size:8px;letter-spacing:2px;font-weight:700;color:#ead1dc}
 #friendBattleScreen .fb-lobby-title h2{font:900 italic 29px/.94 Arial,sans-serif!important;letter-spacing:-1.5px;color:#ffebbd!important;text-align:center!important;margin:8px 0!important}
-#friendBattleScreen .fb-lobby-title p{font-size:10px;margin:0;color:#f4dfe9}
 #friendBattleScreen .fb-lobby-welcome{font-size:12px;color:#887080;margin:18px 0 4px;text-align:center}
 #friendBattleScreen.fb-lobby .fb-section-head{margin:22px 0 10px;gap:8px;min-height:32px}
 #friendBattleScreen.fb-lobby .fb-section-head h3{font-size:15px;color:#493440}
@@ -166,9 +164,6 @@
 #friendBattleScreen button.fb-history{display:flex;align-items:center;gap:8px;width:100%;min-height:62px;margin:0;padding:10px 2px;background:#fff!important;color:#67505f!important;border:0;border-bottom:1px solid #eee5eb;border-radius:0;box-shadow:none!important;text-align:left;transform:none}
 #friendBattleScreen .fb-history .fb-avatar{width:31px;height:31px}
 .fb-history-name{flex:1;font-size:12px;font-weight:600;overflow-wrap:anywhere}
-#friendBattleScreen .fb-history .fb-outcome{flex:0 0 42px;text-align:center;font:bold 9px/1.5 Arial,sans-serif;letter-spacing:.4px;padding:5px 0;border-radius:6px;background:#f1edf3;color:#806e8d}
-#friendBattleScreen .fb-history .is-win{background:#faf0d9;color:#8b6122}
-#friendBattleScreen .fb-history .is-lose{background:#f0edf5;color:#776185}
 .fb-history-result{font-size:10px;color:#8a7582;white-space:nowrap}
 #friendBattleScreen .fb-rules{margin:20px 0 0;padding-top:13px;border-top:1px solid #eee5eb;color:#998390}
 .fb-rules summary{font-size:11px;list-style:none;cursor:pointer;padding:6px 0}
@@ -178,3 +173,51 @@
 @media(min-width:600px){#friendBattleScreen.fb-lobby{padding:24px!important}.fb-friend-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}#friendBattleScreen .fb-lobby-banner{min-height:200px}#friendBattleScreen .fb-lobby-title h2{font-size:38px!important}}
 @media(max-width:360px){#friendBattleScreen.fb-lobby{padding:14px!important}#friendBattleScreen .fb-lobby-banner{min-height:130px}#friendBattleScreen .fb-lobby-title h2{font-size:25px!important}.fb-section-caption{font-size:7px;letter-spacing:.5px}#friendBattleScreen.fb-lobby .fb-person .fb-avatar{width:40px;height:40px}}
 @media(prefers-reduced-motion:reduce){.fb-live-state:before{animation:none}}
+/* Refined lobby: one title, a compact toolbar, and quiet result typography. */
+#friendBattleScreen .fb-lobby-title h2{font-size:32px!important;line-height:.97!important;letter-spacing:-1.4px;text-shadow:0 2px 0 #855243,0 4px 12px #150718}
+#friendBattleScreen .fb-lobby-welcome{font-size:11px;margin:15px 0 0;color:#8e7987}
+#friendBattleScreen.fb-lobby .fb-section-head{margin:20px 0 9px}
+#friendBattleScreen.fb-lobby .fb-section-head h3>span{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 5px;background:#f5eff3;border-radius:7px;font-size:10px;color:#977889;vertical-align:middle;margin-left:4px}
+.fb-lobby-tools{display:flex;gap:4px;align-items:center}
+#friendBattleScreen .fb-lobby-tools .fb-btn{min-height:36px;font-size:11px;padding:6px 9px;border-radius:9px}
+#friendBattleScreen .fb-lobby-tools .fb-add-toggle{background:#fff9ed;border:1px solid #eee1c9;color:#836340;gap:5px}
+#friendBattleScreen .fb-add-toggle span{font-size:16px;line-height:1}
+#friendBattleScreen .fb-add-toggle[aria-expanded=true] span{transform:rotate(45deg)}
+#friendBattleScreen .fb-add-friend{padding:0;margin:0;border:0}
+#friendBattleScreen .fb-add-friend[open]{padding:4px 12px 12px;margin:0 0 12px;background:#faf7f9;border:1px solid #efe5ec;border-radius:12px}
+#friendBattleScreen .fb-add-friend>summary{display:none}
+#friendBattleScreen.fb-lobby .fb-friend{position:relative;padding:15px 12px;background:linear-gradient(115deg,#fffbf2 0%,#fff 48%,#faf6fb 100%);border-color:#e9dfe5;border-radius:16px;box-shadow:0 4px 14px #49223906;overflow:hidden}
+#friendBattleScreen.fb-lobby .fb-friend:before{content:'';position:absolute;left:0;top:23%;bottom:23%;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(#e5c684,#c08bab)}
+#friendBattleScreen.fb-lobby .fb-person .fb-avatar{width:56px;height:56px;border-radius:50%;background:radial-gradient(ellipse,#f5e4c3 0%,#fff5df90 48%,transparent 70%);filter:drop-shadow(0 3px 3px #8b5a2720)}
+#friendBattleScreen.fb-lobby .fb-person strong{font-size:15px;letter-spacing:-.3px}
+#friendBattleScreen.fb-lobby .fb-friend-bottom{gap:7px}
+#friendBattleScreen.fb-lobby .fb-friend-bottom .fb-btn{display:flex;gap:5px;background:linear-gradient(125deg,#75345f,#4c2a48);border:1px solid #683153;color:#fff2dc;min-height:38px;padding:8px 10px;box-shadow:0 3px 7px #4b234318}
+#friendBattleScreen .fb-friend-bottom .fb-btn svg{width:13px;height:13px;flex-shrink:0}
+#friendBattleScreen .fb-presence.is-online{color:#5a8b73}
+#friendBattleScreen .fb-history-list{border:1px solid #eee5eb;border-radius:15px;background:#fcfafc;overflow:hidden;padding:0 12px}
+#friendBattleScreen button.fb-history{background:transparent!important;min-height:62px;padding:10px 0;gap:10px}
+#friendBattleScreen button.fb-history:last-child{border-bottom:0}
+#friendBattleScreen .fb-history .fb-avatar{width:38px;height:38px}
+#friendBattleScreen .fb-history-name{font-size:12px;color:#674f5f}
+#friendBattleScreen .fb-history-result{font:800 italic 13px/1.4 Arial,sans-serif;letter-spacing:.7px;margin-left:auto;color:#8d7898;background:none;padding:0}
+#friendBattleScreen .fb-history-result.is-win{color:#ab7d37}
+#friendBattleScreen .fb-history-result.is-draw{color:#7b8991}
+#friendBattleScreen .fb-history>span:last-child{font-size:16px;color:#b7a7b1}
+#friendBattleScreen .fb-rules{margin-top:15px;border:0;padding-top:0}
+@media(hover:hover){#friendBattleScreen .fb-friend-bottom .fb-btn:hover{filter:brightness(1.1)}#friendBattleScreen button.fb-history:hover{background:#f5eef4!important}}
+@media(min-width:600px){#friendBattleScreen .fb-lobby-title h2{font-size:42px!important}}
+@media(max-width:360px){#friendBattleScreen .fb-lobby-title h2{font-size:28px!important}#friendBattleScreen.fb-lobby .fb-person .fb-avatar{width:44px;height:44px}#friendBattleScreen.fb-lobby .fb-friend{padding:12px 9px}#friendBattleScreen.fb-lobby .fb-person strong{font-size:13px}#friendBattleScreen .fb-lobby-tools .fb-btn{padding:6px 7px}}
+/* Friend management shares the lobby's player-card styling. */
+.fb-sheet.fb-manage-sheet{background:linear-gradient(180deg,#fffaf3 0,#fff 150px);padding:22px 20px calc(22px + env(safe-area-inset-bottom))}
+.fb-manage-sheet h2{font-size:21px!important}
+.fb-manage-sheet>.fb-sub{font-size:12px!important;margin:7px 0 18px!important;color:#927c88}
+.fb-manage-sheet .fb-manage-row{display:flex;flex-wrap:wrap;gap:10px;padding:12px;border:1px solid #eee2e9;border-radius:14px;background:#fff;margin:8px 0}
+.fb-manage-sheet .fb-person{gap:8px;flex:1 1 145px}
+.fb-manage-sheet .fb-person .fb-avatar{width:44px;height:44px;background:radial-gradient(ellipse,#fff0ce,transparent 70%)}
+.fb-manage-sheet .fb-person strong{font-size:14px;color:#553b4b;overflow-wrap:anywhere}
+.fb-manage-sheet .fb-person small{font-size:10px;line-height:1.5}
+.fb-manage-sheet .fb-manage-actions{gap:3px;margin-left:auto}
+.fb-manage-sheet .fb-manage-actions .fb-btn{min-height:36px;padding:7px 9px;border-radius:8px;font-size:11px;color:#967888;background:#faf5f8}
+.fb-manage-sheet .fb-manage-actions [data-action=block]{color:#a0726c;background:#fbf3ef}
+.fb-manage-sheet>h3{font-size:12px;color:#9a8290;margin:24px 0 10px}
+.fb-manage-sheet .fb-manage-empty{padding:19px 12px;border:1px dashed #e8dfe5;border-radius:12px;background:#fcfafb;text-align:center;margin:0!important}

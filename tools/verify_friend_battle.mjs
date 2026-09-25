@@ -14,7 +14,10 @@ let game={id:'room',status:'invited',settings:{title:'중등단어',kind:'standa
 w.fetch=async(url,args)=>{const body=JSON.parse(args.body);calls.push(body);let result=home;switch(body.action){case 'catalog':result=[{id:'middle',title:'중등단어DB',kind:'standard',days:Array.from({length:70},(_,i)=>i+1)}];break;case 'invite':game={...game,settings:{...game.settings,count:body.payload.count,seconds:body.payload.seconds}};result=game;break;case 'poll':result=game;break;case 'ready':game={...game,status:'playing',hostReady:true,guestReady:true,roundAt:new Date(Date.now()+3000).toISOString(),deadline:new Date(Date.now()+13000).toISOString()};result=game;break;case 'answer':game={...game,answered:true,choice:body.payload.choice};result=game;break;case 'leave':result={...game,status:'finished'};break;}return {ok:true,json:async()=>({success:true,result})};};
 w.eval(readFileSync('public/friend-battle.js','utf8'));d.dispatchEvent(new w.Event('DOMContentLoaded'));
 const wait=()=>new Promise(r=>setTimeout(r,20)),click=async(sel)=>{assert(d.querySelector(sel),sel);d.querySelector(sel).click();await wait();};
-await w.hsmOpenFriendBattle_();assert(d.getElementById('friendBattleScreen').textContent.includes('친구와 단어 대전'));assert(!d.querySelector('[onerror]'));
+await w.hsmOpenFriendBattle_();assert(d.getElementById('friendBattleScreen').textContent.includes('WORDBATTLE'));assert(!d.querySelector('[onerror]'));
+assert(!d.querySelector('#fbAddFriend').open);
+await click('[data-action="toggleSearch"]');assert(d.querySelector('#fbAddFriend').open);assert.equal(d.activeElement.id,'fbStudentId');assert.equal(d.querySelector('[data-action="toggleSearch"]').getAttribute('aria-expanded'),'true');
+await click('[data-action="toggleSearch"]');assert(!d.querySelector('#fbAddFriend').open);
 await click('[data-action="challenge"]');assert.equal(d.querySelector('#fbEnd').options.length,70);assert.equal(d.querySelector('#fbEnd').value,'70');assert(d.querySelector('[aria-label="닫기"]'));
 assert.equal(d.querySelector('[data-action="count"][aria-pressed="true"]').dataset.id,'10');
 await click('[data-action="count"][data-id="20"]');assert.equal(d.querySelector('[data-action="count"][aria-pressed="true"]').dataset.id,'20');
