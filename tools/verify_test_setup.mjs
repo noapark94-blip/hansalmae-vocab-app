@@ -78,6 +78,13 @@ el('hsmPickendDay').click();el('hsmDayGrid').querySelector('[aria-label="Day 3"]
 el('hsmPickstartDay').click();el('hsmDayGrid').querySelector('[aria-label="Day 50"]').click();
 assert.equal(el('endDay').value,'50');
 assert.equal(el('hsmDayPicker').open,false);
+el('hsmPickendDay').click();
+assert.equal(el('hsmDayGrid').children.length,70);
+assert.equal(el('hsmDayGrid').lastElementChild.getAttribute('aria-label'),'Day 70');
+el('hsmDayGrid').lastElementChild.click();
+assert.equal(el('endDay').value,'70');
+el('hsmPickendDay').click();el('hsmDayClose').click();
+assert.equal(el('hsmDayPicker').open,false);
 el('hsmPickendDay').click();el('hsmDayAll').click();
 assert.equal(el('startDay').value,'1');assert.equal(el('endDay').value,'70');
 w.hsmSetupApplyStudentDefaults_({studentId:'new',grade:'고1'});

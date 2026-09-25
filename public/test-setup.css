@@ -72,3 +72,21 @@
 #startScreen #hsmSetupSummary{margin:22px 0 9px;text-align:center;font-size:11px;line-height:1.7;color:#97818f;word-break:keep-all;overflow-wrap:anywhere}
 #startScreen #startButton{margin:0 0 4px!important;min-height:50px}
 #startScreen #loadingText:empty{display:none}
+
+/* Day picker: keep all day rows inside a bounded scrolling region. */
+#hsmDayPicker[open]{display:flex;flex-direction:column;overflow:hidden;max-height:80dvh;gap:0}
+#hsmDayPicker .hsm-day-head,#hsmDayPicker #hsmDayHint,#hsmDayPicker #hsmDayRange,#hsmDayPicker #hsmDayMore,#hsmDayPicker #hsmDayAll{flex-shrink:0}
+#hsmDayPicker .hsm-day-head h2{font-size:20px!important;line-height:1.4}
+#hsmDayPicker #hsmDayClose{display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;border:0;background:transparent;color:#95828f;font-size:28px;font-weight:400;box-shadow:none}
+#hsmDayPicker #hsmDayClose:focus{outline:none}
+#hsmDayPicker #hsmDayClose:focus-visible{background:#f5eff4;outline:none}
+#hsmDayPicker #hsmDayHint{margin:8px 0 5px;font-size:13px}
+#hsmDayPicker #hsmDayRange{font-size:12px;color:#947c8b;margin:0 0 14px}
+#hsmDayPicker #hsmDayGrid{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;grid-auto-rows:46px;gap:8px;padding:4px 3px 10px;scroll-padding:8px}
+#hsmDayPicker #hsmDayGrid button{min-height:44px;border:0;background:#faf7f9;border-radius:11px;font-size:14px;font-weight:550;box-shadow:none}
+#hsmDayPicker #hsmDayGrid button[aria-pressed=true]{background:#8f145f;color:#fff}
+#hsmDayPicker #hsmDayGrid button:focus{outline:none}
+#hsmDayPicker #hsmDayGrid button:focus-visible{box-shadow:inset 0 0 0 2px #b8759e}
+#hsmDayPicker #hsmDayMore{text-align:center;font-size:11px;line-height:1.5;color:#97818f;padding:7px 0 0}
+#hsmDayPicker #hsmDayAll{margin-top:12px;min-height:44px;border:0;border-radius:12px;font-size:13px;font-weight:600;background:#f5eff4}
+@media(max-width:650px){#hsmDayPicker[open]{max-height:78dvh;padding:18px 18px calc(16px + env(safe-area-inset-bottom))}#hsmDayPicker::before{flex-shrink:0;margin:-4px auto 12px}}

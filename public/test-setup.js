@@ -67,14 +67,21 @@
       trigger.disabled = select.disabled || !select.options.length;
     });
   }
+  function updateDayScrollHint(){
+    var grid=$('hsmDayGrid'),hint=$('hsmDayMore');if(!grid||!hint)return;
+    hint.hidden=grid.scrollHeight<=grid.clientHeight+2||grid.scrollTop+grid.clientHeight>=grid.scrollHeight-2;
+  }
   function closeDays() { $('hsmDayPicker').close(); }
   function renderDays() {
     var select = $(activeDay), grid = $('hsmDayGrid'); grid.replaceChildren();
     var vocabulary = activeDay === 'vocabDay';
     $('hsmDayTitle').textContent = vocabulary ? '학습할 Day 선택' : activeDay === 'startDay' ? '시작 Day 선택' : '마지막 Day 선택';
-    $('hsmDayHint').textContent = vocabulary ? '원하는 Day를 누르면 해당 단어장이 열립니다.' : '시작일과 마지막 날을 포함해 출제합니다.';
+    $('hsmDayHint').textContent = vocabulary ? '학습할 Day를 선택하세요.' : activeDay === 'startDay' ? '시작할 Day를 선택하세요.' : '마지막 Day를 선택하세요.';
     $('hsmDayAll').hidden = vocabulary;
-    Array.from(select.options).forEach(function (option) {
+    var options = Array.from(select.options).filter(function(o){return o.value;});
+    $('hsmDayRange').textContent = vocabulary ? '전체 '+options.length+'개 Day' : 'Day '+$('startDay').value+' → Day '+$('endDay').value;
+    $('hsmDayMore').textContent = options.length ? '마지막 Day '+options[options.length-1].value+'까지 · 아래로 스크롤' : '';
+    options.forEach(function (option) {
       var b = button(option.value, function () {
         select.value = option.value;
         if (!vocabulary && Number($('startDay').value) > Number($('endDay').value)) {
@@ -132,12 +139,14 @@
     ['sheetName','vocabSheetName'].forEach(function(id){$(id).addEventListener('change',function(){picked[id]=this.value;sync();});});
     $('questionMode').addEventListener('change',sync);
     var dialog = document.createElement('dialog'); dialog.id = 'hsmDayPicker'; dialog.setAttribute('aria-labelledby','hsmDayTitle');
-    dialog.innerHTML = '<div class="hsm-day-head"><h2 id="hsmDayTitle"></h2><button type="button" id="hsmDayClose">닫기</button></div><p id="hsmDayHint">시작일과 마지막 날을 포함해 출제합니다.</p><div id="hsmDayGrid"></div><button type="button" id="hsmDayAll">전체 범위 선택</button>';
+    dialog.innerHTML = '<div class="hsm-day-head"><h2 id="hsmDayTitle"></h2><button type="button" id="hsmDayClose" aria-label="닫기">×</button></div><p id="hsmDayHint">시작일과 마지막 날을 포함해 출제합니다.</p><div id="hsmDayRange"></div><div id="hsmDayGrid"></div><div id="hsmDayMore"></div><button type="button" id="hsmDayAll">전체 범위 선택</button>';
     document.body.appendChild(dialog); $('hsmDayClose').onclick = closeDays;
+    $('hsmDayGrid').addEventListener('scroll',updateDayScrollHint,{passive:true});
+    window.addEventListener('resize',function(){if(dialog.open)updateDayScrollHint();});
     dialog.addEventListener('close',function(){if(returnFocus)returnFocus.focus();});
     dialog.addEventListener('click',function(e){if(e.target===dialog){var r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeDays();}});
     $('hsmDayAll').onclick=function(){var start=$('startDay'),end=$('endDay');start.selectedIndex=0;end.selectedIndex=end.options.length-1;sync();closeDays();};
-    ['startDay','endDay','vocabDay'].forEach(function(id){var select=$(id);if(!select)return;select.hidden=true;var b=button('',function(){activeDay=id;returnFocus=b;renderDays();dialog.showModal();var selected=$('hsmDayGrid').querySelector('[aria-pressed="true"]');if(selected)selected.focus();});b.id='hsmPick'+id;b.className='hsm-day-trigger';b.setAttribute('aria-haspopup','dialog');b.setAttribute('aria-controls','hsmDayPicker');b.setAttribute('aria-label',id==='vocabDay'?'학습할 Day 선택':id==='startDay'?'시작 Day 선택':'마지막 Day 선택');select.insertAdjacentElement('afterend',b);document.querySelector('label[for="'+id+'"]').htmlFor=b.id;select.addEventListener('change',sync);new MutationObserver(sync).observe(select,{childList:true,attributes:true,attributeFilter:['disabled']});});
+    ['startDay','endDay','vocabDay'].forEach(function(id){var select=$(id);if(!select)return;select.hidden=true;var b=button('',function(){activeDay=id;returnFocus=b;renderDays();dialog.showModal();var selected=$('hsmDayGrid').querySelector('[aria-pressed="true"]');if(selected){selected.focus({preventScroll:true});$('hsmDayGrid').scrollTop=Math.max(0,selected.offsetTop-$('hsmDayGrid').offsetTop-8);}updateDayScrollHint();});b.id='hsmPick'+id;b.className='hsm-day-trigger';b.setAttribute('aria-haspopup','dialog');b.setAttribute('aria-controls','hsmDayPicker');b.setAttribute('aria-label',id==='vocabDay'?'학습할 Day 선택':id==='startDay'?'시작 Day 선택':'마지막 Day 선택');select.insertAdjacentElement('afterend',b);document.querySelector('label[for="'+id+'"]').htmlFor=b.id;select.addEventListener('change',sync);new MutationObserver(sync).observe(select,{childList:true,attributes:true,attributeFilter:['disabled']});});
     var rangeRow=$('startDay').closest('.row'); rangeRow.classList.add('hsm-setup-range');
     var rangeLabel=document.createElement('div');rangeLabel.className='hsm-setup-range-title';rangeLabel.textContent='시험 범위';rangeRow.insertAdjacentElement('beforebegin',rangeLabel);
     var summary=document.createElement('div');summary.id='hsmSetupSummary';summary.setAttribute('aria-live','polite');summary.setAttribute('aria-atomic','true');$('startButton').insertAdjacentElement('beforebegin',summary);
