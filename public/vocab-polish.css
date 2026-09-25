@@ -80,3 +80,18 @@
 #vocabScreen .word-bookmark>.hsm-ui-icon{display:none!important}
 #vocabScreen .hsm-cover-toolbar{position:static;margin:12px 0;padding:6px;border-radius:12px;box-shadow:none;background:#fcfafb}
 @media(max-width:650px){body.hsm-student-app-open::before{content:'';position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#faf7fa;z-index:100000;pointer-events:none}}
+
+/* Match the compact test controls without shifting the reading layout. */
+#vocabScreen .vocab-controls{gap:18px;margin-bottom:14px}
+#vocabScreen .vocab-controls label{font-size:13px;font-weight:650;color:#6c5664}
+#vocabScreen #hsmVocabSheets{gap:4px;padding:4px;background:#f5eff4;border-radius:13px}
+#vocabScreen #hsmVocabSheets button{min-height:44px;padding:9px 4px!important;border:0!important;border-radius:10px;background:transparent!important;color:#907a89;font-size:13px;font-weight:600;box-shadow:none!important}
+#vocabScreen #hsmVocabSheets button[aria-pressed=true]{background:#fff!important;color:#8f145f;box-shadow:0 2px 7px #43203608!important}
+#vocabScreen #hsmPickvocabDay{position:relative;min-height:46px;padding:11px 38px 11px 14px;font-size:15px;font-weight:550;color:#69535f}
+#vocabScreen #hsmPickvocabDay:after{content:'';position:absolute;right:17px;top:18px;width:7px;height:7px;border-right:1.5px solid #97818f;border-bottom:1.5px solid #97818f;transform:rotate(45deg)}
+#vocabScreen #hsmVocabSelect,#vocabScreen #hsmVocabSelectionPanel{box-sizing:border-box;height:48px;min-height:48px;margin:0 0 12px!important;border:0!important;border-radius:12px;background:#f8f2f6;box-shadow:none}
+#vocabScreen #hsmVocabSelect{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px;font-size:13px;font-weight:600}
+#vocabScreen #hsmVocabSelectionPanel{padding:2px 8px}
+#vocabScreen #hsmVocabSelectionPanel #hsmVocabSelectionBar{height:44px;min-height:44px}
+#vocabScreen #hsmVocabSelectionPanel .vocab-actions{position:fixed;left:50%;transform:translateX(-50%);z-index:999;width:calc(100% - 32px);max-width:640px;box-sizing:border-box;padding:8px!important;border:1px solid #eee4eb;border-radius:14px;background:#fff;box-shadow:0 6px 24px #43203618}
+#vocabScreen.hsm-vocab-selecting{padding-bottom:90px!important}
