@@ -315,3 +315,48 @@
 #friendBattleScreen.fb-finished .fb-result-actions .fb-primary svg{width:17px;height:17px;flex-shrink:0;color:#e9c990}
 #friendBattleScreen.fb-finished .fb-result-actions .fb-btn:active{transform:translateY(1px)}
 @media(min-width:600px){#friendBattleScreen .fb-stage-player .fb-avatar{width:140px;height:140px}}
+/* Battle setup follows the arena palette with compact, tactile choices. */
+.fb-sheet.fb-challenge-sheet{border:1px solid #e7dce9;border-radius:24px;background:linear-gradient(145deg,#fff 45%,#faf6fb);padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
+.fb-challenge-sheet>.fb-section-head{margin-bottom:16px}
+.fb-challenge-sheet .fb-section-head h2{font-size:22px!important;letter-spacing:-.04em;color:#513054}
+.fb-challenge-sheet .fb-section-head .fb-close{width:34px;height:34px;min-height:34px;background:#f3eef5!important;border:1px solid #ebe2ef!important;border-radius:50%;font-size:23px!important;line-height:1;padding:0;color:#8b7492!important}
+.fb-setup-opponent{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid #654474;border-radius:15px;background:radial-gradient(ellipse at top right,#78508a66,transparent 70%),#2d1c3d;color:#fff3df;margin-bottom:19px}
+.fb-setup-opponent .fb-avatar{width:54px;height:54px;flex-shrink:0;margin:0;filter:drop-shadow(0 3px 6px #13081e55)}
+.fb-setup-opponent>div{min-width:0;flex:1}
+.fb-setup-opponent small{display:block;font:700 8px Arial,sans-serif;letter-spacing:2px;color:#dabe8e}
+.fb-setup-opponent strong{display:block;font-size:16px;margin:4px 0;overflow-wrap:anywhere}
+.fb-setup-opponent span{font-size:10px;color:#d5c3df}
+.fb-setup-opponent>b{width:24px;color:#dfbf8b;opacity:.8;flex-shrink:0}
+.fb-setup-opponent>b svg{width:24px;height:24px}
+.fb-challenge-sheet #fbSource[hidden]{display:none!important}
+.fb-source-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.fb-challenge-sheet .fb-source-cards .fb-btn{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:10px;min-height:80px;background:#fff!important;border:1px solid #e7dfeb!important;border-radius:12px;color:#826c89!important;box-shadow:none!important}
+.fb-source-cards .fb-btn>span{font-size:18px;line-height:1;color:#b39abd}
+.fb-source-cards strong{font-size:12px;font-weight:650;overflow-wrap:anywhere;text-align:left}
+.fb-source-cards small{font:600 8px/1.4 Arial,sans-serif;letter-spacing:.6px;color:#a18ba8}
+.fb-challenge-sheet .fb-source-cards .fb-btn[aria-pressed=true]{background:#f0e9f5!important;border-color:#9877ab!important;color:#583869!important;box-shadow:inset 0 0 0 1px #9877ab20!important}
+.fb-challenge-sheet .fb-count-field{margin-top:15px}
+.fb-challenge-sheet .fb-count-field legend,.fb-challenge-sheet #fbChallenge>label{font-size:11px;color:#846c88;font-weight:650}
+.fb-challenge-sheet .fb-count-options{background:#eee8f1;border-radius:12px;padding:4px;gap:4px}
+.fb-challenge-sheet .fb-count-options .fb-btn{min-height:38px;border-radius:9px;font-size:12px;background:transparent!important;color:#9b87a1!important;border:1px solid transparent!important;box-shadow:none!important}
+.fb-challenge-sheet .fb-count-options .fb-btn[aria-pressed=true]{background:#654576!important;color:#fff0d7!important;border-color:#785487!important;box-shadow:0 2px 5px #38214618!important}
+.fb-challenge-sheet .fb-day-range .fb-btn{background:#fff!important;border:1px solid #e3d8e9!important;border-radius:11px;color:#67496f!important;font-size:14px;min-height:43px;padding:10px 13px}
+.fb-challenge-sheet .fb-challenge-rules{margin-top:15px;padding:11px 12px;border:1px solid #ece4ef;background:#f6f2f8;color:#937f9a;font-size:10px;line-height:1.8}
+.fb-challenge-sheet .fb-reward-preview{background:#fbf6eb;border-color:#eddfc2;font-size:10px;color:#977640;border-radius:10px}
+.fb-challenge-sheet .fb-challenge-hint{font-size:10px;margin:12px 0 9px}
+.fb-challenge-sheet #fbChallenge>.fb-primary{background:linear-gradient(120deg,#70497e,#422953)!important;color:#fff0d2!important;border:1px solid #92749a!important;box-shadow:inset 0 1px 0 #ffffff22,0 5px 12px #49275b20!important;border-radius:13px;min-height:48px;font-size:13px;justify-content:center}
+.fb-challenge-sheet #fbChallenge>.fb-primary span{color:#e8c98f}
+.fb-day-current{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;margin-bottom:14px;border-radius:12px;background:#2f1e3c;color:#eee0f5;flex-shrink:0}
+.fb-day-current>span{font-size:10px;color:#c6b0d1}
+.fb-day-current strong{font-size:13px;color:#f1d7a6}
+.fb-day-current i{font-style:normal;margin:0 7px;color:#8e779d}
+.fb-challenge-sheet .fb-day-grid{grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:2px 2px 10px;max-height:56dvh;scrollbar-width:thin;scrollbar-color:#c5b2cd transparent}
+.fb-challenge-sheet .fb-day-grid .fb-btn{min-height:40px;padding:6px 0;border-radius:9px;font-size:12px;background:#fff!important;color:#9b86a2!important;border:1px solid #e8dfee!important;box-shadow:none!important}
+.fb-challenge-sheet .fb-day-grid .fb-btn.in-range{background:#f2ecf6!important;color:#785782!important;border-color:#e0d3e8!important}
+.fb-challenge-sheet .fb-day-grid .fb-btn[aria-pressed=true]{background:#654576!important;color:#ffebc5!important;border-color:#654576!important;box-shadow:0 3px 7px #38244620!important}
+@media(max-width:360px){.fb-sheet.fb-challenge-sheet{padding:17px 13px calc(17px + env(safe-area-inset-bottom))}.fb-challenge-sheet .fb-day-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.fb-source-cards .fb-btn strong{font-size:11px}}
+.fb-challenge-sheet .fb-source-cards .fb-btn{min-height:70px;padding:9px;gap:3px}
+.fb-source-cards .fb-btn>svg{width:17px;height:17px;flex-shrink:0;color:#ab8fba}
+.fb-challenge-sheet .fb-setup-opponent{padding:10px 12px;margin-bottom:15px}
+.fb-challenge-sheet .fb-count-field{margin-top:12px}
+.fb-challenge-sheet .fb-challenge-rules{margin-top:12px;padding:8px 11px}
