@@ -466,3 +466,32 @@
 @keyframes fb-intro-exit{0%,82%{opacity:1}100%{opacity:0}}
 @media(max-width:360px){#friendBattleScreen.fb-game .fb-live-scoreboard{grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr)}#friendBattleScreen .fb-live-scoreboard .fb-fighter{grid-template-columns:30px minmax(0,1fr);column-gap:3px}#friendBattleScreen .fb-live-scoreboard .fb-guest{grid-template-columns:minmax(0,1fr) 30px}#friendBattleScreen .fb-live-scoreboard .fb-avatar{width:30px;height:36px}#friendBattleScreen .fb-live-scoreboard strong{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.fb-match-intro{display:none}}
+
+/* Results use the same open porcelain podiums as the waiting room. */
+#friendBattleScreen.fb-finished{background:#fff}
+#friendBattleScreen.fb-finished .fb-final-arena{background:transparent;border:0;box-shadow:none;border-radius:0;overflow:visible;margin:0 0 10px}
+#friendBattleScreen.fb-finished .fb-final-stage{background:transparent;isolation:isolate;aspect-ratio:1.95}
+#friendBattleScreen.fb-finished .fb-stage-player{bottom:18%;isolation:isolate}
+#friendBattleScreen.fb-finished .fb-stage-player .fb-avatar{position:relative;z-index:2;transform:none;margin:0 0 -5px;filter:drop-shadow(0 5px 3px #5b446324)}
+#friendBattleScreen.fb-finished .fb-stage-player .fb-player-tag{color:#ad95b0;font-size:8px;letter-spacing:2px;margin-bottom:12px}
+#friendBattleScreen.fb-finished .fb-stage-player:before{content:'';position:absolute;z-index:0;bottom:-17px;width:96%;height:28px;border-radius:50%;background:linear-gradient(90deg,#e4dce9,#f7f1f9 45%,#e0d3e4);box-shadow:0 11px 14px -8px #78578445,inset 0 -1px 0 #d1c1d7}
+#friendBattleScreen.fb-finished .fb-stage-player:after{content:'';position:absolute;z-index:1;bottom:-6px;width:96%;height:23px;border-radius:50%;background:radial-gradient(ellipse at center,#d8cadd50,transparent 60%),linear-gradient(150deg,#fffdf9,#f3edf7);border:1px solid #ddcaa850;filter:none;box-shadow:inset 0 1px 0 #fff,0 2px 0 #d9c2a440}
+#friendBattleScreen.fb-finished .fb-stage-player.is-winner:after{border-color:#d2b373;box-shadow:0 0 15px #e8d3a14d,inset 0 1px 0 #fff,0 2px 0 #d4b575}
+#friendBattleScreen.fb-finished .fb-final-score{top:45%;left:38%;width:24%;text-shadow:none}
+#friendBattleScreen.fb-finished .fb-stage-vs{margin:0;font:800 italic 25px/1 Arial,sans-serif;letter-spacing:-1px;color:#b79a62;text-shadow:none;transform:none}
+#friendBattleScreen.fb-finished .fb-nameplates{background:none;border:0;padding:8px 0 0;grid-template-columns:40% 40%;justify-content:space-between;gap:0}
+#friendBattleScreen.fb-finished .fb-nameplate+.fb-nameplate{border:0}
+#friendBattleScreen.fb-finished .fb-nameplate strong{color:#58425f;font-size:14px}
+#friendBattleScreen.fb-finished .fb-nameplate small{color:#a08ba6;font-size:10px;margin-top:5px}
+#friendBattleScreen.fb-finished .fb-status-dot.is-ready{background:#85b396;box-shadow:none}
+
+#friendBattleScreen.fb-finished .fb-final-score{top:36%;left:34%;width:32%}
+#friendBattleScreen.fb-finished .fb-final-score>span{font:700 8px/1.4 Arial,sans-serif;letter-spacing:2px;color:#b39b77}
+#friendBattleScreen.fb-finished .fb-final-score .fb-score{gap:6px;margin:5px 0}
+#friendBattleScreen.fb-finished .fb-final-score .fb-score b{font-size:29px;color:#72547f}
+#friendBattleScreen.fb-finished .fb-final-score .fb-score>span{font-size:17px;color:#bdaec5}
+#friendBattleScreen.fb-finished .fb-final-score>small{font-size:9px;color:#aa96b1}
+#friendBattleScreen.fb-finished .fb-nameplate small{font-size:12px;color:#9e8458}
+#friendBattleScreen.fb-finished .fb-final-arena{margin-bottom:22px}
+#friendBattleScreen.fb-finished .fb-stage-player.is-winner .fb-player-tag{color:#b48e4b}
+@media(max-width:360px){#friendBattleScreen.fb-finished .fb-final-score .fb-score b{font-size:25px}}
