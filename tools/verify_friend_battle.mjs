@@ -11,7 +11,7 @@ const dom=new JSDOM('<div id="mainApp"><div id="myPageScreen"><div class="learni
 const w=dom.window,d=w.document;w.scrollTo=()=>{};w.currentStudent={studentId:'test'};w.hsmEnsureStudentSession_=async()=> 'token';w.HANSALMAE_CONFIG={apiUrl:'https://example.test/api'};w.hideAllStudentMainScreens_=()=>d.getElementById('myPageScreen').classList.add('hidden');w.setActiveMenu=()=>{};w.HSMDialog={confirm:async()=>true};w.showMyPage=()=>{};
 const me={id:'me',name:'나',level:8,title:'단어수집가'},friend={id:'friend',name:'<img src=x onerror=alert(1)>',level:7,title:'단어수집가',online:true,status:'accepted'},home={me,friends:[friend],blocked:[],battles:[]};
 let game={id:'room',status:'invited',settings:{title:'중등단어',kind:'standard',start:1,end:70,mode:'mixed'},me:'me',host:me,guest:friend,hostScore:0,guestScore:0,hostMs:0,guestMs:0,serverNow:new Date().toISOString(),round:0},calls=[];
-w.fetch=async(url,args)=>{const body=JSON.parse(args.body);calls.push(body);let result=home;switch(body.action){case 'catalog':result=[{id:'middle',title:'중등단어',kind:'standard',days:Array.from({length:70},(_,i)=>i+1)}];break;case 'invite':game={...game,settings:{...game.settings,count:body.payload.count}};result=game;break;case 'poll':result=game;break;case 'ready':game={...game,status:'playing',hostReady:true,guestReady:true,roundAt:new Date(Date.now()+3000).toISOString(),deadline:new Date(Date.now()+13000).toISOString()};result=game;break;case 'answer':game={...game,answered:true,choice:body.payload.choice};result=game;break;case 'leave':result={...game,status:'finished'};break;}return {ok:true,json:async()=>({success:true,result})};};
+w.fetch=async(url,args)=>{const body=JSON.parse(args.body);calls.push(body);let result=home;switch(body.action){case 'catalog':result=[{id:'middle',title:'중등단어DB',kind:'standard',days:Array.from({length:70},(_,i)=>i+1)}];break;case 'invite':game={...game,settings:{...game.settings,count:body.payload.count,seconds:body.payload.seconds}};result=game;break;case 'poll':result=game;break;case 'ready':game={...game,status:'playing',hostReady:true,guestReady:true,roundAt:new Date(Date.now()+3000).toISOString(),deadline:new Date(Date.now()+13000).toISOString()};result=game;break;case 'answer':game={...game,answered:true,choice:body.payload.choice};result=game;break;case 'leave':result={...game,status:'finished'};break;}return {ok:true,json:async()=>({success:true,result})};};
 w.eval(readFileSync('public/friend-battle.js','utf8'));d.dispatchEvent(new w.Event('DOMContentLoaded'));
 const wait=()=>new Promise(r=>setTimeout(r,20)),click=async(sel)=>{assert(d.querySelector(sel),sel);d.querySelector(sel).click();await wait();};
 await w.hsmOpenFriendBattle_();assert(d.getElementById('friendBattleScreen').textContent.includes('친구와 단어 대전'));assert(!d.querySelector('[onerror]'));
@@ -19,7 +19,17 @@ await click('[data-action="challenge"]');assert.equal(d.querySelector('#fbEnd').
 assert.equal(d.querySelector('[data-action="count"][aria-pressed="true"]').dataset.id,'10');
 await click('[data-action="count"][data-id="20"]');assert.equal(d.querySelector('[data-action="count"][aria-pressed="true"]').dataset.id,'20');
 await click('[data-action="count"][data-id="30"]');
-await click('[data-action="invite"]');assert.equal(calls.find(c=>c.action==='invite').payload.count,30);assert(d.querySelector('.fb-wait').textContent.includes('총 30문제'));assert(!d.querySelector('.fb-overlay'));assert(d.getElementById('friendBattleScreen').textContent.includes('친구의 수락'));
+assert.equal(d.querySelector('#fbSource').selectedOptions[0].textContent,'중등단어');
+await click('[data-action="seconds"][data-id="15"]');
+await click('[data-action="seconds"][data-id="20"]');
+await click('[data-action="mode"][data-id="korToEng"]');
+await click('[data-action="day"][data-id="fbStart"]');assert.equal(d.querySelectorAll('[data-action="pickDay"]').length,70);
+await click('[data-action="pickDay"][data-id="70"]');assert.equal(d.querySelector('#fbStart').value,'70');
+await click('[data-action="day"][data-id="fbEnd"]');await click('[data-action="pickDay"][data-id="65"]');assert.equal(d.querySelector('#fbStart').value,'65');assert.equal(d.querySelector('#fbEnd').value,'65');
+assert.equal(d.querySelector('[data-action="seconds"][aria-pressed="true"]').dataset.id,'20');
+await click('[data-action="day"][data-id="fbStart"]');await click('[data-action="dayBack"]');assert(d.querySelector('#fbChallenge'));
+
+await click('[data-action="invite"]');assert.equal(calls.find(c=>c.action==='invite').payload.count,30);assert.equal(calls.find(c=>c.action==='invite').payload.seconds,20);assert.equal(calls.find(c=>c.action==='invite').payload.mode,'korToEng');assert(d.querySelector('.fb-wait').textContent.includes('20초'));assert(d.querySelector('.fb-wait').textContent.includes('총 30문제'));assert(!d.querySelector('.fb-overlay'));assert(d.getElementById('friendBattleScreen').textContent.includes('친구의 수락'));
 game.status='ready';await w.hsmOpenFriendBattle_();await click('[data-action="ready"]');assert(d.getElementById('fbCountdown'));assert.equal(d.querySelectorAll('.fb-option').length,0);
 game={...game,roundAt:new Date(Date.now()-1000).toISOString(),question:{prompt:'appearance',mode:'engToKor',correctId:null,options:[{id:'one',text:'외모'},{id:'two',text:'삶'},{id:'three',text:'성장'},{id:'four',text:'요청'}]}};
 await w.hsmOpenFriendBattle_();assert(d.querySelector('.fb-round').textContent.includes('01 / 30'));assert.equal(d.querySelectorAll('.fb-option').length,4);assert(!d.querySelector('.is-correct'));

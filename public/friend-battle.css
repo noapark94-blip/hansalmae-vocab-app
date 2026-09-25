@@ -59,3 +59,28 @@
 #fbShortcut:active .fb-cover-cta{box-shadow:inset 0 1px 0 #fffaf0,0 2px 0 #a36c44}
 @media(max-width:360px){#fbShortcut .fb-cover-top{padding:11px 17px 0}#fbShortcut .fb-cover-title{font-size:26px;padding:2px 17px 4px}#fbShortcut .fb-cover-footer{padding:3px 15px 12px}}
 @media(prefers-reduced-motion:reduce){#fbShortcut .fb-cover-cta>span{transition:none}}
+
+/* Battle setup keeps each choice compact; all Days remain scrollable. */
+.fb-challenge-sheet{padding:20px 20px calc(20px + env(safe-area-inset-bottom))}
+.fb-challenge-sheet .fb-challenge-intro{margin:6px 0 18px;font-size:13px;overflow-wrap:anywhere}
+.fb-challenge-sheet #fbChallenge>label{margin:0 0 6px}
+.fb-challenge-sheet #fbSource{margin:0;height:44px;font-size:16px}
+.fb-challenge-sheet .fb-count-field{margin-top:16px}
+.fb-challenge-sheet .fb-count-field legend{margin-bottom:7px;font-size:12px;font-weight:650}
+.fb-challenge-sheet .fb-count-options .fb-btn{min-height:40px;padding:8px 4px;font-size:13px}
+.fb-day-range{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1fr);align-items:center;gap:8px}
+.fb-day-range>span{text-align:center;color:#b39caa}
+.fb-sheet .fb-day-range .fb-btn{display:flex;width:100%;justify-content:space-between;font-size:15px;min-height:44px}
+.fb-day-range .fb-btn span{color:#a08b99}
+.fb-challenge-rules{font-size:11px;line-height:1.65;color:#8e7b88;background:#faf6f9;border-radius:10px;padding:10px 12px;margin:16px 0 0;word-break:keep-all}
+.fb-challenge-hint{font-size:11px;line-height:1.6;color:#9a8794;margin:13px 0 6px;text-align:center}
+.fb-challenge-sheet #fbChallenge>.fb-primary{display:flex;gap:12px;min-height:46px;font-size:14px;margin-top:0}
+.fb-challenge-sheet.fb-day-open{overflow:hidden;display:flex;flex-direction:column}
+.fb-challenge-sheet.fb-day-open>:not(.fb-day-picker){display:none!important}
+.fb-day-picker{display:flex;flex-direction:column;min-height:0;max-height:calc(100dvh - 90px - env(safe-area-inset-bottom))}
+.fb-day-picker>.fb-section-head{flex-shrink:0}
+.fb-day-picker .fb-sub{font-size:12px;margin:6px 0 16px;flex-shrink:0}
+.fb-day-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:3px 3px 6px;scroll-padding:4px}
+.fb-sheet .fb-day-grid .fb-btn{width:100%;min-height:44px;padding:8px 0;border-radius:11px;font-size:14px}
+.fb-sheet .fb-day-grid .fb-btn[aria-pressed="true"]{background:#901462;color:#fff;border-color:#901462}
+@media(max-width:360px){.fb-challenge-sheet{padding:16px 14px calc(16px + env(safe-area-inset-bottom))}.fb-day-grid{gap:6px}}
