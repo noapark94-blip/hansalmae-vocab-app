@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-68"></script>
+  <script src="./app-dialogs.js?v=20260925-69"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260925-68"></script>
-  <script src="./config.js?v=20260925-68"></script>
-  <script src="./app-update.js?v=20260925-68"></script>
+  <script src="./school-runtime.js?v=20260925-69"></script>
+  <script src="./config.js?v=20260925-69"></script>
+  <script src="./app-update.js?v=20260925-69"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -3306,105 +3306,45 @@
 </style>
 
 <script id="hsm-ranking-pull-refresh-v1">
-  (function () {
-    var startY = 0;
-    var pullDistance = 0;
-    var tracking = false;
-    var refreshing = false;
-    var threshold = 68;
-
-    function rankingScreenVisible_() {
-      var screen = document.getElementById('rankingScreen');
-      return screen && !screen.classList.contains('hidden');
-    }
-
-    function indicator_() {
-      return document.getElementById('rankingPullRefresh');
-    }
-
-    function resetIndicator_(delay) {
-      window.setTimeout(function () {
-        var indicator = indicator_();
-        if (!indicator) return;
-        indicator.classList.remove('is-visible', 'is-ready', 'is-refreshing');
-        indicator.style.transform = 'translateY(-24px)';
-        var icon = indicator.querySelector('.ranking-pull-refresh-icon');
-        var text = indicator.querySelector('.ranking-pull-refresh-text');
-        if (icon) icon.textContent = '↓';
-        if (text) text.textContent = '아래로 당겨 새로고침';
-        refreshing = false;
-      }, delay || 0);
-    }
-
-    document.addEventListener('touchstart', function (event) {
-      if (
-        refreshing ||
-        !rankingScreenVisible_() ||
-        window.scrollY > 2 ||
-        !event.touches ||
-        event.touches.length !== 1
-      ) {
-        tracking = false;
-        return;
-      }
-      startY = event.touches[0].clientY;
-      pullDistance = 0;
-      tracking = true;
-    }, { passive: true });
-
-    document.addEventListener('touchmove', function (event) {
-      if (!tracking || refreshing || !event.touches || event.touches.length !== 1) return;
-      var delta = event.touches[0].clientY - startY;
-      if (delta <= 0) {
-        tracking = false;
-        resetIndicator_(0);
-        return;
-      }
-      event.preventDefault();
-      pullDistance = Math.min(delta * 0.58, 92);
-      var indicator = indicator_();
-      if (!indicator) return;
-      indicator.classList.add('is-visible');
-      indicator.classList.toggle('is-ready', pullDistance >= threshold);
-      indicator.style.transform = 'translateY(' + Math.max(-18, pullDistance - 34) + 'px)';
-      var text = indicator.querySelector('.ranking-pull-refresh-text');
-      if (text) {
-        text.textContent = pullDistance >= threshold
-          ? '놓으면 새로고침'
-          : '아래로 당겨 새로고침';
-      }
-    }, { passive: false });
-
-    document.addEventListener('touchend', function () {
-      if (!tracking) return;
-      tracking = false;
-      if (pullDistance < threshold || refreshing) {
-        resetIndicator_(0);
-        return;
-      }
-      refreshing = true;
-      var indicator = indicator_();
-      if (indicator) {
-        indicator.classList.remove('is-ready');
-        indicator.classList.add('is-visible', 'is-refreshing');
-        indicator.style.transform = 'translateY(18px)';
-        var icon = indicator.querySelector('.ranking-pull-refresh-icon');
-        var text = indicator.querySelector('.ranking-pull-refresh-text');
-        if (icon) icon.textContent = '↻';
-        if (text) text.textContent = '최신 순위를 불러오는 중';
-      }
-      try {
-        localStorage.removeItem('hsmMonthlyRankingCacheV2');
-      } catch (_cacheError) {}
-      if (typeof showRankingHome === 'function') showRankingHome();
-      resetIndicator_(1200);
-    }, { passive: true });
-
-    document.addEventListener('touchcancel', function () {
-      tracking = false;
-      resetIndicator_(0);
-    }, { passive: true });
-  })();
+(function(){
+  var startX=0,startY=0,distance=0,tracking=false,refreshing=false,timer=0;
+  var icon='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 7a7 7 0 0 1 11.6-1L20 9M4 15l2.3 3A7 7 0 0 0 17.9 17"/></svg>';
+  function indicator(){return document.getElementById('rankingPullRefresh');}
+  function visible(){var s=document.getElementById('rankingScreen');return s&&!s.classList.contains('hidden');}
+  function reset(){clearTimeout(timer);tracking=false;distance=0;refreshing=false;var i=indicator();if(i){i.classList.remove('is-visible','is-ready','is-refreshing');i.style.transform='translate(-50%,-10px)';}}
+  function paint(label){var i=indicator();if(!i)return;i.querySelector('.ranking-pull-refresh-icon').innerHTML=icon;i.querySelector('.ranking-pull-refresh-text').textContent=label;i.setAttribute('role','status');}
+  document.addEventListener('touchstart',function(e){
+    var screen=document.getElementById('rankingScreen');
+    if(refreshing||!visible()||screen.getAttribute('aria-busy')==='true'||window.scrollY>2||e.touches.length!==1||document.querySelector('dialog[open],.hsm-ranking-showcase:not(.hidden)'))return;
+    clearTimeout(timer);startX=e.touches[0].clientX;startY=e.touches[0].clientY;distance=0;tracking=true;
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(!tracking||refreshing)return;
+    if(!visible()||e.touches.length!==1){reset();return;}
+    var dy=e.touches[0].clientY-startY,dx=Math.abs(e.touches[0].clientX-startX);
+    if(dy<=0||dx>Math.abs(dy)){reset();return;}
+    if(dy<8)return;
+    if(e.cancelable)e.preventDefault();
+    distance=Math.min(dy*.5,80);
+    var i=indicator();paint(distance>=60?'놓으면 새로고침':'당겨서 새로고침');
+    i.classList.add('is-visible');i.classList.toggle('is-ready',distance>=60);
+    i.style.transform='translate(-50%,'+Math.min(distance-16,34)+'px)';
+  },{passive:false});
+  document.addEventListener('touchend',function(){
+    if(!tracking)return;tracking=false;
+    if(distance<60||!visible()){reset();return;}
+    refreshing=true;paint('새로고침 중');
+    var i=indicator();i.classList.remove('is-ready');i.classList.add('is-refreshing');
+    i.style.transform='translate(-50%,18px)';
+    try{showRankingHome();}catch(e){reset();throw e;}
+  },{passive:true});
+  document.addEventListener('touchcancel',reset,{passive:true});
+  window.addEventListener('hsm:ranking-refreshed',function(e){
+    if(!refreshing)return;var i=indicator();i.classList.remove('is-refreshing');
+    paint(e.detail&&e.detail.ok?'업데이트 완료':'다시 시도해주세요');
+    timer=setTimeout(reset,700);
+  });
+})();
 </script>
 
   <style id="data-cleanup-ui-style">
@@ -4746,16 +4686,26 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260925-68">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260925-68">
-<link rel="stylesheet" href="./student-ui.css?v=20260925-68">
-<script defer src="./test-setup.js?v=20260925-68"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260925-68">
-<script defer src="./wrong-review.js?v=20260925-68"></script>
-<script defer src="./vocab-selection.js?v=20260925-68"></script>
-<script defer src="./personal-dialogs.js?v=20260925-68"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-68">
-</head>
+<link rel="stylesheet" href="./test-setup.css?v=20260925-69">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260925-69">
+<link rel="stylesheet" href="./student-ui.css?v=20260925-69">
+<script defer src="./test-setup.js?v=20260925-69"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260925-69">
+<script defer src="./wrong-review.js?v=20260925-69"></script>
+<script defer src="./vocab-selection.js?v=20260925-69"></script>
+<script defer src="./personal-dialogs.js?v=20260925-69"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-69">
+<style id="hsm-ranking-refresh-polish">
+#rankingScreen #rankingLoading:empty{display:none;min-height:0;margin:0}
+#rankingScreen #rankingLoading{font-size:12px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
+#rankingScreen #rankingMonth:empty{min-height:22px}
+#rankingScreen #rankingPullRefresh{position:absolute;left:50%;top:4px;z-index:5;width:max-content;max-width:calc(100% - 32px);height:36px;padding:0 13px;gap:7px;border-radius:999px;background:#fff;color:#8f145f;font-size:12px;font-weight:550;white-space:nowrap;box-shadow:0 4px 18px #4d123718;transform:translate(-50%,-10px)}
+#rankingPullRefresh .ranking-pull-refresh-icon{width:20px;height:20px;flex:none}
+#rankingScreen[aria-busy=true] .ranking-tabs{position:relative}
+#rankingScreen[aria-busy=true] .ranking-tabs:after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#b9759e,transparent);background-size:200% 100%;animation:hsmRankingLoading 1.2s linear infinite}
+@keyframes hsmRankingLoading{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){#rankingScreen .ranking-pull-refresh,#rankingScreen .ranking-pull-refresh-icon{transition:none}#rankingScreen .is-refreshing .ranking-pull-refresh-icon,#rankingScreen[aria-busy=true] .ranking-tabs:after{animation:none}}
+</style></head>
 
 <body>
 
@@ -6069,7 +6019,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           id="rankingMonth"
           class="subtitle"
         >
-          이번 달 순위를 불러오는 중입니다.
+
         </div>
 
         <div class="ranking-tabs" role="group" aria-label="랭킹 부문">
@@ -10386,7 +10336,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
       document
         .getElementById('rankingLoading')
         .textContent =
-        '이번 달 순위를 불러오는 중입니다.';
+        '';
 
       document
         .getElementById('rankingList')
@@ -10416,7 +10366,7 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           monthlyRankingData = cachedData;
           showedCachedRanking = true;
           document.getElementById('rankingLoading').textContent =
-            '저장된 순위를 먼저 표시했습니다. 최신 순위를 확인 중입니다.';
+            '';
           document.getElementById('rankingMonth').textContent =
             monthlyRankingData.year + '년 ' + monthlyRankingData.month + '월 순위';
           showRankingCategory(currentRankingCategory);
@@ -10425,8 +10375,11 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
         localStorage.removeItem(rankingCacheKey);
       }
 
+      document.getElementById('rankingScreen').setAttribute('aria-busy','true');
       google.script.run
         .withSuccessHandler(function (data) {
+          document.getElementById('rankingScreen').setAttribute('aria-busy','false');
+          window.dispatchEvent(new CustomEvent('hsm:ranking-refreshed',{detail:{ok:true}}));
           monthlyRankingData =
             data || {
               middle: [],
@@ -10462,6 +10415,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           );
         })
         .withFailureHandler(function (error) {
+          document.getElementById('rankingScreen').setAttribute('aria-busy','false');
+          window.dispatchEvent(new CustomEvent('hsm:ranking-refreshed',{detail:{ok:false}}));
           document
             .getElementById('rankingLoading')
             .textContent =
@@ -16260,7 +16215,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260925-68"></script>
+<script src="./ui-icons.js?v=20260925-69"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
