@@ -64,3 +64,14 @@
 #fbShortcut:active .fb-cover-cta{box-shadow:0 2px 0 #651346}
 @media(max-width:360px){#myPageScreen #fbShortcut{padding:18px 14px 16px!important}#fbShortcut .fb-cover-arena{height:125px;grid-template-columns:minmax(0,1fr) 38px minmax(0,1fr)}#fbShortcut .fb-cover-side img{width:124px;height:124px}#fbShortcut .fb-cover-vs{font-size:37px}#fbShortcut .fb-cover-rules{font-size:10px}}
 @media(prefers-reduced-motion:reduce){#fbShortcut .fb-cover-side img{transition:none}}
+
+/* Match-intro artwork: opaque edge-to-edge poster, no rules caption. */
+#myPageScreen #fbShortcut{padding:0!important;background:#281031!important;border-color:#e7d4e3!important}
+#myPageScreen #fbShortcut::before{display:none}
+#fbShortcut .fb-cover-top{padding:19px 20px 0;background:#fff9fd}
+#fbShortcut .fb-cover-title{padding:7px 20px 17px;margin:0;background:#fff9fd}
+#fbShortcut .fb-cover-poster{display:block;width:100%;overflow:hidden;line-height:0}
+#fbShortcut .fb-cover-poster img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain}
+#fbShortcut .fb-cover-footer{margin:0;padding:15px 18px 19px;background:linear-gradient(110deg,#421130,#281331)}
+#fbShortcut .fb-cover-cta{border:1px solid #ffffff24;background:linear-gradient(110deg,#a72072,#8c247f);box-shadow:0 3px 0 #160b22;color:#fff}
+@media(max-width:360px){#myPageScreen #fbShortcut{padding:0!important}#fbShortcut .fb-cover-top{padding:16px 16px 0}#fbShortcut .fb-cover-title{padding:7px 16px 14px}#fbShortcut .fb-cover-footer{padding:12px 14px 17px}}

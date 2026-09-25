@@ -5,7 +5,7 @@
   window.__HANSALMAE_APP_UPDATE_COORDINATOR__ = true;
 
   var BUILD_VERSION = String(
-    window.HANSALMAE_BUILD_VERSION || '20260925-73'
+    window.HANSALMAE_BUILD_VERSION || '20260925-74'
   );
   var RELOAD_GUARD_KEY = 'hsmAppUpdateReloadGuard';
   var UPDATED_TO_KEY = 'hsmAppUpdatedTo';
