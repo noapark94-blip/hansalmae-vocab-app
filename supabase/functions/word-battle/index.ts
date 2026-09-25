@@ -42,7 +42,8 @@ Deno.serve(async req=>{
   if(['home','search','request','acceptFriend','remove','declineFriend','block','unblock'].includes(action)){
    const mapped=action==='acceptFriend'?'accept':action==='declineFriend'?'decline':action;
    result=await rpc('battle_social',{p_actor:actor,p_action:mapped,p_target:p.target||null,p_search:str(p.search)});
-  }else if(action==='catalog')result=await rpc('battle_catalog',{p_actor:actor,p_target:str(p.target)});
+  }else if(action==='rewardPreview')result=await rpc('battle_reward_allowance',{p_actor:actor,p_target:str(p.target)||null});
+  else if(action==='catalog')result=await rpc('battle_catalog',{p_actor:actor,p_target:str(p.target)});
   else if(action==='invite'){
    const built=await source(actor,str(p.target),p);
    result=await rpc('battle_play',{p_actor:actor,p_action:'invite',p_payload:{...built,target:str(p.target)}});

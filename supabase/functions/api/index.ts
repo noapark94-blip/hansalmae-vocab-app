@@ -1843,7 +1843,7 @@ async function dispatch(
           hour: "2-digit",
           minute: "2-digit",
         }),
-        sheetName: x.word_sets?.name ??
+        sheetName: x.test_kind === "battle" ? "대전 · " + (x.raw_result?.title || x.word_sets?.name || "단어 대전").replace(/DB$/i, "") : x.word_sets?.name ??
           (x.test_kind === "teacher" ? "선생님 시험" : "단어 시험"),
         dayText: x.start_day
           ? `Day ${x.start_day}${
