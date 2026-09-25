@@ -3,3 +3,8 @@ project_id = "hansalmae-word-app"
 [functions.api]
 verify_jwt = false
 
+
+
+# Custom student token + active-session validation in the function.
+[functions.word-battle]
+verify_jwt = false

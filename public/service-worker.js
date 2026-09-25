@@ -1,10 +1,12 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260925-69';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260925-70';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
 };
 
 const REQUIRED_ASSETS = [
+  versioned('./friend-battle.js'),
+  versioned('./friend-battle.css'),
   versioned('./app-dialogs.js'),
   versioned('./app-dialogs.css'),
   versioned('./personal-dialogs.js'),
@@ -169,5 +171,3 @@ self.addEventListener('fetch', function (event) {
     return cached || networkRequest;
   }));
 });
-
-

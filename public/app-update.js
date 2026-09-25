@@ -5,7 +5,7 @@
   window.__HANSALMAE_APP_UPDATE_COORDINATOR__ = true;
 
   var BUILD_VERSION = String(
-    window.HANSALMAE_BUILD_VERSION || '20260925-69'
+    window.HANSALMAE_BUILD_VERSION || '20260925-70'
   );
   var RELOAD_GUARD_KEY = 'hsmAppUpdateReloadGuard';
   var UPDATED_TO_KEY = 'hsmAppUpdatedTo';
@@ -36,6 +36,7 @@
   }
 
   function isTestInProgress() {
+    if (typeof window.hsmBattleInProgress_ === 'function' && window.hsmBattleInProgress_()) return true;
     if (typeof window.hsmHasPendingApiRequests_ === 'function' && window.hsmHasPendingApiRequests_()) return true;
     if (document.querySelector('dialog[open]')) return true;
     if(document.querySelector('[data-hsm-save-pending]')||window.hsmTeacherDirty_)return true;
@@ -216,5 +217,3 @@
     start();
   }
 })();
-
-
