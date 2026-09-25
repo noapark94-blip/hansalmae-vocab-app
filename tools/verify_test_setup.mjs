@@ -113,7 +113,7 @@ await new Promise(resolve=>w.setTimeout(resolve,0));
 assert.equal(el('hsmPickvocabDay').disabled,true);
 el('vocabDay').disabled=false;el('vocabDay').innerHTML='<option value="1">Day 1</option>';
 await new Promise(resolve=>w.setTimeout(resolve,0));
-assert.equal(el('hsmPickvocabDay').textContent,'Day 1 ⌄');
+assert.equal(el('hsmPickvocabDay').textContent,'Day 1');
 assert.equal(el('hsmPickvocabDay').disabled,false);
 w.close();
 
