@@ -1,7 +1,7 @@
 /* Friends and server-authoritative battles; rewards are settled atomically by the server. */
 (function(){
  'use strict';
- let root, home=null, game=null, owner='', busy=false, pollBusy=false, lastPoll=0, signature='', offset=0, modal=null, searchResult=null, revision=0, lastRewardSync='';
+ let root, home=null, game=null, owner='', busy=false, pollBusy=false, lastPoll=0, signature='', offset=0, modal=null, searchResult=null, revision=0, lastRewardSync='',lastIntroGame='';
  const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const who=()=>typeof currentStudent!=='undefined'&&currentStudent?String(currentStudent.studentId||''):'';
  const active=()=>root&&!root.classList.contains('hidden');
@@ -66,6 +66,15 @@
    ((home?.battles||[]).some(b=>b.status==='finished')?'<div class="fb-section-head"><h3>최근 대전</h3><span class="fb-section-caption">MATCH HISTORY</span></div><div class="fb-history-list">'+home.battles.filter(b=>b.status==='finished').slice(0,5).map(b=>{const outcome=!b.winner?'draw':b.winner===home.me.id?'win':'lose';return '<button type="button" class="fb-history" data-action="room" data-id="'+esc(b.id)+'">'+image(b.opponent)+'<span class="fb-history-name">'+esc(b.opponent?.name||'친구')+'</span><span class="fb-history-result is-'+outcome+'">'+outcome.toUpperCase()+'</span><span aria-hidden="true">›</span></button>';}).join('')+'</div>':'')+
    '<details class="fb-rules" '+(rulesOpen?'open':'')+'><summary>대전 규칙 안내</summary><p>정답 수로 승부하고, 동점이면 정답을 맞힌 총 시간으로 결정해요.</p><p>10문제 기준 WIN +5P · DRAW +3P · LOSE +1P. 경험치는 정답 1개당 +2 EXP, 완료 시 +5 EXP예요. 20·30문제는 포인트와 완료 경험치가 2·3배예요.</p><p>기존 월간 포인트와 누적 경험치에 합산돼요. 하루 100문제, 같은 친구와 하루 첫 3판까지 보상하며, 제한 시간에 따른 차이는 없어요. 한도가 남은 만큼 앞 문제부터 계산하고 비례 보상은 소수점 아래를 버려요. 날짜는 한국 시간 자정에 바뀌어요.</p><p>일반 단어장은 해당 단어장 순위에, 학교 수행평가는 학생 학년에 맞는 중등·고등 순위에 합산돼요. 중도 포기자는 보상이 없고, 상대는 이미 채점된 정답의 경험치만 받아요.</p></details>';
   }
+ function matchIntro(g){
+  const remaining=new Date(g.roundAt).getTime()-(Date.now()+offset);
+  if(g.status!=='playing'||g.round!==0||g.question||lastIntroGame===g.id||remaining<1000||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  const target=root.querySelector('.fb-countdown');if(!target)return;
+  lastIntroGame=g.id;
+  const intro=document.createElement('div');intro.className='fb-match-intro';intro.setAttribute('aria-hidden','true');
+  intro.innerHTML='<div class="fb-intro-player fb-intro-left">'+image(g.host)+'<strong>'+esc(g.host?.name)+'</strong></div><b>VS</b><div class="fb-intro-player fb-intro-right">'+image(g.guest)+'<strong>'+esc(g.guest?.name)+'</strong></div><i></i>';
+  target.appendChild(intro);setTimeout(()=>intro.remove(),850);
+ }
  function scoreboard(g){
   if(['finished','invited','ready'].includes(g.status)){
    const finished=g.status==='finished';
@@ -81,7 +90,7 @@
   }
 
   const fighter=(p,side)=>{const mine=p?.id===g.me,done=mine?g.answered:g.opponentAnswered;const status=g.status==='finished'?((side==='host'?g.hostMs:g.guestMs)/1000).toFixed(1)+'초':g.status==='playing'?(g.revealUntil?'ROUND RESULT':!g.question?'READY':done?'선택 완료 ✓':'고르는 중…'):g.status==='ready'?((side==='host'?g.hostReady:g.guestReady)?'준비 완료 ✓':'준비 중'):mine?'PLAYER 1 · 나':'PLAYER 2 · 친구';return '<div class="fb-fighter fb-'+side+(g.status==='finished'&&g.winner===p?.id?' is-winner':'')+'"><span class="fb-player-tag">'+(mine?'YOU':'RIVAL')+'</span>'+image(p)+'<strong>'+esc(p?.name)+'</strong><small class="'+(done?'is-done':'')+'">'+status+'</small></div>';};
-  return '<div class="fb-scoreboard fb-arena">'+fighter(g.host,'host')+'<div class="fb-score-center"><span class="fb-versus">'+(g.status==='finished'?'FINAL':'VS')+'</span><div class="fb-score"><b data-score="host">'+g.hostScore+'</b><span>:</span><b data-score="guest">'+g.guestScore+'</b></div><small>'+(g.status==='finished'?'정답 수':'WORD BATTLE')+'</small></div>'+fighter(g.guest,'guest')+'</div>';
+  return '<div class="fb-scoreboard fb-arena fb-live-scoreboard">'+fighter(g.host,'host')+'<div class="fb-score-center"><span class="fb-versus">LIVE</span><div class="fb-score"><b class="'+(g.hostScore>g.guestScore?'is-leading':'')+'" data-score="host">'+g.hostScore+'</b><span>:</span><b class="'+(g.guestScore>g.hostScore?'is-leading':'')+'" data-score="guest">'+g.guestScore+'</b></div><small>정답 수</small></div>'+fighter(g.guest,'guest')+'</div>';
  }
  function rewardPanel(g){
   const r=g.reward;
@@ -123,7 +132,7 @@
    html+='<div class="fb-result"><div class="fb-result-stats"><div><small>내 정답</small><strong>'+score+'<em> / '+questionCount(g.settings)+'</em></strong></div><div><small>정답 풀이 시간</small><strong>'+(ms/1000).toFixed(1)+'<em>초</em></strong></div></div></div>'+rewardPanel(g)+'<div class="fb-two fb-result-actions">'+button('<span aria-hidden="true">←</span> 뒤로가기','exit')+button('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></svg>한 판 더','rematch','','fb-primary')+'</div>'+(wrong.length?'<details class="fb-review"><summary>다시 익힐 단어 <span>'+wrong.length+'개</span></summary>'+wrong.map(w=>'<article><strong>'+esc(w.word)+'</strong><p>'+esc(w.meaning)+'</p>'+(w.example?'<div>'+esc(w.example)+(w.translation?'<small>'+esc(w.translation)+'</small>':'')+'</div>':'')+'</article>').join('')+'</details>':'<p class="fb-review-clear"><span aria-hidden="true">✓</span> 다시 익힐 단어가 없어요</p>');
 
   }else html+='<div class="fb-wait"><span class="fb-closed-icon" aria-hidden="true">✦</span><span class="fb-wait-label">MATCH CLOSED</span><h3>대전이 종료됐어요</h3><p>'+esc(g.reason||(g.status==='declined'?'친구가 이번 신청을 사양했어요.':'다음에 다시 함께해요.'))+'</p></div>'+button('뒤로가기','exit','','fb-primary fb-wide');
-  root.innerHTML=html;tick();
+  root.innerHTML=html;tick();matchIntro(g);
  }
  function tick(){if(!active()||game?.status!=='playing')return;const now=Date.now()+offset,remaining=Math.max(0,(new Date(game.deadline)-now)/1000),waiting=now<new Date(game.roundAt);const timer=$('fbTimer'),count=$('fbCountdown'),fill=$('fbTimeFill');if(timer){timer.textContent=game.revealUntil?'정답 확인':waiting?'READY':Math.ceil(remaining)+'초';timer.classList.toggle('is-urgent',!waiting&&!game.revealUntil&&remaining<=3);}if(fill){fill.style.width=(game.revealUntil?0:Math.min(100,remaining/timeLimit(game.settings)*100))+'%';fill.classList.toggle('is-urgent',!waiting&&!game.revealUntil&&remaining<=3);}if(count){const value=waiting?String(Math.max(1,Math.ceil((new Date(game.roundAt)-now)/1000))):'START';if(count.textContent!==value){count.textContent=value;count.classList.remove('fb-pop');void count.offsetWidth;count.classList.add('fb-pop');}}}
  function closeModal(){if(!modal)return;const back=modal._back;modal.remove();modal=null;document.body.style.overflow=closeModal.overflow||'';if(back?.isConnected)back.focus({preventScroll:true});}
@@ -157,7 +166,7 @@
   const msg=document.createElement('div');msg.id='fbToast';msg.className='fb-toast';msg.hidden=true;msg.setAttribute('role','status');document.body.appendChild(msg);const notice=document.createElement('button');notice.id='fbInviteNotice';notice.className='fb-invite-notice';notice.type='button';notice.hidden=true;notice.addEventListener('click',async()=>{const id=notice.dataset.id;try{await open();stamp(await api('poll',{id}));}catch(e){toast(e.message);}});document.body.appendChild(notice);
   let replay=false;document.addEventListener('click',async e=>{if(replay||!active()||!e.target.closest('#hsmMobileNav button,#hsmGlobalBackButton,#testMenuButton,#vocabMenuButton,#myPageMenuButton,#rankingMenuButton,#accountMenuButton,#hsmMobileMore [onclick^="hsmMobileNavigate_"]'))return;const target=e.target.closest('button');if(target.dataset.mobileMenu==='more')return;e.preventDefault();e.stopImmediatePropagation();if(busy)return;busy=true;revision++;try{if(live()&&!await exitGame())return;root.classList.add('hidden');closeModal();replay=true;if(target.id==='hsmGlobalBackButton')window.showMyPage();else target.click();}catch(err){toast(err.message);}finally{replay=false;busy=false;}},true);
   const original=window.hideAllStudentMainScreens_;window.hideAllStudentMainScreens_=function(){root.classList.add('hidden');return original.apply(this,arguments);};
-  setInterval(()=>{const account=who();if(account!==owner){owner=account;revision++;home=null;game=null;searchResult=null;lastRewardSync='';signature='';closeModal();root.classList.add('hidden');lastPoll=0;updateBadge();}refresh();tick();},500);
+  setInterval(()=>{const account=who();if(account!==owner){owner=account;revision++;home=null;game=null;searchResult=null;lastRewardSync='',lastIntroGame='';signature='';closeModal();root.classList.add('hidden');lastPoll=0;updateBadge();}refresh();tick();},500);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){lastPoll=0;refresh(true);}});
  }
  window.hsmOpenFriendBattle_=open;
