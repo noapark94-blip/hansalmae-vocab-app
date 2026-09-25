@@ -84,3 +84,43 @@
 .fb-sheet .fb-day-grid .fb-btn{width:100%;min-height:44px;padding:8px 0;border-radius:11px;font-size:14px}
 .fb-sheet .fb-day-grid .fb-btn[aria-pressed="true"]{background:#901462;color:#fff;border-color:#901462}
 @media(max-width:360px){.fb-challenge-sheet{padding:16px 14px calc(16px + env(safe-area-inset-bottom))}.fb-day-grid{gap:6px}}
+/* Live arena: scoped to battle play so global button states cannot obscure answers. */
+#friendBattleScreen.fb-game{padding:20px 18px 24px}
+#friendBattleScreen .fb-game-title{font-size:21px!important;font-style:italic;letter-spacing:-.045em;color:#55143d}
+#friendBattleScreen.fb-game>.fb-sub{font-size:11px!important;line-height:1.6;margin:4px 0 14px!important}
+#friendBattleScreen .fb-arena{position:relative;isolation:isolate;overflow:hidden;grid-template-columns:minmax(0,1fr) 84px minmax(0,1fr);gap:4px;padding:14px 8px 12px;margin:0 0 14px;background:radial-gradient(ellipse at 10% 65%,#b1267759,transparent 58%),radial-gradient(ellipse at 95% 45%,#7846d36b,transparent 60%),#27132f;border:1px solid #ffffff30;border-radius:20px;color:#fff;box-shadow:0 8px 24px #39152f16}
+.fb-arena:before{content:'';position:absolute;z-index:-1;inset:-30%;background:linear-gradient(118deg,transparent 49.5%,#f8d9ff70 50%,transparent 50.5%);pointer-events:none}
+.fb-arena .fb-fighter{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px}
+#friendBattleScreen .fb-arena .fb-avatar{width:78px;height:78px;filter:drop-shadow(0 5px 9px #ed83ce36);margin:0}
+.fb-arena .fb-player-tag{font-size:9px;letter-spacing:1.5px;color:#f4b5d7;font-weight:750}
+.fb-arena .fb-guest .fb-player-tag{color:#d0b5ff}
+#friendBattleScreen .fb-arena strong{font-size:14px;color:#fff;line-height:1.3}
+#friendBattleScreen .fb-arena small{font-size:10px;color:#d1bdd2;line-height:1.5;margin-top:2px}
+#friendBattleScreen .fb-arena small.is-done{color:#bceacb}
+.fb-score-center{align-self:center}.fb-versus{display:block;font-size:30px;font-weight:900;font-style:italic;color:#ffedbc;line-height:1.1;text-shadow:0 2px #ac577d}
+#friendBattleScreen .fb-score{justify-content:center;gap:8px;color:#fff;margin-top:8px}
+#friendBattleScreen .fb-score b{font-size:27px;line-height:1.2}
+#friendBattleScreen .fb-score-center>small{font-size:7px;letter-spacing:1px;color:#c3a5c6}
+#friendBattleScreen .fb-round{align-items:center;padding:0 0 8px;color:#71536a;font-size:12px;font-weight:700}
+.fb-round small{font-size:9px;letter-spacing:1px;margin-right:5px;color:#aa8e9f}
+#fbTimer{background:#f5edf4;border-radius:8px;padding:4px 10px;min-width:51px;text-align:center;color:#853162}
+#fbTimer.is-urgent{background:#fff0eb;color:#bb493b}
+#friendBattleScreen .fb-time-track{height:5px;background:#f1eaf2}
+#fbTimeFill{width:100%;background:linear-gradient(90deg,#cb579d,#825ac4);transition:width .5s linear}
+#fbTimeFill.is-urgent{background:#d76c51}
+#friendBattleScreen.fb-game .fb-prompt-label{margin:18px 0 4px;font-size:11px;color:#947887}
+#friendBattleScreen.fb-game .fb-question{font-size:26px!important;margin:0 0 18px!important;line-height:1.35!important}
+#friendBattleScreen.fb-game .fb-options{gap:8px}
+#friendBattleScreen.fb-game button.fb-option{min-height:52px;padding:12px;gap:10px;margin:0;background:#fff!important;color:#513e4d!important;border:1px solid #e8dfe7!important;border-radius:12px;box-shadow:none!important;transform:none;opacity:1!important;-webkit-text-fill-color:currentColor;transition:background .15s,border-color .15s}
+#friendBattleScreen.fb-game button.fb-option b{font-size:14px;color:inherit!important;font-weight:600;line-height:1.45}
+#friendBattleScreen.fb-game button.fb-option>span{font-size:10px;flex-basis:19px;color:#9d8797!important}
+#friendBattleScreen.fb-game button.fb-option.is-picked{background:#f5ebf7!important;border-color:#b88cbd!important;color:#743879!important}
+#friendBattleScreen.fb-game button.fb-option.is-correct{background:#edf8f1!important;border-color:#85b699!important;color:#276448!important}
+#friendBattleScreen.fb-game button.fb-option.is-wrong{background:#fff0f1!important;border-color:#d9a0aa!important;color:#a34357!important}
+#friendBattleScreen.fb-game .fb-answer-status{font-size:11px;line-height:1.5;margin:12px 0 0;min-height:17px;color:#8f7486}
+.fb-score-gain{position:absolute;right:8px;top:26px;font-size:25px;font-weight:850;color:#fff2b7;text-shadow:0 2px 8px #2d122c;animation:fb-gain 1s ease-out forwards;pointer-events:none}
+.fb-pop{animation:fb-pop .38s ease-out}
+@keyframes fb-pop{0%{transform:scale(.8);opacity:.5}65%{transform:scale(1.13)}100%{transform:scale(1);opacity:1}}
+@keyframes fb-gain{0%{transform:translateY(8px);opacity:0}20%{opacity:1}100%{transform:translateY(-28px);opacity:0}}
+@media(max-width:360px){#friendBattleScreen.fb-game{padding:16px 12px 20px}#friendBattleScreen .fb-arena .fb-avatar{width:66px;height:66px}#friendBattleScreen .fb-arena{grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr)}#friendBattleScreen.fb-game .fb-question{font-size:23px!important}}
+@media(prefers-reduced-motion:reduce){.fb-pop,.fb-score-gain{animation:none}.fb-score-gain{display:none}#fbTimeFill{transition:none}}
