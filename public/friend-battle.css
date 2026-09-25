@@ -238,3 +238,14 @@
 @keyframes fb-reward-enter{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fb-reward-fill{from{width:0}to{width:var(--reward-progress)}}
 @media(prefers-reduced-motion:reduce){#friendBattleScreen .fb-rewards,.fb-reward-track i{animation:none}}
+/* Matching friend controls, with a clear expanded state and a stable add icon. */
+#friendBattleScreen .fb-lobby-tools{display:flex;align-items:center;gap:4px;padding:4px;background:#f6f1f5;border:1px solid #eee5ed;border-radius:13px}
+#friendBattleScreen .fb-lobby-tools .fb-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:7px 10px;border:1px solid transparent;border-radius:9px;font-size:11px;line-height:1.4;font-weight:650;box-shadow:none;white-space:nowrap;transition:background .16s,color .16s}
+#friendBattleScreen .fb-lobby-tools .fb-add-toggle{background:#fff;color:#794265;border-color:#eadde6;box-shadow:0 2px 5px #48203607}
+#friendBattleScreen .fb-lobby-tools .fb-manage-toggle{background:transparent;color:#907888}
+#friendBattleScreen .fb-lobby-tools .fb-btn svg{width:15px;height:15px;flex:0 0 15px}
+#friendBattleScreen .fb-lobby-tools .fb-add-toggle>span{font-size:inherit;line-height:inherit;transform:none}
+#friendBattleScreen .fb-lobby-tools .fb-add-toggle[aria-expanded=true]{background:#75415f;color:#fff7ed;border-color:#75415f;box-shadow:0 2px 6px #65395017}
+@media(hover:hover){#friendBattleScreen .fb-lobby-tools .fb-manage-toggle:hover{background:#fff;color:#75415f}#friendBattleScreen .fb-lobby-tools .fb-add-toggle:hover{border-color:#c5a7bb}}
+@media(max-width:360px){#friendBattleScreen .fb-lobby-tools{gap:2px;padding:3px}#friendBattleScreen .fb-lobby-tools .fb-btn{gap:4px;padding:7px 7px;font-size:10px}#friendBattleScreen .fb-lobby-tools .fb-btn svg{width:14px;height:14px;flex-basis:14px}}
+@media(prefers-reduced-motion:reduce){#friendBattleScreen .fb-lobby-tools .fb-btn{transition:none}}
