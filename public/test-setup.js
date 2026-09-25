@@ -52,6 +52,15 @@
         b.setAttribute('aria-pressed', String(selected));
       });
     });
+    var summary = $('hsmSetupSummary');
+    if(summary){
+      var sheet=$('sheetName'),mode=$('questionMode'),start=$('startDay'),end=$('endDay'),count=$('questionCount');
+      var names={engToKor:'영어→한글',korToEng:'한글→영어',mixed:'영한·한영 혼합',random:'랜덤 출제',example:'예문 문제'};
+      var sheetText=sheet.options[sheet.selectedIndex] ? sheet.options[sheet.selectedIndex].textContent.trim().replace(/DB/g,'') : '';
+      var range=start.value&&end.value ? 'Day '+start.value+(start.value===end.value?'':'–'+end.value) : '범위 선택 중';
+      var text=[sheetText,range,names[mode.value]||'',Number(count.value)>0?count.value+'문항':'문제 수 입력'].filter(Boolean).join(' · ');
+      if(summary.textContent!==text)summary.textContent=text;
+    }
     ['startDay','endDay','vocabDay'].forEach(function (id) {
       var trigger = $('hsmPick' + id), select = $(id); if (!trigger) return;
       trigger.textContent = select.dataset.loadState === 'error' ? '불러오기 실패' : select.dataset.loadState === 'empty' ? 'Day 없음' : select.value ? 'Day ' + select.value + ' ⌄' : '불러오는 중…';
@@ -80,7 +89,7 @@
   function boot() {
     var screen = $('startScreen'); if (!screen || $('hsmSetupStudent')) return;
     screen.classList.add('hsm-test-setup');
-    var profile = document.createElement('div'); profile.id = 'hsmSetupStudent'; profile.className = 'hsm-setup-student';
+    var profile = document.createElement('div'); profile.id = 'hsmSetupStudent'; profile.className = 'hsm-setup-student'; profile.hidden = true;
     screen.querySelector('.subtitle').insertAdjacentElement('afterend', profile);
     $('studentName').hidden = true; screen.querySelector('label[for="studentName"]').hidden = true;
     choices($('sheetName'), 'hsmSetupSheets');
@@ -129,7 +138,9 @@
     dialog.addEventListener('click',function(e){if(e.target===dialog){var r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeDays();}});
     $('hsmDayAll').onclick=function(){var start=$('startDay'),end=$('endDay');start.selectedIndex=0;end.selectedIndex=end.options.length-1;sync();closeDays();};
     ['startDay','endDay','vocabDay'].forEach(function(id){var select=$(id);if(!select)return;select.hidden=true;var b=button('',function(){activeDay=id;returnFocus=b;renderDays();dialog.showModal();var selected=$('hsmDayGrid').querySelector('[aria-pressed="true"]');if(selected)selected.focus();});b.id='hsmPick'+id;b.className='hsm-day-trigger';b.setAttribute('aria-haspopup','dialog');b.setAttribute('aria-controls','hsmDayPicker');b.setAttribute('aria-label',id==='vocabDay'?'학습할 Day 선택':id==='startDay'?'시작 Day 선택':'마지막 Day 선택');select.insertAdjacentElement('afterend',b);document.querySelector('label[for="'+id+'"]').htmlFor=b.id;select.addEventListener('change',sync);new MutationObserver(sync).observe(select,{childList:true,attributes:true,attributeFilter:['disabled']});});
-    $('startDay').closest('.row').classList.add('hsm-setup-range');
+    var rangeRow=$('startDay').closest('.row'); rangeRow.classList.add('hsm-setup-range');
+    var rangeLabel=document.createElement('div');rangeLabel.className='hsm-setup-range-title';rangeLabel.textContent='시험 범위';rangeRow.insertAdjacentElement('beforebegin',rangeLabel);
+    var summary=document.createElement('div');summary.id='hsmSetupSummary';summary.setAttribute('aria-live','polite');summary.setAttribute('aria-atomic','true');$('startButton').insertAdjacentElement('beforebegin',summary);
     window.addEventListener('hsm:test-days',sync);
     var student = typeof currentStudent !== 'undefined' ? currentStudent : null;
     if(student) {
