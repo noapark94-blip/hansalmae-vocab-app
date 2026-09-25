@@ -92,7 +92,7 @@ assert.equal(el('questionCount').value,'30');assert.equal(el('questionCount').hi
 let selectedVocabDay='';el('vocabDay').addEventListener('change',()=>selectedVocabDay=el('vocabDay').value);
 el('hsmPickvocabDay').click();assert.equal(el('hsmDayAll').hidden,true);
 el('hsmDayGrid').querySelector('[aria-label="Day 12"]').click();
-assert.equal(selectedVocabDay,'12');assert.equal(el('hsmPickvocabDay').textContent,'Day 12 ⌄');
+assert.equal(selectedVocabDay,'12');assert.equal(el('hsmPickvocabDay').textContent,'Day 12');
 assert.equal(el('startDay').value,'1');assert.equal(el('endDay').value,'70');
 el('hsmPickvocabDay').click();assert.equal(el('hsmDayGrid').querySelector('[aria-label="Day 12"]').getAttribute('aria-pressed'),'true');el('hsmDayClose').click();
 el('hsmPickstartDay').click();assert.equal(el('hsmDayAll').hidden,false);el('hsmDayClose').click();
