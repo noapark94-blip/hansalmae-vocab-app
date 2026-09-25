@@ -60,3 +60,6 @@ jobs:
 
       - name: Deploy feature state Edge Function
         run: supabase functions deploy feature-state --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
+
+      - name: Deploy friend word battle Edge Function
+        run: supabase functions deploy word-battle --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
