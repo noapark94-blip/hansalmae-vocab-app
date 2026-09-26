@@ -12,11 +12,13 @@
 #hsmLauncherHome .hsm-launcher-primary{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:10px 14px;margin:14px 0 0;border:0;border-radius:12px;background:#f7eff5!important;color:#8f145f!important;font-size:13px;font-weight:750;box-shadow:none!important}
 #hsmLauncherHome .hsm-launcher-primary>span{font-size:19px}
 #hsmHomeBattle{position:relative;isolation:isolate;display:block;flex-shrink:0;width:100%;aspect-ratio:2.5/1;margin:16px 0 0;padding:0;overflow:hidden;border:1px solid #673b61;border-radius:20px;background:#25102e;color:#fff0cf;box-shadow:0 6px 18px #45203518;cursor:pointer;touch-action:manipulation}
-#hsmHomeBattle>img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
-#hsmHomeBattle .hsm-home-battle-copy{position:absolute;inset:8% 27%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-#hsmHomeBattle strong{display:block;max-width:100%;font-family:Arial,Helvetica,sans-serif;font-style:italic;font-size:clamp(16px,4.4vw,36px);font-weight:900;line-height:1.15;letter-spacing:-.055em;white-space:nowrap;color:#fff1cf;text-shadow:0 2px 0 #99576b,0 3px 10px #17061d}
-#hsmHomeBattle .hsm-home-vs{display:block;font-family:Arial,Helvetica,sans-serif;font-style:italic;font-weight:900;font-size:clamp(32px,9vw,80px);line-height:1.05;letter-spacing:-.1em;padding-right:.12em;color:#fff1cf;text-shadow:1px 2px 0 #b37855,2px 4px 0 #74284d,0 0 18px #ffcc9e66}
-#hsmHomeBattle .hsm-home-battle-cta{display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;margin-top:5px;min-height:30px;padding:5px 12px;border:1px solid #ffe9b8;border-radius:9px;background:linear-gradient(#fff2ce,#edc279);box-shadow:0 3px 0 #a57143;color:#54203e;font-size:clamp(11px,2.8vw,16px);line-height:1.3;font-weight:800}
+#hsmHomeBattle>img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center 45%}
+#hsmHomeBattle::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,#18091d66,transparent 30%,transparent 65%,#18091d55)}
+#hsmHomeBattle .hsm-home-battle-copy{position:absolute;inset:12px;z-index:1;pointer-events:none}
+#hsmHomeBattle strong{position:absolute;left:0;top:0;display:block;font:700 10px/1.2 Arial,Helvetica,sans-serif;letter-spacing:1.2px;white-space:nowrap;color:#fff;text-shadow:none}
+#hsmHomeBattle .hsm-home-battle-cta{position:absolute;right:0;bottom:0;display:flex;align-items:center;gap:8px;white-space:nowrap;margin:0;min-height:30px;padding:6px 10px;border:1px solid #ffffff40;border-radius:9px;background:#22152a80;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:none;color:#fff;font-size:11px;line-height:1.3;font-weight:600}
+#hsmHomeBattle .hsm-home-battle-cta>span{font-size:15px;font-weight:400}
+#hsmHomeBattle:focus-visible{outline:3px solid #a75e97;outline-offset:3px}
 #hsmHomeBattle:active{filter:brightness(.95);transform:translateY(1px)}
 #hsmLauncherHome .hsm-launcher-section-title{margin:24px 2px 10px;color:#65505f;font-size:14px;letter-spacing:-.3px;font-weight:750}
 #hsmLauncherHome .hsm-launcher-study-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
