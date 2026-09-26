@@ -525,3 +525,14 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-room-tile.is-playing .br-tile-status,.br-room-tile:disabled .br-tile-status{background:#eae5ed;color:#88758e}
 .br-room-tile.is-playing .br-tile-status:before,.br-room-tile:disabled .br-tile-status:before{background:#a593ab}
 @media(min-width:701px){.br-root .br-room-tile{grid-template-columns:60px minmax(0,1fr);padding:12px;min-height:104px;column-gap:10px}.br-tile-host img{left:9px;top:9px;width:66px;height:66px}.br-tile-title{font-size:15px}.br-tile-source,.br-tile-settings{font-size:12px}.br-tile-status{font-size:10px}.br-tile-count{font-size:12px}}
+
+/* A restrained lobby toolbar, aligned with the room grid. */
+.br-root .br-lobby-heading{min-height:44px;margin:0 0 8px;gap:12px}
+.br-root .br-lobby-heading h2{gap:7px;margin:0;font-size:18px;font-weight:650;line-height:1.3;letter-spacing:-.6px;color:#493547}
+.br-root .br-lobby-heading h2 span{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;box-sizing:border-box;padding:0 6px;border-radius:7px;background:#eee6f0;color:#85677f;font-size:11px;font-weight:600;letter-spacing:0;font-variant-numeric:tabular-nums}
+.br-root .br-lobby-heading>.br-primary{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:auto;min-height:36px;margin:0;padding:8px 12px;border:1px solid #e1d4e2;border-radius:9px;background:#f1e8f2;color:#79456c;box-shadow:0 1px 2px #56344d05;font-family:inherit;font-size:12px;font-weight:600;line-height:1.3;letter-spacing:-.2px}
+.br-root .br-lobby-heading>.br-primary:hover{background:#e9dcec;border-color:#c8afc8;color:#64345a}
+.br-root .br-lobby-heading>.br-primary:focus-visible{outline:2px solid #a36b96;outline-offset:3px}
+.br-root .br-lobby-bar{margin:0;padding:0;gap:8px}
+.br-root .br-filters{gap:22px}
+.br-root .br-filters .br-btn{width:auto;margin:0;min-height:40px;padding:10px 0;font-size:12px;line-height:1.4}
