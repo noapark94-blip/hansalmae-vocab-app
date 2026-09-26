@@ -484,3 +484,8 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-farm-lobby p{color:#a3a18e;margin-bottom:24px}
 .br-root .br-farm-lobby>.br-primary{background:#7d896e;border-color:#7d896e;box-shadow:none}
 @media(max-width:700px){.br-farm-lobby{min-height:310px;padding:62px 18px 90px}.br-farm-lobby h2{font-size:18px}.br-farm-lobby .br-fence{left:-4%;right:-4%}}
+
+/* Soft miniature host crown, aligned with the name on every avatar. */
+.br-podium .br-crown{display:inline-block;width:18px;height:17px;margin-right:1px;vertical-align:-3px;line-height:1;filter:drop-shadow(0 1px 1px #b88b4826)}
+.br-podium .br-crown svg{display:block;width:100%;height:100%;overflow:visible;transform:rotate(-7deg)}
+@media(max-width:700px){.br-podium .br-crown{width:15px;height:15px;vertical-align:-3px}}
