@@ -430,62 +430,26 @@ html.br-chat-keyboard #hsmMobileNav{visibility:hidden!important;pointer-events:n
 html.br-chat-keyboard #battleRoomScreen #brChatForm{position:fixed;z-index:100100;top:var(--br-composer-top);left:var(--br-composer-left,12px);width:var(--br-composer-width,calc(100% - 24px));bottom:auto;margin:0;box-sizing:border-box;background:#fffdfefa;box-shadow:0 4px 24px #56344515;transform:none;transition:none}
 html.br-chat-keyboard #brChatInput{font-size:16px!important}
 
-/* A warm farm entrance, shared with the waiting-room meadow. */
-.br-root:has(.br-lobby-heading){--br-ink:#514b40;--br-muted:#9b9989}
-.br-lobby-heading h2{font-size:23px;font-weight:650;letter-spacing:-.7px;color:#514b40}
-.br-lobby-heading h2 span{background:#e9eddf;color:#798568;border-radius:10px;font-weight:600}
-.br-root .br-lobby-heading>.br-primary{background:#758365;border-color:#758365;border-radius:14px;box-shadow:0 4px 12px #67755010;font-weight:600}
-.br-lobby-bar{border-color:#e9e5dc;padding-bottom:15px}
-.br-filters{background:#eeeee6;border:1px solid #e6e7dc;border-radius:14px}
-.br-root .br-filters .br-btn{color:#9b9b8b;font-weight:500}
-.br-root .br-filters .is-active{background:#fffef8;color:#627151;box-shadow:0 2px 6px #665e4410}
-.br-lobby-hint{color:#9a9d87}
-.br-farm-lobby{position:relative;overflow:hidden;padding:30px 24px 34px;border:1px solid #e8e5d8;border-radius:26px;background:radial-gradient(ellipse at 23% 10%,#fff3d7a6,transparent 55%),linear-gradient(160deg,#fffef9,#f6f7ee);box-shadow:0 9px 30px #7e775008}
-.br-farm-scene{position:relative;width:min(340px,100%);height:178px;margin:0 auto 17px;isolation:isolate}
-.br-meadow{position:absolute;left:0;right:0;bottom:13px;height:55px;border-radius:50%;background:radial-gradient(ellipse at 45% 15%,#e6edc8,#d3dfb5 58%,#c5d4a5);box-shadow:0 6px 0 #e2d3b6,0 13px 18px -10px #8b8c5433;transform:rotate(-2deg)}
-.br-farm-lobby .br-farm-scene>img{position:absolute;z-index:3;width:135px;height:135px;left:50%;bottom:25px;margin:0;transform:translateX(-50%);filter:drop-shadow(0 5px 3px #78664620)}
-.br-fence{position:absolute;left:7%;right:7%;bottom:47px;height:61px;display:flex;justify-content:space-between;align-items:flex-end;transform:rotate(-3deg);z-index:1;filter:drop-shadow(0 3px 1px #8e75421a)}
-.br-fence:before,.br-fence:after{content:"";position:absolute;left:-3px;right:-3px;height:9px;top:20px;border-radius:3px;background:linear-gradient(#f3e6ce,#ddc6a0);box-shadow:inset 0 1px 0 #fff8e5}
-.br-fence:after{top:43px}
-.br-fence>i{position:relative;z-index:1;width:12px;height:59px;background:linear-gradient(90deg,#e0cba7,#f3e4c9 48%,#debf93);clip-path:polygon(0 9px,50% 0,100% 9px,100% 100%,0 100%);border-radius:2px}
-.br-fence>i:nth-child(2n){height:56px}
-.br-meadow-flowers{position:absolute;z-index:4;left:13%;right:13%;bottom:29px;height:12px}
-.br-meadow-flowers>i{position:absolute;width:5px;height:5px;border-radius:50%;background:#ddb76b;box-shadow:0 -4px 0 1px #fffef4,4px 0 0 1px #fffef4,0 4px 0 1px #fffef4,-4px 0 0 1px #fffef4}
-.br-meadow-flowers>i:nth-child(2){right:4%;top:7px;transform:scale(.85);box-shadow:0 -4px 0 1px #ebc8d1,4px 0 0 1px #ebc8d1,0 4px 0 1px #ebc8d1,-4px 0 0 1px #ebc8d1}
-.br-meadow-flowers>i:last-child{left:14%;top:10px;transform:scale(.6)}
-.br-farm-lobby h2{font-family:inherit;font-size:21px;font-weight:600;letter-spacing:-.6px;color:#655d4f;margin:0 0 10px;line-height:1.45;word-break:keep-all}
-.br-farm-lobby p{font-size:12px;color:#a29a88;line-height:1.8;margin:0 0 23px;word-break:keep-all}
-.br-root .br-farm-lobby>.br-primary{min-height:45px;padding:11px 24px;border-radius:14px;background:#7c896b;border:1px solid #7c896b;color:#fffef7;font-size:13px;font-weight:600;box-shadow:0 5px 12px #79855e16}
-.br-root .br-farm-lobby>.br-primary:hover,.br-root .br-lobby-heading>.br-primary:hover{background:#687657;border-color:#687657}
-.br-room-card{background:linear-gradient(145deg,#fffef9,#f9faf4);border-color:#e6e5d7;box-shadow:0 5px 18px #6f775108}
-.br-room-card h2{color:#5c594b}.br-room-host,.br-room-spec{color:#9a9785}
-.br-card-avatar{background:radial-gradient(ellipse,#f7edcc,transparent 72%)}
-.br-card-pedestal{background:linear-gradient(#dfe9bc,#bfcea0);border-color:#cad5ac;box-shadow:0 5px 0 #deceb0}
-.br-seat-meter i{background:#e8e9df}.br-seat-meter i.is-filled{background:#9cae85}
-.br-room-card footer{border-color:#eae8dd}
-.br-root .br-room-card footer .br-primary{background:#7c896b;border-color:#7c896b;color:#fffef8}
-.br-root:has(.br-lobby-heading)>.br-footnote{color:#aaa594;font-size:10px;line-height:1.8;margin-top:18px}
-@media(max-width:700px){.br-farm-lobby{padding:23px 18px 28px;border-radius:23px}.br-farm-scene{height:166px;margin-bottom:18px}.br-farm-lobby h2{font-size:19px}.br-farm-lobby p{font-size:12px}.br-lobby-heading h2{font-size:21px}.br-root .br-filters .br-btn{padding:8px 16px}.br-fence{left:8%;right:8%}}
-
-/* Let the landscape sit behind the empty state, instead of on a display plinth. */
-.br-farm-lobby{isolation:isolate;min-height:330px;padding:70px 24px 100px;border:0;border-radius:24px;background:linear-gradient(180deg,#fffdf7 0%,#fbfbf3 56%,#edf1df 100%);box-shadow:none}
-.br-farm-lobby:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 16% 8%,#ffeacb5c,transparent 60%)}
-.br-farm-lobby .br-farm-scene{position:absolute;inset:0;width:100%;height:100%;margin:0;z-index:-1;pointer-events:none;overflow:hidden;opacity:.65}
-.br-farm-lobby .br-meadow{left:-20%;right:-20%;bottom:-85px;height:155px;border-radius:50% 50% 0 0;background:linear-gradient(180deg,#dce5c5,#eaf0d9);box-shadow:none;transform:rotate(-3deg)}
-.br-farm-lobby .br-meadow:after{content:"";position:absolute;left:30%;right:-10%;top:8px;height:150px;border-radius:50% 50% 0 0;background:#d7e1c166;transform:rotate(8deg)}
-.br-farm-lobby .br-fence{left:-4%;right:-4%;bottom:38px;height:43px;opacity:.48;transform:rotate(-2deg);filter:none}
-.br-farm-lobby .br-fence>i{width:8px;height:42px;clip-path:none;border-radius:3px 3px 0 0;background:linear-gradient(90deg,#d6c19e,#e4d4b8);box-shadow:none}
-.br-farm-lobby .br-fence>i:nth-child(2n){height:40px}
-.br-farm-lobby .br-fence:before,.br-farm-lobby .br-fence:after{height:5px;top:12px;border-radius:2px;background:#dfceb0;box-shadow:none}
-.br-farm-lobby .br-fence:after{top:28px}
-.br-farm-lobby .br-meadow-flowers{left:8%;right:8%;bottom:27px;opacity:.55;transform:scale(.8)}
-.br-farm-lobby h2,.br-farm-lobby p,.br-farm-lobby>.br-btn{position:relative;z-index:1}
-.br-farm-lobby h2{font-weight:550;font-size:20px;color:#676451}
-.br-farm-lobby p{color:#a3a18e;margin-bottom:24px}
-.br-root .br-farm-lobby>.br-primary{background:#7d896e;border-color:#7d896e;box-shadow:none}
-@media(max-width:700px){.br-farm-lobby{min-height:310px;padding:62px 18px 90px}.br-farm-lobby h2{font-size:18px}.br-farm-lobby .br-fence{left:-4%;right:-4%}}
-
 /* Soft miniature host crown, aligned with the name on every avatar. */
 .br-podium .br-crown{display:inline-block;width:18px;height:17px;margin-right:1px;vertical-align:-3px;line-height:1;filter:drop-shadow(0 1px 1px #b88b4826)}
 .br-podium .br-crown svg{display:block;width:100%;height:100%;overflow:visible;transform:rotate(-7deg)}
 @media(max-width:700px){.br-podium .br-crown{width:15px;height:15px;vertical-align:-3px}}
+
+/* Quiet lobby typography and a single primary action. */
+.br-lobby-heading{margin:4px 0 18px;gap:12px}
+.br-lobby-heading h2{font-size:22px;font-weight:700;letter-spacing:-.7px;color:#392d37}
+.br-lobby-heading h2 span{padding:0;background:none;border-radius:0;font-size:15px;font-weight:500;color:#aa8da0}
+.br-root .br-lobby-heading>.br-primary{min-height:40px;padding:9px 15px;border-radius:12px;background:#8f145f;border-color:#8f145f;box-shadow:none;font-size:12px;font-weight:600;white-space:nowrap}
+.br-root .br-lobby-heading>.br-primary:hover{background:#791050;border-color:#791050}
+.br-lobby-bar{padding:0;margin-bottom:0;border-bottom:1px solid #e9e1e7}
+.br-filters{padding:0;gap:22px;border:0;border-radius:0;background:transparent}
+.br-root .br-filters .br-btn{position:relative;min-height:46px;padding:12px 0;border-radius:0;background:transparent;box-shadow:none;color:#93838e;font-size:13px;font-weight:500}
+.br-root .br-filters .br-btn.is-active{background:transparent;color:#8f145f;box-shadow:none;font-weight:650}
+.br-root .br-filters .br-btn.is-active:after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:2px;background:#8f145f;border-radius:2px}
+.br-lobby-hint{display:none}
+.br-room-grid{margin-top:20px}
+.br-lobby-empty{display:flex;flex-direction:column;justify-content:center;min-height:210px;padding:44px 18px;border:0;border-radius:0;background:none;box-shadow:none}
+.br-lobby-empty h2{margin:0;color:#594450;font-size:18px;font-weight:600;letter-spacing:-.5px;line-height:1.5;word-break:keep-all}
+.br-lobby-empty p{margin:10px 0 0;color:#998994;font-size:12px;line-height:1.8;word-break:keep-all}
+.br-root:has(.br-lobby-heading)>.br-footnote{margin:14px 0 0;padding-top:16px;border-top:1px solid #eee7ec;font-size:10px;line-height:1.6;color:#a4949f}
+@media(max-width:700px){.br-lobby-heading h2{font-size:21px}.br-filters{gap:24px}.br-root .br-filters .br-btn{padding:12px 0;font-size:12px}.br-lobby-empty{min-height:190px;padding:38px 12px}.br-lobby-empty h2{font-size:17px}.br-room-grid{margin-top:14px}}
