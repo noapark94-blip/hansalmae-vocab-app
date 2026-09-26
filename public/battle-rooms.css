@@ -671,3 +671,36 @@ body:has(.br-root:not(.hidden) .br-game-layout){background:#faf7f0}
 .br-root:has(.br-result-layout) .br-result-row.is-winner{background:#fff7df;border-radius:12px}
 .br-root:has(.br-result-layout) .br-reward{background:#faf3e7;color:#977958}
 .br-root:has(.br-result-layout) .br-result-actions .br-primary{background:#8f145f;border-color:#8f145f;color:white;box-shadow:0 3px 0 #6e174c}
+
+/* Original chick reaction artwork; no font emoji, smoke or glow. */
+.br-sticker{display:inline-block;flex-shrink:0;width:44px;height:44px;vertical-align:middle;background-image:url('./images/reactions/hansalmae-reactions-v1.webp');background-repeat:no-repeat;background-size:300% 200%;pointer-events:none}
+.br-sticker-clap{background-position:0% 0%}
+.br-sticker-smile{background-position:50% 0%}
+.br-sticker-cry{background-position:100% 0%}
+.br-sticker-fire{background-position:0% 100%}
+.br-sticker-tongue{background-position:50% 100%}
+.br-sticker-crown{background-position:100% 100%}
+.br-root .br-reaction{padding:0;overflow:hidden}
+.br-root .br-reaction>.br-sticker{width:44px;height:44px}
+.br-game-layout .br-player-grid{padding-top:32px}
+.br-game-layout .br-leader{left:-11px;top:-12px;width:27px;height:27px;line-height:0;transform:rotate(-12deg)}
+.br-game-layout .br-leader>.br-sticker{width:27px;height:27px}
+.br-game-layout .br-mini-character .br-bubble{display:flex;align-items:center;justify-content:center;top:-43px;left:50%;right:auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;transform:translate(-50%,5px) scale(.86);transition:opacity .18s,transform .18s}
+.br-game-layout .br-mini-character .br-bubble.is-showing{transform:translate(-50%,0) scale(1)}
+.br-game-layout .br-mini-character .br-bubble>span{display:block;line-height:0}
+.br-game-layout .br-mini-character .br-bubble .br-sticker{width:46px;height:46px}
+@media(max-width:700px){
+ .br-game-layout .br-player-grid:has(>.br-player:nth-child(5)){padding-top:28px;row-gap:32px}
+ .br-game-layout .br-player-grid:has(>.br-player:nth-child(5)) .br-leader{left:-12px;top:-9px}
+}
+@media(prefers-reduced-motion:reduce){.br-game-layout .br-mini-character .br-bubble{transition:none}}
+.br-game-layout .br-bubble.is-showing .br-sticker-clap{animation:br-wing-clap .28s ease-in-out 2}
+.br-game-layout .br-bubble.is-showing .br-sticker-smile{animation:br-sticker-bob .35s ease-in-out 2}
+.br-game-layout .br-bubble.is-showing .br-sticker-cry{animation:br-sticker-tilt .45s ease-in-out 2}
+.br-game-layout .br-bubble.is-showing .br-sticker-fire{animation:br-flame-rise .4s ease-in-out 2;transform-origin:50% 90%}
+.br-game-layout .br-bubble.is-showing .br-sticker-tongue{animation:br-sticker-tilt .4s ease-in-out 1}
+@keyframes br-wing-clap{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.84) scaleY(1.04)}}
+@keyframes br-sticker-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes br-sticker-tilt{0%,100%{transform:rotate(0)}35%{transform:rotate(-7deg)}70%{transform:rotate(6deg)}}
+@keyframes br-flame-rise{0%,100%{transform:scale(1)}50%{transform:scale(.94,1.06)}}
+@media(prefers-reduced-motion:reduce){.br-game-layout .br-bubble.is-showing .br-sticker{animation:none}}
