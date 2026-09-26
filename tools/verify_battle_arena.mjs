@@ -28,5 +28,14 @@ clock+=1100;state.question={prompt:'again',mode:'engToKor',correctId:null,option
 d.querySelector('[data-emoji="😛"]').click();assert(player.querySelector('.br-bubble .br-sticker-tongue'));assert.equal(player.querySelector('.br-bubble').getAttribute('aria-label'),'메롱');assert(!d.querySelector('[data-br="answer"]').disabled);
 state.members[1].score=1;accept(state);assert.equal(d.querySelectorAll('.br-leader:not([hidden])').length,0,'tied leaders must have no crowns');
 state.members[1].left=true;accept(state);assert.equal(d.querySelectorAll('.br-leader:not([hidden])').length,1,'departed players do not compete for crown');
+// Every supported roster size updates layout without replacing the question.
+for(let n=2;n<=8;n++){
+ const snapshot=structuredClone(state);snapshot.members=members.slice(0,n);accept(snapshot);
+ const grid=d.querySelector('.br-player-grid');
+ assert.equal(grid.dataset.playerCount,String(n));
+ assert.equal(grid.dataset.density,n<=2?'duo':n<=4?'small':'group');
+ assert.equal(grid.style.getPropertyValue('--player-cols'),String(Math.min(n,4)));
+ assert.equal(grid.children.length,n);assert.equal(d.querySelector('.br-question-card'),card);
+}
 const css=readFileSync('public/battle-rooms.css','utf8');assert(css.includes('transform-origin:left center'));assert(css.includes('.br-game-layout .br-game-chat{order:1'));assert(css.includes('prefers-reduced-motion'));
 w.arenaTest.reset();frame();dom.window.close();console.log('PASS custom artwork, flame survives icon processing, zero/tie/solo/departed leader rules; arena: eight players, always-visible five reactions, continuous frame timer, stable DOM on polls/answers, authoritative +1/miss once, locked acknowledged answer, stable round transition, immediate reaction.');

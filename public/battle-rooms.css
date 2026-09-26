@@ -727,3 +727,21 @@ body:has(.br-root:not(.hidden) .br-game-layout){background:#faf7f0}
 .br-root:has(.br-game-layout)>.br-connection:not(.is-reconnecting){display:none}
 .br-root:has(.br-game-layout)>.br-connection.is-reconnecting{color:#a47755}
 @media(max-width:700px){.br-game-layout .br-player-grid:has(>.br-player:nth-child(5)){padding-top:23px;row-gap:26px}}
+
+/* Participant counts control size; each seat reserves its own reaction space. */
+.br-game-layout .br-player-grid[data-density][data-player-count]{padding:0;gap:12px 8px;align-items:start}
+.br-game-layout .br-player-grid[data-density][data-player-count]>.br-player{padding:38px 0 0;gap:4px}
+.br-game-layout .br-player-grid[data-density][data-player-count] .br-mini-character{width:var(--arena-avatar);height:var(--arena-avatar);flex-basis:var(--arena-avatar)}
+.br-game-layout .br-player-grid[data-density="duo"][data-player-count]{--arena-avatar:66px}
+.br-game-layout .br-player-grid[data-density="small"][data-player-count]{--arena-avatar:54px}
+.br-game-layout .br-player-grid[data-density="group"][data-player-count]{--arena-avatar:48px;row-gap:12px}
+.br-game-layout .br-player-grid[data-density][data-player-count] .br-player-copy strong{font-size:11px;line-height:17px}
+.br-game-layout .br-player-grid[data-density][data-player-count] .br-player>b{position:relative;font-size:20px;line-height:25px}
+.br-game-layout .br-player-grid[data-density][data-player-count] .br-player>b .br-leader{left:auto;right:calc(100% + 3px);top:1px;width:22px;height:22px;transform:rotate(-8deg)}
+.br-game-layout .br-player-grid[data-density][data-player-count] .br-leader>.br-sticker{width:22px;height:22px}
+.br-game-layout .br-player-grid[data-density][data-player-count] .br-player.is-me .br-mini-character:before{display:none}
+@media(max-width:350px){
+ .br-game-layout .br-player-grid[data-density="small"][data-player-count]{--arena-avatar:48px}
+ .br-game-layout .br-player-grid[data-density="group"][data-player-count]{--arena-avatar:44px;column-gap:4px}
+ .br-game-layout .br-player-grid[data-density="group"][data-player-count] .br-score-pop{left:calc(100% - 6px);font-size:13px}
+}
