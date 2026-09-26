@@ -550,3 +550,30 @@ body.collection-open{overflow:hidden}
 #hsmSchoolStudentPage #hsmSchoolExamDialog #hsmSchoolExamTitle:focus-visible,
 #hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-dialog-close:focus,
 #hsmSchoolStudentPage #hsmSchoolExamDialog .hsm-school-dialog-close:focus-visible{outline:none!important;box-shadow:none!important}
+
+/* Compact growth overview: one profile panel and one metrics panel. */
+#myPageScreen .my-growth-panel{display:grid;grid-template-columns:94px minmax(0,1fr);gap:16px;align-items:center;padding:16px;margin:0 0 12px;border:1px solid #eee4eb;border-radius:18px;background:#fff}
+#myPageScreen .my-growth-panel #myExperienceCard{grid-column:2;grid-row:1;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;min-width:0}
+#myPageScreen .my-growth-panel .experience-card::before{display:none}
+#myPageScreen .my-growth-panel .experience-head{justify-content:flex-start;flex-wrap:wrap;gap:4px 8px;margin:0 0 12px}
+#myPageScreen .my-growth-panel .experience-level{font-size:28px}
+#myPageScreen .my-growth-panel .experience-title{max-width:100%;padding:0;border:0;background:none;font-size:11px;text-align:left}
+#myPageScreen .my-growth-panel .experience-level-range{display:none}
+#myPageScreen .my-growth-panel .experience-progress-wrap{height:7px;background:#f0e6ed}
+#myPageScreen .my-growth-panel .experience-meta{gap:3px;margin-top:7px;font-size:10px}
+#myPageScreen .my-growth-panel .experience-meta #myExperienceXp{display:none}
+#myPageScreen .my-growth-panel .experience-card-guide{display:flex;align-items:center;justify-content:flex-end;min-height:44px;margin:0;font-size:11px}
+#myPageScreen .my-growth-panel #hsmMyEmblemCard{grid-column:1;grid-row:1;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none}
+#myPageScreen .my-growth-panel .hsm-emblem-current{display:flex;flex-direction:column;gap:0;text-align:center}
+#myPageScreen .my-growth-panel .hsm-emblem-current img{flex:0 0 auto;width:88px;height:82px;padding:0;border-radius:0;background:radial-gradient(ellipse,#fff1d9,transparent 70%)}
+#myPageScreen .my-growth-panel .hsm-emblem-current-name{font-size:10px;font-weight:500;line-height:1.4;letter-spacing:0;color:#8d7786}
+#myPageScreen .my-growth-panel .hsm-emblem-equipped,#myPageScreen .my-growth-panel .hsm-emblem-current-sub{display:none}
+#myPageScreen .my-growth-panel .hsm-emblem-open{min-height:44px;margin:0;padding:6px 0;font-size:11px;text-align:center;width:100%;white-space:nowrap}
+#myPageScreen .my-summary{gap:0;padding:4px 0;margin:0 0 20px;border:1px solid #eee4eb;border-radius:18px;background:#fff;overflow:hidden}
+#myPageScreen .my-summary-card{padding:13px 18px;border:0;border-radius:0;box-shadow:none;background:none}
+#myPageScreen .my-summary-card:nth-child(odd){border-right:1px solid #f0e8ed}
+#myPageScreen .my-summary-card:nth-child(-n+2){border-bottom:1px solid #f0e8ed}
+#myPageScreen .my-summary-label{margin:0 0 5px;font-size:11px}
+#myPageScreen .my-summary .growth-stat-icon{display:none}
+#myPageScreen .my-summary-value{font-size:23px;line-height:1.2}
+@media(max-width:360px){#myPageScreen .my-growth-panel{grid-template-columns:78px minmax(0,1fr);gap:10px;padding:12px}#myPageScreen .my-growth-panel .hsm-emblem-current img{width:76px;height:76px}#myPageScreen .my-summary-card{padding:12px 14px}}
