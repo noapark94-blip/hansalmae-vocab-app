@@ -21,6 +21,8 @@
   #hsmLauncherHome .hsm-launcher-tile-copy strong{font-size:17px}
   #hsmLauncherHome .hsm-launcher-tile-copy span{font-size:12px}
   #hsmLauncherHome .hsm-launcher-manage-grid .hsm-launcher-tile{min-height:84px!important;padding:16px!important}
+  #myPageScreen .learning-shortcuts{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+  #myPageScreen #fbShortcut{grid-column:1/-1;aspect-ratio:4/1;max-height:280px}
   #vocabScreen{width:100%;max-width:none;padding:28px!important}
   #vocabScreen .vocab-controls{grid-template-columns:repeat(2,minmax(0,1fr));align-items:end;gap:16px}
   #vocabScreen .vocab-controls>*{min-width:0}
