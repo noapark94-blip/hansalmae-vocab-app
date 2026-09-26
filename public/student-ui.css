@@ -577,3 +577,11 @@ body.collection-open{overflow:hidden}
 #myPageScreen .my-summary .growth-stat-icon{display:none}
 #myPageScreen .my-summary-value{font-size:23px;line-height:1.2}
 @media(max-width:360px){#myPageScreen .my-growth-panel{grid-template-columns:78px minmax(0,1fr);gap:10px;padding:12px}#myPageScreen .my-growth-panel .hsm-emblem-current img{width:76px;height:76px}#myPageScreen .my-summary-card{padding:12px 14px}}
+
+/* A quiet, single-row summary keeps the focus on learning records. */
+#myPageScreen .my-summary{grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding:15px 0;margin:2px 0 20px;border:0;border-radius:0;background:none;overflow:visible}
+#myPageScreen .my-summary-card{position:relative;padding:0 5px!important;text-align:center;border:0!important;background:none;min-width:0}
+#myPageScreen .my-summary-card+.my-summary-card::before{content:"";position:absolute;left:0;top:8px;width:1px;height:27px;background:#eee7ec}
+#myPageScreen .my-summary-label{display:block;margin:0 0 8px;font-size:10px;font-weight:500;line-height:1.4;white-space:nowrap;letter-spacing:-.3px;color:#94858f}
+#myPageScreen .my-summary-value{font-size:21px;font-weight:650;line-height:1.2;letter-spacing:-.6px;color:#543747}
+@media(max-width:360px){#myPageScreen .my-summary-label{font-size:9px}#myPageScreen .my-summary-value{font-size:19px}}
