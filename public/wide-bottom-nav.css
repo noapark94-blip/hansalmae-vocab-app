@@ -301,7 +301,7 @@
  body.hsm-student-app-open .topbar-menu{display:none!important}
  body.hsm-student-app-open.hsm-launcher-open #hsmMobileNav{display:grid!important}
  #hsmLauncherHome{padding-bottom:120px}
- #hsmMobileNav{left:50%;right:auto;bottom:16px;transform:translateX(-50%);width:calc(100% - 48px);max-width:860px;height:76px;padding:6px 12px;border:1px solid #e9dfe6;border-radius:22px;box-shadow:0 8px 32px #47203918;background:rgba(255,255,255,.97)}
+ #hsmMobileNav{left:0;right:0;bottom:0;transform:none;width:100%;max-width:none;height:calc(76px + env(safe-area-inset-bottom,0px));padding:6px max(16px,calc((100vw - 960px)/2)) env(safe-area-inset-bottom,0px);border:0;border-top:1px solid #e9dfe6;border-radius:0;box-shadow:0 -6px 24px #4720390c;background:rgba(255,255,255,.97)}
  #hsmMobileNav .hsm-mobile-nav-item{min-height:60px!important;font-size:12px!important;gap:5px;transition:background .15s}
  #hsmMobileNav .hsm-mobile-nav-item:hover{background:#faf3f8!important}
  #hsmMobileNav .hsm-mobile-nav-item.active{background:#faf0f6!important}
