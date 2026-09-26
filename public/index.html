@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260926-103"></script>
+  <script src="./app-dialogs.js?v=20260926-104"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -2666,9 +2666,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260926-103"></script>
-  <script src="./config.js?v=20260926-103"></script>
-  <script src="./app-update.js?v=20260926-103"></script>
+  <script src="./school-runtime.js?v=20260926-104"></script>
+  <script src="./config.js?v=20260926-104"></script>
+  <script src="./app-update.js?v=20260926-104"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4686,15 +4686,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260926-103">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260926-103">
-<link rel="stylesheet" href="./student-ui.css?v=20260926-103">
-<script defer src="./test-setup.js?v=20260926-103"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260926-103">
-<script defer src="./wrong-review.js?v=20260926-103"></script>
-<script defer src="./vocab-selection.js?v=20260926-103"></script>
-<script defer src="./personal-dialogs.js?v=20260926-103"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260926-103">
+<link rel="stylesheet" href="./test-setup.css?v=20260926-104">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260926-104">
+<link rel="stylesheet" href="./student-ui.css?v=20260926-104">
+<script defer src="./test-setup.js?v=20260926-104"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260926-104">
+<script defer src="./wrong-review.js?v=20260926-104"></script>
+<script defer src="./vocab-selection.js?v=20260926-104"></script>
+<script defer src="./personal-dialogs.js?v=20260926-104"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260926-104">
 <style id="hsm-ranking-refresh-polish">
 #rankingScreen #rankingLoading:empty{display:none;min-height:0;margin:0}
 #rankingScreen #rankingLoading{font-size:12px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
@@ -4705,10 +4705,10 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #rankingScreen[aria-busy=true] .ranking-tabs:after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#b9759e,transparent);background-size:200% 100%;animation:hsmRankingLoading 1.2s linear infinite}
 @keyframes hsmRankingLoading{to{background-position:-200% 0}}
 @media(prefers-reduced-motion:reduce){#rankingScreen .ranking-pull-refresh,#rankingScreen .ranking-pull-refresh-icon{transition:none}#rankingScreen .is-refreshing .ranking-pull-refresh-icon,#rankingScreen[aria-busy=true] .ranking-tabs:after{animation:none}}
-</style><link rel="stylesheet" href="./friend-battle.css?v=20260926-103">
-<script defer src="./battle-chat.js?v=20260926-103"></script>
-<script defer src="./friend-battle.js?v=20260926-103"></script>
-<link rel="stylesheet" href="./home-refresh.css?v=20260926-103">
+</style><link rel="stylesheet" href="./friend-battle.css?v=20260926-104">
+<script defer src="./battle-chat.js?v=20260926-104"></script>
+<script defer src="./friend-battle.js?v=20260926-104"></script>
+<link rel="stylesheet" href="./home-refresh.css?v=20260926-104">
 </head>
 
 <body>
@@ -5138,9 +5138,8 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
           </header>
 
           <div class="hsm-launcher-hero">
-            <h1 id="hsmLauncherGreeting">오늘도 한 걸음 성장해요</h1>
             <div class="hsm-home-growth">
-              <button type="button" class="hsm-home-character" data-hsm-icon-ready="1" aria-label="내 엠블럼 컬렉션 열기" onclick="HSMEmblems.open()"><img id="hsmHomeEmblemImage" src="./images/emblems/title-chick.png" alt=""><span>내 컬렉션 ↗</span></button>
+              <button type="button" class="hsm-home-character" data-hsm-icon-ready="1" aria-label="내 엠블럼 컬렉션 열기" onclick="HSMEmblems.open()"><img id="hsmHomeEmblemImage" style="visibility:hidden" alt="" onload="this.style.visibility='visible'" onerror="this.style.visibility='hidden'"><span>내 컬렉션 ↗</span></button>
               <div class="hsm-home-growth-copy"><div class="hsm-home-level"><strong id="hsmHomeLevel">Lv.1</strong><span id="hsmHomeTitle">단어병아리</span></div><div id="hsmHomeEmblemName">나의 엠블럼</div><div class="hsm-home-xp-track" id="hsmHomeXpTrack" role="progressbar" aria-label="레벨 경험치" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="hsmHomeXpFill"></i></div><div id="hsmHomeXpRemaining">성장 기록을 확인하고 있어요</div></div>
             </div>
             <button type="button" class="hsm-launcher-primary" onclick="hsmLauncherOpenFeature_('test')">오늘의 학습 시작 <span aria-hidden="true">→</span></button>
@@ -15628,7 +15627,13 @@ google.script.run
     if(!data||!data.success)return; api.data=data; ensureCard(); const eq=data.equippedEmblem;
     const img=document.getElementById('hsmCurrentEmblemImage'), name=document.getElementById('hsmCurrentEmblemName'), sub=document.getElementById('hsmCurrentEmblemSub');
     const homeImage=document.getElementById('hsmHomeEmblemImage'),homeName=document.getElementById('hsmHomeEmblemName');
-    if(homeImage)homeImage.src=eq?.imagePath||'./images/emblems/title-chick.png';
+    if(homeImage){
+      const source=eq?.imagePath||'./images/emblems/title-chick.png';
+      if(homeImage.getAttribute('src')!==source){
+        homeImage.style.visibility='hidden';
+        homeImage.src=source;
+      }
+    }
     if(homeName)homeName.textContent=eq?.emblemName||'엠블럼을 선택해보세요';
     const badge=document.getElementById('hsmCurrentEmblemBadge');
     if(badge)badge.hidden=!eq;
@@ -16239,7 +16244,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260926-103"></script>
+<script src="./ui-icons.js?v=20260926-104"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
