@@ -1,0 +1,38 @@
+/* Student sign-in: one primary action, compact secondary links. */
+#loginScreen.login-card{max-width:440px;margin:24px auto;padding:26px 28px 18px!important;border:1px solid #eee7ec;border-radius:26px;background:#fff;box-shadow:0 12px 42px #50233a08}
+#loginScreen::before{display:none}
+#loginScreen .login-ball-animation{width:58px;height:58px;margin:0 auto 18px}
+#loginScreen>h1{font-size:28px;line-height:1.3;letter-spacing:-1px;margin:0 0 9px;font-weight:800}
+#loginScreen>.subtitle{font-size:13px;line-height:1.6;margin:0 0 27px;color:#95818d;word-break:keep-all}
+#loginScreen>label{display:block;margin:18px 0 8px;font-size:13px;font-weight:650;color:#58414f}
+#loginScreen #studentId,#loginScreen #studentPassword{display:block;width:100%;height:52px;min-height:52px;margin:0;padding:0 15px;border:1px solid #e9e1e7;border-radius:13px;background:#fcfafc;box-shadow:none;font-size:16px;color:#33232e;transition:border-color .16s,box-shadow .16s}
+#loginScreen #studentId::placeholder,#loginScreen #studentPassword::placeholder{color:#b2a4ad;font-size:14px}
+#loginScreen #studentId:focus,#loginScreen #studentPassword:focus{outline:none;border-color:#ba7aa1;box-shadow:0 0 0 3px #8f145f0c;background:#fff}
+#loginScreen .hsm-login-password{position:relative}
+#loginScreen #studentPassword{padding-right:52px}
+#loginScreen #hsmPasswordVisibility{position:absolute;right:4px;top:4px;display:grid;place-items:center;width:44px;min-width:44px;height:44px;min-height:44px;margin:0;padding:11px;border:0;border-radius:10px;background:transparent;color:#998391;box-shadow:none;transform:none}
+#loginScreen #hsmPasswordVisibility svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#hsmPasswordVisibility .hsm-eye-slash{display:none}
+#hsmPasswordVisibility[aria-pressed=true] .hsm-eye-slash{display:block}
+#loginScreen .hsm-login-options{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:7px 0 15px}
+#loginScreen .hsm-login-options .hsm-remember-id{margin:0;font-size:12px;gap:7px;white-space:nowrap}
+#loginScreen .hsm-login-text-button{display:inline-flex;align-items:center;justify-content:center;width:auto;min-width:0;min-height:44px;margin:0;padding:7px 0;border:0;border-radius:6px;background:transparent;color:#927b89;box-shadow:none;font-size:12px;font-weight:500;line-height:1.3;transform:none;white-space:nowrap}
+#loginScreen #loginButton{height:52px;min-height:52px;margin:0;padding:12px 20px;border:0;border-radius:13px;background:#8f145f;color:#fff;font-size:16px;font-weight:700;box-shadow:0 5px 14px #8f145f16;transform:none}
+#loginScreen #loginButton:disabled{opacity:.6;cursor:wait}
+#loginScreen #loginMessage:not(:empty){margin:12px 0 0;font-size:13px;line-height:1.5}
+#loginScreen .hsm-login-signup{display:flex;justify-content:center;align-items:center;gap:9px;margin-top:12px;color:#a08d98;font-size:12px}
+#loginScreen .hsm-login-signup button{color:#8f145f;font-weight:650;gap:5px}
+#loginScreen .signup-guide{margin:0;text-align:center;color:#b09da8;font-size:11px;line-height:1.5}
+#loginScreen .hsm-login-footer{margin-top:22px;padding-top:20px;border-top:1px solid #f0e9ee}
+#loginScreen #installAppButton{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;margin:0;padding:12px 14px;border:1px solid #eee5ed;border-radius:14px;background:#faf7fb;color:#795269;box-shadow:none;transform:none;text-align:left}
+#loginScreen #installAppButton .hsm-install-button-icon{display:grid;place-items:center;flex:0 0 30px;width:30px;height:32px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+#loginScreen #installAppButton svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#loginScreen .hsm-install-copy{display:flex;flex:1;flex-direction:column;gap:4px}
+#loginScreen .hsm-install-copy strong{font-size:13px;font-weight:650;line-height:1.3}
+#loginScreen .hsm-install-copy>span{font-size:11px;font-weight:400;color:#a38d9c;line-height:1.3}
+#loginScreen #installAppButton .hsm-install-chevron{width:15px;height:15px;color:#b09cac}
+#loginScreen .teacher-login-button{display:flex;align-items:center;justify-content:center;gap:5px;width:auto;min-height:44px;margin:7px auto 0;padding:7px 12px;border:0;border-radius:8px;background:transparent;color:#9a8493;box-shadow:none;font-size:12px;font-weight:500;transform:none}
+#loginScreen button:focus-visible{outline:2px solid #b7719e;outline-offset:3px}
+@media(max-width:480px){#loginScreen.login-card{margin:12px auto;padding:22px 20px 12px!important;border-radius:22px}}
+@media(max-width:350px){#loginScreen.login-card{padding-left:16px!important;padding-right:16px!important}#loginScreen .hsm-login-options .hsm-remember-id,#loginScreen .hsm-login-options button{font-size:11px}}
+@media(prefers-reduced-motion:reduce){#loginScreen #studentId,#loginScreen #studentPassword{transition:none}}
