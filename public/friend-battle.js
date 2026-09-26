@@ -28,7 +28,7 @@
  function stamp(g){const previous=game;game=g;offset=new Date(g.serverNow).getTime()-Date.now();renderGame();if(g.status==='finished'&&g.reward&&(g.reward.xp||g.reward.points)&&lastRewardSync!==g.id){lastRewardSync=g.id;try{localStorage.removeItem('hsmMonthlyRankingCacheV2');}catch(_){}window.refreshExperienceUi_?.();window.HSMEmblems?.load(true);}if(previous?.id===g.id)for(const side of ['host','guest'])if(g[side+'Score']>previous[side+'Score']){const score=root.querySelector('[data-score="'+side+'"]');score?.classList.add('fb-pop');const fighter=root.querySelector('.fb-fighter.fb-'+side);if(fighter){const gain=document.createElement('span');gain.className='fb-score-gain';gain.textContent='+1';fighter.appendChild(gain);setTimeout(()=>gain.remove(),1000);}}}
  async function refresh(force=false){
   if(pollBusy||busy||!who()||document.hidden||!$('mainApp')||$('mainApp').classList.contains('hidden'))return;
-  if(!force&&Date.now()-lastPoll<(active()&&live()?1400:active()?7000:20000))return;
+  if(!force&&Date.now()-lastPoll<(active()&&game?.status==='ready'?500:active()&&live()?1400:active()?7000:20000))return;
   pollBusy=true;lastPoll=Date.now();const version=revision,account=who(),room=game?.id;
   try{if(active()&&game){const data=await api('poll',{id:room});if(version===revision&&account===who()&&game?.id===room)stamp(data);}else {const data=await api('home');if(version===revision&&account===who()){home=data;updateBadge();if(active()&&!game)renderHome();}}const status=$('fbConnection');if(status)status.textContent='';}
   catch(e){if(active()){const status=$('fbConnection');if(status)status.textContent='연결을 확인하고 있어요. 잠시만 기다려주세요.';if(force)toast(e.message);}}
@@ -73,7 +73,7 @@
   const remaining=new Date(g.roundAt).getTime()-(Date.now()+offset);
   const eligible=g.status==='playing'&&g.round===0&&!g.question;
   if(!eligible){stopIntro();return;}
-  if(introCleanup||lastIntroGame===g.id||remaining<1400||!Number.isFinite(remaining)||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  if(introCleanup||lastIntroGame===g.id||remaining<500||!Number.isFinite(remaining)||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
   const countdown=root.querySelector('.fb-countdown'),board=root.querySelector('.fb-live-scoreboard');
   const targets=['host','guest'].map(side=>board?.querySelector('.fb-'+side+' .fb-avatar'));
   if(!countdown||targets.some(el=>!el)||typeof targets[0].animate!=='function')return;
@@ -81,14 +81,15 @@
   const area=countdown.getBoundingClientRect(),bounds=board.getBoundingClientRect();
   const centerX=area.left+area.width/2,centerY=area.top+Math.min(area.height/2,90);
   const intro=document.createElement('div');intro.className='fb-match-intro';intro.setAttribute('aria-hidden','true');
-  Object.assign(intro.style,{left:area.left+'px',top:bounds.top+'px',width:area.width+'px',height:Math.max(0,area.bottom-bounds.top)+'px'});
+  Object.assign(intro.style,{left:(area.left+window.scrollX)+'px',top:(bounds.top+window.scrollY)+'px',width:area.width+'px',height:Math.max(0,area.bottom-bounds.top)+'px'});
   intro.innerHTML='<b>VS</b><i></i>';
   for(const el of intro.children){el.style.left=(centerX-area.left)+'px';el.style.top=(centerY-bounds.top)+'px';}
   document.body.appendChild(intro);root.classList.add('fb-intro-running');
-  const duration=1150,animations=[];
+  const duration=Math.min(1150,remaining-100),animations=[];
+  intro.style.setProperty('--intro-duration',duration+'ms');
   targets.forEach((target,i)=>{
    const rect=target.getBoundingClientRect(),clone=target.cloneNode(true),direction=i===0?-1:1;
-   clone.className='fb-flight-avatar';Object.assign(clone.style,{left:(rect.left-area.left)+'px',top:(rect.top-bounds.top)+'px',width:rect.width+'px',height:rect.height+'px'});intro.appendChild(clone);
+   clone.loading='eager';clone.className='fb-flight-avatar';Object.assign(clone.style,{left:(rect.left-area.left)+'px',top:(rect.top-bounds.top)+'px',width:rect.width+'px',height:rect.height+'px'});intro.appendChild(clone);
    const dx=centerX+direction*48-(rect.left+rect.width/2),dy=centerY-(rect.top+rect.height/2);
    const pose=(x,y,scale,angle)=>'translate('+x+'px,'+y+'px) scale('+scale+') rotate('+angle+'deg)';
    animations.push(clone.animate([
@@ -99,9 +100,9 @@
     {transform:pose(0,0,1,0),opacity:1,offset:1}
    ],{duration,easing:'linear',fill:'forwards'}));
   });
-  const cleanup=()=>{clearTimeout(timer);animations.forEach(a=>a.cancel());intro.remove();root.classList.remove('fb-intro-running');window.removeEventListener('resize',cleanup);window.removeEventListener('scroll',cleanup);introCleanup=null;};
+  const cleanup=()=>{clearTimeout(timer);animations.forEach(a=>a.cancel());intro.remove();root.classList.remove('fb-intro-running');window.removeEventListener('resize',cleanup);introCleanup=null;};
   const timer=setTimeout(cleanup,duration);introCleanup=cleanup;
-  window.addEventListener('resize',cleanup,{once:true});window.addEventListener('scroll',cleanup,{once:true});
+  window.addEventListener('resize',cleanup,{once:true});
  }
  function scoreboard(g){
   if(['finished','invited','ready'].includes(g.status)){

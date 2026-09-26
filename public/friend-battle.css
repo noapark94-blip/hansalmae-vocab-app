@@ -511,10 +511,10 @@
 #friendBattleScreen.fb-game{scroll-margin-bottom:90px}
 #friendBattleScreen.fb-intro-running .fb-live-scoreboard .fb-avatar{visibility:hidden}
 #friendBattleScreen.fb-intro-running .fb-countdown>span,#friendBattleScreen.fb-intro-running .fb-countdown>p{visibility:hidden}
-.fb-match-intro{position:fixed;z-index:450;pointer-events:none;background:transparent;overflow:visible}
+.fb-match-intro{position:absolute;z-index:450;pointer-events:none;background:transparent;overflow:visible}
 .fb-flight-avatar{position:absolute;object-fit:contain;transform-origin:center;filter:drop-shadow(0 5px 5px #75558025);will-change:transform}
-.fb-match-intro>b{position:absolute;font:900 italic 32px/1 Arial,sans-serif;color:#b28d4a;transform:translate(-50%,-50%);animation:fb-flight-vs 1.15s both;z-index:2}
-.fb-match-intro>i{position:absolute;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,#efd39180,transparent 70%);transform:translate(-50%,-50%);animation:fb-flight-glow 1.15s both}
+.fb-match-intro>b{position:absolute;font:900 italic 32px/1 Arial,sans-serif;color:#b28d4a;transform:translate(-50%,-50%);animation:fb-flight-vs var(--intro-duration,1.15s) both;z-index:2}
+.fb-match-intro>i{position:absolute;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,#efd39180,transparent 70%);transform:translate(-50%,-50%);animation:fb-flight-glow var(--intro-duration,1.15s) both}
 @keyframes fb-flight-vs{0%,15%{opacity:0;scale:.7}34%,55%{opacity:1;scale:1}75%,100%{opacity:0;scale:.85}}
 @keyframes fb-flight-glow{0%,24%{opacity:0}36%{opacity:1}65%,100%{opacity:0}}
 @media(max-width:360px){#friendBattleScreen .fb-live-scoreboard .fb-fighter{grid-template-columns:48px minmax(0,1fr);column-gap:3px}#friendBattleScreen .fb-live-scoreboard .fb-guest{grid-template-columns:minmax(0,1fr) 48px}#friendBattleScreen .fb-live-scoreboard .fb-avatar{width:48px;height:54px}#friendBattleScreen.fb-game .fb-live-scoreboard{gap:5px;grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr)}}
