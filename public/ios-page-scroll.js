@@ -13,6 +13,9 @@
   const root = document.documentElement;
   const body = document.body;
   const nativeScrollTo = window.scrollTo.bind(window);
+  window.hsmResetChatViewportPan_ = function () {
+    if (active && root.classList.contains('br-chat-keyboard') && (window.scrollX || window.scrollY || window.visualViewport?.offsetTop)) nativeScrollTo({left:0,top:0,behavior:'instant'});
+  };
   window.scrollTo = function () {
     if (active) return body.scrollTo.apply(body, arguments);
     return nativeScrollTo.apply(window, arguments);
