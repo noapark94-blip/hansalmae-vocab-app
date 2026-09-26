@@ -77,7 +77,8 @@
 }
 @media(max-width:650px) and (display-mode:standalone){
  body.hsm-student-app-open{padding-top:max(56px,calc(env(safe-area-inset-top,0px) + 12px))!important}
- .hsm-launcher-home,#hsmSchoolStudentPage,#hsmSchoolContentPage{padding-top:max(56px,calc(env(safe-area-inset-top,0px) + 16px))!important}
+ #hsmLauncherHome{padding-top:12px!important}
+ #hsmSchoolStudentPage,#hsmSchoolContentPage{padding-top:max(56px,calc(env(safe-area-inset-top,0px) + 16px))!important}
 }
 @media(prefers-reduced-motion:reduce){#mainApp *,#hsmSchoolStudentPage *,#hsmSchoolContentPage *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
