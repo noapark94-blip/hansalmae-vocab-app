@@ -453,3 +453,27 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-lobby-empty p{margin:10px 0 0;color:#998994;font-size:12px;line-height:1.8;word-break:keep-all}
 .br-root:has(.br-lobby-heading)>.br-footnote{margin:14px 0 0;padding-top:16px;border-top:1px solid #eee7ec;font-size:10px;line-height:1.6;color:#a4949f}
 @media(max-width:700px){.br-lobby-heading h2{font-size:21px}.br-filters{gap:24px}.br-root .br-filters .br-btn{padding:12px 0;font-size:12px}.br-lobby-empty{min-height:190px;padding:38px 12px}.br-lobby-empty h2{font-size:17px}.br-room-grid{margin-top:14px}}
+
+/* Compact, in-place room setup choices. */
+.br-create-sheet{padding:24px;max-width:500px;border:1px solid #eee7ec;border-radius:22px;color:#44333e}
+.br-create-sheet>header{margin-bottom:24px}.br-create-sheet h2{font-size:20px;font-weight:650;color:#44333e}
+.br-create-sheet .br-close{width:34px;height:34px;min-height:34px;font-size:22px;background:#f7f4f6;color:#988591}
+.br-create-sheet label,.br-choice-field{margin:0 0 18px;font-size:12px;font-weight:600;color:#776370;min-width:0}
+.br-field-caption{display:block;margin-bottom:8px;line-height:1.6}
+.br-create-sheet input{height:44px;min-height:44px;background:#fcfafb;border-color:#e9e2e7;border-radius:10px;font-size:16px;color:#513c49}
+.br-create-sheet select[hidden]{display:none!important}
+.br-choice-buttons{display:flex;gap:6px;flex-wrap:wrap}
+.br-create-sheet .br-choice{flex:1;min-width:0;min-height:40px;padding:8px 5px;border:1px solid #eae3e8;border-radius:9px;background:#faf8fa;color:#89727f;font:500 12px/1.4 inherit;font-family:inherit;font-size:12px;white-space:nowrap}
+.br-create-sheet .br-choice.is-selected{border-color:#ba7ca2;background:#f6eaf1;color:#8f145f;font-weight:650;box-shadow:inset 0 0 0 .5px #ba7ca2}
+.br-create-sheet .br-choice:focus-visible,.br-choice-panel summary:focus-visible{outline:2px solid #b5749d;outline-offset:2px}
+.br-choice-buttons.is-capacity{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.br-create-sheet .br-form-row:has(#brCapacity),.br-create-sheet .br-form-row:has(#brMode){grid-template-columns:1fr;gap:0}
+.br-choice-panel summary{display:flex;justify-content:space-between;align-items:center;gap:8px;list-style:none;cursor:pointer;min-height:44px;padding:10px 12px;background:#fcfafb;border:1px solid #e9e2e7;border-radius:10px;color:#513c49;font-size:14px;font-weight:500}
+.br-choice-panel summary::-webkit-details-marker{display:none}.br-choice-panel summary:after{content:"";width:6px;height:6px;border-right:1.5px solid #a08a97;border-bottom:1.5px solid #a08a97;transform:rotate(45deg);margin-right:3px;flex-shrink:0}
+.br-choice-panel[open] summary:after{transform:rotate(225deg)}
+.br-choice-panel.is-folded .br-choice-buttons{margin-top:8px;max-height:170px;overflow-y:auto;padding:2px}
+.br-choice-buttons.is-source{flex-direction:column}.br-choice-buttons.is-source .br-choice{text-align:left;padding:11px 12px;white-space:normal}
+.br-choice-buttons.is-days{display:grid;grid-template-columns:repeat(3,1fr)}
+.br-create-sheet .br-form-note{background:none;padding:0;margin:0 0 14px;font-size:11px;color:#a18b99;text-align:center}
+.br-create-sheet form>.br-primary{min-height:46px;border-radius:12px;font-size:14px;box-shadow:none}
+@media(max-width:700px){.br-create-sheet{padding:22px 18px}.br-create-sheet h2{font-size:20px}.br-choice-buttons.is-days{grid-template-columns:repeat(2,1fr)}}
