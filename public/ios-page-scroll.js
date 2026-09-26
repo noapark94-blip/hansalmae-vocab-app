@@ -9,7 +9,7 @@
     return active ? document.body.scrollTop : window.scrollY;
   };
   if (!ios) return;
-  const mobile = window.matchMedia('(max-width: 650px)');
+  const mobile = window.matchMedia('(max-width: 650px), (min-width: 651px) and (max-width: 1400px) and (min-height: 600px) and (pointer: coarse)');
   const root = document.documentElement;
   const body = document.body;
   const nativeScrollTo = window.scrollTo.bind(window);
