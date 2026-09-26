@@ -569,7 +569,7 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-rankings{gap:0;margin:24px 0 18px}.br-result-row,.br-result-row:first-child{border:0;border-bottom:1px solid #f1ebf0;border-radius:0;background:transparent;padding:11px 8px;gap:10px}
 .br-result-row.is-me{background:#f8f0f6;border-radius:10px;box-shadow:none;border-bottom-color:transparent}
 .br-result-row .br-rank{font-size:14px;font-weight:600;width:20px;color:#a48f9d}.br-result-row.is-winner .br-rank{color:#b18a48}
-.br-result-row>img{width:38px;height:38px}.br-result-row strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:600;color:#61495b}.br-result-row small{font-size:9px;color:#a18b9b}.br-result-row>b:last-child{font-size:18px;color:#79556d;flex-shrink:0}
+.br-result-row>img{width:34px;height:34px}.br-result-row strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:600;color:#61495b}.br-result-row small{font-size:9px;color:#a18b9b}.br-result-row>b:last-child{font-size:18px;color:#79556d;flex-shrink:0}
 .br-me-label{display:inline-block;padding:2px 5px;margin-left:3px;border-radius:4px;background:#eadce7;color:#936480;font-size:9px}
 .br-reward{border:0;border-radius:9px;background:#f8f5f8;color:#96818e;gap:14px;padding:12px;font-size:11px}.br-reward strong{font-size:13px;font-weight:600;color:#7b5b71}
 .br-root .br-result-actions{display:flex;gap:8px;margin:20px 0}.br-root .br-result-actions .br-btn{flex:1;min-height:44px;width:auto;margin:0;border-radius:10px;padding:10px;font-size:13px;font-weight:600;box-shadow:none}.br-result-actions>span{width:100%;font-size:11px}
@@ -707,7 +707,7 @@ body:has(.br-root:not(.hidden) .br-game-layout){background:#faf7f0}
 
 /* Compact proportions and clean touch feedback. */
 .br-root .br-reaction{width:44px;height:44px;min-height:44px;border-radius:14px;background:#fffcf7;-webkit-tap-highlight-color:transparent}
-.br-root .br-reaction>.br-sticker{width:37px;height:37px}
+.br-root .br-reaction>.br-sticker{width:33px;height:33px}
 .br-root .br-reaction>.br-sticker-clap,.br-root .br-reaction>.br-sticker-smile,.br-root .br-reaction>.br-sticker-cry{transform:translateY(-2px)}
 .br-root .br-reaction>.br-sticker-fire,.br-root .br-reaction>.br-sticker-tongue{transform:translateY(2px)}
 @media(hover:none){.br-root .br-reaction:hover,.br-root .br-reaction:focus:not(:focus-visible){background:#fffcf7;border-color:#efe4dc;box-shadow:none}}
@@ -718,7 +718,7 @@ body:has(.br-root:not(.hidden) .br-game-layout){background:#faf7f0}
 .br-game-layout .br-player.is-me .br-mini-character:before{inset:auto 4px -1px;height:7px;background:#ead7e3;border:1px solid #bd82a5;border-radius:50%;z-index:-1}
 .br-game-layout .br-score-pop{left:calc(100% + 1px);top:4px;min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:#8f145f;font-size:15px;line-height:20px;font-weight:800;white-space:nowrap;transform:none}
 .br-game-layout .br-score-pop.is-miss{background:transparent;color:#ac8179;font-size:17px;box-shadow:none}
-.br-game-layout .br-mini-character .br-bubble{top:-37px;width:38px;height:38px;min-width:38px;min-height:38px}
+.br-game-layout .br-mini-character .br-bubble{top:-35px;width:34px;height:34px;min-width:34px;min-height:34px}
 .br-game-layout .br-mini-character .br-bubble .br-sticker{width:38px;height:38px}
 .br-root .br-options .br-btn{border-bottom-width:1px;box-shadow:0 1px 2px #6b483807;font-weight:550}
 .br-root .br-options .br-btn:not(:disabled):active{transform:translateY(1px);box-shadow:none}
