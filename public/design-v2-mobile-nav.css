@@ -299,3 +299,15 @@
 @media (prefers-reduced-motion: reduce) {
   .hsm-mobile-more-sheet { animation: none; }
 }
+
+/* Explicit visual-viewport top avoids stale iOS fixed-bottom positioning. */
+@media (max-width: 650px) {
+  #hsmMobileNav[style*="--hsm-mobile-nav-top"] {
+    position: fixed;
+    top: var(--hsm-mobile-nav-top);
+    bottom: auto;
+    left: 0;
+    right: 0;
+    margin: 0;
+  }
+}
