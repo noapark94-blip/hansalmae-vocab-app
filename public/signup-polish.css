@@ -1,0 +1,33 @@
+/* Student registration follows the compact sign-in design. */
+#signupScreen.signup-card{max-width:440px;margin:24px auto;padding:26px 28px 18px!important;border:1px solid #eee7ec;border-radius:26px;background:#fff;box-shadow:0 12px 42px #50233a08}
+#signupScreen::before{display:none}
+#signupScreen>.brand-mark{display:block;width:58px;height:58px;object-fit:contain;margin:0 auto 18px;border-radius:16px;box-shadow:none}
+#signupScreen>h1{font-size:26px;line-height:1.3;letter-spacing:-1px;margin:0 0 9px;font-weight:800}
+#signupScreen>.subtitle{font-size:13px;line-height:1.6;margin:0 0 24px;color:#95818d;word-break:keep-all}
+#signupScreen>label{display:block;margin:18px 0 8px;font-size:13px;font-weight:650;color:#58414f}
+#signupScreen input,#signupScreen select{display:block;width:100%;min-width:0;height:52px;min-height:52px;margin:0;padding:0 15px;border:1px solid #e9e1e7;border-radius:13px;background:#fcfafc;box-shadow:none;font-size:16px;color:#33232e;transition:border-color .16s,box-shadow .16s}
+#signupScreen input::placeholder{color:#b2a4ad;font-size:14px}
+#signupScreen input:focus,#signupScreen select:focus{outline:none;border-color:#ba7aa1;box-shadow:0 0 0 3px #8f145f0c;background-color:#fff}
+#signupScreen select{appearance:none;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23998391' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center}
+#signupScreen .signup-id-row{display:flex;flex-direction:row;align-items:center;gap:8px}
+#signupScreen .signup-id-row input{flex:1;width:0}
+#signupScreen #idCheckButton{flex:0 0 80px;width:80px;min-width:80px;min-height:52px;margin:0;padding:0 8px;border:1px solid #ead5e2;border-radius:13px;background:#faf1f7;color:#8f145f;box-shadow:none;font-size:12px;font-weight:650;white-space:nowrap;transform:none}
+#signupScreen .hsm-signup-hint{margin:7px 2px 0;color:#9c8995;font-size:11px;line-height:1.5;word-break:keep-all}
+#signupScreen .field-message{min-height:0;margin:0;font-size:12px;line-height:1.5}
+#signupScreen .field-message:not(:empty){margin:7px 2px 0}
+#signupScreen .hsm-signup-password{position:relative}
+#signupScreen .hsm-signup-password input{padding-right:52px}
+#signupScreen .hsm-signup-eye{position:absolute;right:4px;top:4px;display:grid;place-items:center;width:44px;min-width:44px;height:44px;min-height:44px;margin:0;padding:11px;border:0;border-radius:10px;background:transparent;color:#998391;box-shadow:none;transform:none}
+#signupScreen .hsm-signup-eye svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#signupScreen .hsm-eye-slash{display:none}
+#signupScreen .hsm-signup-eye[aria-pressed=true] .hsm-eye-slash{display:block}
+#signupScreen #signupButton{height:52px;min-height:52px;margin:24px 0 0;padding:12px 20px;border:0;border-radius:13px;background:#8f145f;color:#fff;font-size:16px;font-weight:700;box-shadow:0 5px 14px #8f145f16;transform:none}
+#signupScreen button:disabled{opacity:.6;cursor:wait}
+#signupScreen .hsm-signup-login{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:12px;color:#a08d98;font-size:12px}
+#signupScreen .hsm-signup-login button{display:inline-flex;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;min-height:44px;margin:0;padding:7px 0;border:0;border-radius:6px;background:transparent;color:#8f145f;box-shadow:none;font-size:12px;font-weight:650;transform:none}
+#signupScreen #signupMessage:empty{display:none}
+#signupScreen #signupMessage:not(:empty){margin:12px 0 0;font-size:13px;line-height:1.5}
+#signupScreen button:focus-visible{outline:2px solid #b7719e;outline-offset:3px}
+@media(max-width:480px){#signupScreen.signup-card{margin:12px auto;padding:22px 20px 12px!important;border-radius:22px}}
+@media(max-width:350px){#signupScreen.signup-card{padding-left:16px!important;padding-right:16px!important}}
+@media(prefers-reduced-motion:reduce){#signupScreen input,#signupScreen select{transition:none}}
