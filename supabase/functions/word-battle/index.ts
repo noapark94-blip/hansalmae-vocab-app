@@ -15,12 +15,12 @@ async function student(token:string){
  return profile.id;
 }
 async function rpc(name:string,args:any){const {data,error}=await admin.rpc(name,args);if(error)throw new Error(error.message);return data;}
-async function source(actor:string,target:string,p:any){
+async function source(actor:string,target:string,p:any,room=false){
  const count=p.count===undefined?10:Number(p.count);
  if(![10,20,30].includes(count))throw new Error('문제 수는 10·20·30문제 중 선택해주세요.');
  const seconds=p.seconds===undefined?10:Number(p.seconds);
  if(![10,15,20].includes(seconds))throw new Error('제한 시간은 10·15·20초 중 선택해주세요.');
- const catalog=await rpc('battle_catalog',{p_actor:actor,p_target:target});
+ const catalog=room?await rpc('battle_room_catalog',{p_actor:actor}):await rpc('battle_catalog',{p_actor:actor,p_target:target});
  const selected=catalog.find((x:any)=>x.id===str(p.source));if(!selected)throw new Error('두 학생이 이용할 수 있는 단어장을 선택해주세요.');
  let start=Number(p.start),end=Number(p.end);
  if(selected.kind==='school'){start=1;end=1;}
@@ -39,7 +39,19 @@ Deno.serve(async req=>{
  try{
   const raw=await req.text();if(raw.length>12000)throw new Error('요청이 너무 큽니다.');
   const body=JSON.parse(raw);const actor=await student(str(body.token));const action=str(body.action),p=body.payload||{};let result;
-  if(['home','search','request','acceptFriend','remove','declineFriend','block','unblock'].includes(action)){
+  if(action==='roomCatalog')result=await rpc('battle_room_catalog',{p_actor:actor});
+  else if(action==='roomCreate'){
+   if(str(p.title).length>40||str(p.password).length>32)throw new Error('방 이름은 40자, 비밀번호는 32자까지 입력해주세요.');
+   const built=await source(actor,'',p,true);
+   result=await rpc('battle_room_play',{p_actor:actor,p_action:'create',p_payload:{title:str(p.title),capacity:Number(p.capacity),password:str(p.password),settings:built.settings}});
+  }else if(action==='roomStart'){
+   const settings=await rpc('battle_room_play',{p_actor:actor,p_action:'settings',p_id:str(p.id)});
+   const built=await source(actor,'',settings,true);
+   result=await rpc('battle_room_play',{p_actor:actor,p_action:'start',p_id:str(p.id),p_payload:{questions:built.questions}});
+  }else if(['roomLobby','roomJoin','roomPoll','roomReady','roomAnswer','roomLeave','roomChat','roomRematch'].includes(action)){
+   result=await rpc('battle_room_play',{p_actor:actor,p_action:action.slice(4).toLowerCase(),p_id:str(p.id)||null,p_payload:{password:str(p.password),ready:p.ready,round:p.round,choice:str(p.choice),kind:str(p.kind),body:str(p.body)}});
+   if(result?.error)throw new Error(result.error);
+  }else if(['home','search','request','acceptFriend','remove','declineFriend','block','unblock'].includes(action)){
    const mapped=action==='acceptFriend'?'accept':action==='declineFriend'?'decline':action;
    result=await rpc('battle_social',{p_actor:actor,p_action:mapped,p_target:p.target||null,p_search:str(p.search)});
   }else if(action==='rewardPreview')result=await rpc('battle_reward_allowance',{p_actor:actor,p_target:str(p.target)||null});
