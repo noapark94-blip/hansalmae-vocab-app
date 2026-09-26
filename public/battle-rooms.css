@@ -424,3 +424,8 @@
 .br-podium.is-ready .br-front-blooms>i{opacity:1;transform:translateY(0) scale(1) rotate(0deg);transition-delay:.25s}
 .br-podium.is-ready .br-front-blooms>i:last-child{transition-delay:.4s}
 @media(prefers-reduced-motion:reduce){.br-character:before,.br-character:after,.br-podium .br-front-blooms>i{transition:none!important}}
+
+/* Mobile typing uses the visible viewport; the room stays at its scroll position. */
+html.br-chat-keyboard #hsmMobileNav{visibility:hidden!important;pointer-events:none!important}
+html.br-chat-keyboard #battleRoomScreen #brChatForm{position:fixed;z-index:100100;top:var(--br-composer-top);left:var(--br-composer-left,12px);width:var(--br-composer-width,calc(100% - 24px));bottom:auto;margin:0;box-sizing:border-box;background:#fffdfefa;box-shadow:0 4px 24px #56344515;transform:none;transition:none}
+html.br-chat-keyboard #brChatInput{font-size:16px!important}
