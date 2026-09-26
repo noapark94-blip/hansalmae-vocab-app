@@ -299,38 +299,3 @@
 @media (prefers-reduced-motion: reduce) {
   .hsm-mobile-more-sheet { animation: none; }
 }
-
-/* Anchor the screen-sized layer at its top; the menu uses ordinary absolute
-   layout inside it, avoiding WebKit's scrolling fixed-bottom adjustment. */
-#hsmMobileNavLayer { display:none; }
-@media (max-width:650px) {
-  body.hsm-student-app-open #hsmMobileNavLayer {
-    display:block;
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    height:100%;
-    margin:0;
-    padding:0;
-    border:0;
-    z-index:99980;
-    pointer-events:none;
-    transform:translateZ(0);
-    isolation:isolate;
-  }
-  body.hsm-launcher-open #hsmMobileNavLayer { display:none; }
-  #hsmMobileNavLayer #hsmMobileNav {
-    position:absolute;
-    top:auto;
-    bottom:0;
-    left:0;
-    right:0;
-    margin:0;
-    transform:none;
-    pointer-events:auto;
-    background:#fff;
-    backdrop-filter:none;
-    -webkit-backdrop-filter:none;
-  }
-}
