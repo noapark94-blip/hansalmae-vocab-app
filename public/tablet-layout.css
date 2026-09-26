@@ -311,6 +311,8 @@
   #hsmLauncherHome .hsm-launcher-tile-copy span{font-size:13px}
   #hsmLauncherHome .hsm-launcher-hero{padding:24px!important}
   #hsmHomeBattle{aspect-ratio:3.4/1;max-height:270px}
+  #myPageScreen .learning-shortcuts{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+  #myPageScreen #fbShortcut{grid-column:1/-1;aspect-ratio:3.2/1;max-height:280px}
   #vocabScreen{padding:26px!important}
   #vocabScreen .vocab-controls{grid-template-columns:repeat(2,minmax(0,1fr));align-items:end;gap:14px}
   #vocabScreen .vocab-controls>*{min-width:0}
