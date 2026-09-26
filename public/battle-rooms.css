@@ -520,3 +520,15 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-tile-arrow{font-size:17px;font-weight:400;color:#af8da2}.br-tile-lock{width:14px;height:14px;fill:none;stroke:#af8da2;stroke-width:1.5;flex-shrink:0}
 .br-room-tile.is-playing .br-tile-status{color:#a2909d}
 @media(max-width:700px){.br-root .br-room-grid{gap:10px}.br-root .br-room-tile{padding:14px 12px;border-radius:15px}.br-tile-title{font-size:14px;min-height:41px}.br-tile-source{font-size:11px}.br-tile-range,.br-tile-settings{font-size:10px}.br-tile-top{margin-bottom:12px}}
+
+/* Short room tiles: compact metadata and no reserved title whitespace. */
+.br-root .br-room-tile{display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:start;gap:0 5px;padding:12px;border-radius:12px;box-shadow:none}
+.br-tile-top{grid-column:1/-1;margin-bottom:8px}
+.br-tile-title{grid-column:1/-1;min-height:0;margin:0 0 7px;font-size:14px;line-height:1.35}
+.br-tile-source{grid-column:1;grid-row:3;font-size:10px;line-height:1.6}
+.br-tile-range{grid-column:2;grid-row:3;font-size:10px;line-height:1.6;white-space:nowrap}
+.br-tile-settings{grid-column:1/-1;margin-top:2px;font-size:10px;line-height:1.6}
+.br-tile-bottom{grid-column:1/-1;margin-top:8px;padding-top:7px;border-top:1px solid #f4eff2}
+.br-tile-host{gap:4px;font-size:10px}.br-tile-host img{width:20px;height:20px}
+.br-tile-arrow{font-size:14px}.br-tile-status{font-size:9px;font-weight:500}.br-tile-count{font-size:11px}
+@media(max-width:700px){.br-root .br-room-tile{padding:11px 10px;border-radius:12px}.br-tile-title{min-height:0;font-size:13px;margin-bottom:7px}.br-tile-top{margin-bottom:8px}.br-root .br-room-grid{gap:9px}}
