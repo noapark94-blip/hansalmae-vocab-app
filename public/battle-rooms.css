@@ -381,3 +381,17 @@
 .br-root .br-wait-layout .br-start:disabled{background:#eee7ec;border-color:#eee7ec;color:#ac99a6}
 .br-root:has(.br-wait-layout){padding-bottom:8px}
 .br-root:has(.br-wait-layout) .br-connection{margin-top:10px}
+
+/* Soft daylight stays behind each ready character, without covering labels. */
+.br-character:before,.br-character:after{content:"";position:absolute;pointer-events:none;opacity:0;z-index:0}
+.br-character:before{left:50%;top:-20px;width:min(108px,100%);height:calc(100% + 28px);transform:translateX(-56%) rotate(-14deg);transform-origin:50% 100%;background:linear-gradient(90deg,transparent 9%,#f5d57d00 17%,#f5d57d38 28%,#fff2c750 33%,#f5d57d00 43%,transparent 48%,#f5d57d30 58%,#fff4d04a 63%,#f5d57d00 76%,transparent 90%);mask-image:linear-gradient(transparent,#000 24%,#000 70%,transparent);-webkit-mask-image:linear-gradient(transparent,#000 24%,#000 70%,transparent);filter:blur(4px)}
+.br-character:after{left:50%;bottom:-11px;width:min(116px,100%);height:40px;border-radius:50%;transform:translateX(-50%);background:radial-gradient(ellipse,#ffe8a15c, #ffe8a122 45%,transparent 72%);filter:blur(3px)}
+.br-podium.is-ready .br-character:before,.br-podium.is-ready .br-character:after{opacity:1}
+.br-sunrise .br-character:before{animation:brSunrise .85s ease-out both}
+.br-sunrise .br-character:after{animation:brWarmGround 1s ease-out both}
+.br-sunset .br-character:before,.br-sunset .br-character:after{animation:brSunset .55s ease-out both}
+@keyframes brSunrise{0%{opacity:0;transform:translateX(-62%) translateY(-7px) rotate(-17deg) scaleX(.8)}65%{opacity:1;transform:translateX(-56%) rotate(-14deg) scaleX(1.06)}100%{opacity:1;transform:translateX(-56%) rotate(-14deg)}}
+@keyframes brWarmGround{from{opacity:0;transform:translateX(-50%) scale(.75)}to{opacity:1;transform:translateX(-50%) scale(1)}}
+@keyframes brSunset{from{opacity:1}to{opacity:0}}
+@media(max-width:700px){.br-character:before{top:-15px;height:calc(100% + 23px);filter:blur(3px)}.br-character:after{height:28px;bottom:-9px}}
+@media(prefers-reduced-motion:reduce){.br-sunrise .br-character:before,.br-sunrise .br-character:after,.br-sunset .br-character:before,.br-sunset .br-character:after{animation:none}}
