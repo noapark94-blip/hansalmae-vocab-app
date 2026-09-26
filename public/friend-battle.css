@@ -126,7 +126,7 @@
 @media(prefers-reduced-motion:reduce){.fb-pop,.fb-score-gain{animation:none}.fb-score-gain{display:none}#fbTimeFill{transition:none}}
 /* Compact game lobby. Explicit colors prevent legacy button styles leaking in. */
 #friendBattleScreen.fb-lobby{padding:18px!important}
-#friendBattleScreen .fb-lobby-banner{position:relative;overflow:hidden;border-radius:17px;min-height:154px;background:#26112c url('./images/battle-home-v1.webp') center/cover no-repeat;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 7px 20px #46163612}
+#friendBattleScreen .fb-lobby-banner{position:relative;overflow:hidden;border-radius:17px;min-height:154px;background:#26112c url('./images/battle-faceoff-v2.webp') center 45%/cover no-repeat;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:0 7px 20px #46163612}
 #friendBattleScreen .fb-lobby-title{padding:16px 0;color:#fff2d0;text-shadow:0 2px 8px #170c27}
 #friendBattleScreen .fb-lobby-title h2{font:900 italic 29px/.94 Arial,sans-serif!important;letter-spacing:-1.5px;color:#ffebbd!important;text-align:center!important;margin:8px 0!important}
 #friendBattleScreen .fb-lobby-welcome{font-size:12px;color:#887080;margin:18px 0 4px;text-align:center}
