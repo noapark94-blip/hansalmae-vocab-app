@@ -358,3 +358,26 @@
 .br-root .br-wait-layout .br-chat form .br-btn{width:38px;min-width:38px;height:38px;min-height:38px;padding:0;border-radius:10px;font-size:11px;font-weight:500;box-shadow:none}
 .br-ready-bar strong{font-weight:500}.br-root .br-ready-bar .br-btn{font-weight:600;letter-spacing:-.2px}
 @media(max-width:700px){.br-header h1{font-size:21px;font-weight:600;letter-spacing:-.5px}.br-header p{font-size:11px}.br-header>.br-btn{font-size:11px}.br-wait-layout .br-chat-head{padding:6px 13px}.br-wait-layout .br-chat-log{height:88px}.br-podium .br-front-blooms{bottom:34px;width:min(76px,calc(100% - 5px))}.br-front-blooms>i{left:13%;width:4px;height:4px}.br-front-blooms>i:last-child{right:13%}}
+
+/* Keep the waiting-room controls directly below the conversation. */
+.br-wait-layout{padding-bottom:0;gap:12px}
+.br-wait-layout .br-stage-card{padding-bottom:6px}
+.br-wait-layout .br-chat{position:relative;border-radius:16px}
+.br-wait-layout .br-chat-head{position:absolute;right:10px;top:0;padding:0;min-height:32px;z-index:1}
+.br-wait-layout .br-chat-toggle{display:none}
+.br-wait-layout .br-chat-body{display:block}
+.br-wait-layout .br-chat-log{height:96px;padding:34px 14px 8px}
+.br-root .br-wait-layout .br-chat-head .br-icon-btn{min-height:32px;padding:4px 6px}
+.br-wait-layout .br-chat form{margin:0 8px 8px;padding:4px 4px 4px 12px;border-radius:14px;background:#f7f3f6;gap:8px}
+.br-wait-layout .br-chat form:focus-within{border-color:#caa7bf}
+.br-root .br-wait-layout .br-chat form .br-btn{width:40px;min-width:40px;height:40px;min-height:40px;border-radius:11px;background:#80516f;border-color:#80516f;color:#fff}
+.br-root .br-wait-layout .br-chat form .br-btn:hover{background:#6c405c;transform:none}
+.br-wait-layout .br-ready-bar{position:static;inset:auto;transform:none;width:100%;padding:2px 4px 0;gap:9px;border:0;background:transparent;backdrop-filter:none;box-shadow:none}
+.br-wait-layout .br-ready-bar>div:last-child{gap:8px}
+.br-root .br-wait-layout .br-ready-bar .br-btn{min-height:46px;border-radius:13px;font-weight:600}
+.br-root .br-wait-layout .br-ready-outline{background:#fffafc;border-color:#e5d5df;color:#8a617b}
+.br-root .br-wait-layout .br-ready-selected{background:#f4e8f0;border-color:#d7b6cb;color:#804a6c}
+.br-root .br-wait-layout .br-start{background:#80516f;border-color:#80516f}
+.br-root .br-wait-layout .br-start:disabled{background:#eee7ec;border-color:#eee7ec;color:#ac99a6}
+.br-root:has(.br-wait-layout){padding-bottom:8px}
+.br-root:has(.br-wait-layout) .br-connection{margin-top:10px}
