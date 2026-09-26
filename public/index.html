@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260926-125"></script>
+  <script src="./app-dialogs.js?v=20260926-126"></script>
   <base target="_top">
 
   <meta charset="UTF-8">
@@ -32,7 +32,7 @@
 
 
   <!-- PWA 설정 -->
-  <link rel="manifest" href="./manifest.json?v=20260926-125">
+  <link rel="manifest" href="./manifest.json?v=20260926-126">
   <meta name="theme-color" content="#8f145f">
 
   <meta name="mobile-web-app-capable" content="yes">
@@ -2667,9 +2667,9 @@
     - 요청 시간 제한
     - 기존 google.script.run 문법 유지
   -->
-  <script src="./school-runtime.js?v=20260926-125"></script>
-  <script src="./config.js?v=20260926-125"></script>
-  <script src="./app-update.js?v=20260926-125"></script>
+  <script src="./school-runtime.js?v=20260926-126"></script>
+  <script src="./config.js?v=20260926-126"></script>
+  <script src="./app-update.js?v=20260926-126"></script>
   <script>
     const APPS_SCRIPT_API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -4420,7 +4420,7 @@
   @media(max-width:560px){.hsm-install-actions{flex-direction:column}}
 </style>
 <link rel="stylesheet" href="./design-v1.css?v=2">
-<link rel="stylesheet" href="./design-v2-mobile-nav.css?v=20260926-125">
+<link rel="stylesheet" href="./design-v2-mobile-nav.css?v=20260926-126">
 <link rel="stylesheet" href="./design-v3-test-rewards.css?v=2">
 <link rel="stylesheet" href="./ui-icons.css?v=1">
 <style id="hsm-launcher-home-style">
@@ -4687,15 +4687,15 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #personalTestSelectionHint{margin:8px 0 14px;padding:10px 12px;border:1px solid #eadfe5;border-radius:12px;background:#faf7f9;color:#74656e;font-size:13px;line-height:1.55}
 #personalTestSelectionHint.is-ready{color:#8f145f;background:#fff7fb}
 </style>
-<link rel="stylesheet" href="./test-setup.css?v=20260926-125">
-<link rel="stylesheet" href="./vocab-polish.css?v=20260926-125">
-<link rel="stylesheet" href="./student-ui.css?v=20260926-125">
-<script defer src="./test-setup.js?v=20260926-125"></script>
-<link rel="stylesheet" href="./wrong-review.css?v=20260926-125">
-<script defer src="./wrong-review.js?v=20260926-125"></script>
-<script defer src="./vocab-selection.js?v=20260926-125"></script>
-<script defer src="./personal-dialogs.js?v=20260926-125"></script>
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260926-125">
+<link rel="stylesheet" href="./test-setup.css?v=20260926-126">
+<link rel="stylesheet" href="./vocab-polish.css?v=20260926-126">
+<link rel="stylesheet" href="./student-ui.css?v=20260926-126">
+<script defer src="./test-setup.js?v=20260926-126"></script>
+<link rel="stylesheet" href="./wrong-review.css?v=20260926-126">
+<script defer src="./wrong-review.js?v=20260926-126"></script>
+<script defer src="./vocab-selection.js?v=20260926-126"></script>
+<script defer src="./personal-dialogs.js?v=20260926-126"></script>
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260926-126">
 <style id="hsm-ranking-refresh-polish">
 #rankingScreen #rankingLoading:empty{display:none;min-height:0;margin:0}
 #rankingScreen #rankingLoading{font-size:12px;line-height:1.6;word-break:keep-all;overflow-wrap:anywhere}
@@ -4706,13 +4706,13 @@ body.hsm-launcher-open #mainApp > :not(#hsmLauncherHome){display:none!important}
 #rankingScreen[aria-busy=true] .ranking-tabs:after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#b9759e,transparent);background-size:200% 100%;animation:hsmRankingLoading 1.2s linear infinite}
 @keyframes hsmRankingLoading{to{background-position:-200% 0}}
 @media(prefers-reduced-motion:reduce){#rankingScreen .ranking-pull-refresh,#rankingScreen .ranking-pull-refresh-icon{transition:none}#rankingScreen .is-refreshing .ranking-pull-refresh-icon,#rankingScreen[aria-busy=true] .ranking-tabs:after{animation:none}}
-</style><link rel="stylesheet" href="./friend-battle.css?v=20260926-125">
-<script defer src="./battle-chat.js?v=20260926-125"></script>
-<script defer src="./friend-battle.js?v=20260926-125"></script>
-<link rel="stylesheet" href="./home-refresh.css?v=20260926-125">
-<link rel="stylesheet" href="./exam-visuals.css?v=20260926-125">
-<link rel="stylesheet" href="./login-polish.css?v=20260926-125">
-<link rel="stylesheet" href="./signup-polish.css?v=20260926-125">
+</style><link rel="stylesheet" href="./friend-battle.css?v=20260926-126">
+<script defer src="./battle-chat.js?v=20260926-126"></script>
+<script defer src="./friend-battle.js?v=20260926-126"></script>
+<link rel="stylesheet" href="./home-refresh.css?v=20260926-126">
+<link rel="stylesheet" href="./exam-visuals.css?v=20260926-126">
+<link rel="stylesheet" href="./login-polish.css?v=20260926-126">
+<link rel="stylesheet" href="./signup-polish.css?v=20260926-126">
 </head>
 
 <body>
@@ -12531,6 +12531,7 @@ google.script.run
 
     /* PWA 설치 및 서비스 워커 */
     let deferredInstallPrompt = null;
+    let hsmInstallPromptInFlight_ = false;
 
     window.addEventListener('beforeinstallprompt', function (event) {
       event.preventDefault();
@@ -12545,13 +12546,27 @@ google.script.run
     window.addEventListener('appinstalled', function () {
       deferredInstallPrompt = null;
       window.hsmAppInstalledThisSession_ = true;
+      closeHansalmaeInstall_();
       const button = document.getElementById('installAppButton');
       if (button) {
         button.classList.add('hidden');
       }
     });
 
-    async function installHansalmaeApp() {
+    function installHansalmaeApp() {
+      if (hsmInstallPromptInFlight_) return;
+      const installed = window.hsmAppInstalledThisSession_ || window.navigator.standalone === true ||
+        window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: fullscreen)').matches;
+      if (installed) {
+        HSMDialog.alert('이미 앱으로 설치되어 있습니다.');
+        return;
+      }
+      // Invoke synchronously from the tap, including supported in-app browsers.
+      if (deferredInstallPrompt) return runHansalmaeInstall_();
+      showHansalmaeInstallGuide_();
+    }
+
+    function showHansalmaeInstallGuide_() {
       const modal = document.getElementById('hsmInstallModal');
       const title = document.getElementById('hsmInstallTitle');
       const steps = document.getElementById('hsmInstallSteps');
@@ -12571,7 +12586,9 @@ google.script.run
         title.textContent = '안드로이드 앱 설치';
         steps.innerHTML = deferredInstallPrompt
           ? '아래 “설치 시작”을 누르면 홈 화면에 한살매 보카가 설치됩니다.'
-          : 'Chrome 메뉴(⋮)에서 “앱 설치” 또는 “홈 화면에 추가”를 선택하세요.';
+          : /kakaotalk/i.test(navigator.userAgent)
+            ? '현재 카카오톡 창에서는 설치창을 열 수 없어요.<br>메뉴에서 외부 브라우저로 연 뒤 “앱 설치하기”를 다시 눌러주세요.<br>Chrome 메뉴(⋮)의 “앱 설치” 또는 “홈 화면에 추가”로도 설치할 수 있어요.'
+            : 'Chrome 메뉴(⋮)에서 “앱 설치” 또는 “홈 화면에 추가”를 선택하세요.';
         install.classList.toggle('hidden', !deferredInstallPrompt);
       } else {
         title.textContent = 'PC에 앱 설치';
@@ -12591,11 +12608,20 @@ google.script.run
     }
 
     async function runHansalmaeInstall_() {
-      if (!deferredInstallPrompt) return;
-      deferredInstallPrompt.prompt();
-      await deferredInstallPrompt.userChoice;
+      if (hsmInstallPromptInFlight_) return;
+      if (!deferredInstallPrompt) { showHansalmaeInstallGuide_(); return; }
+      const promptEvent = deferredInstallPrompt;
       deferredInstallPrompt = null;
+      hsmInstallPromptInFlight_ = true;
       closeHansalmaeInstall_();
+      try {
+        await promptEvent.prompt();
+        await promptEvent.userChoice;
+      } catch (_error) {
+        if (!window.hsmAppInstalledThisSession_) showHansalmaeInstallGuide_();
+      } finally {
+        hsmInstallPromptInFlight_ = false;
+      }
     }
 
     function removeAppSplash() {
@@ -16237,7 +16263,7 @@ google.script.run
 })();
 </script>
 
-<script src="./ui-icons.js?v=20260926-125"></script>
+<script src="./ui-icons.js?v=20260926-126"></script>
 
 <div id="hsmInstallModal" class="hsm-install-modal hidden" aria-hidden="true">
   <div class="hsm-install-panel" role="dialog" aria-modal="true" aria-labelledby="hsmInstallTitle">
@@ -16354,10 +16380,10 @@ body.hsm-school-study-open #mainApp #hsmGlobalBackButton{display:inline-flex!imp
 #hsmRankingEmblemShowcase .hsm-ranking-showcase-stat-value{margin-top:6px;font-size:21px;font-weight:700;color:#65505f;line-height:1.3}
 #hsmRankingEmblemShowcase #hsmRankingShowcasePoints{color:#8f145f;font-size:25px}
 #hsmRankingEmblemShowcase [hidden]{display:none!important}
-</style><script src="./teacher-exam-live.js?v=20260926-125"></script>
-<script src="./teacher-exam-navigation.js?v=20260926-125"></script>
-<script src="./ios-page-scroll.js?v=20260926-125"></script>
-<script src="./login-polish.js?v=20260926-125"></script>
-<script src="./signup-polish.js?v=20260926-125"></script>
+</style><script src="./teacher-exam-live.js?v=20260926-126"></script>
+<script src="./teacher-exam-navigation.js?v=20260926-126"></script>
+<script src="./ios-page-scroll.js?v=20260926-126"></script>
+<script src="./login-polish.js?v=20260926-126"></script>
+<script src="./signup-polish.js?v=20260926-126"></script>
 </body>
 </html>
