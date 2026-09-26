@@ -63,6 +63,18 @@ function polishCreateForm(){
   let summary;if(fold){summary=document.createElement('summary');panel.append(summary);panel.addEventListener('toggle',()=>{if(panel.open)form.querySelectorAll('details').forEach(other=>{if(other!==panel)other.open=false;});});}
   const choices=document.createElement('div');choices.className='br-choice-buttons '+(id==='brCapacity'?'is-capacity':id==='brSource'?'is-source':id==='brStart'||id==='brEnd'?'is-days':'');choices.setAttribute('role','group');choices.setAttribute('aria-labelledby',caption.id);panel.append(choices);
   const draw=()=>{choices.replaceChildren();for(const opt of select.options){const b=document.createElement('button');b.type='button';b.textContent=clean(opt.textContent)+(id==='brCount'?'문제':'');b.className='br-choice'+(opt.selected?' is-selected':'');b.setAttribute('aria-pressed',String(opt.selected));b.onclick=()=>{select.value=opt.value;select.dispatchEvent(new Event('change',{bubbles:true}));draw();if(fold){panel.open=false;summary.focus();}};choices.append(b);}if(summary)summary.textContent=clean(select.selectedOptions[0]?.textContent||'선택');};
+  if(id==='brStart'||id==='brEnd'){
+   summary.setAttribute('aria-haspopup','dialog');
+   summary.addEventListener('click',e=>{e.preventDefault();
+    const dialog=document.createElement('dialog');dialog.className='br-day-dialog';dialog.setAttribute('aria-label',caption.textContent+' 선택');
+    const head=document.createElement('header'),title=document.createElement('h2'),close=document.createElement('button');title.textContent=caption.textContent+' 선택';close.type='button';close.className='br-day-close';close.textContent='×';close.setAttribute('aria-label','닫기');head.append(title,close);dialog.append(head);
+    const grid=document.createElement('div');grid.className='br-day-grid';dialog.append(grid);
+    for(const opt of select.options){const b=document.createElement('button');b.type='button';b.textContent=opt.textContent;b.className=opt.selected?'is-selected':'';b.setAttribute('aria-pressed',String(opt.selected));b.onclick=()=>{select.value=opt.value;select.dispatchEvent(new Event('change',{bubbles:true}));dialog.close();};grid.append(b);}
+    close.onclick=()=>dialog.close();dialog.addEventListener('click',event=>{event.stopPropagation();if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
+    dialog.addEventListener('keydown',event=>event.stopPropagation());dialog.addEventListener('close',()=>{dialog.remove();summary.focus({preventScroll:true});});
+    modal.append(dialog);dialog.showModal();grid.querySelector('.is-selected')?.focus({preventScroll:true});
+   });
+  }
   select.addEventListener('change',draw);select._drawChoices=draw;draw();
  }
  for(const id of ['brCapacity','brCount','brMode','brSeconds'])enhance(id,false);

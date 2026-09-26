@@ -492,3 +492,14 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-create-sheet .br-field-caption{margin-bottom:6px;font-size:12px;font-weight:550}
 .br-create-sheet>header{margin-bottom:18px}
 .br-create-sheet .br-choice-panel summary{min-height:40px;padding:9px 12px;font-size:13px}
+
+/* Separate Day picker, leaving the room setup in place. */
+.br-day-dialog{box-sizing:border-box;width:calc(100% - 40px);max-width:380px;max-height:70dvh;margin:auto;padding:22px;border:1px solid #eee5eb;border-radius:22px;background:#fff;color:#513c49;box-shadow:0 18px 65px #38202f26;overflow:hidden}
+.br-day-dialog::backdrop{background:#291b2b66;backdrop-filter:blur(3px)}
+.br-day-dialog header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.br-day-dialog h2{margin:0;font:600 18px/1.4 inherit;font-family:inherit;font-size:18px}
+.br-day-dialog button{box-sizing:border-box;width:auto;margin:0;min-height:42px;padding:9px 5px;border:1px solid #e9e1e7;border-radius:10px;background:#faf8fa;color:#806c79;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer}
+.br-day-dialog .br-day-close{width:34px;min-height:34px;height:34px;padding:0;border:0;border-radius:50%;background:#f7f3f6;font-size:23px}
+.br-day-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-height:calc(70dvh - 105px);overflow:auto;overscroll-behavior:contain;padding:2px}
+.br-day-dialog button.is-selected{background:#f5e8f0;border-color:#b97ba1;color:#8f145f;font-weight:650}
+.br-day-dialog button:focus-visible{outline:2px solid #b97ba1;outline-offset:1px}
