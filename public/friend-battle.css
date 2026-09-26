@@ -558,3 +558,18 @@
 #friendBattleScreen .bc-heading strong{white-space:nowrap;flex-shrink:0}
 #friendBattleScreen .bc-heading .bc-mute{width:auto!important;flex:0 0 auto;white-space:nowrap}
 #friendBattleScreen .bc-picker button[data-emoji],#friendBattleScreen .bc-reaction{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;color:#594260;-webkit-text-fill-color:currentColor}
+
+/* Keep the match decision ahead of the compact conversation. */
+#friendBattleScreen.fb-pregame .fb-wait{margin:8px 0 10px;padding:6px 0 0}
+#friendBattleScreen.fb-pregame .fb-wait-dots{display:none}
+#friendBattleScreen.fb-pregame .fb-wait h3{font-size:16px;margin:0 0 4px}
+#friendBattleScreen.fb-pregame .fb-wait p{font-size:11px;line-height:1.5}
+#friendBattleScreen.fb-pregame .bc-panel{margin:16px 0 0;padding:10px 12px;border-radius:14px;background:#fcfafd}
+#friendBattleScreen .bc-heading{margin-bottom:4px}
+#friendBattleScreen .bc-log{height:auto;max-height:88px;padding:0 2px}
+#friendBattleScreen .bc-log.is-empty{max-height:none}
+#friendBattleScreen .bc-empty{margin:5px 0 7px;text-align:left;font-size:11px}
+#friendBattleScreen .bc-message{margin-bottom:6px;gap:2px}
+#friendBattleScreen .bc-message>span{padding:5px 8px;line-height:1.4}
+#friendBattleScreen .bc-compose{margin-top:6px}
+#friendBattleScreen .bc-hint{display:none}

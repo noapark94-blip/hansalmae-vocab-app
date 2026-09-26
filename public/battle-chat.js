@@ -21,7 +21,7 @@
   root.querySelector('[data-chat="toggle"]')?.setAttribute('aria-expanded',String(opened));
   if(waiting&&panel){
    const items=messages.filter(m=>!muted||m.sender===game.me),sig=JSON.stringify(items);
-   const log=panel.querySelector('.bc-log');
+   const log=panel.querySelector('.bc-log');log.classList.toggle('is-empty',!items.length);
    if(sig!==listSignature||!log.childNodes.length){
     const atBottom=log.scrollHeight-log.scrollTop-log.clientHeight<24;const first=!listSignature;
     log.innerHTML=items.length?items.map(m=>'<div class="bc-message '+(m.sender===game.me?'is-mine':'')+'"><small>'+esc(m.sender===game.me?'나':(game.host.id===m.sender?game.host.name:game.guest.name))+'</small><span>'+esc(m.body)+'</span></div>').join(''):'<p class="bc-empty">반가운 인사로 시작해보세요 👋</p>';
