@@ -273,3 +273,24 @@
  .br-wait-layout .br-chat-log{height:110px}.br-wait-layout .br-chat{border-radius:18px}.br-wait-layout .br-chat-head{padding:6px 9px}
 }
 @media(max-width:350px){.br-ready-bar>div:first-child{flex-basis:80px}.br-ready-bar p{display:none}.br-ready-bar .br-btn{font-size:11px;padding:9px 7px}.br-character{height:62px}.br-root .br-avatar-button{height:68px;width:68px}}
+
+/* Transparent arena with grounded pearl podiums. */
+.br-stage-card{background:transparent;border:0;box-shadow:none;border-radius:0;padding:14px 10px 18px;overflow:visible}
+.br-stage-card .br-section-head{padding:0 5px}
+.br-stage{gap:24px 16px;padding-top:26px}
+.br-character{z-index:2}
+.br-root .br-avatar-button{transform:translateY(calc(var(--br-foot-gap,9%) + 6px));position:relative;z-index:2}
+.br-avatar-button>img{filter:drop-shadow(0 3px 2px #54334a16)}
+.br-platform{position:relative;z-index:1;height:19px;border:0;border-radius:50%;background:linear-gradient(180deg,#e9dfe7,#d4c2d1);box-shadow:0 7px 10px -3px #53304425,0 1px 0 #cbb8c9;isolation:isolate}
+.br-platform:before{content:'';display:block;position:absolute;inset:0 0 auto;height:72%;border-radius:50%;background:linear-gradient(155deg,#fff 5%,#fcf8fb 45%,#e8dfe9);border:1px solid #ffffffcf;box-shadow:inset 0 -1px 2px #d1becd44}
+.br-platform:after{content:'';position:absolute;z-index:1;width:54%;height:35%;left:23%;top:12%;border-radius:50%;background:#715466;opacity:.17;filter:blur(3px)}
+.br-podium.is-empty .br-platform{opacity:.4;border:0;background:linear-gradient(#eee7ee,#ddd2de);box-shadow:0 5px 9px -3px #53304415}
+.br-podium.is-empty .br-platform:after{opacity:0}
+.br-podium.is-ready .br-platform{border:0;background:linear-gradient(#dec9d9,#bb86a8);box-shadow:0 5px 12px -3px #8f145f35,0 0 0 1px #b5669829,0 0 16px #a731791a}
+.br-podium.is-ready .br-platform:before{background:linear-gradient(155deg,#fff,#fbedf6 55%,#eed3e3)}
+.br-podium>strong{margin-top:12px}.br-vacant-label{color:#bba8b6}
+.br-arrive .br-avatar-button{animation:brStageRise .65s cubic-bezier(.2,.8,.3,1) both}
+.br-arrive .br-platform:after{animation:brContactShadow .65s ease-out both}
+@keyframes brStageRise{0%{opacity:0;transform:translateY(calc(var(--br-foot-gap,9%) + 32px)) scale(.84)}55%{opacity:1;transform:translateY(calc(var(--br-foot-gap,9%) - 2px)) scale(1.02)}78%{transform:translateY(calc(var(--br-foot-gap,9%) + 8px)) scale(.98,1.02)}100%{opacity:1;transform:translateY(calc(var(--br-foot-gap,9%) + 6px)) scale(1)}}
+@keyframes brContactShadow{0%{opacity:0;transform:scale(.5)}65%{opacity:.1;transform:scale(.8)}100%{opacity:.17;transform:scale(1)}}
+@media(max-width:700px){.br-stage-card{padding:10px 2px 14px}.br-stage{gap:24px 6px;padding:24px 0 8px}.br-platform{height:16px;max-width:76px;width:calc(100% - 5px)}.br-podium>strong{margin-top:10px}.br-stage.br-seats-2 .br-platform{height:19px;max-width:105px}}
