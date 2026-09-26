@@ -477,3 +477,18 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-create-sheet .br-form-note{background:none;padding:0;margin:0 0 14px;font-size:11px;color:#a18b99;text-align:center}
 .br-create-sheet form>.br-primary{min-height:46px;border-radius:12px;font-size:14px;box-shadow:none}
 @media(max-width:700px){.br-create-sheet{padding:22px 18px}.br-create-sheet h2{font-size:20px}.br-choice-buttons.is-days{grid-template-columns:repeat(2,1fr)}}
+
+/* Reset global button margins inside room choices. */
+.br-create-sheet .br-choice{width:auto;margin:0!important;min-height:36px;height:auto;padding:8px 6px;line-height:1.35;font-weight:500;box-shadow:none}
+.br-create-sheet .br-choice:hover{background:#f3edf1}
+.br-create-sheet .br-choice.is-selected:hover{background:#f6eaf1}
+.br-create-sheet .br-choice-buttons{align-items:start;gap:6px}
+.br-create-sheet .br-choice-buttons.is-source{display:grid;grid-template-columns:1fr;gap:4px}
+.br-create-sheet .br-choice-buttons.is-source .br-choice{width:100%;min-height:38px;padding:9px 12px;border:0;border-radius:7px;background:transparent}
+.br-create-sheet .br-choice-buttons.is-source .br-choice.is-selected{background:#f6eaf1;box-shadow:none}
+.br-create-sheet .br-choice-panel.is-folded .br-choice-buttons{max-height:150px;margin:6px 0 0;padding:6px;background:#faf8fa;border-radius:10px;scroll-padding:6px}
+.br-create-sheet .br-choice-buttons.is-days{grid-auto-rows:min-content;align-content:start;gap:5px}
+.br-create-sheet .br-choice-field,.br-create-sheet label{margin-bottom:14px}
+.br-create-sheet .br-field-caption{margin-bottom:6px;font-size:12px;font-weight:550}
+.br-create-sheet>header{margin-bottom:18px}
+.br-create-sheet .br-choice-panel summary{min-height:40px;padding:9px 12px;font-size:13px}

@@ -60,7 +60,7 @@ function polishCreateForm(){
   const caption=document.createElement('span');caption.className='br-field-caption';caption.id=id+'Label';caption.textContent=label.firstChild.textContent;
   label.replaceWith(field);field.append(caption,select);select.hidden=true;select.tabIndex=-1;
   const panel=document.createElement(fold?'details':'div');panel.className='br-choice-panel'+(fold?' is-folded':'');field.append(panel);
-  let summary;if(fold){summary=document.createElement('summary');panel.append(summary);}
+  let summary;if(fold){summary=document.createElement('summary');panel.append(summary);panel.addEventListener('toggle',()=>{if(panel.open)form.querySelectorAll('details').forEach(other=>{if(other!==panel)other.open=false;});});}
   const choices=document.createElement('div');choices.className='br-choice-buttons '+(id==='brCapacity'?'is-capacity':id==='brSource'?'is-source':id==='brStart'||id==='brEnd'?'is-days':'');choices.setAttribute('role','group');choices.setAttribute('aria-labelledby',caption.id);panel.append(choices);
   const draw=()=>{choices.replaceChildren();for(const opt of select.options){const b=document.createElement('button');b.type='button';b.textContent=clean(opt.textContent)+(id==='brCount'?'문제':'');b.className='br-choice'+(opt.selected?' is-selected':'');b.setAttribute('aria-pressed',String(opt.selected));b.onclick=()=>{select.value=opt.value;select.dispatchEvent(new Event('change',{bubbles:true}));draw();if(fold){panel.open=false;summary.focus();}};choices.append(b);}if(summary)summary.textContent=clean(select.selectedOptions[0]?.textContent||'선택');};
   select.addEventListener('change',draw);select._drawChoices=draw;draw();
