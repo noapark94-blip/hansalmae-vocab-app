@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <script src="./app-dialogs.js?v=20260925-69"></script>
+  <script src="./app-dialogs.js?v=20260926-109"></script>
   <meta charset="UTF-8" />
   <title>한살매 선생님 시험 관리</title>
   <meta name="description" content="한살매입시전문학원 선생님용 단어시험 출제 및 학생 응시 현황 관리">
@@ -1224,8 +1224,8 @@
 
 </style>
 <link rel="stylesheet" href="./ui-icons.css?v=1">
-<link rel="stylesheet" href="./teacher-modern.css?v=20260925-69">
-  <link rel="stylesheet" href="./app-dialogs.css?v=20260925-69">
+<link rel="stylesheet" href="./teacher-modern.css?v=20260926-109">
+  <link rel="stylesheet" href="./app-dialogs.css?v=20260926-109">
 </head>
 <body>
   <main class="app">
@@ -1525,8 +1525,8 @@ protect	보호하다"></textarea>
     </div>
   </div>
 
-  <script src="./config.js?v=20260925-69"></script>
-  <script src="./app-update.js?v=20260925-69"></script>
+  <script src="./config.js?v=20260926-109"></script>
+  <script src="./app-update.js?v=20260926-109"></script>
   <script>
     const API_URL =
       window.HANSALMAE_CONFIG && window.HANSALMAE_CONFIG.apiUrl;
@@ -1620,9 +1620,9 @@ protect	보호하다"></textarea>
 
     const TEACHER_API_CACHE_TTL = {
       teacherGetSetupData: 5 * 60 * 1000,
-      teacherListExams: 20 * 1000,
+      teacherListExams: 0,
       teacherGetExamDetails: 30 * 1000,
-      teacherGetExamStatus: 10 * 1000
+      teacherGetExamStatus: 0
     };
 
     function teacherApiKey(functionName, args) {
@@ -1712,7 +1712,7 @@ protect	보호하다"></textarea>
               savedAt: Date.now(),
               value: result
             });
-          } else {
+          } else if (!(functionName in TEACHER_API_CACHE_TTL)) {
             clearTeacherReadCache();
           }
 
@@ -2503,6 +2503,7 @@ protect	보호하다"></textarea>
       try {
         setLoading(true, '응시 현황을 불러오는 중입니다.');
         const result = await apiCall('teacherGetExamStatus', examId);
+        if (currentStatusExamId !== String(examId || '')) return;
         renderStatusModal(result);
         $('#statusModal').classList.add('show');
       } catch (error) {
@@ -2836,7 +2837,8 @@ protect	보호하다"></textarea>
         .replaceAll("'", '&#039;');
     }
   </script>
-  <script src="./ui-icons.js?v=20260925-69"></script>
+  <script src="./ui-icons.js?v=20260926-109"></script>
+<script src="./teacher-exam-live.js?v=20260926-109"></script>
 </body>
 </html>
 
