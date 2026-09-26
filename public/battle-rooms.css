@@ -505,27 +505,23 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-day-dialog button:focus-visible{outline:2px solid #b97ba1;outline-offset:1px}
 
 
-/* Compact game-room rows with a clear avatar and information hierarchy. */
+/* Compact two-column lobby cards. */
 .br-root .br-room-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
-.br-root .br-room-tile{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;align-content:center;gap:3px 4px;min-width:0;width:100%;min-height:88px;margin:0;padding:12px 10px 11px 55px;text-align:left;border:1px solid #e7dce4;border-radius:12px;background:#fff;color:#4e3545;box-shadow:0 2px 7px #59384905;font-family:inherit;cursor:pointer}
-.br-root .br-room-tile:hover:not(:disabled){background:#fffbfd;border-color:#cda9c0}
+.br-root .br-room-tile{box-sizing:border-box;position:relative;display:grid;grid-template-columns:46px minmax(0,1fr);grid-template-rows:auto auto auto auto;align-content:center;column-gap:7px;row-gap:3px;min-width:0;width:100%;min-height:94px;margin:0;padding:10px;text-align:left;border:1px solid #dfd3e4;border-radius:10px;background:linear-gradient(115deg,#f0eaf7 0%,#faf7fc 40%,#fff 85%);color:#48263e;box-shadow:0 2px 5px #49315107;font-family:inherit;cursor:pointer;overflow:hidden}
+.br-root .br-room-tile:hover:not(:disabled){border-color:#ba92b1;background:linear-gradient(115deg,#eae0f3,#fff)}
 .br-root .br-room-tile:focus-visible{outline:2px solid #9c3975;outline-offset:2px}
-.br-root .br-room-tile:disabled{background:#f7f4f6;color:#93838d;cursor:default}
-.br-tile-title{grid-column:1/-1;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0 0 2px;font-size:13px;font-weight:650;line-height:1.4;letter-spacing:-.3px}
-.br-tile-source{grid-column:1/-1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:400;line-height:1.5;color:#9a8292}
-.br-tile-range{grid-column:1/-1;font-size:10px;font-weight:400;line-height:1.4;color:#9a8292}
-.br-tile-settings{display:none}
-.br-tile-top{grid-column:1/-1;grid-row:3;display:flex;align-items:center;justify-content:space-between;gap:3px;margin-top:5px;line-height:1.2}
-.br-tile-status{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:600;color:#897180}
-.br-tile-status:before{content:"";width:4px;height:4px;border-radius:50%;background:#96ab8c}
-.br-tile-count{font-size:10px;font-weight:650;color:#735565;font-variant-numeric:tabular-nums}.br-tile-count>span{font-weight:400;color:#b29eab}
+.br-root .br-room-tile:disabled{background:#f5f2f5;cursor:default}
+.br-tile-title{grid-column:2;grid-row:1;display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0;font-size:13px;font-weight:700;line-height:1.35;letter-spacing:-.3px;color:#572743}
+.br-tile-source{grid-column:2;grid-row:2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:500;line-height:1.4;color:#786678}
+.br-tile-range{font:inherit;color:inherit}
+.br-tile-settings{grid-column:2;grid-row:3;display:block;white-space:nowrap;font-size:10px;font-weight:500;line-height:1.4;color:#786678;letter-spacing:-.3px}
+.br-tile-top{grid-column:1/-1;grid-row:4;display:flex;align-items:center;justify-content:space-between;gap:4px;margin-top:5px;line-height:1.2}
+.br-tile-status{display:inline-flex;align-items:center;gap:4px;padding:3px 6px;border-radius:5px;background:#e9efdf;color:#576d43;font-size:9px;font-weight:650;white-space:nowrap}
+.br-tile-status:before{content:"";width:4px;height:4px;border-radius:50%;background:#829c66}
+.br-tile-count{font-size:11px;font-weight:700;color:#65465c;font-variant-numeric:tabular-nums}.br-tile-count>span{font-weight:450;color:#8d7a88}
 .br-tile-bottom,.br-tile-host{display:contents}.br-tile-host>span,.br-tile-arrow{display:none}
-.br-tile-host img{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:39px;height:48px;object-fit:contain;background:#f8f2f6;border-radius:10px;padding:2px}
-.br-tile-lock{position:absolute;left:22px;bottom:7px;width:10px;height:10px;fill:none;stroke:#ad8da0;stroke-width:1.5}
-.br-room-tile.is-playing .br-tile-status:before{background:#baa2b1}
-@media(min-width:701px){.br-root .br-room-tile{min-height:96px;padding-left:72px}.br-tile-host img{left:12px;width:48px;height:57px}.br-tile-title{font-size:15px}.br-tile-source,.br-tile-range{font-size:12px}}
-
-.br-root .br-room-tile{min-height:80px;padding-top:12px;padding-bottom:12px}
-.br-tile-source .br-tile-range{font:inherit;color:#b29ba9}
-.br-tile-title{margin-bottom:3px}
-.br-tile-top{margin-top:7px}
+.br-tile-host img{position:absolute;left:5px;top:8px;width:55px;height:55px;object-fit:contain;background:transparent;border-radius:0;padding:0;filter:drop-shadow(0 3px 3px #694d7314)}
+.br-tile-lock{position:absolute;left:47px;top:8px;width:10px;height:10px;fill:none;stroke:#87687e;stroke-width:1.5}
+.br-room-tile.is-playing .br-tile-status,.br-room-tile:disabled .br-tile-status{background:#eae5ed;color:#88758e}
+.br-room-tile.is-playing .br-tile-status:before,.br-room-tile:disabled .br-tile-status:before{background:#a593ab}
+@media(min-width:701px){.br-root .br-room-tile{grid-template-columns:60px minmax(0,1fr);padding:12px;min-height:104px;column-gap:10px}.br-tile-host img{left:9px;top:9px;width:66px;height:66px}.br-tile-title{font-size:15px}.br-tile-source,.br-tile-settings{font-size:12px}.br-tile-status{font-size:10px}.br-tile-count{font-size:12px}}
