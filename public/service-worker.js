@@ -1,12 +1,10 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260926-117';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260926-118';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
 };
 
 const REQUIRED_ASSETS = [
-  versioned('./mobile-app-shell.js'),
-  versioned('./mobile-app-shell.css'),
   versioned('./teacher-exam-navigation.js'),
   versioned('./exam-visuals.css'),
   versioned('./battle-chat.js'),
