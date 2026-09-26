@@ -1,0 +1,119 @@
+/* Teacher workspace; student screens are deliberately outside this scope. */
+body.hsm-teacher-workspace{background:#f7f5f8;color:#302530}
+.hsm-teacher-workspace .app{width:min(1440px,calc(100% - 64px));padding:28px 0 56px}
+.hsm-teacher-workspace .topbar{padding:22px 24px 16px;border-radius:20px;box-shadow:0 3px 18px #38203205;gap:22px;background:#fff;backdrop-filter:none}
+.hsm-teacher-workspace h1{font-size:25px;letter-spacing:-.035em}
+.hsm-teacher-workspace .brand-mark{width:48px;height:48px;border-radius:15px;box-shadow:none}
+.hsm-teacher-workspace .subtitle{font-size:13px;color:#8a7a86}
+.hsm-teacher-workspace .tabs{background:#f5f2f6;border:0;padding:5px;gap:5px;box-shadow:none}
+.hsm-teacher-workspace .tab-btn{min-height:46px;color:#887586}
+.hsm-teacher-workspace .tab-btn.active{background:#fff;color:#8f145f;box-shadow:0 2px 8px #4324370d}
+.hsm-teacher-workspace .grid,.hsm-teacher-workspace .hsm-sv-grid,.hsm-teacher-workspace .hsm-sc-grid{grid-template-columns:minmax(0,1fr) minmax(340px,.65fr);gap:24px;align-items:start}
+.hsm-teacher-workspace :is(.grid,.hsm-sv-grid,.hsm-sc-grid)>*{min-width:0}
+.hsm-teacher-workspace :is(.card,.hsm-sv-card,.hsm-sc-card){padding:26px;border:1px solid #eae4eb;border-radius:20px;box-shadow:0 4px 20px #35203904;background:#fff;backdrop-filter:none;min-width:0}
+.hsm-teacher-workspace .card::before{display:none}
+.hsm-teacher-workspace .card+.card{margin-top:24px}
+.hsm-teacher-workspace :is(.card-title,.section-title,.hsm-sv-card h2,.hsm-sc-card h2,.hsm-sc-card h3){font-size:18px;line-height:1.5;color:#44263b;letter-spacing:-.025em;margin-bottom:20px}
+.hsm-teacher-workspace :is(.field,.hsm-sv-field,.hsm-sc-field){margin-bottom:18px}
+.hsm-teacher-workspace :is(.field label,.hsm-sv-field>label,.hsm-sc-field>label){font-size:13px;font-weight:650;color:#64505f}
+.hsm-teacher-workspace :is(.row,.hsm-sv-row,.hsm-sc-row){gap:14px}
+.hsm-teacher-workspace :is(input:not([type=checkbox]):not([type=radio]),select,textarea){min-width:0;max-width:100%;min-height:46px;border:1px solid #e5dce5;border-radius:11px;background:#fcfbfd;padding:11px 13px;color:#352b35;font-family:var(--teacher-font);font-size:14px;box-shadow:none}
+.hsm-teacher-workspace :is(input,textarea)::placeholder{color:#a597a3}
+.hsm-teacher-workspace :is(input,select,textarea):focus{outline:none;border-color:#b8789e;background:#fff;box-shadow:0 0 0 3px #8f145f0b}
+.hsm-teacher-workspace input:is([type=checkbox],[type=radio]){accent-color:#8f145f;min-height:0;padding:0;width:19px;height:19px;flex-shrink:0}
+.hsm-teacher-workspace :is(.hsm-sv-help,.hsm-sc-help,.help){color:#8b7b88;line-height:1.65;font-size:12px}
+.hsm-teacher-workspace :is(.primary-btn,.outline-btn,.small-btn,.danger-btn,.ghost-btn,.student-reset-btn){min-height:42px;border-radius:10px;font-weight:650;box-shadow:none}
+.hsm-teacher-workspace .primary-btn{background:#8f145f;color:#fff;box-shadow:0 3px 9px #8f145f12}
+.hsm-teacher-workspace .primary-btn:hover:not(:disabled){background:#771050;transform:none}
+.hsm-teacher-workspace :is(.outline-btn,.small-btn,.student-reset-btn){border-color:#e4d7e1;color:#865574}
+.hsm-teacher-workspace .danger-btn{background:#fff9fa;border-color:#f0dce3;color:#b25974}
+.hsm-teacher-workspace .danger-btn:hover:not(:disabled){background:#b9365b;color:#fff}
+.hsm-teacher-workspace .choice span{min-height:46px;border-radius:11px;background:#fcfbfd}
+.hsm-teacher-workspace .choice input:checked+span{background:#f9eef5;border-color:#bd80a3;box-shadow:none}
+.hsm-teacher-workspace :is(.student-list,.hsm-sv-students,.hsm-sc-students){border:1px solid #eee6ed;border-radius:12px;padding:8px;scrollbar-width:thin;scrollbar-color:#d4c4d0 transparent;overscroll-behavior:contain}
+.hsm-teacher-workspace :is(.student-item,.hsm-sv-student,.hsm-sc-student){padding:10px;border-radius:10px;background:#fff;border:1px solid #f0eaf0;min-height:60px}
+.hsm-teacher-workspace :is(.student-item,.hsm-sv-student,.hsm-sc-student):has(input:checked){background:#fcf2f8;border-color:#dfb7d0}
+.hsm-teacher-workspace .student-toolbar{grid-template-columns:1fr;gap:8px}
+.hsm-teacher-workspace .student-actions{justify-content:flex-end}
+.hsm-teacher-workspace .student-reset-btn{font-size:11px;padding:7px 9px}
+.hsm-teacher-workspace .student-meta{min-width:0;overflow-wrap:anywhere}
+.hsm-teacher-workspace :is(.count-badge,.status-pill,.hsm-sc-badge){padding:5px 9px;font-size:11px;background:#faf0f6;border:1px solid #eed8e5;color:#8f145f}
+.hsm-teacher-workspace .deadline-pill{background:#f5f3f6;border-color:#e5dfe7;color:#8a7e89}
+.hsm-teacher-workspace .exam-card{padding:22px;background:#fff;border-radius:15px;box-shadow:none}
+.hsm-teacher-workspace .exam-card:hover{transform:none;box-shadow:0 4px 15px #38213306}
+.hsm-teacher-workspace .exam-title{font-size:18px}
+.hsm-teacher-workspace .exam-id{font-size:10px;color:#a899a4;overflow-wrap:anywhere}
+.hsm-teacher-workspace .exam-info{padding:14px 0;margin:10px 0;border-top:1px solid #f2edf2;border-bottom:1px solid #f2edf2}
+.hsm-teacher-workspace .exam-info .info-box{min-height:48px;padding:0 12px;border:0;border-radius:0;background:transparent;box-shadow:none;border-left:1px solid #eee7ee}
+.hsm-teacher-workspace .exam-info .info-box:first-child{border-left:0;padding-left:0}
+.hsm-teacher-workspace .exam-actions{gap:8px}
+.hsm-teacher-workspace :is(.hsm-sv-book,.hsm-sc-book){padding:18px;border:1px solid #ece5ed;border-radius:13px;background:#fff;min-width:0}
+.hsm-teacher-workspace :is(.hsm-sv-book-title,.hsm-sc-book-title){font-size:15px;font-weight:750;line-height:1.5;overflow-wrap:anywhere;color:#442d3c}
+.hsm-teacher-workspace :is(.hsm-sv-meta,.hsm-sc-meta){color:#93828e;line-height:1.65}
+.hsm-teacher-workspace .hsm-sc-builder{background:#faf7fb;border-color:#eee2ed;border-radius:13px;padding:18px}
+.hsm-teacher-workspace #hsmSvWords{min-height:210px}
+.hsm-teacher-workspace #hsmScBulk{min-height:130px}
+.hsm-teacher-workspace :is(#hsmSvBookList,#hsmScBooks){scrollbar-width:thin;scrollbar-color:#d4c4d0 transparent}
+.hsm-teacher-workspace .hsm-sc-sticky{position:static}
+.hsm-teacher-workspace .hsm-sc-morph{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:1001px){
+ .hsm-teacher-workspace #hsmSvBookList{max-height:760px;max-height:max(440px,calc(100dvh - 270px));overflow:auto;overscroll-behavior:contain;padding-right:6px}
+ .hsm-teacher-workspace #hsmScBooks{max-height:400px;overflow:auto;overscroll-behavior:contain;padding-right:6px}
+ .hsm-teacher-workspace .student-list{max-height:460px}
+}
+@media(min-width:701px) and (max-width:1000px){
+ .hsm-teacher-workspace .app{width:calc(100% - 40px);padding-top:20px}
+ .hsm-teacher-workspace :is(.grid,.hsm-sv-grid,.hsm-sc-grid){grid-template-columns:1fr}
+ .hsm-teacher-workspace .topbar{grid-template-columns:1fr;gap:16px}
+ .hsm-teacher-workspace .tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .hsm-teacher-workspace .hsm-sv-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hsm-teacher-workspace .hsm-sc-students{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ .hsm-teacher-workspace .app{width:calc(100% - 24px);padding:12px 0 calc(28px + env(safe-area-inset-bottom,0px))}
+ .hsm-teacher-workspace .topbar{padding:18px 14px 12px;grid-template-columns:1fr;gap:14px;border-radius:17px;margin-bottom:16px}
+ .hsm-teacher-workspace h1{font-size:21px}
+ .hsm-teacher-workspace .subtitle{font-size:11px;line-height:1.6}
+ .hsm-teacher-workspace .brand{gap:10px}
+ .hsm-teacher-workspace .brand-mark{width:42px;height:42px}
+ .hsm-teacher-workspace .topbar-actions{display:flex;flex-wrap:wrap;gap:6px}
+ .hsm-teacher-workspace .topbar-actions button{flex:1 1 auto;width:auto;min-height:44px;padding:8px;font-size:11px}
+ .hsm-teacher-workspace .tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+ .hsm-teacher-workspace .tab-btn{font-size:13px;padding:10px 5px;min-height:46px}
+ .hsm-teacher-workspace :is(.grid,.hsm-sv-grid,.hsm-sc-grid){grid-template-columns:minmax(0,1fr);gap:16px}
+ .hsm-teacher-workspace :is(.card,.hsm-sv-card,.hsm-sc-card){padding:20px 16px;border-radius:16px}
+ .hsm-teacher-workspace .card+.card{margin-top:16px}
+ .hsm-teacher-workspace :is(.row,.row.three,.hsm-sv-row,.hsm-sc-row){grid-template-columns:minmax(0,1fr);gap:0}
+ .hsm-teacher-workspace .choice-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .hsm-teacher-workspace .choice span{font-size:11px;padding:8px 3px;min-height:46px}
+ .hsm-teacher-workspace :is(input:not([type=checkbox]):not([type=radio]),select,textarea){font-size:16px;min-height:48px}
+ .hsm-teacher-workspace :is(.hsm-sv-students,.hsm-sc-students){grid-template-columns:1fr;max-height:300px}
+ .hsm-teacher-workspace .student-list{max-height:340px}
+ .hsm-teacher-workspace :is(.primary-btn,.outline-btn,.small-btn,.danger-btn,.ghost-btn,.student-reset-btn){min-height:44px}
+ .hsm-teacher-workspace :is(.hsm-sv-actions,.hsm-sc-actions){gap:8px}
+ .hsm-teacher-workspace :is(.hsm-sv-actions,.hsm-sc-actions)>button{flex:1 1 auto}
+ .hsm-teacher-workspace .exam-card{padding:16px 13px}
+ .hsm-teacher-workspace .exam-info{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 8px}
+ .hsm-teacher-workspace .exam-info .info-box{padding:0;border:0}
+ .hsm-teacher-workspace .exam-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hsm-teacher-workspace .exam-actions button{width:100%;min-height:44px}
+ .hsm-teacher-workspace .exam-list-toolbar{display:grid;gap:12px}
+ .hsm-teacher-workspace .exam-list-toolbar .card-title{margin:0}
+ .hsm-teacher-workspace .hsm-sc-morph{grid-template-columns:1fr}
+ .hsm-teacher-workspace .hsm-sc-chunk-top{grid-template-columns:minmax(0,1fr)}
+ .hsm-teacher-workspace .modal{width:calc(100% - 24px);max-height:calc(100dvh - 32px);padding:18px 14px}
+}
+/* The sign-in card lives in index.html and retains the academy logo. */
+#teacherLoginScreen.signup-card{width:100%;max-width:440px;margin:24px auto;padding:30px 28px 20px!important;border:1px solid #eee5ed;border-radius:24px;background:#fff;box-shadow:0 12px 42px #50233a08}
+#teacherLoginScreen::before{display:none}
+#teacherLoginScreen>.brand-mark{display:block;width:64px;height:64px;padding:0;margin:0 auto 22px;border-radius:18px;box-shadow:none}
+#teacherLoginScreen>h1{font-size:27px;line-height:1.3;letter-spacing:-1px;margin:0 0 10px}
+#teacherLoginScreen>.subtitle{font-size:13px;line-height:1.6;margin:0 0 26px;color:#95818d}
+#teacherLoginScreen>label{display:block;font-size:13px;font-weight:650;color:#58414f;margin:0 0 8px}
+#teacherLoginScreen #teacherAdminCode{width:100%;min-height:54px;height:54px;margin:0 0 18px;padding:12px 15px;font-size:19px;border:1px solid #e9e1e7;border-radius:12px;background:#fcfafc;box-shadow:none}
+#teacherLoginScreen #teacherAdminCode:focus{outline:none;border-color:#ba7aa1;box-shadow:0 0 0 3px #8f145f0c}
+#teacherLoginScreen #teacherLoginButton{min-height:52px;margin:0;border-radius:12px;background:#8f145f;box-shadow:none;font-size:15px}
+#teacherLoginScreen>.secondary-button{min-height:44px;margin:14px 0 0;padding:10px;border:0;background:transparent;box-shadow:none;font-size:13px;color:#937d8b}
+#teacherLoginScreen #teacherLoginMessage:empty{display:none}
+#teacherLoginScreen #teacherLoginMessage:not(:empty){margin:14px 0 0;font-size:13px;line-height:1.5}
+@media(max-width:480px){#teacherLoginScreen.signup-card{margin:12px auto;padding:26px 20px 16px!important;border-radius:20px}}
