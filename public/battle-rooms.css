@@ -704,3 +704,26 @@ body:has(.br-root:not(.hidden) .br-game-layout){background:#faf7f0}
 @keyframes br-sticker-tilt{0%,100%{transform:rotate(0)}35%{transform:rotate(-7deg)}70%{transform:rotate(6deg)}}
 @keyframes br-flame-rise{0%,100%{transform:scale(1)}50%{transform:scale(.94,1.06)}}
 @media(prefers-reduced-motion:reduce){.br-game-layout .br-bubble.is-showing .br-sticker{animation:none}}
+
+/* Compact proportions and clean touch feedback. */
+.br-root .br-reaction{width:44px;height:44px;min-height:44px;border-radius:14px;background:#fffcf7;-webkit-tap-highlight-color:transparent}
+.br-root .br-reaction>.br-sticker{width:37px;height:37px}
+.br-root .br-reaction>.br-sticker-clap,.br-root .br-reaction>.br-sticker-smile,.br-root .br-reaction>.br-sticker-cry{transform:translateY(-2px)}
+.br-root .br-reaction>.br-sticker-fire,.br-root .br-reaction>.br-sticker-tongue{transform:translateY(2px)}
+@media(hover:none){.br-root .br-reaction:hover,.br-root .br-reaction:focus:not(:focus-visible){background:#fffcf7;border-color:#efe4dc;box-shadow:none}}
+@media(hover:hover) and (pointer:fine){.br-root .br-reaction:hover{background:#f7f0e8}}
+.br-root .br-reaction:active{background:#f4e8f0;transform:scale(.93)}
+.br-game-layout .br-players{padding:6px 12px 8px;border-radius:20px;background:radial-gradient(ellipse at 50% 100%,#faefd8 0,transparent 64%),#fffcf7;box-shadow:none}
+.br-game-layout .br-player-grid{padding-top:23px}
+.br-game-layout .br-player.is-me .br-mini-character:before{inset:auto 4px -1px;height:7px;background:#ead7e3;border:1px solid #bd82a5;border-radius:50%;z-index:-1}
+.br-game-layout .br-score-pop{left:calc(100% + 1px);top:4px;min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:#8f145f;font-size:15px;line-height:20px;font-weight:800;white-space:nowrap;transform:none}
+.br-game-layout .br-score-pop.is-miss{background:transparent;color:#ac8179;font-size:17px;box-shadow:none}
+.br-game-layout .br-mini-character .br-bubble{top:-37px;width:38px;height:38px;min-width:38px;min-height:38px}
+.br-game-layout .br-mini-character .br-bubble .br-sticker{width:38px;height:38px}
+.br-root .br-options .br-btn{border-bottom-width:1px;box-shadow:0 1px 2px #6b483807;font-weight:550}
+.br-root .br-options .br-btn:not(:disabled):active{transform:translateY(1px);box-shadow:none}
+.br-options .br-btn>span{background:#f5f0ea;color:#ac998b}
+.br-answer-note{margin-top:7px;font-size:10px;min-height:18px}
+.br-root:has(.br-game-layout)>.br-connection:not(.is-reconnecting){display:none}
+.br-root:has(.br-game-layout)>.br-connection.is-reconnecting{color:#a47755}
+@media(max-width:700px){.br-game-layout .br-player-grid:has(>.br-player:nth-child(5)){padding-top:23px;row-gap:26px}}
