@@ -466,3 +466,21 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-root .br-room-card footer .br-primary{background:#7c896b;border-color:#7c896b;color:#fffef8}
 .br-root:has(.br-lobby-heading)>.br-footnote{color:#aaa594;font-size:10px;line-height:1.8;margin-top:18px}
 @media(max-width:700px){.br-farm-lobby{padding:23px 18px 28px;border-radius:23px}.br-farm-scene{height:166px;margin-bottom:18px}.br-farm-lobby h2{font-size:19px}.br-farm-lobby p{font-size:12px}.br-lobby-heading h2{font-size:21px}.br-root .br-filters .br-btn{padding:8px 16px}.br-fence{left:8%;right:8%}}
+
+/* Let the landscape sit behind the empty state, instead of on a display plinth. */
+.br-farm-lobby{isolation:isolate;min-height:330px;padding:70px 24px 100px;border:0;border-radius:24px;background:linear-gradient(180deg,#fffdf7 0%,#fbfbf3 56%,#edf1df 100%);box-shadow:none}
+.br-farm-lobby:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 16% 8%,#ffeacb5c,transparent 60%)}
+.br-farm-lobby .br-farm-scene{position:absolute;inset:0;width:100%;height:100%;margin:0;z-index:-1;pointer-events:none;overflow:hidden;opacity:.65}
+.br-farm-lobby .br-meadow{left:-20%;right:-20%;bottom:-85px;height:155px;border-radius:50% 50% 0 0;background:linear-gradient(180deg,#dce5c5,#eaf0d9);box-shadow:none;transform:rotate(-3deg)}
+.br-farm-lobby .br-meadow:after{content:"";position:absolute;left:30%;right:-10%;top:8px;height:150px;border-radius:50% 50% 0 0;background:#d7e1c166;transform:rotate(8deg)}
+.br-farm-lobby .br-fence{left:-4%;right:-4%;bottom:38px;height:43px;opacity:.48;transform:rotate(-2deg);filter:none}
+.br-farm-lobby .br-fence>i{width:8px;height:42px;clip-path:none;border-radius:3px 3px 0 0;background:linear-gradient(90deg,#d6c19e,#e4d4b8);box-shadow:none}
+.br-farm-lobby .br-fence>i:nth-child(2n){height:40px}
+.br-farm-lobby .br-fence:before,.br-farm-lobby .br-fence:after{height:5px;top:12px;border-radius:2px;background:#dfceb0;box-shadow:none}
+.br-farm-lobby .br-fence:after{top:28px}
+.br-farm-lobby .br-meadow-flowers{left:8%;right:8%;bottom:27px;opacity:.55;transform:scale(.8)}
+.br-farm-lobby h2,.br-farm-lobby p,.br-farm-lobby>.br-btn{position:relative;z-index:1}
+.br-farm-lobby h2{font-weight:550;font-size:20px;color:#676451}
+.br-farm-lobby p{color:#a3a18e;margin-bottom:24px}
+.br-root .br-farm-lobby>.br-primary{background:#7d896e;border-color:#7d896e;box-shadow:none}
+@media(max-width:700px){.br-farm-lobby{min-height:310px;padding:62px 18px 90px}.br-farm-lobby h2{font-size:18px}.br-farm-lobby .br-fence{left:-4%;right:-4%}}
