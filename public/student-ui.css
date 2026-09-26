@@ -319,10 +319,15 @@ body.collection-open{overflow:hidden}
 #hsmEmblemModal .hsm-emblem-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
 #hsmEmblemModal h3{margin:0;text-align:left;font-size:22px;line-height:1.4;color:#532640}
 #hsmEmblemSummary{margin-top:4px;font-size:12px;line-height:1.5;color:#8d7785}
-#hsmEmblemModal .hsm-emblem-close{flex:0 0 44px;width:44px;height:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:50%;background:#f7f1f5;color:#876879;font-size:25px;box-shadow:none}
-#hsmEmblemModal .hsm-collection-filters{display:flex;gap:6px}
-#hsmEmblemModal .hsm-collection-filters button{width:auto;min-height:40px;margin:0;padding:8px 15px;border:0;border-radius:999px;background:#f7f3f6;color:#8c7584;font-size:13px;font-weight:500;box-shadow:none}
-#hsmEmblemModal .hsm-collection-filters button[aria-pressed=true]{background:#8f145f;color:#fff}
+#hsmEmblemModal .hsm-emblem-close{position:relative;display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:12px;background:transparent;color:#927e8a;font-size:0;box-shadow:none;transform:none}
+#hsmEmblemModal .hsm-emblem-close::before,#hsmEmblemModal .hsm-emblem-close::after{content:"";position:absolute;left:14px;top:21px;width:16px;height:1.5px;border-radius:2px;background:currentColor;transform:rotate(45deg)}
+#hsmEmblemModal .hsm-emblem-close::after{transform:rotate(-45deg)}
+#hsmEmblemModal .hsm-collection-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;width:100%;padding:4px;border:1px solid #f0e9ee;border-radius:14px;background:#f6f2f5}
+#hsmEmblemModal .hsm-collection-filters button{display:block;width:100%;min-width:0;min-height:44px;margin:0;padding:8px 12px;border:1px solid transparent;border-radius:10px;background:transparent;color:#8b7984;font-size:13px;font-weight:600;line-height:1.2;box-shadow:none;transform:none;transition:background .16s ease,color .16s ease,box-shadow .16s ease}
+#hsmEmblemModal .hsm-collection-filters button[aria-pressed=true]{border-color:#eee3e9;background:#fff;color:#8f145f;box-shadow:0 2px 6px #5326400c}
+#hsmEmblemModal .hsm-collection-filters button:focus-visible,#hsmEmblemModal .hsm-emblem-close:focus-visible{outline:2px solid #a95286;outline-offset:2px}
+@media(hover:hover){#hsmEmblemModal .hsm-emblem-close:hover{background:#f7f2f5;color:#8f145f}#hsmEmblemModal .hsm-collection-filters button[aria-pressed=false]:hover{background:#ede5eb;color:#725260}}
+@media(prefers-reduced-motion:reduce){#hsmEmblemModal .hsm-collection-filters button{transition:none}}
 #hsmEmblemModal .hsm-emblem-guide{margin:12px 0;padding:10px 12px;border:0;border-radius:10px;background:#faf7f9;color:#8b7482;font-size:12px;line-height:1.7;word-break:keep-all;overflow-wrap:anywhere}
 #hsmEmblemModal .hsm-emblem-guide summary{cursor:pointer;min-height:24px;font-weight:500}
 #hsmEmblemModal .hsm-emblem-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}
