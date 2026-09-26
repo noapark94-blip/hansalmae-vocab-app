@@ -504,46 +504,28 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-day-dialog button.is-selected{background:#f5e8f0;border-color:#b97ba1;color:#8f145f;font-weight:650}
 .br-day-dialog button:focus-visible{outline:2px solid #b97ba1;outline-offset:1px}
 
-/* Two-column room cards, including on phones. */
-.br-root .br-room-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.br-root .br-room-tile{display:flex;flex-direction:column;min-width:0;width:100%;margin:0;padding:18px;text-align:left;border:1px solid #ece4e9;border-radius:18px;background:#fff;color:#503a48;box-shadow:0 3px 12px #51344904;font-family:inherit;cursor:pointer}
-.br-root .br-room-tile:hover:not(:disabled){background:#fffcfe;border-color:#d8b9cd}
-.br-root .br-room-tile:focus-visible{outline:2px solid #9c3975;outline-offset:3px}
-.br-root .br-room-tile:disabled{background:#f8f5f7;color:#978692;cursor:default;opacity:.8}
-.br-tile-top{display:flex;justify-content:space-between;align-items:center;gap:6px;width:100%;margin-bottom:15px}
-.br-tile-status{font-size:10px;font-weight:600;color:#956780}.br-tile-count{font-size:12px;font-weight:600;color:#735566}.br-tile-count>span{font-size:10px;font-weight:400;color:#b2a0ab;margin-left:2px}
-.br-tile-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;font-size:16px;font-weight:650;line-height:1.45;min-height:46px;letter-spacing:-.4px;margin-bottom:10px}
-.br-tile-source{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:500;color:#806b77;line-height:1.6}
-.br-tile-range,.br-tile-settings{font-size:11px;font-weight:400;line-height:1.7;color:#a18c9a}.br-tile-settings{margin-top:6px}
-.br-tile-bottom{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;border-top:1px solid #f1ebef;padding-top:11px;margin-top:14px}
-.br-tile-host{display:flex;align-items:center;gap:6px;min-width:0;font-size:11px;font-weight:500;color:#89727f}.br-tile-host img{width:26px;height:26px;object-fit:contain;flex-shrink:0}.br-tile-host>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.br-tile-arrow{font-size:17px;font-weight:400;color:#af8da2}.br-tile-lock{width:14px;height:14px;fill:none;stroke:#af8da2;stroke-width:1.5;flex-shrink:0}
-.br-room-tile.is-playing .br-tile-status{color:#a2909d}
-@media(max-width:700px){.br-root .br-room-grid{gap:10px}.br-root .br-room-tile{padding:14px 12px;border-radius:15px}.br-tile-title{font-size:14px;min-height:41px}.br-tile-source{font-size:11px}.br-tile-range,.br-tile-settings{font-size:10px}.br-tile-top{margin-bottom:12px}}
 
-/* Short room tiles: compact metadata and no reserved title whitespace. */
-.br-root .br-room-tile{display:grid;grid-template-columns:minmax(0,1fr) auto;align-content:start;gap:0 5px;padding:12px;border-radius:12px;box-shadow:none}
-.br-tile-top{grid-column:1/-1;margin-bottom:8px}
-.br-tile-title{grid-column:1/-1;min-height:0;margin:0 0 7px;font-size:14px;line-height:1.35}
-.br-tile-source{grid-column:1;grid-row:3;font-size:10px;line-height:1.6}
-.br-tile-range{grid-column:2;grid-row:3;font-size:10px;line-height:1.6;white-space:nowrap}
-.br-tile-settings{grid-column:1/-1;margin-top:2px;font-size:10px;line-height:1.6}
-.br-tile-bottom{grid-column:1/-1;margin-top:8px;padding-top:7px;border-top:1px solid #f4eff2}
-.br-tile-host{gap:4px;font-size:10px}.br-tile-host img{width:20px;height:20px}
-.br-tile-arrow{font-size:14px}.br-tile-status{font-size:9px;font-weight:500}.br-tile-count{font-size:11px}
-@media(max-width:700px){.br-root .br-room-tile{padding:11px 10px;border-radius:12px}.br-tile-title{min-height:0;font-size:13px;margin-bottom:7px}.br-tile-top{margin-bottom:8px}.br-root .br-room-grid{gap:9px}}
+/* Compact game-room rows with a clear avatar and information hierarchy. */
+.br-root .br-room-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+.br-root .br-room-tile{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;align-content:center;gap:3px 4px;min-width:0;width:100%;min-height:88px;margin:0;padding:12px 10px 11px 55px;text-align:left;border:1px solid #e7dce4;border-radius:12px;background:#fff;color:#4e3545;box-shadow:0 2px 7px #59384905;font-family:inherit;cursor:pointer}
+.br-root .br-room-tile:hover:not(:disabled){background:#fffbfd;border-color:#cda9c0}
+.br-root .br-room-tile:focus-visible{outline:2px solid #9c3975;outline-offset:2px}
+.br-root .br-room-tile:disabled{background:#f7f4f6;color:#93838d;cursor:default}
+.br-tile-title{grid-column:1/-1;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0 0 2px;font-size:13px;font-weight:650;line-height:1.4;letter-spacing:-.3px}
+.br-tile-source{grid-column:1/-1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:400;line-height:1.5;color:#9a8292}
+.br-tile-range{grid-column:1/-1;font-size:10px;font-weight:400;line-height:1.4;color:#9a8292}
+.br-tile-settings{display:none}
+.br-tile-top{grid-column:1/-1;grid-row:3;display:flex;align-items:center;justify-content:space-between;gap:3px;margin-top:5px;line-height:1.2}
+.br-tile-status{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:600;color:#897180}
+.br-tile-status:before{content:"";width:4px;height:4px;border-radius:50%;background:#96ab8c}
+.br-tile-count{font-size:10px;font-weight:650;color:#735565;font-variant-numeric:tabular-nums}.br-tile-count>span{font-weight:400;color:#b29eab}
+.br-tile-bottom,.br-tile-host{display:contents}.br-tile-host>span,.br-tile-arrow{display:none}
+.br-tile-host img{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:39px;height:48px;object-fit:contain;background:#f8f2f6;border-radius:10px;padding:2px}
+.br-tile-lock{position:absolute;left:22px;bottom:7px;width:10px;height:10px;fill:none;stroke:#ad8da0;stroke-width:1.5}
+.br-room-tile.is-playing .br-tile-status:before{background:#baa2b1}
+@media(min-width:701px){.br-root .br-room-tile{min-height:96px;padding-left:72px}.br-tile-host img{left:12px;width:48px;height:57px}.br-tile-title{font-size:15px}.br-tile-source,.br-tile-range{font-size:12px}}
 
-/* Arcade lobby reference: compact horizontal rooms, two across. */
-.br-root .br-room-grid{gap:8px;align-items:start}
-.br-root .br-room-tile{position:relative;display:flex;flex-direction:column;justify-content:center;gap:0;min-height:92px;padding:11px 9px 10px 51px;border-radius:11px;border-color:#e5d9e1;background:linear-gradient(110deg,#f7f0f5 0 44px,#fff 44px);overflow:hidden}
-.br-tile-title{order:0;display:block;min-height:0;margin:0 0 4px;font-size:12px;line-height:1.35;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;width:100%;letter-spacing:-.3px}
-.br-tile-source{order:1;font-size:9px;line-height:1.5;width:100%}
-.br-tile-range{order:2;font-size:9px;line-height:1.4;white-space:nowrap}
-.br-tile-settings{order:3;margin:1px 0 0;font-size:9px;line-height:1.4;white-space:nowrap}
-.br-tile-top{order:4;gap:3px;margin:6px 0 0;width:100%;line-height:1.3}
-.br-tile-status{font-size:9px;color:#8f145f;font-weight:650}.br-tile-count{font-size:10px}.br-tile-count>span{font-size:9px}
-.br-tile-bottom{display:contents}.br-tile-host{display:contents}.br-tile-host>span{display:none}
-.br-tile-host img{position:absolute;left:7px;top:50%;transform:translateY(-50%);width:33px;height:43px;object-fit:contain}
-.br-tile-arrow{display:none}.br-tile-lock{position:absolute;left:18px;bottom:7px;width:10px;height:10px}
-.br-root .br-room-tile:disabled{background:linear-gradient(110deg,#f0edf0 0 44px,#faf8fa 44px)}
-@media(min-width:701px){.br-root .br-room-tile{min-height:104px;padding:13px 14px 12px 74px;background:linear-gradient(110deg,#f7f0f5 0 62px,#fff 62px)}.br-tile-host img{left:10px;width:44px;height:56px}.br-tile-title{font-size:14px}.br-tile-source,.br-tile-range,.br-tile-settings{font-size:11px}.br-tile-lock{left:26px}}
+.br-root .br-room-tile{min-height:80px;padding-top:12px;padding-bottom:12px}
+.br-tile-source .br-tile-range{font:inherit;color:#b29ba9}
+.br-tile-title{margin-bottom:3px}
+.br-tile-top{margin-top:7px}
