@@ -575,3 +575,27 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-root .br-result-actions{display:flex;gap:8px;margin:20px 0}.br-root .br-result-actions .br-btn{flex:1;min-height:44px;width:auto;margin:0;border-radius:10px;padding:10px;font-size:13px;font-weight:600;box-shadow:none}.br-result-actions>span{width:100%;font-size:11px}
 .br-review summary{font-size:12px;color:#7c6174}.br-review article{padding:13px 0}
 @media(max-width:700px){.br-game-layout .br-question-card{padding:18px 15px;border-radius:16px}.br-game-layout{gap:10px}.br-result-card{padding:24px 16px}.br-game-layout .br-player{flex-basis:68px}.br-prompt{min-height:120px}}
+
+/* Stable, compact participant positions and quick reactions. */
+.br-game-layout .br-player-grid{display:grid;grid-template-columns:repeat(var(--player-cols,4),minmax(0,1fr));gap:6px 8px;overflow:visible;padding:12px 0 2px}
+.br-game-layout .br-player,.br-game-layout .br-player.is-me{max-width:none;min-width:0;padding:4px 2px;border:0;background:transparent;gap:3px}
+.br-game-layout .br-mini-character{width:34px;height:34px;flex-basis:34px;isolation:isolate}
+.br-game-layout .br-mini-character>img{object-position:center bottom}
+.br-game-layout .br-player.is-me .br-mini-character:before{content:"";position:absolute;inset:-3px;border-radius:50%;background:#eee1ee;z-index:-1}
+.br-game-layout .br-player-copy strong{font-size:10px;font-weight:500;line-height:16px}.br-self-tag{font-style:normal;color:#986389;font-size:9px;margin-left:2px}
+.br-answer-dot{display:inline-block;width:4px;height:4px;border-radius:50%;background:#ddd4de;margin-left:4px;vertical-align:middle}.has-answered .br-answer-dot{background:#89a079}
+.br-game-layout .br-player>b{font-size:13px;line-height:17px;font-weight:650}
+.br-game-layout .br-mini-character .br-bubble{top:-8px;right:-24px;min-width:28px;min-height:28px;font-size:23px;z-index:3;pointer-events:none}
+.br-game-layout .br-game-chat{margin:0;min-height:38px}
+.br-reactions{display:flex;align-items:center;justify-content:flex-end;gap:6px;min-height:38px}
+.br-root .br-reaction-toggle,.br-root .br-reaction{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;width:38px;height:38px;min-height:38px;margin:0;padding:0;border:1px solid #e8dfe8;border-radius:12px;background:#fff;color:inherit;font-size:23px;box-shadow:none;cursor:pointer}
+.br-root .br-reaction-toggle{order:2;background:#f5eef6}.br-reaction-picker{display:flex;gap:4px;padding:4px;border-radius:14px;background:#fff;box-shadow:0 3px 15px #55334b0a}.br-reaction-picker[hidden]{display:none}.br-root .br-reaction{border:0;background:transparent}.br-root .br-reaction:hover{background:#f5eef6}
+.br-root .br-reaction:focus-visible,.br-root .br-reaction-toggle:focus-visible{outline:2px solid #a47598;outline-offset:2px}
+.br-time-track>i{transition:width .2s linear,background-color .7s ease;background:#a88cb7}
+.br-time-track>i[data-tone="mid"]{background:#d5a174}.br-time-track>i[data-tone="low"]{background:#c87982}
+.br-timer,.br-timer.is-urgent{transition:color .7s,background-color .7s;color:#94729f;background:#f4eff7}
+.br-timer[data-tone="mid"]{color:#ac7a4e;background:#faf2e9}.br-timer[data-tone="low"]{color:#b56972;background:#fbf0f2}
+.br-prompt{min-height:100px;padding:18px 0}.br-time-track{margin-bottom:16px}
+.br-root .br-options .is-correct:after{content:"✓";margin-left:auto;color:#557e49;font-weight:700}.br-root .br-options .is-wrong:after{content:"×";margin-left:auto;color:#aa6570;font-weight:700}
+@media(max-width:700px){.br-prompt{min-height:96px;padding:16px 0}.br-game-layout .br-question-card{padding:15px}.br-game-layout{gap:10px}.br-answer-note{margin-top:12px}}
+@media(prefers-reduced-motion:reduce){.br-time-track>i,.br-timer{transition:none}}
