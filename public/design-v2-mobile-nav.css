@@ -300,21 +300,37 @@
   .hsm-mobile-more-sheet { animation: none; }
 }
 
-/* Let CSS track dynamic viewport height without JS scroll/keyboard coordinates. */
-@media (max-width: 650px) {
-  #hsmMobileNav {
+/* Anchor the screen-sized layer at its top; the menu uses ordinary absolute
+   layout inside it, avoiding WebKit's scrolling fixed-bottom adjustment. */
+#hsmMobileNavLayer { display:none; }
+@media (max-width:650px) {
+  body.hsm-student-app-open #hsmMobileNavLayer {
+    display:block;
     position:fixed;
-    inset:auto 0 0;
+    top:0;
+    left:0;
+    right:0;
+    height:100%;
     margin:0;
-    transform:translate3d(0,0,0);
+    padding:0;
+    border:0;
+    z-index:99980;
+    pointer-events:none;
+    transform:translateZ(0);
+    isolation:isolate;
+  }
+  body.hsm-launcher-open #hsmMobileNavLayer { display:none; }
+  #hsmMobileNavLayer #hsmMobileNav {
+    position:absolute;
+    top:auto;
+    bottom:0;
+    left:0;
+    right:0;
+    margin:0;
+    transform:none;
+    pointer-events:auto;
     background:#fff;
     backdrop-filter:none;
     -webkit-backdrop-filter:none;
-  }
-  @supports (height:100dvh) {
-    #hsmMobileNav {
-      top:calc(100dvh - var(--hsm-mobile-nav-height) - env(safe-area-inset-bottom,0px));
-      bottom:auto;
-    }
   }
 }

@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+const source=n=>fs.readFileSync(new URL('../public/'+n,import.meta.url),'utf8');
+const html=source('index.html');
+const head=html.slice(html.indexOf('<head>')+6,html.indexOf('</head>')).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<link\b[^>]*>/gi,tag=>{const h=tag.match(/href="\.\/([^"?]+)(?:\?[^" ]*)?"/);return /rel="stylesheet"/.test(tag)&&h?'<style>'+source(h[1])+'</style>':''});
+const body=html.slice(html.indexOf('<body>')+6,html.indexOf('</body>')).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'');
+const dom=new JSDOM('<head>'+head+'</head><body>'+body+'</body>',{url:'https://example.test',runScripts:'outside-only'});
+const w=dom.window,d=w.document,nav=d.getElementById('hsmMobileNav'),layer=d.getElementById('hsmMobileNavLayer');
+assert.equal(layer.parentElement,d.body);assert.equal(nav.parentElement,layer);
+assert.equal(nav.querySelectorAll('[data-mobile-menu]').length,6);
+// Expand mobile media rules for the cascade test; jsdom does not do mobile layout.
+const css=source('design-v2-mobile-nav.css');const sheet=d.createElement('style');sheet.textContent=css;d.head.append(sheet);
+const active=d.createElement('style');active.textContent=[...sheet.sheet.cssRules].map(r=>r.type===4?(r.conditionText.includes('max-width')?[...r.cssRules].map(x=>x.cssText).join('\n'):''):r.cssText).join('\n');d.head.append(active);
+d.body.classList.add('hsm-student-app-open');
+const get=el=>w.getComputedStyle(el);
+assert.equal(get(layer).position,'fixed');assert.equal(get(layer).top,'0px');assert.equal(get(layer).height,'100%');assert.equal(get(layer).pointerEvents,'none');
+assert.equal(get(nav).position,'absolute');assert.equal(get(nav).top,'auto');assert.equal(get(nav).bottom,'0px');assert.equal(get(nav).pointerEvents,'auto');
+d.body.classList.add('hsm-launcher-open');assert.equal(get(layer).display,'none');
+d.body.classList.remove('hsm-launcher-open');assert.equal(get(layer).display,'block');
+d.body.classList.remove('hsm-student-app-open');assert.equal(get(layer).display,'none');
+w.close();console.log('PASS mobile nav layer ownership, CSS cascade, click-through background, interactive menu, home/login visibility (not device layout verification)');
