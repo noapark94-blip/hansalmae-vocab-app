@@ -1,6 +1,6 @@
 -- Run with the room migration in a rolled-back transaction.
 do $$
-declare users uuid[];u uuid;r jsonb;rid uuid;qs jsonb;i integer;j integer;oldhost uuid;setid uuid;
+declare users uuid[];u uuid;r jsonb;rid uuid;qs jsonb;i integer;j integer;oldhost uuid;setid uuid;lobby jsonb;listed jsonb;
 begin
  select array_agg(gen_random_uuid()) into users from generate_series(1,10);
  for i in 1..10 loop
@@ -12,10 +12,20 @@ begin
  r:=battle_room_play(users[1],'create',null,jsonb_build_object('title','검증방','capacity',8,'password','1234','settings',jsonb_build_object('kind','standard','source',setid,'title','검증','start',1,'end',1,'count',10,'seconds',10,'mode','engToKor')));rid:=(r->>'id')::uuid;
  assert jsonb_array_length(r->'members')=1;
  assert r->'question'='null'::jsonb;
+ lobby:=battle_room_play(users[1],'lobby');
+ select value into listed from jsonb_array_elements(lobby->'rooms') where value->>'id'=rid::text;
+ assert listed is not null and (listed->>'joined')::boolean and (listed->>'locked')::boolean,'host lobby';
+ lobby:=battle_room_play(users[9],'lobby');
+ select value into listed from jsonb_array_elements(lobby->'rooms') where value->>'id'=rid::text;
+ assert listed is not null and not (listed->>'joined')::boolean,'visitor lobby';
+ assert not (listed ? 'password_hash') and not (listed ? 'questions'),'lobby secrets';
  r:=battle_room_play(users[2],'join',rid,'{"password":"wrong"}');assert r ? 'error','password';
  assert not exists(select 1 from battle_room_members where room_id=rid and user_id=users[2]);
  for i in 2..8 loop r:=battle_room_play(users[i],'join',rid,'{"password":"1234"}');end loop;
  assert jsonb_array_length(r->'members')=8,'8 members';
+ lobby:=battle_room_play(users[9],'lobby');
+ select value into listed from jsonb_array_elements(lobby->'rooms') where value->>'id'=rid::text;
+ assert jsonb_array_length(listed->'members')=8,'full lobby';
  begin perform battle_room_play(users[9],'join',rid,'{"password":"1234"}');raise exception 'FAIL capacity';exception when others then if SQLERRM='FAIL capacity' then raise;end if;end;
  begin perform battle_room_play(users[9],'poll',rid);raise exception 'FAIL outsider';exception when others then if SQLERRM='FAIL outsider' then raise;end if;end;
  begin perform battle_room_play(users[2],'start',rid,jsonb_build_object('questions',qs));raise exception 'FAIL host';exception when others then if SQLERRM='FAIL host' then raise;end if;end;
@@ -50,5 +60,7 @@ begin
  r:=battle_room_play(users[2],'join',rid);assert jsonb_array_length(r->'members')=2,'rematch join without password';
  perform battle_room_play(users[1],'leave',rid);r:=battle_room_play(users[2],'poll',rid);assert r->>'host'=users[2]::text,'host succession';assert jsonb_array_length(r->'members')=1;
  perform battle_room_play(users[2],'leave',rid);assert (select status from battle_rooms where id=rid)='closed','empty room cleanup';
+ lobby:=battle_room_play(users[2],'lobby');
+ assert not exists(select 1 from jsonb_array_elements(lobby->'rooms') where value->>'id' in(rid::text,oldhost::text)),'closed and finished excluded';
  assert not has_table_privilege('authenticated','battle_rooms','SELECT');assert not has_function_privilege('anon','battle_room_play(uuid,text,uuid,jsonb)','EXECUTE');
 end;$$;
