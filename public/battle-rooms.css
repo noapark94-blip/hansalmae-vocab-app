@@ -532,3 +532,18 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-tile-host{gap:4px;font-size:10px}.br-tile-host img{width:20px;height:20px}
 .br-tile-arrow{font-size:14px}.br-tile-status{font-size:9px;font-weight:500}.br-tile-count{font-size:11px}
 @media(max-width:700px){.br-root .br-room-tile{padding:11px 10px;border-radius:12px}.br-tile-title{min-height:0;font-size:13px;margin-bottom:7px}.br-tile-top{margin-bottom:8px}.br-root .br-room-grid{gap:9px}}
+
+/* Arcade lobby reference: compact horizontal rooms, two across. */
+.br-root .br-room-grid{gap:8px;align-items:start}
+.br-root .br-room-tile{position:relative;display:flex;flex-direction:column;justify-content:center;gap:0;min-height:92px;padding:11px 9px 10px 51px;border-radius:11px;border-color:#e5d9e1;background:linear-gradient(110deg,#f7f0f5 0 44px,#fff 44px);overflow:hidden}
+.br-tile-title{order:0;display:block;min-height:0;margin:0 0 4px;font-size:12px;line-height:1.35;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;width:100%;letter-spacing:-.3px}
+.br-tile-source{order:1;font-size:9px;line-height:1.5;width:100%}
+.br-tile-range{order:2;font-size:9px;line-height:1.4;white-space:nowrap}
+.br-tile-settings{order:3;margin:1px 0 0;font-size:9px;line-height:1.4;white-space:nowrap}
+.br-tile-top{order:4;gap:3px;margin:6px 0 0;width:100%;line-height:1.3}
+.br-tile-status{font-size:9px;color:#8f145f;font-weight:650}.br-tile-count{font-size:10px}.br-tile-count>span{font-size:9px}
+.br-tile-bottom{display:contents}.br-tile-host{display:contents}.br-tile-host>span{display:none}
+.br-tile-host img{position:absolute;left:7px;top:50%;transform:translateY(-50%);width:33px;height:43px;object-fit:contain}
+.br-tile-arrow{display:none}.br-tile-lock{position:absolute;left:18px;bottom:7px;width:10px;height:10px}
+.br-root .br-room-tile:disabled{background:linear-gradient(110deg,#f0edf0 0 44px,#faf8fa 44px)}
+@media(min-width:701px){.br-root .br-room-tile{min-height:104px;padding:13px 14px 12px 74px;background:linear-gradient(110deg,#f7f0f5 0 62px,#fff 62px)}.br-tile-host img{left:10px;width:44px;height:56px}.br-tile-title{font-size:14px}.br-tile-source,.br-tile-range,.br-tile-settings{font-size:11px}.br-tile-lock{left:26px}}
