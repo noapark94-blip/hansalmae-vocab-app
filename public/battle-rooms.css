@@ -331,3 +331,30 @@
 @keyframes brFarmDust{0%{opacity:0;transform:translateY(0) scale(.5)}25%{opacity:.65}100%{opacity:0;transform:translateY(-13px) scale(1.6)}}
 .br-vacant-label{color:#a5ad96}
 @media(max-width:700px){.br-platform,.br-podium.is-ready .br-platform,.br-stage.br-seats-2 .br-platform{height:19px}.br-platform>.br-grass-tuft{width:5px;height:6px;top:-2px}.br-sprout{height:15px}.br-sprout>i{width:10px;height:7px;left:-8px}.br-sprout>i:last-child{width:11px;height:8px}.br-platform>.br-farm-flower{right:12%;width:3px;height:3px;top:1px}}
+
+/* Readable room typography and flowers in front of the characters. */
+.br-root{font-family:"Pretendard Variable",-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif}
+.br-header{align-items:center;padding:6px 5px 18px}
+.br-header h1{font-family:inherit;font-size:24px;font-weight:650;line-height:1.45;letter-spacing:-.65px;color:#44333e;margin:0 0 8px}
+.br-header p{font-size:12px;font-weight:400;line-height:1.6;letter-spacing:-.15px;color:#9b8c95}
+.br-header>.br-btn{font-size:12px;font-weight:500;color:#977f8f;border:0;background:transparent;padding:8px 12px;min-height:40px}
+.br-stage-card .br-section-head h2{font-size:11px;font-weight:500;letter-spacing:.1px;color:#99a087}
+.br-stage-card .br-count{font-weight:500;font-size:11px!important}
+.br-podium>strong{font-weight:600;letter-spacing:-.2px;color:#705765}
+.br-podium .br-front-blooms{position:absolute;z-index:4;left:50%;right:auto;width:min(112px,94%);bottom:35px;height:8px;pointer-events:none;opacity:0;transform:translateX(-50%) translateY(4px) scale(.8);transition:opacity .25s,transform .4s cubic-bezier(.2,.8,.3,1.4)}
+.br-podium.is-ready .br-front-blooms{opacity:1;transform:translateX(-50%)}
+.br-front-blooms>i{position:absolute;left:15%;top:0;width:5px;height:5px;border-radius:50%;background:#dfb65e;box-shadow:0 -4px 0 1px #fffdf3,4px 0 0 1px #fffdf3,0 4px 0 1px #fffdf3,-4px 0 0 1px #fffdf3;filter:drop-shadow(0 2px 1px #62744430)}
+.br-front-blooms>i:last-child{left:auto;right:15%;box-shadow:0 -4px 0 1px #f4ccdc,4px 0 0 1px #f4ccdc,0 4px 0 1px #f4ccdc,-4px 0 0 1px #f4ccdc}
+.br-platform>.br-farm-flower{display:none}
+.br-wait-layout .br-chat{border:1px solid #ede5eb;border-radius:18px;background:#ffffffb8;box-shadow:none}
+.br-wait-layout .br-chat-head{padding:8px 13px;border-bottom:0;min-height:44px}
+.br-root .br-chat-toggle{font-family:inherit;font-size:12px;font-weight:600;letter-spacing:-.15px;color:#755d6d;min-height:32px;padding:4px 0;background:transparent}
+.br-root .br-icon-btn{font-weight:400;color:#aa9aa5;font-size:10px}
+.br-wait-layout .br-chat-log{height:94px;background:transparent;padding:10px 14px}
+.br-message small{font-size:10px;font-weight:500}.br-message p{font-size:13px;font-weight:400}
+.br-wait-layout .br-chat form{margin:0 10px 10px;padding:4px 5px 4px 10px;border:1px solid #eee6ec;background:#f8f5f8;border-radius:13px;align-items:center;gap:5px}
+.br-wait-layout .br-chat input{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0;padding:7px 2px;height:38px;min-height:38px;font-family:inherit;font-size:16px!important;font-weight:400;color:#65515e}
+.br-chat input::placeholder{color:#b7a8b2;font-weight:400}
+.br-root .br-wait-layout .br-chat form .br-btn{width:38px;min-width:38px;height:38px;min-height:38px;padding:0;border-radius:10px;font-size:11px;font-weight:500;box-shadow:none}
+.br-ready-bar strong{font-weight:500}.br-root .br-ready-bar .br-btn{font-weight:600;letter-spacing:-.2px}
+@media(max-width:700px){.br-header h1{font-size:21px;font-weight:600;letter-spacing:-.5px}.br-header p{font-size:11px}.br-header>.br-btn{font-size:11px}.br-wait-layout .br-chat-head{padding:6px 13px}.br-wait-layout .br-chat-log{height:88px}.br-podium .br-front-blooms{bottom:34px;width:min(76px,calc(100% - 5px))}.br-front-blooms>i{left:13%;width:4px;height:4px}.br-front-blooms>i:last-child{right:13%}}
