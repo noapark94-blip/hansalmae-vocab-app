@@ -60,4 +60,4 @@
 @media(prefers-reduced-motion:reduce){.hsm-home-xp-track i{transition:none}}
 
 /* iPhone installed app: the default status bar reserves its own space. */
-@media (display-mode:standalone) and (max-width:650px){html.hsm-ios-body-scroll #hsmLauncherHome{padding-top:20px}}
+@media (max-width:650px){#hsmLauncherHome{padding-top:12px}}
