@@ -205,3 +205,73 @@
 }
 
 #hsmSchoolStudentPage .hsm-school-free-card.hsm-question-enter .choice .mark { display:none !important; }
+
+/* Compact question navigation, with a quieter exit action. */
+#teacherExamTakingScreen .teacher-exam-nav {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.65fr) !important;
+  gap:10px !important;
+  margin-top:20px !important;
+  padding-top:18px !important;
+  border-top:1px solid #f0e8ed !important;
+}
+#teacherExamTakingScreen .teacher-exam-nav button {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  width:100% !important;
+  min-width:0 !important;
+  min-height:50px !important;
+  margin:0 !important;
+  padding:12px 14px !important;
+  border:1px solid transparent !important;
+  border-radius:14px !important;
+  font-size:15px !important;
+  font-weight:700 !important;
+  line-height:1.4 !important;
+  box-shadow:none !important;
+  transition:background .16s ease,transform .16s ease !important;
+}
+#teacherExamTakingScreen .teacher-exam-nav .secondary-button {
+  background:#f6f2f5 !important;
+  border-color:#eee5eb !important;
+  color:#796572 !important;
+}
+#teacherExamTakingScreen .teacher-exam-nav button:not(.secondary-button) {
+  background:linear-gradient(120deg,#941564,#ab2879) !important;
+  color:#fff !important;
+  box-shadow:0 4px 12px rgba(143,20,95,.12) !important;
+}
+#teacherExamTakingScreen .teacher-exam-nav button:disabled {
+  opacity:.4 !important;
+  cursor:default !important;
+  box-shadow:none !important;
+}
+#teacherExamTakingScreen .teacher-exam-nav button:not(:disabled):active { transform:scale(.98) !important; }
+#teacherExamTakingScreen .teacher-question-card > .exam-stop-button {
+  display:block !important;
+  width:fit-content !important;
+  min-height:44px !important;
+  margin:10px auto -6px !important;
+  padding:10px 16px !important;
+  border:0 !important;
+  border-radius:10px !important;
+  background:transparent !important;
+  color:#897c85 !important;
+  font-size:13px !important;
+  font-weight:500 !important;
+  line-height:1.5 !important;
+  box-shadow:none !important;
+}
+#teacherExamTakingScreen .teacher-exam-nav button:focus-visible,
+#teacherExamTakingScreen .teacher-question-card > .exam-stop-button:focus-visible {
+  outline:2px solid #8f145f !important;
+  outline-offset:3px !important;
+}
+@media(hover:hover) {
+  #teacherExamTakingScreen .teacher-question-card > .exam-stop-button:hover { background:#f6f2f5 !important; color:#67555f !important; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #teacherExamTakingScreen .teacher-exam-nav button { transition:none !important; }
+}
