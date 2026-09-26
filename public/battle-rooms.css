@@ -200,3 +200,38 @@
 }
 @media(min-width:701px){.br-seats-3{max-width:850px;margin:auto}.br-wait-layout .br-chat input{font-size:16px!important}}
 @media(prefers-reduced-motion:reduce){.br-room-card{transition:none}}
+
+/* Open stage: characters share one floor, with no individual card frames. */
+.br-header{max-width:1120px;margin:0 auto 12px;padding:8px 3px 16px;background:none;border:0;border-radius:0;box-shadow:none}
+.br-header h1{font-size:24px;margin:0 0 6px;letter-spacing:-.8px}.br-header p{color:#917b88;font-size:12px}
+.br-header>.br-btn{background:#fff9;border-color:#e7dce3;border-radius:99px;padding:9px 17px;font-size:12px}
+.br-stage-card{padding:20px 24px;background:radial-gradient(ellipse at 50% 25%,#fffaf0,transparent 75%),#fffdfc;border:1px solid #ede3e7;border-radius:24px;box-shadow:0 8px 26px #59354605}
+.br-stage-card .br-section-head h2{margin:0;font-size:13px;font-weight:600;color:#9b8290;letter-spacing:0}
+.br-stage-card .br-count{font-size:11px!important;background:none;border:0;padding:0;color:#917184!important}
+.br-stage{gap:20px 12px;padding:20px 0 24px;align-items:end}
+.br-podium,.br-podium.is-host,.br-podium.is-ready,.br-podium.is-empty{padding:0 6px 4px;background:none;border:0;border-radius:0;box-shadow:none}
+.br-character{height:100px}.br-character>img{width:110px;height:110px;transform:translateY(5px);filter:drop-shadow(0 5px 4px #71574518)}
+.br-platform{height:15px;width:min(120px,90%);margin:0 auto 12px;border:1px solid #e4d8c5;border-radius:50%;background:linear-gradient(160deg,#fffdf5,#efe4d0);box-shadow:0 4px 0 #e9ddc8,0 8px 11px #7d644a0e}
+.br-platform:before{display:none}
+.br-podium.is-ready .br-platform{border-color:#c790b0;background:linear-gradient(160deg,#fff8fc,#f0d8e7);box-shadow:0 3px 0 #dfc1d3,0 0 20px #aa4f8410}
+.br-podium.is-empty .br-platform{opacity:.55;box-shadow:0 2px 0 #eee5d7;background:#fbf8f1;border-color:#e8dfd1}
+.br-placeholder{width:34px;height:34px;margin:0 0 11px;border:1px solid #e5dcd1;border-radius:50%;font-size:22px;color:#c5b6a5;background:#fffaf1;opacity:1;filter:none;font-weight:300}
+.br-podium>strong{font-size:13px;line-height:19px}.br-podium>p{margin:3px 0 0;font-size:10px;min-height:15px;color:#a8909e}
+.br-podium>strong small{font-size:8px;background:none;color:#b191a4;padding:0 2px}
+.br-crown{font-size:14px;color:#b18b44}.br-ready-check{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#8f145f;color:white;font-size:10px;vertical-align:middle}
+.br-vacant-label{font-size:10px;color:#c3b6a9;letter-spacing:2px}
+.br-seats-2{max-width:540px;padding:24px 0 28px}.br-seats-2 .br-character{height:135px}.br-seats-2 .br-character>img{height:140px;width:140px}
+.br-ready-bar{padding-top:16px;border-top:1px solid #eee5e6}.br-ready-bar strong{font-size:12px;font-weight:600}.br-ready-bar p{font-size:10px;color:#a48d9a}
+.br-wait-layout{gap:14px}.br-wait-layout .br-chat{border-color:#ede3e7;border-radius:20px;box-shadow:none}
+.br-wait-layout .br-chat-log{height:120px}
+@keyframes brArrive{from{opacity:0;transform:translateY(-16px) scale(.7)}60%{opacity:1;transform:translateY(7px) scale(1.04)}to{transform:translateY(5px) scale(1)}}
+@media(max-width:700px){
+ .br-header{padding:4px 4px 12px;margin-bottom:8px}.br-header h1{font-size:21px;margin:0 0 5px}.br-header p{font-size:10px}.br-header>.br-btn{font-size:11px;min-height:38px;padding:7px 13px}
+ .br-stage-card{padding:16px 14px;border-radius:22px}.br-stage-card .br-section-head{padding:0 2px}.br-stage-card .br-section-head h2{font-size:12px}
+ .br-stage{gap:12px 10px;padding:16px 0 18px}.br-podium{min-height:139px}
+ .br-character{height:85px}.br-character>img{width:95px;height:95px}
+ .br-platform{width:100px;height:12px;margin-bottom:10px}.br-podium>strong{font-size:12px;line-height:17px}.br-podium>p{font-size:9px;min-height:13px;margin-top:2px}
+ .br-seats-2{padding:22px 0}.br-seats-2 .br-character{height:120px}.br-seats-2 .br-character>img{width:125px;height:125px}
+ .br-ready-bar{padding:14px 2px 0}.br-ready-bar>div:last-child{margin-top:12px}.br-ready-bar .br-btn{min-height:45px;border-radius:13px}
+ .br-wait-layout .br-chat-log{height:100px}
+}
