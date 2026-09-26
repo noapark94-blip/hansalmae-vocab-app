@@ -1,10 +1,16 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260926-121';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260926-122';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
 };
 
 const REQUIRED_ASSETS = [
+  './icon-chick-180.png',
+  './icon-chick-192.png',
+  './icon-chick-512.png',
+  './icon-chick-maskable-512.png',
+  './favicon-chick-32.png',
+  versioned('./manifest.json'),
   versioned('./ios-page-scroll.js'),
   versioned('./teacher-exam-navigation.js'),
   versioned('./exam-visuals.css'),
@@ -105,7 +111,7 @@ self.addEventListener('push', function (event) {
   catch (_error) { data = { body: event.data ? event.data.text() : '' }; }
   event.waitUntil(self.registration.showNotification(data.title || '한살매 보카', {
     body: data.body || '새로운 알림이 도착했습니다.',
-    icon: './icon-192.png',
+    icon: './icon-chick-192.png',
     badge: './icon-192.png',
     tag: data.tag || 'hansalmae-notification',
     renotify: true,
