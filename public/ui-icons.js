@@ -110,6 +110,7 @@
 
   function decorateElement(element) {
     if (!element || element.nodeType !== 1) return;
+    if (element.closest('.bc-tools, .bc-panel')) return;
     if (element.classList.contains('word-bookmark') || element.id === 'personalBookPickerButton') return;
     if (element.closest('#personalBookPickerModal') && !element.classList.contains('hsm-picker-book-icon')) return;
     if (keepOwnHeadingIconOnly(element)) return;

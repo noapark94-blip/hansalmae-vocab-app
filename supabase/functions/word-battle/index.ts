@@ -43,6 +43,7 @@ Deno.serve(async req=>{
    const mapped=action==='acceptFriend'?'accept':action==='declineFriend'?'decline':action;
    result=await rpc('battle_social',{p_actor:actor,p_action:mapped,p_target:p.target||null,p_search:str(p.search)});
   }else if(action==='rewardPreview')result=await rpc('battle_reward_allowance',{p_actor:actor,p_target:str(p.target)||null});
+  else if(action==='chat')result=await rpc('battle_chat',{p_actor:actor,p_battle:str(p.id),p_kind:str(p.kind),p_body:str(p.body)});
   else if(action==='catalog')result=await rpc('battle_catalog',{p_actor:actor,p_target:str(p.target)});
   else if(action==='invite'){
    const built=await source(actor,str(p.target),p);
@@ -50,6 +51,10 @@ Deno.serve(async req=>{
   }else if(['poll','accept','decline','ready','answer','leave'].includes(action)){
    result=await rpc('battle_play',{p_actor:actor,p_action:action,p_id:str(p.id),p_payload:{round:p.round,choice:str(p.choice)}});
   }else throw new Error('지원하지 않는 요청입니다.');
+  if(result?.id&&['invite','poll','accept','decline','ready','answer','leave'].includes(action)){
+   // Chat availability must never interrupt answering or starting the game.
+   try{result.chat=await rpc('battle_chat',{p_actor:actor,p_battle:result.id});}catch(_){result.chat=null;}
+  }
   return reply({success:true,result});
  }catch(e){return reply({success:false,message:e instanceof Error?e.message:'요청을 처리하지 못했어요.'},400);}
 });

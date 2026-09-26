@@ -1,0 +1,40 @@
+begin;
+do $test$
+declare source word_battles; room uuid; outsider uuid; r jsonb; blocked boolean;
+begin
+ select * into source from word_battles where status='finished' order by created_at desc limit 1;
+ if source.id is null then raise exception 'Missing fixture';end if;
+ select id into outsider from profiles where enabled and role='student' and id not in(source.host,source.guest) limit 1;
+ insert into word_battles(host,guest,status,settings,questions,rewards_enabled) values(source.host,source.guest,'ready',source.settings,source.questions,false) returning id into room;
+ r:=battle_chat(source.host,room,'text','안녕 <script>alert(1)</script>');
+ if jsonb_array_length(r->'messages')<>1 then raise exception 'Text send failed';end if;
+ r:=battle_chat(source.guest,room);
+ if r->'messages'->0->>'sender'<>source.host::text then raise exception 'Peer cannot read';end if;
+ blocked:=false;begin perform battle_chat(outsider,room);exception when others then blocked:=true;end;
+ if not blocked then raise exception 'Outsider could read';end if;
+ blocked:=false;begin perform battle_chat(source.host,room,'text','again');exception when others then blocked:=true;end;
+ if not blocked then raise exception 'Rate limit failed';end if;
+ update battle_messages set created_at=now()-interval '10 seconds' where battle_id=room;
+ blocked:=false;begin perform battle_chat(source.host,room,'text',repeat('a',161));exception when others then blocked:=true;end;
+ if not blocked then raise exception 'Length validation failed';end if;
+ update word_battles set status='playing' where id=room;
+ blocked:=false;begin perform battle_chat(source.host,room,'text','playing');exception when others then blocked:=true;end;
+ if not blocked then raise exception 'Live text allowed';end if;
+ r:=battle_chat(source.host,room,'emoji','💗');
+ if r->'messages'->1->>'body'<>'💗' then raise exception 'Emoji failed';end if;
+ update battle_messages set created_at=now()-interval '10 seconds' where battle_id=room;
+ blocked:=false;begin perform battle_chat(source.host,room,'emoji','💣');exception when others then blocked:=true;end;
+ if not blocked then raise exception 'Invalid emoji allowed';end if;
+ for i in 1..45 loop
+  update battle_messages set created_at=now()-interval '10 seconds' where battle_id=room;
+  perform battle_chat(source.host,room,'emoji','👏');
+ end loop;
+ if (select count(*) from battle_messages where battle_id=room)<>40 then raise exception 'Retention failed';end if;
+ update word_battles set status='finished' where id=room;
+ blocked:=false;begin perform battle_chat(source.guest,room,'emoji','😆');exception when others then blocked:=true;end;
+ if not blocked then raise exception 'Finished send allowed';end if;
+ if has_function_privilege('anon','public.battle_chat(uuid,uuid,text,text)','EXECUTE') or has_function_privilege('authenticated','public.battle_chat(uuid,uuid,text,text)','EXECUTE') then raise exception 'RPC exposed';end if;
+ if has_table_privilege('anon','public.battle_messages','SELECT') or has_table_privilege('authenticated','public.battle_messages','SELECT') then raise exception 'Table exposed';end if;
+end $test$;
+select 'PASS: peer delivery, participant access, state restrictions, emoji allowlist, rate/length limits, retention, privileges (rollback)' as verification;
+rollback;
