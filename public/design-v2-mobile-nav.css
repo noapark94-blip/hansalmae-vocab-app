@@ -300,14 +300,21 @@
   .hsm-mobile-more-sheet { animation: none; }
 }
 
-/* Explicit visual-viewport top avoids stale iOS fixed-bottom positioning. */
+/* Let CSS track dynamic viewport height without JS scroll/keyboard coordinates. */
 @media (max-width: 650px) {
-  #hsmMobileNav[style*="--hsm-mobile-nav-top"] {
-    position: fixed;
-    top: var(--hsm-mobile-nav-top);
-    bottom: auto;
-    left: 0;
-    right: 0;
-    margin: 0;
+  #hsmMobileNav {
+    position:fixed;
+    inset:auto 0 0;
+    margin:0;
+    transform:translate3d(0,0,0);
+    background:#fff;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+  @supports (height:100dvh) {
+    #hsmMobileNav {
+      top:calc(100dvh - var(--hsm-mobile-nav-height) - env(safe-area-inset-bottom,0px));
+      bottom:auto;
+    }
   }
 }

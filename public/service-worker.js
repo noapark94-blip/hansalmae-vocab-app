@@ -1,11 +1,10 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260926-111';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260926-112';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
 };
 
 const REQUIRED_ASSETS = [
-  versioned('./mobile-nav-viewport.js'),
   versioned('./exam-visuals.css'),
   versioned('./battle-chat.js'),
   versioned('./friend-battle.js'),

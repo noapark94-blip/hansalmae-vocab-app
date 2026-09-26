@@ -31,9 +31,10 @@ load('    async function moveFromTestWithConfirm_', '    function showTestHome')
 let pending=w.moveFromTestWithConfirm_(()=>moved++);assert.equal(moved,0);cancel();await pending;assert.equal(stopped,0);
 pending=w.moveFromTestWithConfirm_(()=>moved++);accept();await pending;assert.equal(moved,1);assert.equal(stopped,1);
 w.clearTestProgress=()=>assert.fail('later must preserve the saved exam');w.resumeSavedTest=()=>resumed++;
-load('    async function handleSavedTestProgress_', '    /**');
+w.currentStudent={studentId:'fixture'};w.getTestProgressStorageKey=()=> 'progress:fixture';w.isNormalTestInProgress_=()=>false;
+load('    let savedTestPromptOpen_', '    let signupIdChecked');
 pending=w.handleSavedTestProgress_({questions:[1,2,3],currentIndex:1});assert.match(d.querySelector('dialog').textContent,/2번 문제부터 · 2문제 남음/);cancel();await pending;assert.equal(resumed,0);assert.equal(d.querySelector('dialog'),null);
-pending=w.handleSavedTestProgress_({questions:[1,2,3],currentIndex:1});accept();await pending;assert.equal(resumed,1);
+pending=w.handleSavedTestProgress_({questions:[1,2,3],currentIndex:1,savedAt:'new-progress'});accept();await pending;assert.equal(resumed,1);
 // Destructive teacher action must pass both independent confirmations.
 const teacher=source('teacher.html');const start=teacher.indexOf('    async function deleteAllExams()');const end=teacher.indexOf('\n    async function ',start+10);
 w.eval(teacher.slice(start,end));let api=0;w.setLoading=()=>{};w.showToast=()=>{};w.loadExams=async()=>{};
