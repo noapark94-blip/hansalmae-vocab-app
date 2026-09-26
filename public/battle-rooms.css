@@ -503,3 +503,20 @@ html.br-chat-keyboard #brChatInput{font-size:16px!important}
 .br-day-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-height:calc(70dvh - 105px);overflow:auto;overscroll-behavior:contain;padding:2px}
 .br-day-dialog button.is-selected{background:#f5e8f0;border-color:#b97ba1;color:#8f145f;font-weight:650}
 .br-day-dialog button:focus-visible{outline:2px solid #b97ba1;outline-offset:1px}
+
+/* Two-column room cards, including on phones. */
+.br-root .br-room-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.br-root .br-room-tile{display:flex;flex-direction:column;min-width:0;width:100%;margin:0;padding:18px;text-align:left;border:1px solid #ece4e9;border-radius:18px;background:#fff;color:#503a48;box-shadow:0 3px 12px #51344904;font-family:inherit;cursor:pointer}
+.br-root .br-room-tile:hover:not(:disabled){background:#fffcfe;border-color:#d8b9cd}
+.br-root .br-room-tile:focus-visible{outline:2px solid #9c3975;outline-offset:3px}
+.br-root .br-room-tile:disabled{background:#f8f5f7;color:#978692;cursor:default;opacity:.8}
+.br-tile-top{display:flex;justify-content:space-between;align-items:center;gap:6px;width:100%;margin-bottom:15px}
+.br-tile-status{font-size:10px;font-weight:600;color:#956780}.br-tile-count{font-size:12px;font-weight:600;color:#735566}.br-tile-count>span{font-size:10px;font-weight:400;color:#b2a0ab;margin-left:2px}
+.br-tile-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;font-size:16px;font-weight:650;line-height:1.45;min-height:46px;letter-spacing:-.4px;margin-bottom:10px}
+.br-tile-source{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:500;color:#806b77;line-height:1.6}
+.br-tile-range,.br-tile-settings{font-size:11px;font-weight:400;line-height:1.7;color:#a18c9a}.br-tile-settings{margin-top:6px}
+.br-tile-bottom{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;border-top:1px solid #f1ebef;padding-top:11px;margin-top:14px}
+.br-tile-host{display:flex;align-items:center;gap:6px;min-width:0;font-size:11px;font-weight:500;color:#89727f}.br-tile-host img{width:26px;height:26px;object-fit:contain;flex-shrink:0}.br-tile-host>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.br-tile-arrow{font-size:17px;font-weight:400;color:#af8da2}.br-tile-lock{width:14px;height:14px;fill:none;stroke:#af8da2;stroke-width:1.5;flex-shrink:0}
+.br-room-tile.is-playing .br-tile-status{color:#a2909d}
+@media(max-width:700px){.br-root .br-room-grid{gap:10px}.br-root .br-room-tile{padding:14px 12px;border-radius:15px}.br-tile-title{font-size:14px;min-height:41px}.br-tile-source{font-size:11px}.br-tile-range,.br-tile-settings{font-size:10px}.br-tile-top{margin-bottom:12px}}
