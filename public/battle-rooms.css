@@ -310,3 +310,24 @@
 .br-chat form{border-bottom:0}
 @media(max-width:700px){.br-ready-bar{padding:10px 16px 12px;gap:8px}.br-ready-bar>div:first-child{flex:auto}.br-ready-bar>div:last-child{flex:auto}.br-ready-bar strong{font-size:10px}.br-ready-bar p{font-size:9px}.br-root .br-ready-bar .br-btn{min-height:44px;font-size:13px}}
 @media(max-width:350px){.br-ready-bar{padding-inline:12px}.br-ready-bar p{font-size:8px}.br-ready-bar strong{font-size:9px}}
+
+/* A little farm meadow, without a surrounding card. */
+.br-stage-card{background:radial-gradient(ellipse at 25% 36%,#fff5d64d,transparent 55%),radial-gradient(ellipse at 75% 75%,#e6efdc66,transparent 58%);border:0;box-shadow:none}
+.br-stage-card .br-section-head h2{color:#8b9272}.br-stage-card .br-count{color:#788463!important}
+.br-platform,.br-podium.is-ready .br-platform{height:23px;border:0;border-radius:48% 52% 46% 48%;background:linear-gradient(180deg,#d9bc91 30%,#b99a75 80%,#a88869);box-shadow:0 7px 12px -4px #75634432,inset 0 -2px 0 #97775222}
+.br-platform:before,.br-podium.is-ready .br-platform:before{height:70%;border:0;border-radius:49% 51% 48% 52%;background:radial-gradient(ellipse at 30% 25%,#dceeb9,transparent 65%),linear-gradient(165deg,#c8dfa5,#a9c588 75%,#94b474);box-shadow:inset 0 2px 0 #edf6d180,0 2px 0 #8eaa6866}
+.br-platform:after{background:#52643c;opacity:.2}
+.br-podium.is-empty .br-platform{opacity:.75;border:0;background:linear-gradient(180deg,#dfc8a5,#c4aa87);box-shadow:0 5px 9px -4px #75634428}
+.br-podium.is-empty .br-platform:before{background:linear-gradient(155deg,#e0ebc9,#bbd09f);box-shadow:inset 0 2px 0 #f0f5db80,0 2px 0 #a2b88455}
+.br-platform>.br-grass-tuft{position:absolute;display:block;z-index:3;left:10%;top:-3px;width:7px;height:8px;padding:0;background:#92b76b;border-radius:90% 0 80% 0;transform:rotate(-27deg);box-shadow:5px 2px 0 -1px #aac77b}
+.br-sprout{position:relative;display:block;width:2px;height:19px;background:#9ab67c;border-radius:4px;margin-bottom:-5px;z-index:3;transform:rotate(-5deg)}
+.br-sprout>i{position:absolute;bottom:7px;left:-10px;width:12px;height:8px;background:linear-gradient(135deg,#cedfae,#97b974);border-radius:2px 9px 2px 9px;transform:rotate(20deg)}
+.br-sprout>i:last-child{left:1px;bottom:10px;transform:scaleX(-1) rotate(10deg);width:13px;height:9px}
+.br-platform>.br-farm-flower{position:absolute;display:block;z-index:3;right:13%;top:1px;width:4px;height:4px;padding:0;border-radius:50%;background:#eac977;box-shadow:0 -3px 0 1px #fffaf0,3px 0 0 1px #fffaf0,0 3px 0 1px #fffaf0,-3px 0 0 1px #fffaf0;opacity:0;transform:scale(.3);transition:opacity .3s,transform .4s cubic-bezier(.2,.8,.3,1.5)}
+.br-podium.is-ready .br-farm-flower{opacity:1;transform:scale(1)}
+.br-podium:nth-child(even) .br-farm-flower{right:17%;box-shadow:0 -3px 0 1px #f5d5e4,3px 0 0 1px #f5d5e4,0 3px 0 1px #f5d5e4,-3px 0 0 1px #f5d5e4}
+.br-platform>.br-farm-dust{position:absolute;display:block;z-index:4;left:50%;top:1px;width:4px;height:4px;padding:0;border-radius:50%;background:#dac4a0;opacity:0;box-shadow:-20px 0 0 1px #dac4a0,18px 1px 0 #dac4a0}
+.br-arrive .br-farm-dust{animation:brFarmDust .6s .25s ease-out both}
+@keyframes brFarmDust{0%{opacity:0;transform:translateY(0) scale(.5)}25%{opacity:.65}100%{opacity:0;transform:translateY(-13px) scale(1.6)}}
+.br-vacant-label{color:#a5ad96}
+@media(max-width:700px){.br-platform,.br-podium.is-ready .br-platform,.br-stage.br-seats-2 .br-platform{height:19px}.br-platform>.br-grass-tuft{width:5px;height:6px;top:-2px}.br-sprout{height:15px}.br-sprout>i{width:10px;height:7px;left:-8px}.br-sprout>i:last-child{width:11px;height:8px}.br-platform>.br-farm-flower{right:12%;width:3px;height:3px;top:1px}}
