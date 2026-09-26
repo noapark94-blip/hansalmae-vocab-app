@@ -90,3 +90,6 @@
 #hsmDayPicker #hsmDayMore{text-align:center;font-size:11px;line-height:1.5;color:#97818f;padding:7px 0 0}
 #hsmDayPicker #hsmDayAll{margin-top:12px;min-height:44px;border:0;border-radius:12px;font-size:13px;font-weight:600;background:#f5eff4}
 @media(max-width:650px){#hsmDayPicker[open]{max-height:78dvh;padding:18px 18px calc(16px + env(safe-area-inset-bottom))}#hsmDayPicker::before{flex-shrink:0;margin:-4px auto 12px}}
+
+/* The default iOS standalone status bar already reserves the top area. */
+@media (display-mode:standalone) and (max-width:650px){html.hsm-ios-body-scroll body.hsm-student-app-open{padding-top:12px!important}}
