@@ -1,0 +1,207 @@
+/* 한살매 보카 디자인 3차: 시험 흐름과 결과·엠블럼 보상 경험 */
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) {
+  overflow: hidden !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .progress-wrap {
+  height: 9px !important;
+  margin-bottom: 18px !important;
+  border: 1px solid rgba(143, 20, 95, 0.06) !important;
+  background: #f3e9ee !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .progress-bar {
+  position: relative !important;
+  overflow: visible !important;
+  background: linear-gradient(90deg, #8f145f, #c6478e) !important;
+  box-shadow: 0 3px 10px rgba(143, 20, 95, 0.22) !important;
+  transition: width 0.48s cubic-bezier(.22, .78, .28, 1) !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .progress-bar::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: -4px !important;
+  width: 9px !important;
+  height: 9px !important;
+  border: 2px solid #fff !important;
+  border-radius: 50% !important;
+  background: #b52f7c !important;
+  box-shadow: 0 2px 7px rgba(102, 15, 67, 0.28) !important;
+  transform: translateY(-50%) !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .question-info {
+  margin-bottom: 13px !important;
+  color: var(--hsm-text-secondary, #74656e) !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .question-type {
+  padding: 7px 13px !important;
+  border: 1px solid #ead5e1 !important;
+  background: #fff6fa !important;
+  font-size: 13px !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .question {
+  min-height: 112px !important;
+  margin: 20px 0 22px !important;
+  padding: 12px !important;
+  font-size: clamp(27px, 6vw, 36px) !important;
+  line-height: 1.38 !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap).hsm-question-enter .question-type,
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap).hsm-question-enter .question,
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap).hsm-question-enter :is(.choice, .teacher-option-button) {
+  animation: hsmQuestionEnter 0.38s cubic-bezier(.22, .78, .28, 1) both !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap).hsm-question-enter .question {
+  animation-delay: 0.035s !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap).hsm-question-enter :is(.choice, .teacher-option-button) {
+  animation-delay: calc(0.065s + (var(--hsm-choice-index, 0) * 0.045s)) !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice, .teacher-option-button) {
+  position: relative !important;
+  min-height: 58px !important;
+  margin-top: 10px !important;
+  padding: 15px 17px !important;
+  overflow: hidden !important;
+  border: 1.5px solid #eadfe5 !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 15px rgba(70, 29, 53, 0.045) !important;
+  font-weight: 600 !important;
+  line-height: 1.42 !important;
+  transition: transform .16s ease, border-color .16s ease, background-color .16s ease, box-shadow .16s ease !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice, .teacher-option-button):not(:disabled):active {
+  transform: scale(0.985) !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice, .teacher-option-button).correct {
+  padding-right: 50px !important;
+  border-color: #3a9a69 !important;
+  background: linear-gradient(180deg, #f1fcf6, #e8f8ef) !important;
+  color: #17603c !important;
+  box-shadow: 0 8px 20px rgba(47, 156, 103, 0.12) !important;
+  animation: hsmAnswerCorrect .48s cubic-bezier(.22, .78, .28, 1) both !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice, .teacher-option-button).correct::after {
+  content: "✓" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 16px !important;
+  display: inline-flex !important;
+  width: 27px !important;
+  height: 27px !important;
+  border-radius: 50% !important;
+  background: #2f9c67 !important;
+  color: #fff !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  transform: translateY(-50%) !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice, .teacher-option-button).wrong {
+  padding-right: 50px !important;
+  border-color: #d75876 !important;
+  background: linear-gradient(180deg, #fff6f8, #ffedf1) !important;
+  color: #8d2742 !important;
+  box-shadow: 0 8px 20px rgba(200, 67, 104, 0.11) !important;
+  animation: hsmAnswerWrong .4s ease both !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice, .teacher-option-button).wrong::after {
+  content: "×" !important;
+  position: absolute !important;
+  top: 50% !important;
+  right: 16px !important;
+  display: inline-flex !important;
+  width: 27px !important;
+  height: 27px !important;
+  border-radius: 50% !important;
+  background: #c84368 !important;
+  color: #fff !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  transform: translateY(-50%) !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice, .teacher-option-button):disabled:not(.correct):not(.wrong) {
+  opacity: 0.54 !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .feedback {
+  display: flex !important;
+  min-height: 66px !important;
+  margin-top: 15px !important;
+  padding: 11px 14px !important;
+  border-radius: 15px !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  line-height: 1.45 !important;
+  font-size: 16px !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .feedback-status {
+  display: block !important;
+  color: #30232b !important;
+  font-weight: 800 !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .feedback-translation {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: #74656e !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .feedback:not(:empty) {
+  border: 1px solid #eadfe5 !important;
+  background: #fff9fc !important;
+  animation: hsmFeedbackUp .28s ease both !important;
+}
+
+
+/* Keep official exam answers private until submission. */
+#teacherExamTakingScreen.hsm-teacher-question-enter .teacher-question-card { animation: none !important; }
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .question { display:flex !important; align-items:center !important; justify-content:center !important; text-align:center !important; overflow-wrap:anywhere; }
+#teacherExamTakingScreen .teacher-question-card { padding:20px; border-radius:22px; }
+#teacherExamTakingScreen .teacher-question-options { gap:0; margin-top:0; }
+#teacherExamTakingScreen .teacher-option-button { width:100%; text-align:left; font-size:16px; color:#251b22 !important; }
+#teacherExamTakingScreen .teacher-question-card .teacher-option-button.selected { border-color:#8f145f !important; background:#fff0f7 !important; color:#8f145f !important; box-shadow:0 5px 15px rgba(143,20,95,.12) !important; animation:hsmAnswerCorrect .48s cubic-bezier(.22,.78,.28,1) both !important; }
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .progress-wrap { border-radius:20px; }
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .progress-bar { height:100%; border-radius:20px; }
+:is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .question-type { display:inline-block; border-radius:30px; color:#8f145f; font-weight:700; }
+@media(max-width:650px) {
+  :is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) { padding:20px 16px 22px !important; }
+  :is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) .question { min-height:96px !important; margin:15px 0 17px !important; }
+  :is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice,.teacher-option-button) { min-height:56px !important; padding:14px 15px !important; font-size:16px !important; }
+  :is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice.correct,.choice.wrong) { padding-right:50px !important; }
+}
+@media(prefers-reduced-motion:reduce) {
+  :is(#teacherExamTakingScreen .teacher-question-card, #hsmSchoolStudentPage .hsm-school-free-card, #hsmSchoolStudentPage .hsm-school-test-wrap) :is(.choice.correct,.choice.wrong,.teacher-option-button.selected,.choice,.teacher-option-button,.question,.question-type,.feedback) { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}
+
+#hsmSchoolStudentPage .hsm-school-free-card.hsm-question-enter .choice .mark { display:none !important; }

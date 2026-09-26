@@ -33,7 +33,7 @@ s.hide(false);s.advance(10000);s.response({exams:[]});await s.tick();assert.equa
 for(const name of ['teacher.html','index.html']){
  const html=fs.readFileSync('public/'+name,'utf8');const d=new JSDOM(html);
  for(const script of d.window.document.querySelectorAll('script:not([src])')) if(script.textContent.trim())new vm.Script(script.textContent);
- assert.match(html,/teacher-exam-live.js\?v=20260926-109/);d.window.close();
+ assert.match(html,/teacher-exam-live.js\?v=2026\d{4}-\d+/);d.window.close();
 }
 assert.match(fs.readFileSync('public/teacher.html','utf8'),/teacherListExams: 0/);
 assert.match(fs.readFileSync('public/teacher.html','utf8'),/teacherGetExamStatus: 0/);

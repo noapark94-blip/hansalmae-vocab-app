@@ -1,0 +1,24 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+const read=n=>fs.readFileSync('public/'+n,'utf8');
+const html=read('index.html');
+const dom=new JSDOM('<section id="teacherExamTakingScreen"><div id="teacherExamQuestionArea"></div></section>',{runScripts:'outside-only',url:'https://example.test'});
+const w=dom.window;
+function extract(name){const start=html.indexOf('    function '+name+'(');assert.ok(start>=0);const end=html.indexOf('\n    }',start);return html.slice(start,end+6);}
+w.eval('var teacherExamSession={questions:[{questionId:"q1",prompt:"remember",mode:"engToKor",options:["기억하다","잊다"]},{questionId:"q2",prompt:"집중하다",mode:"korToEng",options:["focus","forget"]}]},teacherExamAnswers={},teacherExamQuestionIndex=0; var saveAssignedTeacherExamProgress_=()=>{};');
+for(const name of ['escapeHtml','escapeJsString_','teacherQuestionModeLabel_','renderTeacherExamQuestion_','selectTeacherExamAnswer_','moveTeacherExamQuestion_'])w.eval(extract(name));
+w.renderTeacherExamQuestion_();
+assert.equal(w.document.querySelector('.question').textContent,'remember');
+assert.ok(w.document.querySelector('.teacher-question-card.hsm-question-enter'));
+assert.equal(w.document.querySelectorAll('.teacher-option-button')[1].style.getPropertyValue('--hsm-choice-index'),'1');
+w.selectTeacherExamAnswer_('q1','기억하다');assert.equal(w.document.querySelector('.selected').textContent,'기억하다');assert.equal(w.document.querySelectorAll('.correct,.wrong').length,0);
+w.moveTeacherExamQuestion_(1);assert.equal(w.document.querySelector('.progress-bar').style.width,'50%');w.moveTeacherExamQuestion_(-1);assert.equal(w.document.querySelector('.selected').textContent,'기억하다');
+dom.window.close();
+const school=read('school-vocab-free-test-ui.js');
+assert.match(school,/hsm-school-free-card hsm-question-enter/);assert.match(school,/--hsm-choice-index/);
+const css=read('exam-visuals.css');
+for(const token of ['hsmQuestionEnter 0.38s','hsmAnswerCorrect .48s','hsmAnswerWrong .4s','prefers-reduced-motion','--hsm-choice-index','min-height: 58px'])assert.ok(css.includes(token),token);
+assert.match(css,/\.mark \{ display:none !important/);
+assert.match(read('service-worker.js'),/versioned\('\.\/exam-visuals.css'\)/);
+console.log('PASS actual teacher question rendering, selection, navigation, saved answers, no answer disclosure and shared animation wiring');
