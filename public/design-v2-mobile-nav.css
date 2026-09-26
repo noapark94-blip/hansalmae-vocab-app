@@ -40,7 +40,7 @@
     box-shadow: 0 -10px 30px rgba(70, 29, 53, 0.10);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     align-items: stretch;
   }
 
