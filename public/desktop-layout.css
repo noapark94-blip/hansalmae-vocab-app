@@ -1,0 +1,45 @@
+/* Mouse/trackpad desktop only. Touch tablet and phone styles remain independent. */
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  body.hsm-student-app-open{padding:28px 36px 40px}
+  body.hsm-student-app-open>.container{width:100%;max-width:1200px;margin:0 auto}
+  body.hsm-student-app-open .topbar{display:flex;flex-direction:column;align-items:stretch;gap:18px;margin-bottom:24px;padding:22px 26px!important;border:1px solid #eadfe7;border-radius:20px;background:#fff;box-shadow:0 8px 24px #50233a06}
+  body.hsm-student-app-open .topbar-title{width:100%;text-align:left;justify-content:flex-start!important}
+  body.hsm-student-app-open .topbar-menu{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;padding-top:14px;border-top:1px solid #f0e8ed}
+  body.hsm-student-app-open .topbar-menu>button{flex:0 0 auto;width:auto;min-width:0;min-height:42px;margin:0;padding:10px 14px;border-radius:11px;font-size:13px;line-height:1.35}
+  body.hsm-student-app-open .topbar-menu>.logout-button{margin-left:auto}
+  #hsmLauncherHome{padding:32px 40px 28px}
+  #hsmLauncherHome .hsm-launcher-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 22px;align-content:start;min-height:0;width:100%;max-width:1120px}
+  #hsmLauncherHome .hsm-launcher-header,#hsmLauncherHome .hsm-launcher-section-title,#hsmLauncherHome .hsm-launcher-grid,#hsmLauncherHome .hsm-launcher-footer{grid-column:1/-1}
+  #hsmLauncherHome .hsm-launcher-header{margin-bottom:24px}
+  #hsmLauncherHome .hsm-launcher-hero{display:flex;flex-direction:column;justify-content:center;min-width:0;min-height:220px;padding:26px!important}
+  #hsmLauncherHome .hsm-launcher-primary{margin-top:22px;min-height:44px}
+  #hsmHomeBattle{height:100%;min-height:220px;max-height:270px;aspect-ratio:auto;margin:0}
+  #hsmLauncherHome .hsm-launcher-study-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  #hsmLauncherHome .hsm-launcher-manage-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  #hsmLauncherHome .hsm-launcher-tile{padding:20px!important;min-height:126px!important;transition:border-color .16s,box-shadow .16s}
+  #hsmLauncherHome .hsm-launcher-tile:hover{border-color:#cfa7be;box-shadow:0 6px 18px #50233a0b!important}
+  #hsmLauncherHome .hsm-launcher-tile-copy strong{font-size:17px}
+  #hsmLauncherHome .hsm-launcher-tile-copy span{font-size:12px}
+  #hsmLauncherHome .hsm-launcher-manage-grid .hsm-launcher-tile{min-height:84px!important;padding:16px!important}
+  #vocabScreen{width:100%;max-width:none;padding:28px!important}
+  #vocabScreen .vocab-controls{grid-template-columns:repeat(2,minmax(0,1fr));align-items:end;gap:16px}
+  #vocabScreen .vocab-controls>*{min-width:0}
+  #vocabScreen #hsmVocabSheets{grid-column:1/-1}
+  #vocabScreen #wordList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+  #vocabScreen #wordList>.word-card{min-width:0;margin:0!important;padding:22px!important;overflow-wrap:anywhere}
+  #vocabScreen #wordList>:not(.word-card){grid-column:1/-1}
+  #startScreen,#wrongTestSetupScreen{width:100%;max-width:860px;margin-left:auto!important;margin-right:auto!important;padding:32px!important}
+  #testScreen,#teacherExamTakingScreen,#resultScreen,#teacherExamResultScreen{width:100%;max-width:800px;margin-left:auto!important;margin-right:auto!important;padding:32px!important}
+  #hsmSchoolStudentPage .hsm-school-test-wrap,#hsmSchoolStudentPage .hsm-school-free-card{max-width:800px;margin-left:auto;margin-right:auto}
+  #hsmSchoolContentPage .hsm-content-study{max-width:860px;margin-left:auto;margin-right:auto}
+  #hsmDayPicker{max-width:640px}
+  #hsmDayGrid{grid-template-columns:repeat(7,minmax(0,1fr))}
+  #hsmDayGrid button{min-height:44px}
+}
+@media (min-width: 1440px) and (hover: hover) and (pointer: fine) {
+  body.hsm-student-app-open>.container{max-width:1320px}
+  #vocabScreen #wordList{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
+  #hsmLauncherHome .hsm-launcher-tile{transition:none}
+}
