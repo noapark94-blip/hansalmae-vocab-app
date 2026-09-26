@@ -58,3 +58,6 @@
 #hsmLauncherHome .hsm-home-character:focus-visible{outline:2px solid #b783a4;outline-offset:3px;border-radius:14px}
 @media(max-width:360px){.hsm-home-growth{grid-template-columns:78px minmax(0,1fr);gap:10px}#hsmLauncherHome .hsm-home-character{width:78px}.hsm-home-character img{width:78px;height:82px}.hsm-home-level strong{font-size:26px}.hsm-home-level{gap:5px}.hsm-home-level span{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.hsm-home-xp-track i{transition:none}}
+
+/* iPhone installed app: the default status bar reserves its own space. */
+@media (display-mode:standalone) and (max-width:650px){html.hsm-ios-body-scroll #hsmLauncherHome{padding-top:20px}}
