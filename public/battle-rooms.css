@@ -843,3 +843,43 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 .br-root .br-wait-layout .br-ready-bar .br-btn:focus-visible{outline:2px solid #a12875;outline-offset:5px}
 @media(max-width:350px){.br-root>.br-wait-header h1{font-size:22px}.br-room-meta{gap:6px}.br-wait-layout .br-ready-bar p{font-size:9px}.br-root .br-wait-layout .br-ready-bar .br-btn{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.br-root .br-wait-layout .br-ready-bar .br-btn{transition:none}}
+
+/* Farm arena: real illustrated terrain, live equipped characters and scoreboards. */
+.br-game-layout .br-players.br-farm-arena{position:relative;isolation:isolate;padding:72px 14px 45px;border:0;border-radius:20px;background:#8aa845 url('./images/battle/farm-arena-v1.svg') center center/cover no-repeat;box-shadow:0 4px 0 #657b3630;overflow:visible}
+.br-farm-arena>.br-section-head{display:none!important}
+.br-farm-scoreboard{position:absolute;top:12px;left:50%;transform:translateX(-50%);min-width:112px;padding:7px 17px 5px;text-align:center;background:repeating-linear-gradient(4deg,#0000 0 9px,#4f28151a 10px 11px),#8b542f;border:3px solid #c29660;border-radius:12px;box-shadow:inset 0 0 0 2px #5b351f,0 3px 0 #5b351f,0 5px 8px #26351635;color:#fff1cf;z-index:1}
+.br-farm-scoreboard strong{display:block;font-size:26px;line-height:29px;letter-spacing:2px;text-shadow:0 2px #59351e;font-variant-numeric:tabular-nums}
+.br-farm-scoreboard small{font-size:17px;vertical-align:2px;color:#e5c697}
+.br-farm-scoreboard>span{display:block;font-size:9px;line-height:13px;font-weight:800;letter-spacing:1px;color:#f4d9ad}
+.br-farm-arena:has([data-density="group"]) .br-farm-scoreboard strong,.br-farm-arena:has([data-density="small"]) .br-farm-scoreboard strong{font-size:16px;line-height:20px;letter-spacing:0}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count]{gap:9px 8px;align-items:start}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count]>.br-player{padding:35px 0 0;gap:4px;background:none;border:0;box-shadow:none;min-width:0}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="duo"][data-player-count]{--arena-avatar:88px;padding:0 10px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="small"][data-player-count]{--arena-avatar:65px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count]{--arena-avatar:56px}
+.br-farm-arena .br-mini-character{isolation:isolate}
+.br-farm-arena .br-mini-character>img{filter:drop-shadow(0 5px 3px #35431955)}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy{max-width:100%;padding:3px 7px;background:repeating-linear-gradient(3deg,#0000 0 7px,#895d3320 8px 9px),#e7c28c;border:1px solid #a87843;border-radius:6px;box-shadow:0 2px 0 #90643c;text-align:center}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy strong{display:block;color:#4c331f;font-size:11px;line-height:16px;text-shadow:0 1px #fff5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.br-farm-arena .br-self-tag{color:#8f145f;font-size:9px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player>b{min-width:28px;padding:0 7px;border-radius:7px;background:#fff7dfed;color:#654326;font-size:18px;line-height:24px;box-shadow:0 2px 0 #7a522933}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="duo"][data-player-count] .br-player>b{height:0;min-height:0;padding:0;background:none;box-shadow:none;line-height:0}
+.br-farm-arena [data-density="duo"] .br-seat-score{display:none}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="duo"][data-player-count] .br-leader{top:-23px;right:calc(100% + 34px)}
+.br-game-layout .br-farm-arena .br-game-chat{position:absolute;inset:auto 9px 6px auto;z-index:20;min-height:44px;margin:0;width:44px}
+.br-reaction-dock{position:relative;width:44px;height:44px}
+.br-root .br-reaction-toggle{width:44px;height:44px;min-height:44px;padding:5px;display:flex;align-items:center;justify-content:center;border:1px solid #ddcba6;border-radius:50%;background:#fff8e9;box-shadow:0 3px 0 #a8824d,0 4px 7px #35411a30;touch-action:manipulation}
+.br-reaction-toggle .br-sticker{width:30px;height:30px}
+.br-root .br-reaction-toggle:active{transform:translateY(2px);box-shadow:0 1px 0 #a8824d}
+.br-farm-arena .br-reactions{position:absolute;bottom:0;right:51px;display:flex;gap:2px;min-height:44px;width:max-content;padding:5px;background:#fffcf4;border:1px solid #e5d6b9;border-radius:17px;box-shadow:0 4px 14px #36461935;transform-origin:right center}
+.br-farm-arena .br-reactions[hidden]{display:none!important}
+.br-farm-arena .br-reactions.is-open{animation:brReactionReveal .16s ease-out}
+.br-root .br-farm-arena .br-reaction{padding:4px;width:44px;height:44px;min-width:44px;border:0;background:transparent;border-radius:11px}
+.br-root .br-farm-arena .br-reaction .br-sticker{width:32px;height:32px}
+@keyframes brReactionReveal{from{opacity:0;transform:translateX(6px) scale(.96)}to{opacity:1;transform:none}}
+@media(max-width:350px){.br-game-layout .br-players.br-farm-arena{padding-inline:7px}.br-game-layout .br-farm-arena .br-player-grid[data-density="small"][data-player-count]{--arena-avatar:54px}.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count]{--arena-avatar:48px;column-gap:3px}.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy{padding-inline:4px}.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy strong{font-size:10px}.br-farm-arena .br-reactions{gap:0;padding:3px;right:48px}}
+@media(prefers-reduced-motion:reduce){.br-farm-arena .br-reactions.is-open{animation:none}}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="duo"][data-player-count] .br-player>b .br-leader{top:-26px;right:calc(100% + 35px)}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character .br-bubble{top:-38px}
+.br-game-layout .br-players.br-farm-arena{padding-bottom:60px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy{width:auto;max-width:100%;min-width:0}

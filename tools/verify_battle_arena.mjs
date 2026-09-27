@@ -10,7 +10,7 @@ const members=Array.from({length:8},(_,i)=>({id:i?'p'+i:'me',name:i?'친구'+i:'
 const state={id:'r1',me:'me',host:'me',title:'단어 대전',status:'playing',members,settings:{count:10,seconds:10,title:'중등',kind:'standard',start:1,end:1},round:0,roundAt:new Date(clock-100).toISOString(),deadline:new Date(clock+9900).toISOString(),serverNow:new Date(clock).toISOString(),question:{prompt:'together',mode:'engToKor',correctId:null,options:[{id:'a',text:'함께'},{id:'b',text:'언제나'},{id:'c',text:'천천히'},{id:'d',text:'바로'}]},chat:[]};
 const accept=s=>{s.serverNow=new Date(clock).toISOString();w.arenaTest.accept(structuredClone(s));};
 accept(state);
-assert.equal(d.querySelectorAll('[data-br="emoji"]').length,5);assert.equal(d.querySelector('[data-br="reactionsToggle"]'),null);assert.equal(d.querySelectorAll('[data-player]').length,8);
+assert.equal(d.querySelectorAll('[data-br="emoji"]').length,5);assert(d.querySelector('[data-br="reactionsToggle"]'));assert(d.querySelector('#brReactionPanel').hidden);d.querySelector('[data-br="reactionsToggle"]').click();assert(!d.querySelector('#brReactionPanel').hidden);assert.equal(d.querySelectorAll('[data-player]').length,8);
 assert.equal(d.querySelectorAll('.br-leader:not([hidden])').length,0,'zero scores have no leader');
 for(const emoji of ['👏','😄','😭','🔥','😛'])assert(d.querySelector('[data-emoji="'+emoji+'"] .br-sticker'),'all five reactions use artwork');
 w.eval(readFileSync('public/ui-icons.js','utf8'));w.HSMIcons.decorate(d.body);
@@ -25,7 +25,7 @@ state.revealUntil=new Date(clock+1000).toISOString();state.question.correctId='a
 state.round=1;state.question=null;state.revealUntil=null;state.answered=false;state.choice=null;state.deadline=new Date(clock+11000).toISOString();state.roundAt=new Date(clock+1000).toISOString();accept(state);assert.equal(d.querySelector('.br-question-card'),card);assert(d.querySelector('.br-next-overlay'));assert.equal(player.querySelector('.br-score-pop').textContent,'');
 clock+=1100;state.question={prompt:'again',mode:'engToKor',correctId:null,options:[{id:'a',text:'다시'},{id:'b',text:'함께'},{id:'c',text:'곧'},{id:'d',text:'오래'}]};accept(state);assert.equal(d.querySelector('.br-next-overlay'),null);assert.equal(d.querySelector('.br-question-card'),card);assert.equal(d.querySelector('.br-prompt').textContent,'again');assert([...d.querySelectorAll('[data-br="answer"]')].every(x=>!x.disabled));assert.equal(player.querySelector('img'),img);
 // Reactions display immediately and do not lock answers.
-d.querySelector('[data-emoji="😛"]').click();assert(player.querySelector('.br-bubble .br-sticker-tongue'));assert.equal(player.querySelector('.br-bubble').getAttribute('aria-label'),'메롱');assert(!d.querySelector('[data-br="answer"]').disabled);
+d.querySelector('[data-emoji="😛"]').click();assert(player.querySelector('.br-bubble .br-sticker-tongue'));assert.equal(player.querySelector('.br-bubble').getAttribute('aria-label'),'메롱');assert(d.querySelector('#brReactionPanel').hidden,'sending closes picker');d.querySelector('[data-br="reactionsToggle"]').click();d.querySelector('[data-br="reactionsToggle"]').dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert(d.querySelector('#brReactionPanel').hidden,'Escape closes picker');assert(!d.querySelector('[data-br="answer"]').disabled);
 state.members[1].score=1;accept(state);assert.equal(d.querySelectorAll('.br-leader:not([hidden])').length,0,'tied leaders must have no crowns');
 state.members[1].left=true;accept(state);assert.equal(d.querySelectorAll('.br-leader:not([hidden])').length,1,'departed players do not compete for crown');
 // Every supported roster size updates layout without replacing the question.
@@ -38,4 +38,4 @@ for(let n=2;n<=8;n++){
  assert.equal(grid.children.length,n);assert.equal(d.querySelector('.br-question-card'),card);
 }
 const css=readFileSync('public/battle-rooms.css','utf8');assert(css.includes('transform-origin:left center'));assert(css.includes('.br-game-layout .br-game-chat{order:1'));assert(css.includes('prefers-reduced-motion'));
-w.arenaTest.reset();frame();dom.window.close();console.log('PASS custom artwork, flame survives icon processing, zero/tie/solo/departed leader rules; arena: eight players, always-visible five reactions, continuous frame timer, stable DOM on polls/answers, authoritative +1/miss once, locked acknowledged answer, stable round transition, immediate reaction.');
+w.arenaTest.reset();frame();dom.window.close();console.log('PASS custom artwork, flame survives icon processing, zero/tie/solo/departed leader rules; arena: eight players, collapsible five reactions, continuous frame timer, stable DOM on polls/answers, authoritative +1/miss once, locked acknowledged answer, stable round transition, immediate reaction.');
