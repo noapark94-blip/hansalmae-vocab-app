@@ -1,3 +1,4 @@
+@import url("./fonts/battle-jua.css");
 /* Room UI is isolated from student learning and legacy matches. */
 .br-root{--br-plum:#861355;--br-ink:#412939;--br-muted:#9a8794;--br-line:#eee4ed;width:100%;max-width:1320px;margin:0 auto;padding:8px 0 36px;color:var(--br-ink);font-family:inherit}
 .br-root *, .br-sheet *{box-sizing:border-box}
@@ -937,3 +938,17 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 .br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy strong:before{content:'';display:inline-block;width:2px;height:2px;margin-right:4px;border-radius:50%;background:#9c693a;vertical-align:middle}
 .br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{padding:1px 3px;font-size:10px;line-height:12px;letter-spacing:-.4px}
 @media(max-width:350px){.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:9px}}
+
+/* Short posts anchor the engraved name plank in front of the deck. */
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy{height:53px;background-size:100% 39px;background-position:center top}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="small"][data-player-count] .br-player-copy{height:47px;background-size:100% 33px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy{height:45px;background-size:100% 31px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy:before,.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy:after{content:'';position:absolute;bottom:2px;width:4px;height:13px;border-radius:0 0 1px 1px;background:#946034;box-shadow:inset 1px 0 #ca985b,1px 1px 1px #52361555;z-index:0}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy:before{left:38%}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy:after{right:38%}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy strong{top:2px;z-index:1;font-family:BattleJua,"Pretendard Variable",sans-serif;font-weight:400;font-size:13px;letter-spacing:0;color:#603819;text-shadow:0 1px 0 #ffe0aa}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:11px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character .br-bubble{top:-20px}
+.br-root:has(.br-game-layout){padding-bottom:calc(var(--hsm-mobile-nav-height,70px) + env(safe-area-inset-bottom,0px) + 24px)}
+.br-game-layout .br-answer-note{margin-bottom:16px}
+@media(max-width:350px){.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:10px}}
