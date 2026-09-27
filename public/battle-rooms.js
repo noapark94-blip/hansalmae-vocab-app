@@ -10,7 +10,7 @@ const modes={mixed:'영한·한영 혼합',engToKor:'영어 → 한글',korToEng
 const bubbleEvents=new Map();
 const clockSamples=[],responseClocks=new WeakMap(),pendingSync=new Set();
 function clockSample(serverNow,sent,received){const rtt=Math.max(0,received-sent),sample={rtt,offset:new Date(serverNow).getTime()-(sent+received)/2};if(!Number.isFinite(sample.offset)||rtt>10000)return null;clockSamples.push(sample);if(clockSamples.length>8)clockSamples.shift();return clockSamples.reduce((a,b)=>a.rtt<=b.rtt?a:b).offset;}
-function syncPayload(payload){return {...payload,protocol:2,...(room?.id===payload.id&&room.preparedQuestion&&!document.hidden?{readyRound:room.round,syncToken:room.syncToken}: {})};}
+function syncPayload(payload){return {...payload,protocol:2,...(room&&room.id===payload.id&&room.preparedQuestion&&!document.hidden?{readyRound:room.round,syncToken:room.syncToken}: {})};}
 async function acknowledgePrepared(){const id=room?.id,token=room?.syncToken,version=epoch;if(!token||!room.preparedQuestion||document.hidden||!visible()||pendingSync.has(token))return;pendingSync.add(token);try{const data=await api('Poll',{id});if(version===epoch&&room?.id===id)accept(data);}catch(_){/* Normal polling retries a lost acknowledgement. */}finally{pendingSync.delete(token);}}
 function preparationLabel(){return room.preparing?'함께 시작할 준비 중':room.round===0?'곧 시작해요':'다음 문제';}
 
