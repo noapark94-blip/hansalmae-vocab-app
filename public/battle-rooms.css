@@ -905,3 +905,23 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 .br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-leader>.br-sticker{width:20px;height:20px}
 .br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-score-pop{right:-4px;top:18px;min-width:23px;font-size:12px;line-height:16px;padding:2px 3px}
 @media(max-width:350px){.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:9px}.br-game-layout .br-farm-arena .br-player-grid[data-density="duo"][data-player-count]{--arena-avatar:94px}}
+
+/* Compact arena; ground artwork feet on the deck and keep status legible. */
+.br-game-layout .br-players.br-farm-arena{padding-top:51px;padding-bottom:52px}
+.br-game-layout .br-farm-arena .br-farm-scoreboard{top:8px;width:154px;height:44px;padding:0 20px 3px;display:flex;align-items:center;justify-content:center}
+.br-game-layout .br-farm-arena .br-farm-scoreboard strong{font-size:23px;line-height:1;letter-spacing:1px}
+.br-game-layout .br-farm-arena:has([data-density="small"]) .br-farm-scoreboard strong,.br-game-layout .br-farm-arena:has([data-density="group"]) .br-farm-scoreboard strong{font-size:15px;letter-spacing:0}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count]>.br-player{padding-top:29px}
+.br-game-layout .br-farm-arena .br-mini-character>img{top:calc(var(--arena-foot-gap,9%) + 4px)}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy strong{color:#fff5df;text-shadow:0 1px 2px #44220d,0 0 3px #44220d;font-size:12px;font-weight:800}
+.br-farm-arena .br-self-tag{display:inline-block;padding:0 3px;border-radius:4px;background:#8f145f;color:#fff5df;font-size:8px;text-shadow:none;vertical-align:1px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character .br-bubble{top:-30px;width:30px;height:30px;min-width:30px;min-height:30px}
+.br-game-layout .br-farm-arena .br-mini-character .br-bubble .br-sticker{width:30px;height:30px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-score-pop.is-miss{background:#fff1ed;color:#a54740;border:1px solid #edc5b9;box-shadow:none;border-radius:7px;font-size:10px;line-height:16px;min-width:0;padding:2px 4px;pointer-events:none}
+.br-root .br-options .br-btn.is-correct:after{content:'✓ 정답';font-size:11px;white-space:nowrap}
+@media(max-width:700px){.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:10px}.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-self-tag{font-size:7px;padding:0 2px}}
+@media(max-width:350px){.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:9px}}
+.br-game-layout .br-players.br-farm-arena:has([data-density="group"]){padding-bottom:66px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy{padding-top:14px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{line-height:12px}
+.br-game-layout .br-players.br-farm-arena{padding-bottom:66px}

@@ -21,6 +21,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   assert(g.scroll<=width+1,`overflow ${width}/${n}`);assert.equal(g.cols,Math.min(n,4));
   for(const p of g.players){assert(p.bubble.y>=g.stage.y,`bubble outside stage ${width}/${n}`);assert(p.avatar.width>=(n<=2?66:n<=4?(width<=350?48:54):(width<=350?44:48)));assert(p.bubble.bottom<=p.avatar.y+1);assert(p.name.bottom<=p.score.y+1);if(p.crown){assert(p.crown.y>=g.stage.y);assert(p.crown.bottom<=p.avatar.bottom);}}
   for(let i=0;i<g.players.length;i++)for(let j=i+1;j<g.players.length;j++){const a=g.players[i].seat,b=g.players[j].seat;assert(a.right<=b.x+1||b.right<=a.x+1||a.bottom<=b.y+1||b.bottom<=a.y+1,`overlap ${width}/${n}`);}
+  assert(g.players.every(p=>p.score.bottom<=panel.y+1),'reaction panel must clear scores');
   assert(g.buttons.every(b=>b.width>=44&&b.height>=44));results.push({width,n,cols:g.cols,avatar:g.players[0].avatar.width,stage:Math.round(g.stage.height)});
   if(width===393&&[2,4,8].includes(n))await page.screenshot({path:`/tmp/arena-layout-${n}.png`,fullPage:true});
   await page.locator('.br-prompt').click();assert(await page.locator('#brReactionPanel').isHidden());
