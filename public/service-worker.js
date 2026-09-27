@@ -1,10 +1,12 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260927-185';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20260927-186';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
 };
 
 const REQUIRED_ASSETS = [
+  './images/battle/wood-deck-v1.svg',
+  './images/battle/wood-scoreboard-v1.svg',
   './images/battle/farm-arena-v1.svg',
   './images/reactions/hansalmae-reactions-v1.webp',
   versioned('./battle-rooms.js'),

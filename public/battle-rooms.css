@@ -883,3 +883,25 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 .br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character .br-bubble{top:-38px}
 .br-game-layout .br-players.br-farm-arena{padding-bottom:60px}
 .br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy{width:auto;max-width:100%;min-width:0}
+
+/* Illustrated wood assets: names and scores remain live DOM text. */
+.br-game-layout .br-farm-arena .br-farm-scoreboard{top:9px;width:154px;height:57px;min-width:0;padding:9px 20px 10px;border:0;border-radius:0;background:transparent url('./images/battle/wood-scoreboard-v1.svg') center/100% 100% no-repeat;box-shadow:none;filter:drop-shadow(0 3px 2px #33431944)}
+.br-farm-scoreboard strong{font-size:25px;line-height:26px;letter-spacing:1px}
+.br-farm-scoreboard>span{font-size:8px;line-height:10px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="duo"][data-player-count]{--arena-avatar:102px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count]>.br-player{gap:3px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character{z-index:2}
+.br-game-layout .br-farm-arena .br-mini-character>img{position:relative;top:var(--arena-foot-gap,9%);filter:drop-shadow(0 3px 2px #38291550)}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy{position:relative;z-index:1;flex:none;width:100%;max-width:140px;height:39px;padding:22px 12px 0;margin-top:-9px;border:0;border-radius:0;background:transparent url('./images/battle/wood-deck-v1.svg') center/100% 100% no-repeat;box-shadow:none;filter:drop-shadow(0 3px 2px #3f401e50)}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy strong{font-size:11px;line-height:14px;color:#3e210d;text-shadow:0 1px 0 #ffe3b080;font-weight:750}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy{height:31px;padding:17px 5px 0;margin-top:-7px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="small"][data-player-count] .br-player-copy{height:33px;padding:18px 6px 0;margin-top:-7px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character>.br-leader{display:flex;align-items:center;justify-content:center;position:absolute;left:-7px;right:auto;top:0;width:28px;height:28px;padding:2px;background:#fff6d9;border:1px solid #e3b749;border-radius:10px;box-shadow:0 2px 0 #a2732d,0 3px 5px #35431940;transform:rotate(-10deg);z-index:6}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character>.br-leader[hidden]{display:none}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-leader>.br-sticker{width:24px;height:24px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-score-pop{left:auto;right:-7px;top:23px;z-index:8;min-width:28px;padding:3px 5px;background:#951363;color:#fff9ef;border:1px solid #ffe8f5;border-radius:10px;box-shadow:0 2px 0 #600b3e,0 3px 6px #35271955;font-size:15px;line-height:19px;font-weight:800;text-shadow:none;transform:none}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-score-pop.is-miss{background:#fff6e9;color:#936654;border-color:#dfcbb7;box-shadow:0 2px 0 #b19b81}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-mini-character>.br-leader{width:23px;height:23px;left:-4px;top:-2px;padding:1px;border-radius:8px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-leader>.br-sticker{width:20px;height:20px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-score-pop{right:-4px;top:18px;min-width:23px;font-size:12px;line-height:16px;padding:2px 3px}
+@media(max-width:350px){.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:9px}.br-game-layout .br-farm-arena .br-player-grid[data-density="duo"][data-player-count]{--arena-avatar:94px}}
