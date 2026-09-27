@@ -1029,3 +1029,26 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 
 .br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled,
 .br-root .br-lobby-heading>.br-primary,.br-root .br-lobby-heading>.br-primary:hover{border-image-slice:24% 12% 40% 12% fill}
+
+/* Waiting actions share the lobby's slim illustrated wooden frame. */
+.br-root .br-wait-layout .br-ready-bar .br-btn{
+ min-height:51px;border:7px solid transparent;border-radius:0;
+ border-image:url('./images/battle/wood-scoreboard-v1.svg') 24% 12% 40% 12% fill / 7px / 0 stretch;
+ background:none;padding:8px 12px 10px;box-shadow:none;
+ color:#fff0d2;font-family:BattleJua,"Pretendard Variable",sans-serif;font-size:16px;font-weight:400;
+ line-height:1.2;text-shadow:0 1px 1px #38200f;
+ display:flex;align-items:center;justify-content:center;gap:7px;
+ filter:drop-shadow(0 2px 1px #68442130);
+ transition:transform .12s ease,filter .12s ease;
+}
+.br-root .br-wait-layout .br-ready-bar .br-ready-outline{filter:brightness(1.13) drop-shadow(0 2px 1px #68442130)}
+.br-root .br-wait-layout .br-ready-bar .br-ready-selected{color:#dceec0}
+.br-root .br-wait-layout .br-ready-bar .br-start{color:#fff4ce;filter:brightness(1.17) drop-shadow(0 2px 2px #68442145)}
+.br-root .br-wait-layout .br-ready-bar .br-start:disabled{
+ background:none;border-color:transparent;color:#dbd1c0;opacity:.65;
+ filter:grayscale(.85);box-shadow:none;text-shadow:0 1px #493d31;cursor:default;
+}
+.br-root .br-wait-layout .br-ready-bar .br-btn:not(:disabled):active{transform:translateY(2px);box-shadow:none}
+.br-root .br-wait-layout .br-ready-bar .br-btn:focus-visible{outline:2px solid #926332;outline-offset:3px}
+@media(max-width:350px){.br-root .br-wait-layout .br-ready-bar .br-btn{font-size:14px;padding-inline:8px}}
+@media(prefers-reduced-motion:reduce){.br-root .br-wait-layout .br-ready-bar .br-btn{transition:none}}
