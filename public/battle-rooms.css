@@ -978,3 +978,21 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 .br-root:has(.br-room-grid) .br-filters .br-btn.is-active{color:#82512c}
 @media(min-width:701px){.br-root .br-room-tile{min-height:166px;padding:12px 10px;grid-template-columns:46px minmax(0,1fr);column-gap:8px}.br-root .br-tile-host img{width:58px;height:58px}.br-root .br-tile-title{font-size:19px}.br-root .br-tile-source,.br-root .br-tile-settings{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.br-root .br-room-tile{transition:none}}
+
+/* Low, compact room signs retain two columns without shrinking the text. */
+.br-root .br-room-grid{padding-top:9px;gap:10px}
+.br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled{min-height:108px;border-width:12px;border-image-width:12px;padding:4px 3px;row-gap:2px;grid-template-columns:31px minmax(0,1fr);grid-template-rows:22px 15px 15px auto;align-content:start}
+.br-root .br-tile-title{font-size:14px;line-height:22px}
+.br-root .br-tile-host img{width:39px;height:39px;left:-5px;top:-5px}
+.br-root .br-tile-top{margin-top:2px;padding-top:4px}
+.br-root .br-tile-status{padding:2px 4px}
+@media(min-width:701px){.br-root .br-room-tile{min-height:118px;padding:6px;grid-template-columns:37px minmax(0,1fr);grid-template-rows:24px 17px 17px auto}.br-root .br-tile-title{font-size:16px}.br-root .br-tile-host img{width:45px;height:45px}}
+
+.br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled{min-height:118px;grid-template-columns:32px minmax(0,1fr);grid-template-rows:32px 15px 15px auto;column-gap:5px}
+.br-root .br-tile-host img{width:34px;height:34px;left:1px;top:2px}
+.br-root .br-tile-title{align-self:center;line-height:20px}
+.br-root .br-tile-lock{top:-5px;right:-5px}
+@media(min-width:701px){.br-root .br-room-tile{min-height:126px;grid-template-rows:34px 17px 17px auto}.br-root .br-tile-host img{width:36px;height:36px;left:3px;top:4px}}
+
+.br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled{padding-bottom:12px;grid-template-rows:28px 15px 15px auto}
+.br-root .br-tile-host img{width:30px;height:30px}
