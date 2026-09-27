@@ -14,7 +14,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   const state={id:'result',title:'함께하는 단어 대전',me:'p1',host:c.role==='host'?'p1':'p0',nextRoom:c.role==='next'?'new-room':null,status:'finished',syncEnabled:true,round:9,serverNow:new Date().toISOString(),members:Array.from({length:c.count},(_,i)=>({id:'p'+i,name:i===1?'박노아':'친구'+i,score:c.tie?5:Math.max(0,6-i),ms:c.tie?21000:21000+i*1000,rankMs:c.tie?21000:21000+i*1000,left:false,image:i===1?'./images/emblems/achievement-reborn.png':'./images/emblems/title-chick.png'})),settings:{count:10,seconds:10,title:'중등단어',kind:'standard',start:1,end:1},reward:c.reward,review:[{word:'earth',meaning:'지구, 땅',correct:false}],chat:[]};
   await page.evaluate(s=>arenaTest.accept(s),state);
   assert.equal(await page.locator('.br-result-row').count(),c.count);
-  assert(!(await page.locator('.br-chat-body').isVisible()),'result chat starts collapsed');
+  assert.equal(await page.locator('#brChatMount,.br-chat,.br-header').count(),0,'results omit room heading and chat entirely');
   assert.equal(await page.locator('[data-br="leave"]').count(),1);
   assert.equal(await page.locator('.br-result-avatar>img').count(),1);
   assert(await page.locator('body').evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
