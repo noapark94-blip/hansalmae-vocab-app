@@ -745,3 +745,11 @@ body:has(.br-root:not(.hidden) .br-game-layout){background:#faf7f0}
  .br-game-layout .br-player-grid[data-density="group"][data-player-count]{--arena-avatar:44px;column-gap:4px}
  .br-game-layout .br-player-grid[data-density="group"][data-player-count] .br-score-pop{left:calc(100% - 6px);font-size:13px}
 }
+
+/* Readiness uses the existing stage; no washed-out question overlay. */
+.br-players.is-preparing .br-answer-dot{width:5px;height:5px;background:#cbbfb6;transition:background .2s}
+.br-players.is-preparing .has-loaded .br-answer-dot{background:#839f71}
+.br-question-card.is-round-wait>.br-direction,.br-question-card.is-round-wait>.br-prompt,.br-question-card.is-round-wait>.br-options,.br-question-card.is-round-wait>.br-answer-note{visibility:hidden}
+.br-question-card.is-round-wait .br-next-overlay{background:transparent;gap:14px}
+.br-next-overlay strong,.br-countdown strong{font-variant-numeric:tabular-nums}
+.br-question-card.is-round-wait .br-next-overlay>span{color:#8f7a85;font-weight:550}

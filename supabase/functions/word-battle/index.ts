@@ -49,7 +49,7 @@ Deno.serve(async req=>{
    const built=await source(actor,'',settings,true);
    result=await rpc('battle_room_play',{p_actor:actor,p_action:'start',p_id:str(p.id),p_payload:{questions:built.questions}});
   }else if(['roomLobby','roomJoin','roomPoll','roomReady','roomAnswer','roomLeave','roomChat','roomRematch'].includes(action)){
-   result=await rpc('battle_room_play',{p_actor:actor,p_action:action.slice(4).toLowerCase(),p_id:str(p.id)||null,p_payload:{password:str(p.password),ready:p.ready,round:p.round,choice:str(p.choice),kind:str(p.kind),body:str(p.body)}});
+   result=await rpc('battle_room_play',{p_actor:actor,p_action:action.slice(4).toLowerCase(),p_id:str(p.id)||null,p_payload:{protocol:p.protocol,readyRound:p.readyRound,syncToken:str(p.syncToken),password:str(p.password),ready:p.ready,round:p.round,choice:str(p.choice),kind:str(p.kind),body:str(p.body)}});
    if(result?.error)throw new Error(result.error);
   }else if(['home','search','request','acceptFriend','remove','declineFriend','block','unblock'].includes(action)){
    const mapped=action==='acceptFriend'?'accept':action==='declineFriend'?'decline':action;

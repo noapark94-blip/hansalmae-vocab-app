@@ -19,5 +19,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   assert(g.buttons.every(b=>b.width>=44&&b.height>=44));results.push({width,n,cols:g.cols,avatar:g.players[0].avatar.width,stage:Math.round(g.stage.height)});
   if(width===393&&[2,4,8].includes(n))await page.screenshot({path:`/tmp/arena-layout-${n}.png`,fullPage:true});
  }
+ await page.setViewportSize({width:393,height:852});
+ await page.evaluate(()=>{const now=Date.now();arenaTest.accept({id:'sync-test',title:'단어 대전',me:'p0',host:'p0',status:'playing',syncEnabled:true,preparing:true,round:0,roundAt:null,deadline:null,serverNow:new Date(now).toISOString(),members:Array.from({length:4},(_,i)=>({id:'p'+i,name:i?'친구'+i:'박노아',score:0,loaded:i<3,image:'./images/emblems/title-chick.png'})),settings:{count:10,seconds:10,title:'중등단어'},question:null,preparedQuestion:{prompt:'story',mode:'engToKor',correctId:null,options:[{id:'a',text:'이야기'}]},chat:[]});});
+ assert.equal(await page.locator('[data-br="answer"]').count(),0);
+ assert.equal(await page.locator('#brTimer').textContent(),'준비 중');
+ await page.screenshot({path:'/tmp/arena-sync-ready.png',fullPage:true});
  assert.deepEqual(errors,[]);console.log(JSON.stringify(results));console.log('PASS 35 viewport/roster cases: 2–8 players, columns, avatar sizes, reaction bounds, no seat overlap, no horizontal overflow, 44px touch targets.');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
