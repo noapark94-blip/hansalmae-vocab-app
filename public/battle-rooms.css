@@ -996,3 +996,36 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 
 .br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled{padding-bottom:12px;grid-template-rows:28px 15px 15px auto}
 .br-root .br-tile-host img{width:30px;height:30px}
+
+/* Shared slim wood frames and readable character/info columns. */
+.br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled{
+ border-width:7px;border-image-width:7px;padding:10px 6px 13px;min-height:120px;
+ grid-template-columns:42px minmax(0,1fr);grid-template-rows:auto auto auto auto;
+ column-gap:6px;row-gap:4px;align-content:center;align-items:center;
+}
+.br-root .br-tile-title,.br-root .br-tile-source,.br-root .br-tile-settings{
+ grid-column:2;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;min-width:0;
+}
+.br-root .br-tile-title{grid-row:1;font-size:14px;line-height:1.25}
+.br-root .br-tile-source{grid-row:2;font-size:10px;line-height:1.4}
+.br-root .br-tile-settings{grid-row:3;font-size:10px;line-height:1.4}
+.br-root .br-tile-host{display:flex;grid-column:1;grid-row:1/4;align-items:center;justify-content:center;min-width:0;align-self:stretch}
+.br-root .br-tile-host img{position:static;width:48px;height:58px;max-width:none;object-fit:contain}
+.br-root .br-tile-top{grid-row:4;grid-column:1/-1;margin-top:4px;padding-top:6px;align-self:end;min-width:0}
+.br-root .br-tile-status,.br-root .br-tile-count{white-space:nowrap}
+.br-root .br-tile-lock{top:1px;right:1px;width:10px;height:10px}
+.br-root .br-lobby-heading{align-items:center}
+.br-root .br-lobby-heading>.br-primary,.br-root .br-lobby-heading>.br-primary:hover{
+ width:max-content;height:auto;min-height:44px;padding:6px 12px 9px;
+ border:7px solid transparent;border-image:url('./images/battle/wood-scoreboard-v1.svg') 24% 12% 24% 12% fill / 7px / 0 stretch;
+ background:none;display:flex;align-items:center;justify-content:center;line-height:1.2;white-space:nowrap;font-size:13px;
+}
+@media(min-width:701px){
+ .br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled{grid-template-columns:60px minmax(0,1fr);padding:12px 10px 15px;column-gap:10px}
+ .br-root .br-tile-host img{width:66px;height:76px}
+ .br-root .br-tile-title{font-size:17px}
+ .br-root .br-tile-source,.br-root .br-tile-settings{font-size:12px}
+}
+
+.br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled,
+.br-root .br-lobby-heading>.br-primary,.br-root .br-lobby-heading>.br-primary:hover{border-image-slice:24% 12% 40% 12% fill}
