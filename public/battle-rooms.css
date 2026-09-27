@@ -952,3 +952,29 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 .br-root:has(.br-game-layout){padding-bottom:calc(var(--hsm-mobile-nav-height,70px) + env(safe-area-inset-bottom,0px) + 24px)}
 .br-game-layout .br-answer-note{margin-bottom:16px}
 @media(max-width:350px){.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:10px}}
+
+/* Farm lobby: nine-slice illustrated wood keeps the frame corners intact. */
+.br-root:has(.br-room-grid){--br-ink:#513a29;--br-muted:#958271}
+.br-root .br-room-grid{gap:14px 10px;padding-top:18px}
+.br-root .br-room-tile,.br-root .br-room-tile:hover:not(:disabled),.br-root .br-room-tile:disabled{border:17px solid transparent;border-image:url('./images/battle/wood-scoreboard-v1.svg') 24% 12% 24% 12% fill / 17px / 0 stretch;background:none;border-radius:0;box-shadow:none;filter:drop-shadow(0 3px 2px #69472824);padding:8px 3px 7px;min-height:150px;grid-template-columns:36px minmax(0,1fr);column-gap:4px;row-gap:5px;overflow:visible;color:#fff1d4;transition:transform .15s ease,filter .15s ease}
+.br-root .br-room-tile:hover:not(:disabled){filter:drop-shadow(0 4px 4px #69472838);transform:translateY(-1px)}
+.br-root .br-room-tile:active:not(:disabled){transform:translateY(1px)}
+.br-root .br-room-tile:focus-visible{outline:2px solid #8f145f;outline-offset:3px}
+.br-root .br-tile-title{font-family:BattleJua,sans-serif;font-size:16px;font-weight:400;color:#fff2d6;line-height:1.4;text-shadow:0 1px 2px #281308;letter-spacing:0}
+.br-root .br-tile-source{grid-column:1/-1;font-size:10px;color:#eed1a6;text-shadow:0 1px #3b2011}
+.br-root .br-tile-settings{grid-column:1/-1;font-size:10px;color:#eed1a6;letter-spacing:0}
+.br-root .br-tile-host img{left:-7px;top:-3px;width:47px;height:47px;filter:drop-shadow(0 2px 2px #2e180b55)}
+.br-root .br-tile-top{margin-top:5px;border-top:1px solid #d8ae7333;padding-top:7px}
+.br-root .br-tile-status{background:#dfe9c7;color:#47602f;padding:3px 5px;font-size:9px}
+.br-root .br-tile-count,.br-root .br-tile-count>span{color:#ffe9bf;font-size:10px}
+.br-root .br-room-tile.is-playing .br-tile-status,.br-root .br-room-tile:disabled .br-tile-status{background:#e1d0b8;color:#795a3c}
+.br-root .br-room-tile.is-playing .br-tile-status:before,.br-root .br-room-tile:disabled .br-tile-status:before{background:#a98255}
+.br-root .br-tile-lock{left:auto;right:-8px;top:-8px;stroke:#ffe8be}
+.br-root .br-lobby-heading h2{font-family:BattleJua,sans-serif;font-weight:400;font-size:23px;color:#5a3b26}
+.br-root .br-lobby-heading h2 span{background:#eee1c9;color:#89673e}
+.br-root .br-lobby-heading>.br-primary,.br-root .br-lobby-heading>.br-primary:hover{width:125px;min-height:48px;padding:8px 17px;border:0;border-radius:0;background:transparent url('./images/battle/wood-scoreboard-v1.svg') center/100% 100% no-repeat;color:#fff0d0;font-family:BattleJua,sans-serif;font-weight:400;font-size:13px;text-shadow:0 1px 1px #432410;box-shadow:none}
+.br-root .br-lobby-bar{border-bottom-color:#e6dbc9}
+.br-root:has(.br-room-grid) .br-filters .br-btn{color:#9a8775}
+.br-root:has(.br-room-grid) .br-filters .br-btn.is-active{color:#82512c}
+@media(min-width:701px){.br-root .br-room-tile{min-height:166px;padding:12px 10px;grid-template-columns:46px minmax(0,1fr);column-gap:8px}.br-root .br-tile-host img{width:58px;height:58px}.br-root .br-tile-title{font-size:19px}.br-root .br-tile-source,.br-root .br-tile-settings{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.br-root .br-room-tile{transition:none}}
