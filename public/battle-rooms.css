@@ -925,3 +925,15 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 .br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy{padding-top:14px}
 .br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{line-height:12px}
 .br-game-layout .br-players.br-farm-arena{padding-bottom:66px}
+
+/* Reactions sit close to the head; the crown is artwork, not a button. */
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character .br-bubble{top:-25px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-mini-character>.br-leader{left:18%;top:14%;width:26px;height:26px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;filter:drop-shadow(0 0 1px #fff8dc) drop-shadow(0 1px 1px #63452080);transform:rotate(-12deg);pointer-events:none}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-leader>.br-sticker{width:26px;height:26px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-mini-character>.br-leader,.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-leader>.br-sticker{width:20px;height:20px}
+
+/* A small upright name plank on the front of each deck. */
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy strong{position:relative;top:-2px;width:max-content;max-width:100%;margin:0 auto;padding:2px 7px;border:1px solid #9b6333;border-radius:4px;background:repeating-linear-gradient(2deg,transparent 0 5px,#92521e12 6px 7px),#e6b775;box-shadow:inset 0 1px 0 #ffe3ad,0 2px 0 #85502c;color:#603817;text-shadow:0 1px 0 #ffdfa2;font-weight:850;letter-spacing:-.35px;line-height:14px;font-size:12px}
+.br-game-layout .br-farm-arena .br-player-grid[data-density][data-player-count] .br-player-copy strong:before{content:'';display:inline-block;width:2px;height:2px;margin-right:4px;border-radius:50%;background:#9c693a;vertical-align:middle}
+.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{padding:1px 3px;font-size:10px;line-height:12px;letter-spacing:-.4px}
+@media(max-width:350px){.br-game-layout .br-farm-arena .br-player-grid[data-density="group"][data-player-count] .br-player-copy strong{font-size:9px}}
