@@ -26,9 +26,13 @@
   }finally{clearTimeout(timer);}
  }
  function stamp(g){const previous=game;game=g;offset=new Date(g.serverNow).getTime()-Date.now();renderGame();if(g.status==='finished'&&g.reward&&(g.reward.xp||g.reward.points)&&lastRewardSync!==g.id){lastRewardSync=g.id;try{localStorage.removeItem('hsmMonthlyRankingCacheV2');}catch(_){}window.refreshExperienceUi_?.();window.HSMEmblems?.load(true);}if(previous?.id===g.id)for(const side of ['host','guest'])if(g[side+'Score']>previous[side+'Score']){const score=root.querySelector('[data-score="'+side+'"]');score?.classList.add('fb-pop');const fighter=root.querySelector('.fb-fighter.fb-'+side);if(fighter){const gain=document.createElement('span');gain.className='fb-score-gain';gain.textContent='+1';fighter.appendChild(gain);setTimeout(()=>gain.remove(),1000);}}}
+ function pollInterval(){
+  if(active())return game?.status==='ready'?500:live()?1400:game?30000:7000;
+  return (home?.battles||[]).some(b=>['invited','ready','playing'].includes(b.status))?20000:60000;
+ }
  async function refresh(force=false){
   if(pollBusy||busy||!who()||document.hidden||!$('mainApp')||$('mainApp').classList.contains('hidden'))return;
-  if(!force&&Date.now()-lastPoll<(active()&&game?.status==='ready'?500:active()&&live()?1400:active()?7000:20000))return;
+  if(!force&&Date.now()-lastPoll<pollInterval())return;
   pollBusy=true;lastPoll=Date.now();const version=revision,account=who(),room=game?.id;
   try{if(active()&&game){const data=await api('poll',{id:room});if(version===revision&&account===who()&&game?.id===room)stamp(data);}else {const data=await api('home');if(version===revision&&account===who()){home=data;updateBadge();if(active()&&!game)renderHome();}}const status=$('fbConnection');if(status)status.textContent='';}
   catch(e){if(active()){const status=$('fbConnection');if(status)status.textContent='연결을 확인하고 있어요. 잠시만 기다려주세요.';if(force)toast(e.message);}}
