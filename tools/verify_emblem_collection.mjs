@@ -31,4 +31,24 @@ assert.equal(w.document.querySelector('.collection-detail-action').disabled,true
 w.document.getElementById('hsmCollectionDetail').close();
 w.HSMEmblems.open();assert.equal(w.document.getElementById('hsmEmblemModal').getAttribute('aria-hidden'),'false');
 w.HSMEmblems.close();assert.equal(w.document.getElementById('hsmEmblemModal').getAttribute('aria-hidden'),'true');
+await new Promise(resolve=>setImmediate(resolve));
+// A delayed response from a previous account must not populate the next account.
+const pending=[];
+w.google.script.run.withSuccessHandler=ok=>({withFailureHandler:bad=>({getStudentEmblems(){pending.push({ok,bad});}})});
+w.currentStudent={studentId:'first'};w.currentLoginToken='first-token';
+const first=w.HSMEmblems.load(true);
+w.currentStudent=null;w.currentLoginToken='';w.HSMEmblems.reset();
+assert.equal(w.document.querySelectorAll('.collection-tile').length,0);
+assert.equal(w.document.getElementById('hsmHomeEmblemImage').hasAttribute('src'),false);
+w.currentStudent={studentId:'second'};w.currentLoginToken='second-token';
+const second=w.HSMEmblems.load(true);
+assert.equal(pending.length,2,'new account may load while the old request is pending');
+pending[1].ok({success:true,emblems:[{...entries[0],emblemName:'새 계정',imagePath:'second.png'}],acquiredCount:1,totalCount:1,equippedEmblem:{emblemName:'새 계정',imagePath:'second.png'}});
+await second;
+pending[0].ok({success:true,emblems:entries,acquiredCount:2,totalCount:3,equippedEmblem:entries[2]});await first;
+assert.equal(w.document.getElementById('hsmHomeEmblemName').textContent,'새 계정');
+assert.equal(w.document.querySelectorAll('.collection-tile').length,1);
+// Refreshing the token for the same account keeps its cached collection.
+w.currentLoginToken='second-renewed';await w.HSMEmblems.load(false);
+assert.equal(pending.length,2);
 dom.window.close();console.log('PASS collection filters, locked details, equip failure/retry, duplicate guard and modal state');
