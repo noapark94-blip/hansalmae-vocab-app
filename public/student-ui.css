@@ -591,3 +591,9 @@ body.collection-open{overflow:hidden}
 #myPageScreen .my-summary-label{display:block;margin:0 0 8px;font-size:10px;font-weight:500;line-height:1.4;white-space:nowrap;letter-spacing:-.3px;color:#94858f}
 #myPageScreen .my-summary-value{font-size:21px;font-weight:650;line-height:1.2;letter-spacing:-.6px;color:#543747}
 @media(max-width:360px){#myPageScreen .my-summary-label{font-size:9px}#myPageScreen .my-summary-value{font-size:19px}}
+
+/* Keep the exact point total readable within the existing four-column summary. */
+#myPageScreen .my-summary-card:has(#myTotalPoint){container-type:inline-size}
+#myPageScreen #myTotalPoint{display:flex;align-items:baseline;justify-content:center;gap:2px;height:26px;white-space:nowrap;overflow-wrap:normal;letter-spacing:-.3px;font-size:min(21px,calc(100cqi / var(--point-width,2)));line-height:26px}
+#myPageScreen #myTotalPoint .my-point-unit{font-size:.65em;line-height:1;font-weight:600}
+@media(max-width:360px){#myPageScreen #myTotalPoint{font-size:min(19px,calc(100cqi / var(--point-width,2)))}}
