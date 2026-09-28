@@ -4,15 +4,16 @@ import {JSDOM} from 'jsdom';
 const html=fs.readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
 const rememberScript=html.slice(html.indexOf('function hsmSaveRememberedId_(){'),html.indexOf('</script>',html.indexOf('function hsmSaveRememberedId_(){')));
 const clearScript=html.slice(html.indexOf('    function clearLoginState() {'),html.indexOf('    function logout() {'));
+const resetScript=html.slice(html.indexOf('    function resetExperienceSummary_() {'),html.indexOf('    function renderExperienceSummary_(experience) {'));
 const key='hsmRememberedStudentId';
 function open(saved){
  const d=new JSDOM(html,{url:'https://app.test',runScripts:'outside-only'}),w=d.window;
  w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};
  if(saved!==null)w.localStorage.setItem(key,saved);
  w.eval(rememberScript);
- w.eval(`var currentLoginToken='token',currentRefreshToken='refresh',currentTokenExpiresAt=123,currentStudent={studentId:'student-one'};
+ w.eval(`var currentExperienceData=null,currentLoginToken='token',currentRefreshToken='refresh',currentTokenExpiresAt=123,currentStudent={studentId:'student-one'};
  const HSM_STUDENT_TOKEN_KEY_='hansalmaeStudentToken',HSM_STUDENT_INFO_KEY_='hansalmaeStudentInfo',HSM_STUDENT_REFRESH_KEY_='hansalmaeStudentRefreshToken',HSM_STUDENT_EXPIRES_KEY_='hansalmaeStudentTokenExpiresAt';
- function stopStudentSessionMonitor_(){} function stopStudentNotificationPoll_(){}`+clearScript);
+ function stopStudentSessionMonitor_(){} function stopStudentNotificationPoll_(){}`+resetScript+clearScript);
  return w;
 }
 let w=open(null),id=w.document.getElementById('studentId'),check=w.document.getElementById('rememberStudentId');
@@ -20,7 +21,9 @@ id.value=' student-one ';check.checked=true;check.dispatchEvent(new w.Event('cha
 assert.equal(w.localStorage.getItem(key),'student-one');
 w.document.getElementById('studentPassword').value='test-only-password';
 w.localStorage.setItem('hansalmaeStudentToken','test-token');
+w.document.getElementById('hsmHomeLevel').textContent='Lv.9';
 w.clearLoginState();
+assert.equal(w.document.getElementById('hsmHomeLevel').textContent,'Lv.—','logout clears previous student level');
 assert.equal(id.value,'student-one','logout/session expiry must restore remembered ID');
 assert.equal(check.checked,true);assert.equal(w.document.getElementById('studentPassword').value,'');
 assert.equal(w.localStorage.getItem('hansalmaeStudentToken'),null);
