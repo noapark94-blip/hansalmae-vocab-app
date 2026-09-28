@@ -24,8 +24,10 @@ assert.equal(t.pollInterval(),300);
 state.members[0].loaded=true;accept();const before=request;await t.acknowledgePrepared();assert.equal(request,before,'acknowledged question must not send another immediate request');
 state.members[0].loaded=false;accept();
 const pending=t.acknowledgePrepared();await new Promise(r=>setImmediate(r));assert.equal(request.payload.protocol,2);assert.equal(request.payload.readyRound,0);assert.equal(request.payload.syncToken,'token1');
-state.syncToken=null;state.preparing=false;state.roundAt=new Date(clock+2000).toISOString();state.deadline=new Date(clock+12000).toISOString();reply(structuredClone(state));await pending;
-assert.equal(d.querySelectorAll('[data-br="answer"]').length,0);clock+=1999;t.tickClock();assert.equal(d.querySelectorAll('[data-br="answer"]').length,0);
+state.syncToken=null;state.preparing=false;state.roundAt=new Date(clock+4000).toISOString();state.deadline=new Date(clock+14000).toISOString();reply(structuredClone(state));await pending;
+assert.equal(d.querySelectorAll('[data-br="answer"]').length,0);t.tickClock();assert.equal(d.querySelector('#brCountdown').textContent,'4');
+for(const count of ['3','2','1']){clock+=1000;t.tickClock();assert.equal(d.querySelector('#brCountdown').textContent,count);assert.equal(d.querySelectorAll('[data-br="answer"]').length,0);}
+clock+=999;t.tickClock();assert.equal(d.querySelectorAll('[data-br="answer"]').length,0);
 clock++;t.tickClock();assert.equal(d.querySelector('.br-prompt').textContent,'story','release cached question without another fetch');assert.equal(d.querySelectorAll('[data-br="answer"]:not(:disabled)').length,2);
 state.round=1;state.roundAt=null;state.deadline=null;state.preparing=true;state.syncToken='token2';state.preparedQuestion={...q,prompt:'again'};accept();assert(!d.querySelector('[data-br="answer"]:not(:disabled)'));assert(d.querySelector('.br-question-card').classList.contains('is-round-wait'));assert(!d.querySelector('.br-prompt').textContent.includes('again'));
 Object.defineProperty(d,'hidden',{value:true,configurable:true});assert.equal(t.syncPayload({id:'r'}).readyRound,undefined,'background tab cannot acknowledge readiness');

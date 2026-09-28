@@ -22,7 +22,8 @@ begin
  if v->'roundAt'<>'null'::jsonb then raise exception 'Started before all ready';end if;
  w:=battle_room_play(b,'poll',rid,'{}');
  v:=battle_room_play(b,'poll',rid,jsonb_build_object('readyRound',0,'syncToken',w->>'syncToken'));
- if (v->>'roundAt')::timestamptz<clock_timestamp()+interval '1 second' then raise exception 'Missing common countdown';end if;
+ if (v->>'roundAt')::timestamptz-(v->>'serverNow')::timestamptz not between interval '3.5 seconds' and interval '4 seconds' then raise exception 'First countdown must be four seconds';end if;
+ if (v->>'deadline')::timestamptz-(v->>'roundAt')::timestamptz<>interval '10 seconds' then raise exception 'Countdown consumed answer time';end if;
  w:=battle_room_view(rid,a);if v->>'roundAt'<>w->>'roundAt' then raise exception 'Different starts';end if;
  perform battle_room_play(a,'answer',rid,'{"round":0,"choice":"a"}');
  if (select answers<>'{}'::jsonb from battle_rooms where id=rid) then raise exception 'Early answer accepted';end if;
@@ -59,6 +60,16 @@ begin
  end loop;
  start_at:=v->>'roundAt';if start_at is null then raise exception 'Eight-person barrier failed to release';end if;
  for i in 1..8 loop v:=battle_room_view(rid,ids[i]);if v->>'roundAt'<>start_at then raise exception 'Different eight-person clocks';end if;end loop;
+ -- Next question also waits for everyone, but retains the shorter common delay.
+ update battle_rooms set round=1,round_at=null,prepare_at=clock_timestamp() where id=rid;
+ for i in 1..8 loop
+  v:=battle_room_play(ids[i],'poll',rid,'{}');token:=v->>'syncToken';
+  v:=battle_room_play(ids[i],'poll',rid,jsonb_build_object('readyRound',1,'syncToken',token));
+  if i<8 and v->'roundAt'<>'null'::jsonb then raise exception 'Next round started before everyone was ready';end if;
+ end loop;
+ if (v->>'roundAt')::timestamptz-(v->>'serverNow')::timestamptz not between interval '1.5 seconds' and interval '2 seconds' then raise exception 'Later countdown must remain two seconds';end if;
+ start_at:=v->>'roundAt';
+ for i in 1..8 loop v:=battle_room_view(rid,ids[i]);if v->>'roundAt'<>start_at then raise exception 'Different next-round clocks';end if;end loop;
  if has_function_privilege('authenticated','public.battle_room_play(uuid,text,uuid,jsonb)','execute') or has_table_privilege('authenticated','public.battle_room_members','select') then raise exception 'Private game state exposed';end if;
 end;$eight$;
 select 'PASS eight-person readiness barrier and service-only permissions' as result;
