@@ -117,3 +117,13 @@ body.hsm-teacher-workspace{background:#f7f5f8;color:#302530}
 #teacherLoginScreen #teacherLoginMessage:empty{display:none}
 #teacherLoginScreen #teacherLoginMessage:not(:empty){margin:14px 0 0;font-size:13px;line-height:1.5}
 @media(max-width:480px){#teacherLoginScreen.signup-card{margin:12px auto;padding:26px 20px 16px!important;border-radius:20px}}
+
+/* Native iOS date controls must shrink with their grid cell. */
+.hsm-teacher-workspace :is(.row,.hsm-sv-row,.hsm-sc-row,.field,.hsm-sv-field,.hsm-sc-field){min-width:0;max-width:100%}
+.hsm-teacher-workspace input:is([type="datetime-local"],[type="date"],[type="time"]){
+ display:block;box-sizing:border-box;width:100%;min-width:0;max-width:100%;
+ inline-size:100%;min-inline-size:0;max-inline-size:100%;
+ -webkit-appearance:none;appearance:none;text-align:left;
+}
+.hsm-teacher-workspace input:is([type="datetime-local"],[type="date"],[type="time"])::-webkit-date-and-time-value{min-width:0;text-align:left}
+.hsm-teacher-workspace input:is([type="datetime-local"],[type="date"],[type="time"])::-webkit-datetime-edit{min-width:0;padding:0}
