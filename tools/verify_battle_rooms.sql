@@ -1,3 +1,6 @@
+begin;
+set local statement_timeout='15s';
+set local lock_timeout='2s';
 -- Run with the room migration in a rolled-back transaction.
 do $$
 declare users uuid[];u uuid;r jsonb;rid uuid;qs jsonb;i integer;j integer;oldhost uuid;setid uuid;lobby jsonb;listed jsonb;
@@ -33,11 +36,18 @@ begin
  perform battle_room_play(users[1],'chat',rid,'{"kind":"text","body":"안녕하세요"}');
  r:=battle_room_play(users[2],'poll',rid);assert jsonb_array_length(r->'chat')=1;
  begin perform battle_room_play(users[1],'chat',rid,'{"kind":"emoji","body":"🔥"}');raise exception 'FAIL spam';exception when others then if SQLERRM='FAIL spam' then raise;end if;end;
- for i in 1..8 loop perform battle_room_play(users[i],'ready',rid,'{"ready":true}');end loop;
+ for i in 1..8 loop perform battle_room_play(users[i],'ready',rid,'{"protocol":2,"ready":true}');end loop;
  r:=battle_room_play(users[1],'start',rid,jsonb_build_object('questions',qs));assert r->>'status'='playing';assert r->'question'='null'::jsonb,'countdown leak';
  r:=battle_room_play(users[1],'answer',rid,'{"round":0,"choice":"yes0"}');assert not (r->>'answered')::boolean,'early answer';
  begin perform battle_room_play(users[2],'chat',rid,'{"kind":"text","body":"answer"}');raise exception 'FAIL live text';exception when others then if SQLERRM='FAIL live text' then raise;end if;end;
  for j in 0..9 loop
+  -- Every client acknowledges the prepared round before its common start.
+  for i in 1..8 loop
+   r:=battle_room_play(users[i],'poll',rid,'{"protocol":2}');
+   r:=battle_room_play(users[i],'poll',rid,jsonb_build_object('protocol',2,'readyRound',j,'syncToken',r->>'syncToken'));
+   if i<8 then assert r->'roundAt'='null'::jsonb,'started before all eight acknowledged';end if;
+  end loop;
+  assert r->>'roundAt' is not null,'missing synchronized start';
   update battle_rooms set round_at=clock_timestamp()-interval '1 second' where id=rid;
   for i in 1..8 loop
    r:=battle_room_play(users[i],'answer',rid,jsonb_build_object('round',j,'choice','yes'||j));
@@ -62,5 +72,18 @@ begin
  perform battle_room_play(users[2],'leave',rid);assert (select status from battle_rooms where id=rid)='closed','empty room cleanup';
  lobby:=battle_room_play(users[2],'lobby');
  assert not exists(select 1 from jsonb_array_elements(lobby->'rooms') where value->>'id' in(rid::text,oldhost::text)),'closed and finished excluded';
+ -- A player leaving a two-person live game ends it without rewards.
+ r:=battle_room_play(users[3],'create',null,jsonb_build_object('title','퇴장 검증','capacity',2,'settings',jsonb_build_object('kind','standard','source',setid,'count',10,'seconds',10)));rid:=(r->>'id')::uuid;
+ perform battle_room_play(users[4],'join',rid);
+ perform battle_room_play(users[3],'ready',rid,'{"protocol":2,"ready":true}');
+ perform battle_room_play(users[4],'ready',rid,'{"protocol":2,"ready":true}');
+ perform battle_room_play(users[3],'start',rid,jsonb_build_object('questions',qs));
+ perform battle_room_play(users[3],'leave',rid);
+ r:=battle_room_play(users[4],'poll',rid);
+ assert r->>'status'='finished' and r->>'host'=users[4]::text,'live host exit';
+ assert not exists(select 1 from battle_room_rewards where room_id=rid and (points>0 or xp>0)),'abandoned game rewards';
  assert not has_table_privilege('authenticated','battle_rooms','SELECT');assert not has_function_privilege('anon','battle_room_play(uuid,text,uuid,jsonb)','EXECUTE');
 end;$$;
+
+select 'PASS eight-player synchronized game, authorization, capacity, chat, scoring, reward idempotency, rematch, host succession and live exit' as result;
+rollback;
