@@ -33,9 +33,16 @@ state.round=1;state.roundAt=null;state.deadline=null;state.preparing=true;state.
 Object.defineProperty(d,'hidden',{value:true,configurable:true});assert.equal(t.syncPayload({id:'r'}).readyRound,undefined,'background tab cannot acknowledge readiness');
 state.roundAt=new Date(clock+2000).toISOString();state.deadline=new Date(clock+12000).toISOString();state.preparing=false;state.syncToken=null;accept();clock+=2000;Object.defineProperty(d,'hidden',{value:false});t.tickClock();assert.equal(d.querySelector('.br-prompt').textContent,'again');
 assert.equal(t.pollInterval(),1200,'playing cadence unchanged');
+w.dispatchEvent(new w.Event('offline'));assert.equal(d.querySelector('#brRecovery').hidden,false);assert.match(d.querySelector('#brRecoveryTitle').textContent,/다시 이어/);assert.equal(d.querySelectorAll('[data-br="answer"]:not(:disabled)').length,2,'network status must not block answers');
+const workingFetch=w.fetch;w.fetch=async()=>{throw Error('network down');};await t.refresh(true);assert.equal(d.querySelector('#brRecovery').hidden,false);w.fetch=workingFetch;
+accept();assert.equal(d.querySelector('#brRecovery').hidden,true,'successful server response clears recovery');
+state.preparing=true;state.roundAt=null;state.prepareDeadline=new Date(clock+20000).toISOString();state.members[0].loaded=true;accept();assert.match(d.querySelector('#brRecoveryDetail').textContent,/1 \/ 2명 준비/);assert.match(d.querySelector('#brRecoveryDetail').textContent,/20초/);
+state.preparing=false;
+
 state.status='waiting';accept();assert.equal(t.pollInterval(),2000);
 state.status='finished';state.reward=null;accept();assert.equal(t.pollInterval(),2000,'pending rewards remain responsive');
 state.reward={points:0,xp:0};accept();assert.equal(t.pollInterval(),5000,'rematch remains polled');
 state.nextRoom='next-room';accept();assert.equal(t.pollInterval(),Infinity,'settled result with known rematch needs no polling');
 await t.refresh();assert.equal(request.payload.syncToken,'token1','settled result sends no periodic request');
+state.status='closed';state.reason='연결 준비가 늦어 대전을 중단했어요. 승패와 보상에는 반영되지 않아요.';accept();assert(d.querySelector('.br-recovery-end'));assert(!d.querySelector('.br-room-grid'),'closed game does not automatically redirect');assert.match(d.querySelector('[data-br="leave"]').textContent,/방 목록/);
 t.reset();dom.window.close();console.log('PASS midpoint/min-RTT clock, readiness ACK, hidden-tab guard, no early question, local scheduled release, next-round barrier.');

@@ -20,7 +20,9 @@ begin
  update battle_room_members set sync_sent_at=clock_timestamp()-interval '100 milliseconds' where room_id=rid and user_id=a;
  v:=battle_room_play(a,'poll',rid,jsonb_build_object('readyRound',0,'syncToken',t));
  if v->'roundAt'<>'null'::jsonb then raise exception 'Started before all ready';end if;
+ update battle_rooms set prepare_at=clock_timestamp()-interval '20 seconds' where id=rid;
  w:=battle_room_play(b,'poll',rid,'{}');
+ if w->>'status'<>'playing' or not (w->>'preparing')::boolean then raise exception 'Temporary disconnect ended game before 30 seconds';end if;
  v:=battle_room_play(b,'poll',rid,jsonb_build_object('readyRound',0,'syncToken',w->>'syncToken'));
  if (v->>'roundAt')::timestamptz-(v->>'serverNow')::timestamptz not between interval '3.5 seconds' and interval '4 seconds' then raise exception 'First countdown must be four seconds';end if;
  if (v->>'deadline')::timestamptz-(v->>'roundAt')::timestamptz<>interval '10 seconds' then raise exception 'Countdown consumed answer time';end if;
@@ -41,7 +43,7 @@ begin
  v:=battle_room_play(a,'poll',rid,'{}');if v->>'round'<>'1' or not (v->>'preparing')::boolean then raise exception 'Next round skipped barrier';end if;
  perform battle_room_play(a,'poll',rid,jsonb_build_object('readyRound',0,'syncToken',t));
  if exists(select 1 from battle_room_members where room_id=rid and ready_round=1) then raise exception 'Stale acknowledgement accepted';end if;
- update battle_rooms set prepare_at=clock_timestamp()-interval '13 seconds' where id=rid;
+ update battle_rooms set prepare_at=clock_timestamp()-interval '31 seconds' where id=rid;
  v:=battle_room_play(a,'poll',rid,'{}');if v->>'status'<>'closed' then raise exception 'Missing readiness timeout';end if;
  if exists(select 1 from battle_room_rewards where room_id=rid) then raise exception 'Timeout awarded rewards';end if;
 end;$test$;
