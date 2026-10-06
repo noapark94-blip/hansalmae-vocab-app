@@ -32,6 +32,35 @@ w.document.getElementById('hsmCollectionDetail').close();
 w.HSMEmblems.open();assert.equal(w.document.getElementById('hsmEmblemModal').getAttribute('aria-hidden'),'false');
 w.HSMEmblems.close();assert.equal(w.document.getElementById('hsmEmblemModal').getAttribute('aria-hidden'),'true');
 await new Promise(resolve=>setImmediate(resolve));
+// Dictionary is one collectible, with a persisted appearance selected in its detail.
+const dictionary={emblemId:'title_dictionary',emblemName:'WALKING DICTIONARY',owned:true,equipped:false,form:'A',imagePath:'./images/emblems/title-dictionary.png'};
+entries.push(dictionary);
+let savedForm='A',savedId='c',rejectForm=false;
+w.google.script.run.withSuccessHandler=ok=>({withFailureHandler:bad=>({
+  getStudentEmblems(){
+    const emblems=entries.map(e=>({...e,equipped:e.emblemId===savedId,...(e.emblemId==='title_dictionary'?{form:savedForm,imagePath:'./images/emblems/title-dictionary'+(savedForm==='B'?'-b':'')+'.png'}:{})}));
+    ok({success:true,emblems,acquiredCount:3,totalCount:4,equippedEmblem:emblems.find(e=>e.equipped)});
+  },
+  equipStudentEmblem(token,id,form){if(rejectForm)return bad(new Error('저장 실패'));savedId=id;if(form)savedForm=form;ok({success:true});}
+})});
+await w.HSMEmblems.load(true);w.HSMEmblems.showDetail('title_dictionary');
+const choose=form=>w.document.querySelector('[data-form="'+form+'"]').click();
+choose('B');assert.match(w.document.querySelector('.collection-detail-image').src,/dictionary-b/);
+assert.equal(savedForm,'A','preview does not save');
+rejectForm=true;await w.HSMEmblems.equip('title_dictionary','B');
+assert.equal(savedForm,'A');assert.equal(w.document.querySelector('[data-form="A"]').disabled,false);
+rejectForm=false;await w.HSMEmblems.equip('title_dictionary','B');
+assert.equal(savedForm,'B');assert.match(w.document.getElementById('hsmHomeEmblemImage').src,/dictionary-b/);
+choose('A');assert.equal(w.document.querySelector('.collection-detail-action').disabled,false);
+await w.HSMEmblems.equip('title_dictionary','A');
+choose('B');assert.equal(w.document.querySelector('.collection-detail-action').disabled,false,'toggle uses refreshed saved form');
+await w.HSMEmblems.equip('title_dictionary','B');
+w.HSMEmblems.reset();await w.HSMEmblems.load(true);w.HSMEmblems.showDetail('title_dictionary');
+assert.equal(w.document.querySelector('[data-form="B"]').getAttribute('aria-pressed'),'true');
+assert.equal(w.document.querySelector('.collection-detail-action').disabled,true);
+dictionary.owned=false;await w.HSMEmblems.load(true);w.HSMEmblems.showDetail('title_dictionary');choose('A');
+assert.equal(w.document.querySelector('.collection-detail-action').disabled,true,'unowned variants are preview only');
+w.document.getElementById('hsmCollectionDetail').close();
 // A delayed response from a previous account must not populate the next account.
 const pending=[];
 w.google.script.run.withSuccessHandler=ok=>({withFailureHandler:bad=>({getStudentEmblems(){pending.push({ok,bad});}})});

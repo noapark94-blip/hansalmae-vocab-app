@@ -1,3 +1,4 @@
+import { emblemImage } from "./emblem-forms.mts";
 import { gradeEvidence } from "./grading.mts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import webpush from "npm:web-push@3.6.7";
@@ -1650,7 +1651,7 @@ async function dispatch(
         });
       }
       const { data: owned } = await admin.from("student_emblems").select(
-        "emblem_id,earned_at,equipped",
+        "emblem_id,earned_at,equipped,form",
       ).eq("user_id", p.id);
       const ownership = new Map(
         (owned ?? []).map((x: any) => [x.emblem_id, x]),
@@ -1675,7 +1676,8 @@ async function dispatch(
         return {
           emblemId: e.id,
           emblemName: e.name,
-          imagePath: e.image_path,
+          imagePath: emblemImage(e, o?.form),
+          form: o?.form ?? "A",
           conditionText: e.condition_type === "LEVEL"
             ? `Lv.${value} 달성`
             : e.condition_type === "TEACHER_TEST_COUNT"
@@ -1727,9 +1729,10 @@ async function dispatch(
     case "equipStudentEmblem": {
       const p = await profileFromToken(args[0]);
       const id = str(args[1]);
-      const { error } = await admin.rpc("equip_student_emblem_atomic", {
+      const { error } = await admin.rpc("equip_student_emblem_form_atomic", {
         p_user_id: p.id,
         p_emblem_id: id,
+        p_form: args[2] == null ? null : str(args[2]),
       });
       if (error) throw error;
       return { success: true, message: "엠블럼을 장착했습니다." };
@@ -1751,13 +1754,13 @@ async function dispatch(
           : Promise.resolve({ data: [] }),
         ids.length
           ? admin.from("student_emblems").select(
-            "user_id,emblem_settings(id,name,image_path)",
+            "user_id,form,emblem_settings(id,name,image_path)",
           ).eq("equipped", true).in("user_id", ids)
           : Promise.resolve({ data: [] }),
       ]);
       const xpMap = new Map((xp ?? []).map((x: any) => [x.user_id, x]));
       const emblemMap = new Map(
-        (equipped ?? []).map((x: any) => [x.user_id, x.emblem_settings]),
+        (equipped ?? []).map((x: any) => [x.user_id, x.emblem_settings ? { ...x.emblem_settings, image_path: emblemImage(x.emblem_settings, x.form) } : null]),
       );
       const groups: { [key: string]: Map<string, any> } = {
         middle: new Map(),
@@ -1956,7 +1959,7 @@ async function dispatch(
           : Promise.resolve({ data: [] }),
         users.length
           ? admin.from("student_emblems").select(
-            "user_id,emblem_settings(name,image_path)",
+            "user_id,form,emblem_settings(id,name,image_path)",
           ).eq("equipped", true).in("user_id", users)
           : Promise.resolve({ data: [] }),
       ]);
@@ -1967,7 +1970,7 @@ async function dispatch(
         resultMap.set(r.user_id, list);
       }
       const emblemMap = new Map(
-        (equipped ?? []).map((x: any) => [x.user_id, x.emblem_settings]),
+        (equipped ?? []).map((x: any) => [x.user_id, x.emblem_settings ? { ...x.emblem_settings, image_path: emblemImage(x.emblem_settings, x.form) } : null]),
       );
       const ended = Boolean(
         exam?.ends_at && new Date(exam.ends_at).getTime() < Date.now(),
