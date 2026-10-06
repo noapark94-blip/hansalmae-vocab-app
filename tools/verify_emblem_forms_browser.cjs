@@ -15,6 +15,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   })})}}};
  });
  await page.addScriptTag({content:plugin});
+ await page.addScriptTag({content:fs.readFileSync('public/ui-icons.js','utf8')});
  await page.evaluate(async()=>{await HSMEmblems.load(true);HSMEmblems.open();HSMEmblems.showDetail('title_dictionary');});
  for(const width of [320,393,768]){
   await page.setViewportSize({width,height:700});
@@ -30,5 +31,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
  await page.evaluate(()=>HSMEmblems.showDetail('title_dictionary'));
  assert.equal(await page.locator('[data-form="B"]').getAttribute('aria-pressed'),'true');
  assert(await page.locator('.collection-detail-action').isDisabled());
+ await page.locator('#hsmCollectionDetailTitle').evaluate(el=>{el.textContent='오답 사냥꾼';});
+ await page.waitForTimeout(50);
+ assert.equal(await page.locator('#hsmCollectionDetailTitle .hsm-ui-icon').count(),0,'emblem title must not receive keyword action icons');
+ assert.equal(await page.locator('#hsmCollectionDetailTitle').evaluate(el=>getComputedStyle(el).textAlign),'center');
+ assert.equal(await page.locator('#hsmCollectionDetailTitle').evaluate(el=>el.classList.contains('hsm-icon-label')),false);
  assert.deepEqual(errors,[]);console.log('PASS real collection: preview/apply/reopen B form, 320/393/768px bounds, artwork loads, no JS errors');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});
