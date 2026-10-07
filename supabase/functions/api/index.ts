@@ -1552,6 +1552,7 @@ async function dispatch(
         { data: testRows },
         { data: attendanceRows },
         { data: rankingRows },
+        { data: battleCount, error: battleCountError },
       ] = await Promise.all([
         admin.from("emblem_settings").select("*").eq("enabled", true).order(
           "sort_order",
@@ -1577,8 +1578,10 @@ async function dispatch(
           "month,rank,category,winner_grade_group,finalized,word_sets(name)",
         )
           .eq("user_id", p.id).eq("rank", 1).order("month"),
+        admin.rpc("battle_completed_count", { p_user_id: p.id }),
       ]);
       if (error) throw error;
+      if (battleCountError) throw battleCountError;
       const attendanceCount = attendanceStreak(attendanceRows ?? []);
       const perfectCount = perfectTestStreak(testRows ?? []);
       const allowedWins = (rankingRows ?? []).filter(eligibleFinalRankingWin);
@@ -1591,7 +1594,9 @@ async function dispatch(
             : e.condition_value,
         );
       const currentConditionValue = (e: any) =>
-        e.condition_type === "LEVEL"
+        e.condition_type === "BATTLE_COMPLETE_COUNT"
+          ? num(battleCount)
+          : e.condition_type === "LEVEL"
           ? exp.level
           : e.condition_type === "TEACHER_TEST_COUNT"
           ? num(teacherCount)
@@ -1611,7 +1616,9 @@ async function dispatch(
           ? consecutiveWinCount
           : 0;
       const qualifies = (e: any) =>
-        e.condition_type === "LEVEL"
+        e.condition_type === "BATTLE_COMPLETE_COUNT"
+          ? num(battleCount) >= conditionValue(e)
+          : e.condition_type === "LEVEL"
           ? exp.level >= conditionValue(e)
           : e.condition_type === "TEACHER_TEST_COUNT"
           ? num(teacherCount) >= conditionValue(e)
@@ -1664,7 +1671,9 @@ async function dispatch(
         const progressPercent = value > 0
           ? Math.max(0, Math.min(100, Math.round(progressValue / value * 100)))
           : 0;
-        const progressLabel = e.condition_type === "LEVEL"
+        const progressLabel = e.condition_type === "BATTLE_COMPLETE_COUNT"
+          ? `대전 완료 ${progressValue} / ${value}회`
+          : e.condition_type === "LEVEL"
           ? `현재 Lv.${progressValue} / 목표 Lv.${value}`
           : e.condition_type === "ATTENDANCE_STREAK"
           ? `현재 ${progressValue}일 / 목표 ${value}일`
@@ -1678,7 +1687,10 @@ async function dispatch(
           emblemName: e.name,
           imagePath: emblemImage(e, o?.form),
           form: o?.form ?? "A",
-          conditionText: e.condition_type === "LEVEL"
+          description: e.id === "achievement_battle_chick" ? "작지만 물러서지 않는 승부사" : null,
+          conditionText: e.condition_type === "BATTLE_COMPLETE_COUNT"
+            ? `대전 ${value}회 완료 (승패 무관)`
+            : e.condition_type === "LEVEL"
             ? `Lv.${value} 달성`
             : e.condition_type === "TEACHER_TEST_COUNT"
             ? `선생님 시험 ${value}회 응시`
