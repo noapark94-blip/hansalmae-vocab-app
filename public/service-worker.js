@@ -1,10 +1,12 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20261007-206';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20261015-207';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
 };
 
 const REQUIRED_ASSETS = [
+  versioned('./flashcards.js'),
+  versioned('./flashcards.css'),
   './fonts/battle-jua.css',
   './images/battle/wood-deck-v1.svg',
   './images/battle/wood-scoreboard-v1.svg',
