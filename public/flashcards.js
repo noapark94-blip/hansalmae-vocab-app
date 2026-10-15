@@ -48,7 +48,7 @@ function selected(kind){
  if(kind==='wrong'){const rows=getSelectedWrongRows_();return {words:wrongNotebookWords.filter(w=>rows.includes(Number(w.rowNumber))),label:'오답노트'};}
  const rows=[...document.querySelectorAll('#hsmSchoolPageBody .hsm-school-word-row')].filter(r=>r.querySelector('.hsm-school-word-check')?.checked);return {words:rows.map(r=>({word:r.querySelector('.hsm-school-word-eng')?.textContent,meaning:r.querySelector('.hsm-school-word-mean')?.textContent})),label:'내신 단어장'};
 }
-function add(host,kind){if(!host||host.querySelector('[data-flashcards]'))return;const b=document.createElement('button');b.type='button';b.className='fc-entry';b.dataset.flashcards=kind;b.dataset.hsmIconReady='1';b.textContent='선택 단어 암기';b.onclick=()=>{const s=selected(kind);if(!s.words.length){window.HSMDialog?.alert('암기할 단어를 먼저 선택해주세요.');return;}open(s.words,s.label);};host.append(b);}
+function add(host,kind){if(!host||host.querySelector('[data-flashcards]'))return;const b=document.createElement('button');b.type='button';b.className='fc-entry';b.dataset.flashcards=kind;b.dataset.hsmIconReady='1';b.textContent=kind==='vocab'?'암기 시작':'선택 단어 암기';b.onclick=()=>{const s=selected(kind);if(!s.words.length){window.HSMDialog?.alert('암기할 단어를 먼저 선택해주세요.');return;}open(s.words,s.label);};host.append(b);}
 function sync(){
  if(dialog?.open&&account!==owner())dialog.close();
  add(document.querySelector('#vocabScreen .vocab-actions'),'vocab');add($('personalTestButton')?.parentElement,'personal');add($('wrongBulkToolbar'),'wrong');add(document.querySelector('#hsmSchoolPageBody .hsm-school-selectbar'),'school');
@@ -56,8 +56,18 @@ function sync(){
  const saved=read();
  for(const id of ['vocabScreen','personalVocabularyScreen','wrongNotebookScreen','hsmSchoolPageBody']){
   const host=$(id);if(!host)continue;let resume=host.querySelector(':scope > .fc-resume-entry');
-  if(!resume){resume=document.createElement('button');resume.className='fc-resume-entry';resume.type='button';resume.dataset.hsmIconReady='1';resume.onclick=()=>open([],'');host.prepend(resume);}
-  resume.hidden=!owner()||!saved?.queue.length;const label='암기 이어 하기 · '+(saved?.queue.length||0)+'개 남음';if(resume.textContent!==label)resume.textContent=label;
+  if(!resume){
+   resume=document.createElement('div');resume.className='fc-resume-entry';
+   resume.innerHTML='<div class="fc-resume-copy"><span class="fc-resume-caption">이전 암기</span><span class="fc-resume-detail"></span></div><button type="button" data-hsm-icon-ready="1">이어서 하기 <span aria-hidden="true">→</span></button>';
+   resume.querySelector('button').onclick=()=>{open([],'');if(read()?.queue.length){session=read();history=[];revealed=false;phase='study';render();}};
+   const anchor=id==='vocabScreen'?host.querySelector('#hsmVocabSelect'):id==='personalVocabularyScreen'?host.querySelector('#personalVocabularyList'):id==='wrongNotebookScreen'?host.querySelector('#wrongNotebookList'):host.querySelector('.hsm-school-word-list');
+   if(anchor&&anchor.parentElement===host)host.insertBefore(resume,anchor);else if(id==='vocabScreen'&&$('vocabDay'))$('vocabDay').closest('.row')?.after(resume);else host.append(resume);
+   if(!resume.isConnected)host.append(resume);
+  }
+  resume.hidden=!owner()||!saved?.queue.length;
+  const label=(saved?.label||'선택한 단어')+' · 남은 단어 '+(saved?.queue.length||0)+'개';
+  const detail=resume.querySelector('.fc-resume-detail');if(detail.textContent!==label)detail.textContent=label;
+
  }
 
 }

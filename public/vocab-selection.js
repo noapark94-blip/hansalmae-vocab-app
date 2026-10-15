@@ -23,7 +23,16 @@
     const toggle=document.createElement('button');toggle.type='button';toggle.id='hsmVocabOnlySelected';
     toggle.dataset.hsmIconReady='1';toggle.textContent='선택만 보기';
     toggle.setAttribute('aria-pressed','false');
-    actions.prepend(toggle);
+    bar.append(toggle);
+    const countLabel=document.createElement('span');countLabel.className='hsm-dock-count';actions.append(countLabel);
+    const more=document.createElement('button');more.type='button';more.id='hsmVocabMore';more.textContent='⋯';more.dataset.hsmIconReady='1';more.setAttribute('aria-label','선택 단어 더보기');more.setAttribute('aria-haspopup','dialog');more.setAttribute('aria-controls','hsmVocabMoreDialog');actions.append(more);
+    const menu=document.createElement('dialog');menu.id='hsmVocabMoreDialog';menu.setAttribute('aria-labelledby','hsmVocabMoreTitle');
+    menu.innerHTML='<header><h2 id="hsmVocabMoreTitle">선택한 단어</h2><button type="button" data-hsm-icon-ready="1" aria-label="닫기">닫기</button></header><div class="hsm-vocab-more-items"></div>';
+    menu.querySelector('div').append(save,share);document.body.append(menu);
+    more.onclick=()=>menu.showModal();menu.querySelector('header button').onclick=()=>menu.close();
+    [save,share].forEach(b=>b.addEventListener('click',()=>menu.close(),true));
+    menu.addEventListener('close',()=>{if(!actions.hidden)more.focus();});
+    menu.addEventListener('click',e=>{if(e.target===menu){const r=menu.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)menu.close();}});
     toggle.onclick=function(){only.checked=!only.checked;renderVocabulary();};
     save.dataset.hsmIconReady='1';share.dataset.hsmIconReady='1';share.textContent='공유';
     function positionActions(){
@@ -35,6 +44,9 @@
     window.addEventListener('resize',positionActions);
     function sync(){
       const count=getCheckedWords().length;
+      countLabel.innerHTML='<strong>'+count+'</strong><span>개 선택</span>';
+      menu.querySelector('h2').textContent='선택한 단어 '+count+'개';
+      if((!selecting||!count)&&menu.open)menu.close();
       if(!count)only.checked=false;
       screen.classList.toggle('hsm-vocab-selecting',selecting);
       entry.hidden=selecting;bar.hidden=!selecting;panel.hidden=!selecting;
