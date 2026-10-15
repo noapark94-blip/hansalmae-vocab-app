@@ -12,14 +12,14 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
  for(const width of [320,393,768,1280]){
  await page.setViewportSize({width,height:width===320?568:852});
  await page.evaluate(()=>HSMFlashcards.open(getCheckedWords(),'중등 단어 · Day 1'));
- await page.locator('#fcShuffle').uncheck();await page.locator('[data-fc=start]').click();await page.locator('.fc-card').click();
+ await page.locator('#fcShuffle').uncheck();await page.locator('[data-fc=start]').click();await page.locator('.fc-card').hover();await page.mouse.down();assert(await page.locator('.fc-answer').isVisible());await page.mouse.up();assert(!(await page.locator('.fc-answer').isVisible()));
  const rect=await page.locator('.fc-decisions').boundingBox();assert(rect.x>=0&&rect.x+rect.width<=width);assert(rect.y+rect.height<=(width===320?568:852));
  assert.equal(await page.locator('.fc-answer').textContent(),'기억하다; 잊지 않고 마음에 간직하다');
  assert(await page.locator('#hsmFlashcards').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
  await page.waitForTimeout(240);if(width===393)await page.screenshot({path:'/tmp/flashcards-study.png'});
- await page.locator('[data-fc=known]').click();await page.locator('[data-fc=close]').click();
+ await page.locator('[data-fc=known]').click();await page.locator('[data-fc=close]').click();await page.locator('[data-fc=continue]').click();assert(await page.locator('.fc-card').isVisible());await page.locator('[data-fc=close]').click();await page.locator('[data-fc=exit]').click();
  }
- await page.setViewportSize({width:320,height:568});await page.evaluate(()=>HSMFlashcards.open([{word:'longword'.repeat(20),meaning:'아주 긴 뜻을 보여줄 때에도 모든 내용을 읽을 수 있어야 합니다. '.repeat(20)}],'긴 단어'));await page.locator('[data-fc=start]').click();await page.locator('[data-fc=reveal]').first().click();
+ await page.setViewportSize({width:320,height:568});await page.evaluate(()=>HSMFlashcards.open([{word:'longword'.repeat(20),meaning:'아주 긴 뜻을 보여줄 때에도 모든 내용을 읽을 수 있어야 합니다. '.repeat(20)}],'긴 단어'));await page.locator('[data-fc=start]').click();await page.locator('[data-fc=reveal]').dispatchEvent('pointerdown',{button:0,pointerId:1});
  assert(await page.locator('#hsmFlashcards').evaluate(e=>e.scrollWidth<=e.clientWidth+1));const foot=await page.locator('.fc-decisions').boundingBox();assert(foot.y+foot.height<=568);assert(await page.locator('.fc-main').evaluate(e=>e.scrollHeight>e.clientHeight));
  await browser.close();console.log('PASS browser: 320/393/768/1280, fixed controls, long text scrolling, no horizontal overflow');
 })().catch(e=>{console.error(e);process.exit(1)});

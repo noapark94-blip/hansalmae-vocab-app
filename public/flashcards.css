@@ -35,3 +35,18 @@ body .fc-resume-entry button{flex-shrink:0;width:auto!important;min-height:44px;
 #vocabScreen.hsm-vocab-selecting{padding-bottom:96px!important}
 #hsmVocabSelectionBar{flex-wrap:wrap!important}#hsmVocabSelectionBar #hsmVocabOnlySelected{width:auto!important;min-height:36px!important;padding:6px 10px!important;margin:0!important;border:0!important;background:transparent!important;color:#947f8c!important;font-size:11px!important}#hsmVocabSelectionBar #hsmVocabOnlySelected[aria-pressed=true]{background:#eadce6!important;color:#8f145f!important}
 #hsmVocabMoreDialog{width:min(360px,calc(100% - 32px));margin:auto;padding:20px;border:1px solid #eee5eb;border-radius:24px;color:#533849;background:#fff;box-shadow:0 18px 60px #38213124}#hsmVocabMoreDialog::backdrop{background:#30233266;backdrop-filter:blur(4px)}#hsmVocabMoreDialog header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}#hsmVocabMoreDialog h2{font-size:17px;margin:0;text-align:left}#hsmVocabMoreDialog button{width:100%;min-height:48px;margin:0;padding:12px 14px;border:0;border-radius:12px;background:#f7f2f5;color:#664b5e;box-shadow:none;font-size:14px;text-align:left}#hsmVocabMoreDialog header button{width:auto;background:transparent;font-size:12px}#hsmVocabMoreDialog .hsm-vocab-more-items{display:grid;gap:8px}
+
+/* Compact, press-to-peek study: stable card geometry, instant reveal. */
+#hsmFlashcards[data-phase=study] .fc-main{flex:0 1 auto;overflow:auto;min-height:0}
+#hsmFlashcards[data-phase=study] .fc-footer{border:0;padding-top:4px}
+#hsmFlashcards .fc-progress-copy span{min-width:0;overflow-wrap:anywhere}
+#hsmFlashcards .fc-progress-copy strong{white-space:nowrap;font-weight:600}
+#hsmFlashcards .fc-card{position:relative;min-height:230px;padding:42px 20px 58px;gap:0;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y}
+#hsmFlashcards .fc-card .fc-answer{animation:none;font-size:clamp(23px,5vw,32px);line-height:1.5;color:#8f145f}
+#hsmFlashcards .fc-tap{position:absolute;bottom:20px;left:12px;right:12px;font-size:11px}
+#hsmFlashcards .fc-card.is-revealed{background:#faf3f8;border-color:#d9bfd0}
+#hsmFlashcards .fc-again{background:#eee9ec;border-color:#eee9ec;color:#786674;font-weight:600}
+#hsmFlashcards .fc-decisions button{min-height:52px;border-radius:15px;font-size:15px}
+#hsmFlashcards .fc-exit{padding:24px 0 32px;text-align:center}
+#hsmFlashcards[data-phase=exit] .fc-main{flex:0 1 auto}
+@media(max-width:600px){#hsmFlashcards[data-phase=study] .fc-card{min-height:clamp(210px,34dvh,300px)}#hsmFlashcards[data-phase=study] .fc-main{max-height:calc(100dvh - 205px)}#hsmFlashcards .fc-head{padding-bottom:20px}}
