@@ -1,10 +1,12 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20261015-207';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20261015-208';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
 };
 
 const REQUIRED_ASSETS = [
+  versioned('./word-audio.js'),
+  versioned('./word-audio.css'),
   versioned('./flashcards.js'),
   versioned('./flashcards.css'),
   './fonts/battle-jua.css',

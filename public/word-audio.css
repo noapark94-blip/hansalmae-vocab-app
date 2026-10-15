@@ -1,0 +1,6 @@
+/* Icon-only children preserve the word's textContent for school selection and tests. */
+body button.hsm-word-audio{display:inline-flex!important;vertical-align:middle;align-items:center;justify-content:center;flex:0 0 44px;width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;padding:10px!important;margin:0 0 0 5px!important;border:0!important;border-radius:50%!important;background:transparent!important;color:#a3899b!important;box-shadow:none!important;transform:none!important;cursor:pointer;line-height:1!important}
+body button.hsm-word-audio:hover,body button.hsm-word-audio.is-speaking{background:#f3e6ef!important;color:#8f145f!important}body button.hsm-word-audio:focus-visible{outline:2px solid #8f145f;outline-offset:2px}body button.hsm-word-audio svg{pointer-events:none;flex:none}
+@media print{body button.hsm-word-audio{display:none!important}}
+
+.hsm-cover-target:not(.hsm-cover-revealed)>.hsm-word-audio{visibility:hidden!important;pointer-events:none!important}
