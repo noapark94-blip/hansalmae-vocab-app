@@ -13,3 +13,6 @@ Card reveals the answer immediately while pressed and hides it on release, cance
 
 ## v211 exam consistency
 Practice uses the shared standard word-test CSS, with concise completion and result summaries. Correct answers advance after 600 ms; incorrect answers wait for Next. Exit pauses auto-advance; continuing restores the graded question without scoring twice. Tests cover automatic last-question results, wrong-answer waiting, exit/continue during feedback, and four options on a small viewport.
+
+## v212 settings and outcome panels
+Settings, completion, and results use a compact shared panel. Native direction radios are presented as segments, shuffle as a labelled switch. Outcome metrics and actions stay grouped. Headings opt out of automatic icon decoration to prevent injected check icons from shifting alignment. Browser verification includes the real icon decorator and all three screens.
