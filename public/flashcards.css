@@ -50,3 +50,25 @@ body .fc-resume-entry button{flex-shrink:0;width:auto!important;min-height:44px;
 #hsmFlashcards .fc-exit{padding:24px 0 32px;text-align:center}
 #hsmFlashcards[data-phase=exit] .fc-main{flex:0 1 auto}
 @media(max-width:600px){#hsmFlashcards[data-phase=study] .fc-card{min-height:clamp(210px,34dvh,300px)}#hsmFlashcards[data-phase=study] .fc-main{max-height:calc(100dvh - 205px)}#hsmFlashcards .fc-head{padding-bottom:20px}}
+
+/* The practice exam shares the standard word-test visual rules. */
+#hsmFlashcards .fc-exam{background:#fff;border:1px solid #eadfe5;border-radius:22px;padding:20px}
+#hsmFlashcards .fc-exam .question{display:flex;align-items:center;justify-content:center;font-weight:800;color:#493342;overflow-wrap:anywhere}
+#hsmFlashcards .fc-exam .question-type{display:inline-block;border-radius:30px;color:#8f145f;font-weight:700}
+#hsmFlashcards .fc-exam .progress-wrap,#hsmFlashcards .fc-exam .progress-bar{border-radius:20px}
+#hsmFlashcards .fc-exam .progress-bar{height:100%}
+#hsmFlashcards .fc-exam .fc-options{gap:0}
+#hsmFlashcards .fc-exam .choice{width:100%;font-size:16px;text-align:left;overflow-wrap:anywhere}
+#hsmFlashcards .fc-exam .choice.correct,#hsmFlashcards .fc-exam .choice.wrong{opacity:1}
+#hsmFlashcards .fc-exam .feedback:empty{display:none!important}
+#hsmFlashcards[data-phase=quiz] .fc-main,#hsmFlashcards[data-phase=done] .fc-main,#hsmFlashcards[data-phase=result] .fc-main{flex:0 1 auto;overflow:auto;min-height:0}
+#hsmFlashcards[data-phase=quiz] .fc-footer,#hsmFlashcards[data-phase=done] .fc-footer,#hsmFlashcards[data-phase=result] .fc-footer{border:0;padding-top:4px}
+#hsmFlashcards[data-phase=quiz] .fc-footer:not(:has(button:not([hidden]))){display:none}
+#hsmFlashcards .fc-summary{padding:34px 0 24px;text-align:center}
+#hsmFlashcards .fc-summary h3{font-size:25px;margin:14px 0 6px;line-height:1.4}
+#hsmFlashcards .fc-summary-check{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:#f0e4ed;color:#8f145f;font-size:21px}
+#hsmFlashcards .fc-summary-label{font-size:12px;color:#947f8c}
+#hsmFlashcards .fc-secondary-actions{display:flex;justify-content:center;gap:16px}
+#hsmFlashcards[data-phase=done] .fc-main>.fc-text{display:block;margin:0 auto;font-size:12px}
+#hsmFlashcards[data-phase=done] .fc-footer,#hsmFlashcards[data-phase=result] .fc-footer{padding-top:20px}
+@media(max-width:600px){#hsmFlashcards[data-phase=quiz] .fc-main{max-height:calc(100dvh - 165px)}#hsmFlashcards .fc-exam{padding:18px 14px}}

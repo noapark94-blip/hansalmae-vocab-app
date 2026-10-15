@@ -1,17 +1,17 @@
 /* 한살매 보카 디자인 3차: 시험 흐름과 결과·엠블럼 보상 경험 */
 
-#testScreen {
+:is(#testScreen, #hsmFlashcards .fc-exam) {
   overflow: hidden;
 }
 
-#testScreen .progress-wrap {
+:is(#testScreen, #hsmFlashcards .fc-exam) .progress-wrap {
   height: 9px;
   margin-bottom: 18px;
   border: 1px solid rgba(143, 20, 95, 0.06);
   background: #f3e9ee;
 }
 
-#testScreen .progress-bar {
+:is(#testScreen, #hsmFlashcards .fc-exam) .progress-bar {
   position: relative;
   overflow: visible;
   background: linear-gradient(90deg, #8f145f, #c6478e);
@@ -19,7 +19,7 @@
   transition: width 0.48s cubic-bezier(.22, .78, .28, 1);
 }
 
-#testScreen .progress-bar::after {
+:is(#testScreen, #hsmFlashcards .fc-exam) .progress-bar::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -33,21 +33,21 @@
   transform: translateY(-50%);
 }
 
-#testScreen .question-info {
+:is(#testScreen, #hsmFlashcards .fc-exam) .question-info {
   margin-bottom: 13px;
   color: var(--hsm-text-secondary, #74656e);
   font-size: 14px;
   font-weight: 650;
 }
 
-#testScreen .question-type {
+:is(#testScreen, #hsmFlashcards .fc-exam) .question-type {
   padding: 7px 13px;
   border: 1px solid #ead5e1;
   background: #fff6fa;
   font-size: 13px;
 }
 
-#testScreen .question {
+:is(#testScreen, #hsmFlashcards .fc-exam) .question {
   min-height: 112px;
   margin: 20px 0 22px;
   padding: 12px;
@@ -55,21 +55,21 @@
   line-height: 1.38;
 }
 
-#testScreen.hsm-question-enter .question-type,
-#testScreen.hsm-question-enter .question,
-#testScreen.hsm-question-enter .choice {
+:is(#testScreen, #hsmFlashcards .fc-exam).hsm-question-enter .question-type,
+:is(#testScreen, #hsmFlashcards .fc-exam).hsm-question-enter .question,
+:is(#testScreen, #hsmFlashcards .fc-exam).hsm-question-enter .choice {
   animation: hsmQuestionEnter 0.38s cubic-bezier(.22, .78, .28, 1) both;
 }
 
-#testScreen.hsm-question-enter .question {
+:is(#testScreen, #hsmFlashcards .fc-exam).hsm-question-enter .question {
   animation-delay: 0.035s;
 }
 
-#testScreen.hsm-question-enter .choice {
+:is(#testScreen, #hsmFlashcards .fc-exam).hsm-question-enter .choice {
   animation-delay: calc(0.065s + (var(--hsm-choice-index, 0) * 0.045s));
 }
 
-#testScreen .choice {
+:is(#testScreen, #hsmFlashcards .fc-exam) .choice {
   position: relative;
   min-height: 58px;
   margin-top: 10px;
@@ -84,11 +84,11 @@
   transition: transform .16s ease, border-color .16s ease, background-color .16s ease, box-shadow .16s ease;
 }
 
-#testScreen .choice:not(:disabled):active {
+:is(#testScreen, #hsmFlashcards .fc-exam) .choice:not(:disabled):active {
   transform: scale(0.985);
 }
 
-#testScreen .choice.correct {
+:is(#testScreen, #hsmFlashcards .fc-exam) .choice.correct {
   padding-right: 50px;
   border-color: #3a9a69;
   background: linear-gradient(180deg, #f1fcf6, #e8f8ef);
@@ -97,7 +97,7 @@
   animation: hsmAnswerCorrect .48s cubic-bezier(.22, .78, .28, 1) both;
 }
 
-#testScreen .choice.correct::after {
+:is(#testScreen, #hsmFlashcards .fc-exam) .choice.correct::after {
   content: "✓";
   position: absolute;
   top: 50%;
@@ -115,7 +115,7 @@
   transform: translateY(-50%);
 }
 
-#testScreen .choice.wrong {
+:is(#testScreen, #hsmFlashcards .fc-exam) .choice.wrong {
   padding-right: 50px;
   border-color: #d75876;
   background: linear-gradient(180deg, #fff6f8, #ffedf1);
@@ -124,7 +124,7 @@
   animation: hsmAnswerWrong .4s ease both;
 }
 
-#testScreen .choice.wrong::after {
+:is(#testScreen, #hsmFlashcards .fc-exam) .choice.wrong::after {
   content: "×";
   position: absolute;
   top: 50%;
@@ -142,11 +142,11 @@
   transform: translateY(-50%);
 }
 
-#testScreen .choice:disabled:not(.correct):not(.wrong) {
+:is(#testScreen, #hsmFlashcards .fc-exam) .choice:disabled:not(.correct):not(.wrong) {
   opacity: 0.54;
 }
 
-#testScreen .feedback {
+:is(#testScreen, #hsmFlashcards .fc-exam) .feedback {
   display: flex;
   min-height: 66px;
   margin-top: 15px;
@@ -160,13 +160,13 @@
   font-size: 16px;
 }
 
-#testScreen .feedback-status {
+:is(#testScreen, #hsmFlashcards .fc-exam) .feedback-status {
   display: block;
   color: #30232b;
   font-weight: 800;
 }
 
-#testScreen .feedback-translation {
+:is(#testScreen, #hsmFlashcards .fc-exam) .feedback-translation {
   display: block;
   width: 100%;
   margin: 0;
@@ -177,7 +177,7 @@
   text-align: center;
 }
 
-#testScreen .feedback:not(:empty) {
+:is(#testScreen, #hsmFlashcards .fc-exam) .feedback:not(:empty) {
   border: 1px solid #eadfe5;
   background: #fff9fc;
   animation: hsmFeedbackUp .28s ease both;
@@ -412,16 +412,16 @@
 }
 
 @media (max-width: 650px) {
-  #testScreen {
+  :is(#testScreen, #hsmFlashcards .fc-exam) {
     padding: 20px 16px 22px;
   }
 
-  #testScreen .question {
+  :is(#testScreen, #hsmFlashcards .fc-exam) .question {
     min-height: 96px;
     margin: 15px 0 17px;
   }
 
-  #testScreen .choice {
+  :is(#testScreen, #hsmFlashcards .fc-exam) .choice {
     min-height: 56px;
     padding: 14px 15px;
     font-size: 16px;
@@ -449,7 +449,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #testScreen *,
+  :is(#testScreen, #hsmFlashcards .fc-exam) *,
   #resultScreen *,
   #teacherExamTakingScreen *,
   #hsmAchievementCelebration * {

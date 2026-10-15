@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),PREFIX='hsmFlashcards:v1:';
-let dialog,session,account='',phase='setup',revealed=false,history=[],fresh,returnFocus,quiz,index=0,correct=0,missed=[],locked=false,saveFailed=false,previousPhase='study';
+let dialog,session,account='',phase='setup',revealed=false,history=[],fresh,returnFocus,quiz,index=0,correct=0,missed=[],locked=false,saveFailed=false,previousPhase='study',advanceTimer=0;
 const owner=()=>typeof currentStudent!=='undefined'&&currentStudent?.studentId&&typeof currentLoginToken!=='undefined'&&currentLoginToken?String(currentStudent.studentId):'';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -17,9 +17,9 @@ function showAnswer(show){
  card.querySelector('.fc-front').hidden=show;card.querySelector('.fc-answer').hidden=!show;
  const speaker=dialog.querySelector('[data-fc=speak]');if(speaker&&session.direction==='kor')speaker.hidden=!show;
 }
-function requestExit(){showAnswer(false);stopAudio();if(phase==='exit')return;if(!session){dialog.close();return;}save();previousPhase=phase;phase='exit';render();}
+function requestExit(){clearTimeout(advanceTimer);showAnswer(false);stopAudio();if(phase==='exit')return;if(!session){dialog.close();return;}save();previousPhase=phase;phase='exit';render();}
 function ensure(){if(dialog)return;dialog=document.createElement('dialog');dialog.id='hsmFlashcards';dialog.setAttribute('aria-labelledby','fcTitle');document.body.append(dialog);
- dialog.addEventListener('close',()=>{stopAudio();history=[];session=null;sync();if(returnFocus?.isConnected)returnFocus.focus();});
+ dialog.addEventListener('close',()=>{clearTimeout(advanceTimer);stopAudio();history=[];session=null;sync();if(returnFocus?.isConnected)returnFocus.focus();});
  dialog.addEventListener('cancel',e=>{e.preventDefault();if(phase==='exit'){phase=previousPhase;render();}else requestExit();});
  dialog.addEventListener('click',handle);
  dialog.addEventListener('pointerdown',e=>{const card=e.target.closest('[data-fc=reveal]');if(!card||e.button!==0||e.isPrimary===false)return;card.setPointerCapture?.(e.pointerId);showAnswer(true);});
@@ -30,7 +30,7 @@ function ensure(){if(dialog)return;dialog=document.createElement('dialog');dialo
  dialog.addEventListener('focusout',e=>{if(e.target.matches('[data-fc=reveal]'))showAnswer(false);});window.addEventListener('blur',()=>showAnswer(false));document.addEventListener('visibilitychange',()=>{if(document.hidden)showAnswer(false);});
 }
 function button(label,action,cls='',extra=''){return '<button type="button" data-fc="'+action+'" data-hsm-icon-ready="1" class="'+cls+'" '+extra+'>'+label+'</button>';}
-function shell(body,footer=''){dialog.dataset.phase=phase;dialog.innerHTML='<header class="fc-head"><div><h2 id="fcTitle">암기 카드</h2></div>'+button('종료','close','fc-close','aria-label="암기 종료"')+'</header><main class="fc-main" tabindex="-1">'+body+'</main><footer class="fc-footer">'+footer+'</footer>';if(dialog.open)dialog.querySelector('.fc-main').focus({preventScroll:true});}
+function shell(body,footer=''){dialog.dataset.phase=phase;dialog.innerHTML='<header class="fc-head"><div><h2 id="fcTitle">'+(phase==='quiz'?'확인 시험':phase==='result'?'시험 결과':'암기 카드')+'</h2></div>'+button('종료','close','fc-close','aria-label="암기 종료"')+'</header><main class="fc-main" tabindex="-1">'+body+'</main><footer class="fc-footer">'+footer+'</footer>';if(dialog.open)dialog.querySelector('.fc-main').focus({preventScroll:true});}
 function render(){
  if(account!==owner()){dialog.close();return;}
  const notice=saveFailed?'저장 공간이 부족해 이어 하기를 저장하지 못했어요.':'진행 상황은 이 기기에 자동 저장돼요.';
@@ -43,9 +43,13 @@ function render(){
  const w=session.words[session.queue[0]],done=session.words.length-session.queue.length;
  shell('<div class="fc-progress-copy"><span>'+esc(session.label)+'</span><strong>'+done+' / '+session.words.length+' 완료</strong></div><progress max="'+session.words.length+'" value="'+done+'" aria-label="암기 진행"></progress><button type="button" data-fc="reveal" data-hsm-icon-ready="1" class="fc-card" aria-label="누르고 있는 동안 '+(session.direction==='eng'?'뜻':'영어')+' 보기" aria-pressed="false"><strong class="fc-front">'+esc(session.direction==='eng'?w.word:w.meaning)+'</strong><strong class="fc-answer" hidden>'+esc(session.direction==='eng'?w.meaning:w.word)+'</strong><span class="fc-tap">누르고 있는 동안 '+(session.direction==='eng'?'뜻':'영어')+' 보기</span></button><div class="fc-tools">'+button('↶ 되돌리기','undo','',!history.length?'disabled':'')+button('발음 듣기','speak','',(!window.speechSynthesis?'disabled ':'')+(session.direction==='kor'?'hidden':''))+'</div>','<div class="fc-decisions">'+button('아직 몰라요','again','fc-again')+button('외웠어요 ✓','known','fc-primary')+'</div><p class="fc-note">'+notice+'</p>');return;
  }
- if(phase==='done'){shell('<div class="fc-intro fc-complete"><span class="fc-mark">✓</span><h3>'+session.words.length+'개 단어<br>암기 완료!</h3><p>한 장씩 쌓아 올린 오늘의 공부.<br>이제 얼마나 기억하는지 확인해볼까요?</p></div><div class="fc-tools">'+button('↶ 마지막 선택 되돌리기','undo','',history.length?'':'disabled')+'</div>',button('선택한 단어로 확인 시험','quiz','fc-primary',new Set(session.words.map(w=>session.direction==='eng'?w.meaning:w.word)).size<2?'disabled':'')+button('한 번 더 복습','restart','fc-secondary')+button('단어장으로 돌아가기','close','fc-text')+'<p class="fc-note">'+(new Set(session.words.map(w=>session.direction==='eng'?w.meaning:w.word)).size<2?'확인 시험은 서로 다른 답이 2개 이상일 때 가능해요.':notice)+'</p>');return;}
- if(phase==='quiz'){const q=quiz[index];shell('<div class="fc-progress-copy"><strong>암기 확인</strong><span>'+(index+1)+' / '+quiz.length+'</span></div><progress value="'+index+'" max="'+quiz.length+'" aria-label="확인 시험 진행"></progress><div class="fc-quiz-prompt">'+esc(q.prompt)+'</div><div class="fc-options">'+q.options.map((a,i)=>button(esc(a),'answer','', 'data-choice="'+i+'"')).join('')+'</div><p id="fcFeedback" role="status"></p>',button(index+1===quiz.length?'결과 보기':'다음 단어','next','fc-primary','hidden')+'<p class="fc-note">암기 확인용 시험이에요. 점수·경험치에는 반영되지 않아요.</p>');return;}
- shell('<div class="fc-intro"><span class="fc-mark">'+Math.round(correct/quiz.length*100)+'<small>점</small></span><h3>'+quiz.length+'개 중 '+correct+'개 정답</h3><p>'+(missed.length?'헷갈린 '+missed.length+'개만 다시 외워볼까요?':'선택한 단어를 모두 맞혔어요!')+'</p></div>',(missed.length?button('틀린 단어만 다시 암기','retry','fc-primary'):'')+button('단어장으로 돌아가기','close','fc-secondary'));
+ if(phase==='done'){const canQuiz=new Set(session.words.map(w=>session.direction==='eng'?w.meaning:w.word)).size>=2;shell('<div class="fc-summary"><span class="fc-summary-check" aria-hidden="true">✓</span><h3>'+session.words.length+'개 암기 완료</h3><p>'+esc(session.label)+'</p></div>'+button('↶ 마지막 선택 되돌리기','undo','fc-text',history.length?'':'disabled'),button('확인 시험','quiz','fc-primary',canQuiz?'':'disabled')+'<div class="fc-secondary-actions">'+button('다시 암기','restart','fc-text')+button('단어장','close','fc-text')+'</div><p class="fc-note">'+(canQuiz?'확인 시험은 점수·경험치에 반영되지 않아요.':'확인 시험은 서로 다른 답이 2개 이상 필요해요.')+'</p>');return;}
+ if(phase==='quiz'){const q=quiz[index];shell('<section class="fc-exam"><div class="question-info">'+(index+1)+' / '+quiz.length+'</div><div class="progress-wrap" role="progressbar" aria-label="확인 시험 진행" aria-valuemin="0" aria-valuemax="'+quiz.length+'" aria-valuenow="'+index+'"><div class="progress-bar" style="width:'+index/quiz.length*100+'%"></div></div><span class="question-type">'+(session.direction==='eng'?'영어 → 한글':'한글 → 영어')+'</span><div class="question fc-quiz-prompt">'+esc(q.prompt)+'</div><div class="fc-options">'+q.options.map((a,i)=>button(esc(a),'answer','choice', 'data-choice="'+i+'"')).join('')+'</div><div class="feedback" id="fcFeedback" role="status"></div></section>',button(index+1===quiz.length?'결과 보기':'다음','next','fc-primary','hidden'));if(locked)paintAnswer();return;}
+ shell('<div class="fc-summary"><span class="fc-summary-label">확인 시험 완료</span><h3>'+quiz.length+'개 중 '+correct+'개 정답</h3><p>'+esc(session.label)+'</p></div>',(missed.length?button('틀린 '+missed.length+'개 다시 암기','retry','fc-primary'):'')+button('단어장으로','close',missed.length?'fc-text':'fc-primary'));
+}
+function advance(){clearTimeout(advanceTimer);if(!dialog.open||phase!=='quiz'||!locked)return;if(account!==owner()){dialog.close();return;}index++;locked=false;if(index===quiz.length)phase='result';render();}
+function paintAnswer(){const q=quiz[index];clearTimeout(advanceTimer);dialog.querySelectorAll('[data-choice]').forEach(el=>{el.disabled=true;const choice=Number(el.dataset.choice);el.classList.toggle('correct',q.valid.includes(q.options[choice]));el.classList.toggle('wrong',choice===q.selected&&!q.ok);});$('fcFeedback').textContent=q.ok?'정답':'정답: '+q.right;dialog.querySelector('[data-fc=next]').hidden=q.ok;if(q.ok)advanceTimer=setTimeout(advance,600);
+
 }
 function open(words,label){if(!owner())return;ensure();if(dialog.open)return;account=owner();fresh={words:normalize(words||[]),label:label||'선택한 단어'};returnFocus=document.activeElement;phase='setup';saveFailed=false;render();dialog.showModal();}
 function begin(words,label,direction,mix){session={v:1,words,label,direction,queue:words.map((_,i)=>i)};if(mix)session.queue=shuffle(session.queue);history=[];phase='study';revealed=false;save();render();}
@@ -58,8 +62,8 @@ function handle(e){const b=e.target.closest('[data-fc]');if(!b||b.disabled)retur
  if(a==='restart'){begin(session.words,session.label,session.direction,true);return;}
  if(a==='speak'&&phase==='study'&&window.speechSynthesis){stopAudio();const u=new SpeechSynthesisUtterance(session.words[session.queue[0]].word);u.lang='en-US';u.rate=.85;window.speechSynthesis.speak(u);return;}
  if(a==='quiz'){stopAudio();const words=session.words,answer=w=>session.direction==='eng'?w.meaning:w.word;quiz=shuffle(words).map(w=>{const right=answer(w),others=shuffle([...new Set(words.map(answer))].filter(x=>x!==right)).slice(0,3);return {word:w,prompt:session.direction==='eng'?w.word:w.meaning,right,valid:words.filter(x=>(session.direction==='eng'?x.word:x.meaning)===(session.direction==='eng'?w.word:w.meaning)).map(answer),options:shuffle([right,...others])};});index=0;correct=0;missed=[];locked=false;phase='quiz';render();return;}
- if(a==='answer'&&phase==='quiz'&&!locked){locked=true;const q=quiz[index],ok=q.valid.includes(q.options[Number(b.dataset.choice)]);if(ok)correct++;else missed.push(q.word);dialog.querySelectorAll('[data-choice]').forEach(el=>{el.disabled=true;el.classList.toggle('is-correct',q.valid.includes(q.options[Number(el.dataset.choice)]));if(el===b&&!ok)el.classList.add('is-wrong');});$('fcFeedback').textContent=ok?'정답이에요!':'정답: '+q.right;dialog.querySelector('[data-fc=next]').hidden=false;return;}
- if(a==='next'&&phase==='quiz'&&locked){index++;locked=false;if(index===quiz.length)phase='result';render();return;}
+ if(a==='answer'&&phase==='quiz'&&!locked){locked=true;const q=quiz[index];q.selected=Number(b.dataset.choice);q.ok=q.valid.includes(q.options[q.selected]);if(q.ok)correct++;else missed.push(q.word);paintAnswer();return;}
+ if(a==='next'&&phase==='quiz'&&locked){advance();return;}
  if(a==='retry')begin(missed,session.label+' · 확인 시험 오답',session.direction,true);
 }
 function selected(kind){

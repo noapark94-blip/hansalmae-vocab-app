@@ -10,3 +10,6 @@ Validation: existing npm suite plus verify_flashcards.cjs (four adapters, queue 
 
 ## v210 compact study
 Card reveals the answer immediately while pressed and hides it on release, cancellation, focus loss, or page hiding. No flip animation. Decisions remain available. Exit confirmation retains the queue and allows continuing; failed local saves block exit and offer retry. Practice quiz results remain ephemeral. Compact mobile study groups the card and decisions; long content scrolls above visible controls.
+
+## v211 exam consistency
+Practice uses the shared standard word-test CSS, with concise completion and result summaries. Correct answers advance after 600 ms; incorrect answers wait for Next. Exit pauses auto-advance; continuing restores the graded question without scoring twice. Tests cover automatic last-question results, wrong-answer waiting, exit/continue during feedback, and four options on a small viewport.
