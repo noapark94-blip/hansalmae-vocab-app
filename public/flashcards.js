@@ -79,7 +79,7 @@ function add(host,kind){if(!host||host.querySelector('[data-flashcards]'))return
 function sync(){
  if(dialog?.open&&account!==owner())dialog.close();
  add(document.querySelector('#vocabScreen .vocab-actions'),'vocab');add($('personalTestButton')?.parentElement,'personal');add($('wrongBulkToolbar'),'wrong');add(document.querySelector('#hsmSchoolPageBody .hsm-school-selectbar'),'school');
- document.querySelectorAll('[data-flashcards]').forEach(b=>{try{const n=selected(b.dataset.flashcards).words.length;b.disabled=!n;b.hidden=!n;}catch(_){b.hidden=true;}});
+ document.querySelectorAll('[data-flashcards]').forEach(b=>{try{const n=selected(b.dataset.flashcards).words.length;b.disabled=!n;b.hidden=!n;if(b.dataset.flashcards==='vocab'){const label=n+'개 단어 암기';if(b.textContent!==label)b.textContent=label;}}catch(_){b.hidden=true;}});
  const saved=read();
  for(const id of ['vocabScreen','personalVocabularyScreen','wrongNotebookScreen','hsmSchoolPageBody']){
   const host=$(id);if(!host)continue;let resume=host.querySelector(':scope > .fc-resume-entry');

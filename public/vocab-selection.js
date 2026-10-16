@@ -24,17 +24,19 @@
     toggle.dataset.hsmIconReady='1';toggle.textContent='선택만 보기';
     toggle.setAttribute('aria-pressed','false');
     bar.querySelector('.hsm-selection-count').after(toggle);
-    const countLabel=document.createElement('span');countLabel.className='hsm-dock-count';actions.append(countLabel);
     const more=document.createElement('button');more.type='button';more.id='hsmVocabMore';more.textContent='⋯';more.dataset.hsmIconReady='1';more.setAttribute('aria-label','선택 단어 더보기');more.setAttribute('aria-haspopup','dialog');more.setAttribute('aria-controls','hsmVocabMoreDialog');actions.append(more);
     const menu=document.createElement('dialog');menu.id='hsmVocabMoreDialog';menu.setAttribute('aria-labelledby','hsmVocabMoreTitle');
-    menu.innerHTML='<header><h2 id="hsmVocabMoreTitle">선택한 단어</h2><button type="button" data-hsm-icon-ready="1" aria-label="닫기">닫기</button></header><div class="hsm-vocab-more-items"></div>';
+    menu.innerHTML='<header><h2 id="hsmVocabMoreTitle" data-hsm-icon-ready="1">선택한 단어</h2><button type="button" data-hsm-icon-ready="1" aria-label="닫기">×</button></header><div class="hsm-vocab-more-items"></div>';
     menu.querySelector('div').append(save,share);document.body.append(menu);
     more.onclick=()=>menu.showModal();menu.querySelector('header button').onclick=()=>menu.close();
     [save,share].forEach(b=>b.addEventListener('click',()=>menu.close(),true));
     menu.addEventListener('close',()=>{if(!actions.hidden)more.focus();});
     menu.addEventListener('click',e=>{if(e.target===menu){const r=menu.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)menu.close();}});
     toggle.onclick=function(){only.checked=!only.checked;renderVocabulary();};
-    save.dataset.hsmIconReady='1';share.dataset.hsmIconReady='1';share.textContent='공유';
+    const icon=path=>'<svg class="hsm-action-icon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+path+'</svg>';
+    save.dataset.hsmIconReady='1';share.dataset.hsmIconReady='1';
+    save.innerHTML=icon('<path d="M4 19V5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1 0-4h13M9 3v8l3-2 3 2V3"/>')+'<span>단어장에 추가</span>';
+    share.innerHTML=icon('<path d="M12 15V3m-4 4 4-4 4 4M5 12v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8"/>')+'<span>공유하기</span>';
     function positionActions(){
       const nav=document.getElementById('hsmMobileNav');
       const rect=nav&&nav.getBoundingClientRect();
@@ -44,7 +46,6 @@
     window.addEventListener('resize',positionActions);
     function sync(){
       const count=getCheckedWords().length;
-      countLabel.innerHTML='<strong>'+count+'</strong><span>개 선택</span>';
       menu.querySelector('h2').textContent='선택한 단어 '+count+'개';
       if((!selecting||!count)&&menu.open)menu.close();
       if(!count)only.checked=false;
@@ -60,7 +61,6 @@
       all.disabled=!vocabWords.length||count===vocabWords.length;
       document.getElementById('hsmVocabSelectClear').disabled=!count;
       toggle.disabled=!count;
-      save.textContent='단어장 저장';
       save.setAttribute('aria-label','선택한 '+count+'개 단어장 저장');
       document.getElementById('vocabCount').textContent='전체 '+vocabWords.length+'개';
     }

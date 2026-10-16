@@ -141,3 +141,21 @@ body .fc-resume-entry button{flex-shrink:0;width:auto!important;min-height:44px;
 #hsmFlashcards[data-phase=study] .fc-again{background:#eee9ec;border-color:#eee9ec;color:#8d7786}
 @media(max-width:600px){#hsmFlashcards[data-phase=study] .fc-card{min-height:clamp(210px,30dvh,270px)}#hsmFlashcards[data-phase=study] .fc-main{max-height:calc(100dvh - 190px)}}
 @media(prefers-reduced-motion:reduce){#hsmFlashcards .fc-study-track>span{animation:none}}
+
+/* One primary action; secondary actions share a quiet bottom sheet. */
+#vocabScreen #hsmVocabSelectionPanel .vocab-actions{grid-template-columns:minmax(0,1fr) 44px!important;gap:6px!important;padding:6px!important;border-radius:14px!important;box-shadow:0 3px 16px #49334210!important}
+#vocabScreen #hsmVocabSelectionPanel .vocab-actions>.fc-entry{grid-column:1!important;min-height:44px!important;border-radius:10px!important;font-size:14px!important}
+#vocabScreen #hsmVocabSelectionPanel #hsmVocabMore{grid-column:2!important;border-radius:10px!important;font-size:24px!important;color:#947e8d!important}
+#hsmVocabMoreDialog{box-sizing:border-box;position:fixed;inset:auto 0 0;width:100%;max-width:520px;max-height:85dvh;margin:0 auto;padding:22px 22px max(20px,env(safe-area-inset-bottom));border:0;border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -8px 40px #38213112;overflow:auto}
+#hsmVocabMoreDialog[open]{animation:hsmSheetEnter .2s ease-out}
+#hsmVocabMoreDialog::backdrop{background:#30233244;backdrop-filter:blur(2px)}
+#hsmVocabMoreDialog header{margin:0 0 8px;min-height:44px}
+#hsmVocabMoreDialog h2{display:block;font-size:13px;font-weight:600;color:#917b88;margin:0;text-align:left}
+#hsmVocabMoreDialog header button{display:flex;align-items:center;justify-content:center;width:44px;min-height:44px;padding:0;font-size:24px;font-weight:400;color:#9f8c97;border:0;background:transparent}
+#hsmVocabMoreDialog .hsm-vocab-more-items{display:block}
+#hsmVocabMoreDialog .hsm-vocab-more-items>button{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:14px;width:100%;min-height:60px;padding:16px 2px!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:#5d4455!important;text-align:left!important;font-size:15px!important;font-weight:550!important;box-shadow:none!important;transform:none!important}
+#hsmVocabMoreDialog .hsm-vocab-more-items>button+button{border-top:1px solid #f1ebef!important}
+#hsmVocabMoreDialog .hsm-action-icon{flex:none;width:21px;height:21px;color:#96768a;background:transparent;padding:0;border:0;border-radius:0}
+#hsmVocabMoreDialog button:focus-visible{outline:2px solid #b37ca4;outline-offset:1px}
+@keyframes hsmSheetEnter{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){#hsmVocabMoreDialog[open]{animation:none}}
