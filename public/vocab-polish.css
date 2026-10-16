@@ -95,3 +95,16 @@
 #vocabScreen #hsmVocabSelectionPanel #hsmVocabSelectionBar{height:44px;min-height:44px}
 #vocabScreen #hsmVocabSelectionPanel .vocab-actions{position:fixed;left:50%;transform:translateX(-50%);z-index:999;width:calc(100% - 32px);max-width:640px;box-sizing:border-box;padding:8px!important;border:1px solid #eee4eb;border-radius:14px;background:#fff;box-shadow:0 6px 24px #43203618}
 #vocabScreen.hsm-vocab-selecting{padding-bottom:90px!important}
+
+/* Separate selection status, filtering, and bulk actions. */
+#vocabScreen #hsmVocabSelectionPanel{height:auto;min-height:0;padding:8px 12px}
+#vocabScreen #hsmVocabSelectionPanel #hsmVocabSelectionBar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0 8px;height:auto;min-height:0}
+#vocabScreen #hsmVocabSelectionBar .hsm-selection-count{grid-column:1;grid-row:1;padding:0;font-size:12px}
+#vocabScreen #hsmVocabSelectionBar #hsmVocabOnlySelected{grid-column:2;grid-row:1;justify-self:start;display:inline-flex;align-items:center;gap:5px;min-height:44px!important;padding:8px 6px!important;font-size:10px!important;border:0!important;box-shadow:none!important;background:transparent!important}
+#vocabScreen #hsmVocabSelectionBar #hsmVocabOnlySelected:before{content:'';width:20px;height:12px;border-radius:10px;background:radial-gradient(circle at 6px 6px,#fff 4px,transparent 4.5px),#d6c9d2;flex:none}
+#vocabScreen #hsmVocabSelectionBar #hsmVocabOnlySelected[aria-pressed=true]:before{background:radial-gradient(circle at 14px 6px,#fff 4px,transparent 4.5px),#8f145f}
+#vocabScreen #hsmVocabSelectionBar #hsmVocabSelectCancel{grid-column:3;grid-row:1;padding:8px 10px!important;font-size:11px;font-weight:650;color:#755e6e}
+#vocabScreen #hsmVocabSelectionBar #hsmVocabSelectAll{grid-column:1/3;grid-row:2;justify-self:start;padding:8px 0!important;font-size:11px}
+#vocabScreen #hsmVocabSelectionBar #hsmVocabSelectClear{grid-column:3;grid-row:2;padding:8px 10px!important;font-size:11px;color:#947e8d}
+#vocabScreen #hsmVocabSelectionBar button:disabled{opacity:.38;cursor:default}
+#vocabScreen #hsmVocabSelectionBar button:focus-visible{outline:2px solid #ac6292;outline-offset:1px}

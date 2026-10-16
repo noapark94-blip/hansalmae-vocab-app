@@ -15,11 +15,11 @@ click('hsmVocabSelect');assert.equal(d.getElementById('hsmVocabSelectionBar').hi
 assert.equal(d.getElementById('hsmVocabSelectAll').textContent,'전체 선택');
 click('hsmVocabSelectAll');assert.equal(w.getCheckedWords().length,2);
 assert.equal(d.querySelector('.vocab-actions').hidden,false);
-assert.equal(d.getElementById('hsmVocabSelectAll').textContent,'전체 해제');
+assert.equal(d.getElementById('hsmVocabSelectAll').disabled,true);
 click('hsmVocabOnlySelected');
 assert.equal(d.getElementById('showCheckedOnly').checked,true);
 assert.equal(d.getElementById('hsmVocabOnlySelected').getAttribute('aria-pressed'),'true');
-click('hsmVocabSelectAll');assert.equal(w.getCheckedWords().length,0);
+click('hsmVocabSelectClear');assert.equal(w.getCheckedWords().length,0);assert.equal(d.getElementById('hsmVocabSelectClear').disabled,true);assert.equal(d.getElementById('hsmVocabSelectionBar').hidden,false);w.localStorage.setItem('Day1:one','true');w.renderVocabulary();assert.equal(w.getCheckedWords().length,1);click('hsmVocabSelectClear');assert.equal(w.getCheckedWords().length,0);
 assert.equal(d.getElementById('showCheckedOnly').checked,false);
 assert.equal(d.querySelector('.vocab-actions').hidden,true);
 click('hsmVocabSelectAll');click('hsmVocabSelectCancel');

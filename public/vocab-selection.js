@@ -15,7 +15,7 @@
     entry.setAttribute('aria-expanded','false');entry.setAttribute('aria-controls','hsmVocabSelectionPanel');
     entry.dataset.hsmIconReady='1';
     const bar=document.createElement('div');bar.id='hsmVocabSelectionBar';
-    bar.innerHTML='<span aria-live="polite"><strong id="hsmVocabSelectedCount">0</strong>개 선택</span><button type="button" id="hsmVocabSelectAll" data-hsm-icon-ready="1">전체 선택</button><button type="button" id="hsmVocabSelectCancel" data-hsm-icon-ready="1">선택 종료</button>';
+    bar.innerHTML='<span class="hsm-selection-count" aria-live="polite"><strong id="hsmVocabSelectedCount">0</strong>개 선택</span><button type="button" id="hsmVocabSelectAll" data-hsm-icon-ready="1">전체 선택</button><button type="button" id="hsmVocabSelectClear" data-hsm-icon-ready="1">선택 해제</button><button type="button" id="hsmVocabSelectCancel" data-hsm-icon-ready="1" aria-label="단어 선택 모드 완료">완료</button>';
     filter.before(entry,bar);
     const panel=document.createElement('div');panel.id='hsmVocabSelectionPanel';
     bar.before(panel);panel.append(bar,filter,actions);
@@ -23,7 +23,7 @@
     const toggle=document.createElement('button');toggle.type='button';toggle.id='hsmVocabOnlySelected';
     toggle.dataset.hsmIconReady='1';toggle.textContent='선택만 보기';
     toggle.setAttribute('aria-pressed','false');
-    bar.append(toggle);
+    bar.querySelector('.hsm-selection-count').after(toggle);
     const countLabel=document.createElement('span');countLabel.className='hsm-dock-count';actions.append(countLabel);
     const more=document.createElement('button');more.type='button';more.id='hsmVocabMore';more.textContent='⋯';more.dataset.hsmIconReady='1';more.setAttribute('aria-label','선택 단어 더보기');more.setAttribute('aria-haspopup','dialog');more.setAttribute('aria-controls','hsmVocabMoreDialog');actions.append(more);
     const menu=document.createElement('dialog');menu.id='hsmVocabMoreDialog';menu.setAttribute('aria-labelledby','hsmVocabMoreTitle');
@@ -57,8 +57,9 @@
       entry.disabled=!vocabWords.length;
       document.getElementById('hsmVocabSelectedCount').textContent=count;
       const all=document.getElementById('hsmVocabSelectAll');
-      all.textContent=count&&count===vocabWords.length?'전체 해제':'전체 선택';
-      all.disabled=!vocabWords.length;
+      all.disabled=!vocabWords.length||count===vocabWords.length;
+      document.getElementById('hsmVocabSelectClear').disabled=!count;
+      toggle.disabled=!count;
       save.textContent='단어장 저장';
       save.setAttribute('aria-label','선택한 '+count+'개 단어장 저장');
       document.getElementById('vocabCount').textContent='전체 '+vocabWords.length+'개';
@@ -68,9 +69,12 @@
     entry.onclick=function(){selecting=true;sync();};
     document.getElementById('hsmVocabSelectCancel').onclick=function(){selecting=false;only.checked=false;renderVocabulary();};
     document.getElementById('hsmVocabSelectAll').onclick=function(){
-      const clear=getCheckedWords().length===vocabWords.length;
-      vocabWords.forEach(function(word){const key=getCheckStorageKey(word);if(clear)localStorage.removeItem(key);else localStorage.setItem(key,'true');});
+      vocabWords.forEach(function(word){localStorage.setItem(getCheckStorageKey(word),'true');});
       renderVocabulary();
+    };
+    document.getElementById('hsmVocabSelectClear').onclick=function(){
+      vocabWords.forEach(word=>localStorage.removeItem(getCheckStorageKey(word)));
+      only.checked=false;renderVocabulary();
     };
     const load=window.loadVocabulary;
     window.loadVocabulary=function(){selecting=false;only.checked=false;vocabWords=[];sync();return load.apply(this,arguments);};
