@@ -1063,3 +1063,7 @@ body:has(.br-root:not(.hidden) .br-result-layout) #mainApp>.topbar{display:none!
 .br-recovery-end{max-width:440px;margin:24px auto;padding:30px 22px;text-align:center;background:#fffdf7;border:1px solid #e9e2d3;border-radius:26px;box-shadow:0 12px 32px #674c2410}
 .br-recovery-end img{display:block;margin:0 auto 17px;border-radius:24px}.br-recovery-eyebrow{font-size:12px;letter-spacing:.08em;color:#9b8865}
 .br-recovery-end h2{font-size:23px;margin:9px 0 13px;color:#514532}.br-recovery-end p{font-size:15px;line-height:1.75;color:#776c59;overflow-wrap:anywhere}.br-recovery-end small{display:block;line-height:1.7;color:#998c79}.br-recovery-end .br-btn{width:100%;margin-top:24px;min-height:48px}
+
+.br-header-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}.br-audio-settings{display:grid;gap:10px}.br-audio-settings>.br-btn{display:flex;justify-content:space-between;align-items:center;padding:16px;background:#f7f2f6;border:0;border-radius:14px;min-height:48px}.br-audio-settings strong{color:#8f145f}.br-audio-settings p,.br-audio-settings details{font-size:12px;line-height:1.7;color:#80717d}.br-audio-settings a{color:inherit}
+
+.br-header>div:first-child{min-width:0}.br-header-actions .br-btn{padding:8px 10px;min-height:44px;font-size:12px;white-space:nowrap}
