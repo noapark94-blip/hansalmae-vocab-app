@@ -159,3 +159,7 @@ body .fc-resume-entry button{flex-shrink:0;width:auto!important;min-height:44px;
 #hsmVocabMoreDialog button:focus-visible{outline:2px solid #b37ca4;outline-offset:1px}
 @keyframes hsmSheetEnter{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
 @media(prefers-reduced-motion:reduce){#hsmVocabMoreDialog[open]{animation:none}}
+
+#hsmFlashcards .fc-discard-wrap{text-align:center;margin-top:18px}
+#hsmFlashcards .fc-discard{min-height:44px;padding:8px 16px;font-size:13px;color:#806b7a}
+#hsmFlashcards .fc-discard-wrap .fc-note{margin-top:3px;line-height:1.6}

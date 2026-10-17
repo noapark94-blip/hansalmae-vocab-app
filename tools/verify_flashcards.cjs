@@ -12,5 +12,15 @@ for(let i=0;i<3;i++){const prompt=$('.fc-quiz-prompt').textContent,right=words.f
 w.HSMFlashcards.open(words);$('input[value=kor]').checked=true;$('#fcShuffle').checked=false;click('start');assert.equal($('.fc-card strong').textContent,'사과');assert($('#hsmFlashcards [data-fc=speak]').hidden);const card=$('.fc-card');card.dispatchEvent(new w.MouseEvent('pointerdown',{bubbles:true,button:0}));assert(!$('.fc-answer').hidden);assert.equal($('.fc-answer').textContent,'apple');card.dispatchEvent(new w.Event('pointerup',{bubbles:true}));assert($('.fc-answer').hidden);card.dispatchEvent(new w.MouseEvent('pointerdown',{bubbles:true,button:0}));card.dispatchEvent(new w.Event('pointercancel',{bubbles:true}));assert($('.fc-answer').hidden);card.click();assert($('.fc-answer').hidden);card.dispatchEvent(new w.KeyboardEvent('keydown',{bubbles:true,code:'Space'}));assert(!$('.fc-answer').hidden);card.dispatchEvent(new w.KeyboardEvent('keyup',{bubbles:true,code:'Space'}));assert($('.fc-answer').hidden);$('#hsmFlashcards [data-fc=close]').click();assert($('#hsmFlashcards').open);click('continue');assert($('.fc-card')); click('close');
 w.currentStudent={studentId:'two'};w.HSMFlashcards.open([]);assert(!$('#hsmFlashcards [data-fc=resume]'));click('close');w.currentStudent={studentId:'one'};w.HSMFlashcards.open([]);click('resume');w.currentStudent={studentId:'two'};click('reveal');assert(!$('#hsmFlashcards').open);assert.equal(w.localStorage.getItem('hsmFlashcards:v1:two'),null);
 w.HSMFlashcards.open([{word:'<img src=x onerror=alert(1)>',meaning:'<b>뜻</b>'}]);click('start');assert.equal($('#hsmFlashcards img'),null);click('close');assert.equal(words.length,3);
+// Discard removes only this student's session; failures keep the session open.
+const other=w.localStorage.getItem('hsmFlashcards:v1:one');
+w.localStorage.setItem('unrelated','keep');w.HSMFlashcards.open(words);click('start');
+$('#hsmFlashcards [data-fc=close]').click();
+const remove=w.Storage.prototype.removeItem;w.Storage.prototype.removeItem=function(){throw new Error('blocked');};
+click('discard');assert($('#hsmFlashcards').open);assert($('#hsmFlashcards [role=alert]'));assert(w.localStorage.getItem('hsmFlashcards:v1:two'));
+w.Storage.prototype.removeItem=remove;click('discard');assert(!$('#hsmFlashcards').open);assert.equal(w.localStorage.getItem('hsmFlashcards:v1:two'),null);
+assert.equal(w.localStorage.getItem('hsmFlashcards:v1:one'),other);assert.equal(w.localStorage.getItem('unrelated'),'keep');
+assert([...w.document.querySelectorAll('.fc-resume-entry')].every(el=>el.hidden));
+w.HSMFlashcards.open([]);assert(!$('#hsmFlashcards [data-fc=resume]'));click('close');assert.equal(words.length,3);
 w.requestAnimationFrame=()=>0;dom.window.close();console.log('PASS flashcards: all sources, reveal/rotate/remove/undo, resume, reverse, quiz/retry, one card, account isolation, escaped text, original words retained');
 })().catch(e=>{console.error(e);process.exit(1)});

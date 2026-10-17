@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id),PREFIX='hsmFlashcards:v1:';
-let dialog,session,account='',phase='setup',revealed=false,history=[],fresh,returnFocus,quiz,index=0,correct=0,missed=[],locked=false,saveFailed=false,previousPhase='study',advanceTimer=0,lastProgress=0;
+let dialog,session,account='',phase='setup',revealed=false,history=[],fresh,returnFocus,quiz,index=0,correct=0,missed=[],locked=false,saveFailed=false,previousPhase='study',advanceTimer=0,lastProgress=0,discardFailed=false;
 const owner=()=>typeof currentStudent!=='undefined'&&currentStudent?.studentId&&typeof currentLoginToken!=='undefined'&&currentLoginToken?String(currentStudent.studentId):'';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -17,7 +17,7 @@ function showAnswer(show){
  card.querySelector('.fc-front').hidden=show;card.querySelector('.fc-answer').hidden=!show;
  const speaker=dialog.querySelector('[data-fc=speak]');if(speaker&&session.direction==='kor')speaker.hidden=!show;
 }
-function requestExit(){clearTimeout(advanceTimer);showAnswer(false);stopAudio();if(phase==='exit')return;if(!session){dialog.close();return;}save();previousPhase=phase;phase='exit';render();}
+function requestExit(){clearTimeout(advanceTimer);showAnswer(false);stopAudio();if(phase==='exit')return;if(!session){dialog.close();return;}save();discardFailed=false;previousPhase=phase;phase='exit';render();}
 function ensure(){if(dialog)return;dialog=document.createElement('dialog');dialog.id='hsmFlashcards';dialog.setAttribute('aria-labelledby','fcTitle');document.body.append(dialog);
  dialog.addEventListener('close',()=>{clearTimeout(advanceTimer);stopAudio();history=[];session=null;sync();if(returnFocus?.isConnected)returnFocus.focus();});
  dialog.addEventListener('cancel',e=>{e.preventDefault();if(phase==='exit'){phase=previousPhase;render();}else requestExit();});
@@ -34,7 +34,7 @@ function shell(body,footer=''){dialog.dataset.phase=phase;dialog.innerHTML='<hea
 function render(){
  if(account!==owner()){dialog.close();return;}
  const notice=saveFailed?'저장 공간이 부족해 이어 하기를 저장하지 못했어요.':'진행 상황은 이 기기에 자동 저장돼요.';
- if(phase==='exit'){shell('<div class="fc-exit"><h3>암기를 종료할까요?</h3><p>'+(saveFailed?'진행 상황을 저장하지 못했어요. 종료하면 이번 진행을 잃을 수 있어요.':'지금까지의 진행 상황은 이 기기에 저장돼요.')+'</p></div>','<div class="fc-decisions">'+button('계속 학습','continue','fc-secondary')+button(saveFailed?'저장 다시 시도':'저장하고 종료','exit','fc-primary')+'</div>');return;}
+ if(phase==='exit'){shell('<div class="fc-exit"><h3 data-hsm-icon-ready="1">암기를 종료할까요?</h3><p>'+(saveFailed?'진행 상황을 저장하지 못했어요. 종료하면 이번 진행을 잃을 수 있어요.':'지금까지의 진행 상황은 이 기기에 저장돼요.')+'</p></div>','<div class="fc-decisions">'+button('계속 학습','continue','fc-secondary')+button(saveFailed?'저장 다시 시도':'저장하고 종료','exit','fc-primary')+'</div><div class="fc-discard-wrap">'+button('이번 암기 끝내기','discard','fc-text fc-discard')+'<p class="fc-note" '+(discardFailed?'role="alert"':'')+'>'+(discardFailed?'진행 기록을 지우지 못했어요. 다시 시도해주세요.':'이번 진행 기록만 지워져요. 단어장은 그대로 유지돼요.')+'</p></div>');return;}
  if(phase==='setup'){
  const old=read();shell((old?.queue.length?'<section class="fc-resume"><div><strong>이전 학습 이어하기</strong><p>'+esc(old.label)+' · '+old.queue.length+'개 남음</p></div>'+button('이어서','resume','fc-secondary')+'</section>':'')+(fresh?.words.length?'<section class="fc-panel"><p class="fc-kicker">학습 설정</p><h3 data-hsm-icon-ready="1">'+esc(fresh.label)+'</h3><p class="fc-selected-count">선택한 단어 <strong>'+fresh.words.length+'개</strong></p><fieldset class="fc-direction"><legend>학습 방향</legend><div class="fc-segments"><label><input type="radio" name="fcDirection" value="eng" checked><span>영어 → 뜻</span></label><label><input type="radio" name="fcDirection" value="kor"><span>뜻 → 영어</span></label></div></fieldset><label class="fc-switch-row"><span>순서 섞기</span><input type="checkbox" role="switch" id="fcShuffle" checked><span class="fc-switch" aria-hidden="true"></span></label><div class="fc-panel-actions">'+button(old?.queue.length?'새로 시작':'암기 시작','start','fc-primary')+'<p class="fc-note">'+(old?.queue.length?'새로 시작하면 이전 학습을 대체해요.':'선택한 단어를 한 장씩 확인해요.')+'</p></div></section>':'<p class="fc-empty">단어장에서 외울 단어를 선택해주세요.</p>'));return;
  }
@@ -57,7 +57,7 @@ function paintAnswer(){const q=quiz[index];clearTimeout(advanceTimer);dialog.que
 function open(words,label){if(!owner())return;ensure();if(dialog.open)return;account=owner();fresh={words:normalize(words||[]),label:label||'선택한 단어'};returnFocus=document.activeElement;phase='setup';lastProgress=0;saveFailed=false;render();dialog.showModal();}
 function begin(words,label,direction,mix){lastProgress=0;session={v:1,words,label,direction,queue:words.map((_,i)=>i)};if(mix)session.queue=shuffle(session.queue);history=[];phase='study';revealed=false;save();render();}
 function handle(e){const b=e.target.closest('[data-fc]');if(!b||b.disabled)return;if(account!==owner()){dialog.close();return;}const a=b.dataset.fc;
- if(a==='close'){requestExit();return;}if(a==='continue'){phase=previousPhase;render();return;}if(a==='exit'){save();if(saveFailed){render();return;}dialog.close();return;}if(a==='start'){begin(fresh.words,fresh.label,dialog.querySelector('[name=fcDirection]:checked').value,$('fcShuffle').checked);return;}
+ if(a==='close'){requestExit();return;}if(a==='continue'){phase=previousPhase;render();return;}if(a==='exit'){save();if(saveFailed){render();return;}dialog.close();return;}if(a==='discard'&&phase==='exit'){try{localStorage.removeItem(PREFIX+account);}catch(_){discardFailed=true;render();return;}dialog.close();return;}if(a==='start'){begin(fresh.words,fresh.label,dialog.querySelector('[name=fcDirection]:checked').value,$('fcShuffle').checked);return;}
  if(a==='resume'){session=read();if(!session)return;history=[];revealed=false;phase='study';render();return;}
  if(a==='reveal'&&phase==='study'){/* Holding, rather than clicking, reveals the answer. */return;}
  if((a==='known'||a==='again')&&phase==='study'){stopAudio();history.push(session.queue.slice());if(history.length>50)history.shift();const id=session.queue.shift();if(a==='again')session.queue.push(id);revealed=false;save();render();return;}
