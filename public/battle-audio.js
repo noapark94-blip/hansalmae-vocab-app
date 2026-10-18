@@ -13,7 +13,14 @@ async function load(name){if(Date.now()<(failed[name]||0))return null;if(buffers
 function stop(){generation++;if(playing){try{playing.stop();}catch(_){}playing=null;}for(const s of effects){try{s.stop();}catch(_){}}effects.clear();}
 function source(buffer,volume,loop){const s=ctx.createBufferSource(),g=ctx.createGain();s.buffer=buffer;s.loop=loop;g.gain.value=volume;s.connect(g);g.connect(ctx.destination);s.onended=()=>{s.disconnect();g.disconnect();effects.delete(s);};s.start();return s;}
 async function music(){if(!active||document.hidden||!prefs.bgm||!ctx||ctx.state!=='running'||playing)return;const token=generation,buffer=await load('bgm');if(buffer&&token===generation&&active&&!document.hidden&&prefs.bgm&&!playing)playing=source(buffer,.16,true);}
-function unlock(){try{if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();const resumed=ctx.resume(); // Called synchronously from a user gesture, before API awaits.
+function unlock(){try{
+ // iOS Web Audio otherwise follows the ringer/silent switch, unlike media playback.
+ try{if(window.navigator?.audioSession&&(prefs.bgm||prefs.sfx))window.navigator.audioSession.type='playback';}catch(_){}
+ if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();ctx.onstatechange=()=>{
+  if(ctx.state==='interrupted'||ctx.state==='suspended')stop();
+  else if(ctx.state==='running')music();
+ };}
+ const resumed=ctx.resume(); // Called synchronously from a user gesture, before API awaits.
  Promise.resolve(resumed).then(()=>{if(prefs.sfx){load('correct');load('wrong');}if(prefs.bgm)load('bgm');music();}).catch(()=>{});
 }catch(_){}}
 function update(r,visible){const next=!!(visible&&!document.hidden&&r?.status==='playing'&&r.members?.some(m=>m.id===r.me&&!m.left));if(active!==next){active=next;if(!active)stop();}music();
@@ -25,6 +32,8 @@ function update(r,visible){const next=!!(visible&&!document.hidden&&r?.status===
  const buffer=buffers[r.choice===r.question.correctId?'correct':'wrong'];if(buffer)effects.add(source(buffer,r.choice===r.question.correctId ? .55 : .35,false));
 }
 function toggle(name){if(!['bgm','sfx'].includes(name))return;prefs[name]=!prefs[name];try{localStorage.setItem(key,JSON.stringify(prefs));}catch(_){}if(name==='bgm'&&!prefs.bgm){generation++;if(playing){try{playing.stop();}catch(_){}playing=null;}}if(name==='sfx'&&!prefs.sfx){for(const s of effects){try{s.stop();}catch(_){}}effects.clear();}unlock();}
+// Touch-end runs inside Safari's trusted activation, before any async room request.
+document.addEventListener('touchend',e=>{if(e.isTrusted&&e.target.closest?.('#battleRoomScreen:not(.hidden) [data-br],.br-audio-settings [data-br]'))unlock();},{capture:true,passive:true});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){active=false;round=-1;stop();}else if(ctx)unlock();});window.addEventListener('pagehide',()=>{active=false;stop();});
 window.HSMBattleAudio={unlock,update,stop,toggle,settings:()=>({...prefs})};
 })();
