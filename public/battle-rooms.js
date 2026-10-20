@@ -65,12 +65,13 @@ function updateRecovery(){
  const missing=(room?.members||[]).filter(m=>!m.left&&m.online===false);
  const solo=room?.soloWaitUntil,actions=$('brSoloActions');
  if(actions){actions.hidden=!room?.canChooseSolo||!!me?.left;actions.querySelectorAll('button').forEach(b=>b.disabled=busy||connectionLost);}
- box.hidden=!waiting&&!connectionLost&&!missing.length&&!room?.soloMode&&!me?.left;if(box.hidden)return;
+ box.hidden=!waiting&&!connectionLost&&!missing.length&&!room?.soloMode&&!room?.finalizing&&!me?.left;if(box.hidden)return;
  const remaining=solo?Math.max(0,Math.ceil((new Date(solo)-Date.now()-offset)/1000)):0;
  const peers=(room?.members||[]).filter(m=>!m.left&&m.online!==false);
  let title='다음 문제를 준비하고 있어요',detail=peers.filter(m=>m.loaded).length+' / '+peers.length+'명 준비 · 준비된 친구들과 곧 시작해요.';
  if(me?.left){title=me.connectionLost?'내 연결이 종료됐어요':'대전에서 나왔어요';detail='남은 친구들은 계속 진행해요. 방 목록으로 돌아갈 수 있어요.';}
  else if(connectionLost){title='연결을 다시 이어가고 있어요';detail='자동으로 다시 연결해요. 진행 중인 문제 시간은 계속 흐릅니다.';}
+ else if(room?.finalizing){title='결과를 정리하고 있어요';detail='마지막 문제를 마쳤어요. 친구의 재접속 확인 후 결과를 확정해요.';}
  else if(room?.soloMode){title='혼자 마무리 · 연습';detail='남은 문제를 풀어보세요. 대전 점수와 보상은 추가되지 않아요.';}
  else if(solo){title=remaining?'친구의 재접속을 기다려요':'혼자 남았어요';detail=remaining?remaining+'초 안에 돌아오면 함께 이어가요.':'연습으로 마무리하거나 대전을 종료할 수 있어요. 이번 대전은 보상 없이 종료돼요.';}
  else if(missing.length){title=missing.length===1?(missing[0].name||'친구')+'님 재접속 중':missing.length+'명 재접속 중';detail='대전은 계속돼요. 돌아온 친구는 현재 문제부터 참여해요.';}
@@ -151,7 +152,7 @@ function tickClock(){updateRecovery();if(!visible()||room?.status!=='playing')re
  const label=root.querySelector('.br-next-overlay>span,.br-countdown>span');if(label)label.textContent=preparationLabel();
  const setText=(el,text)=>{if(el&&el.textContent!==text)el.textContent=text;};
  setText(count,now<start?String(Math.max(1,Math.ceil((start-now)/1000))):'곧 시작');
- setText(timer,room.revealUntil?'정답 확인':now<start?'준비':Math.ceil(remaining)+'초');
+ setText(timer,room.finalizing?'결과 정리':room.revealUntil?'정답 확인':now<start?'준비':Math.ceil(remaining)+'초');
  const key=room.id+':'+room.round+':'+room.deadline;if(key!==timerKey){timerKey=key;timerFraction=1;}
  const fraction=room.revealUntil?0:Math.min(1,remaining/room.settings.seconds);timerFraction=Math.min(timerFraction,fraction);
  const tone=room.revealUntil||now<start?'calm':fraction<=.25?'low':fraction<=.5?'mid':'calm';
