@@ -36,7 +36,7 @@ assert.equal(t.pollInterval(),1200,'playing cadence unchanged');
 w.dispatchEvent(new w.Event('offline'));assert.equal(d.querySelector('#brRecovery').hidden,false);assert.match(d.querySelector('#brRecoveryTitle').textContent,/다시 이어/);assert.equal(d.querySelectorAll('[data-br="answer"]:not(:disabled)').length,2,'network status must not block answers');
 const workingFetch=w.fetch;w.fetch=async()=>{throw Error('network down');};await t.refresh(true);assert.equal(d.querySelector('#brRecovery').hidden,false);w.fetch=workingFetch;
 accept();assert.equal(d.querySelector('#brRecovery').hidden,true,'successful server response clears recovery');
-state.preparing=true;state.roundAt=null;state.prepareDeadline=new Date(clock+20000).toISOString();state.members[0].loaded=true;accept();assert.match(d.querySelector('#brRecoveryDetail').textContent,/1 \/ 2명 준비/);assert.match(d.querySelector('#brRecoveryDetail').textContent,/20초/);
+state.preparing=true;state.roundAt=null;state.prepareDeadline=new Date(clock+20000).toISOString();state.members[0].loaded=true;accept();assert.match(d.querySelector('#brRecoveryDetail').textContent,/1 \/ 2명 준비/);assert.match(d.querySelector('#brRecoveryDetail').textContent,/곧 시작/);
 state.preparing=false;
 
 state.status='waiting';accept();assert.equal(t.pollInterval(),2000);

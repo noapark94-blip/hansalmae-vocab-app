@@ -1,0 +1,19 @@
+import {JSDOM} from 'jsdom';
+import {readFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const dom=new JSDOM('<div id="mainApp"></div>',{runScripts:'outside-only',pretendToBeVisual:true,url:'https://app.test'});
+const w=dom.window,d=w.document;let clock=100000,sent=[];
+w.Date.now=()=>clock;w.matchMedia=()=>({matches:false});w.scrollTo=()=>{};w.currentStudent={studentId:'me'};w.HANSALMAE_CONFIG={apiUrl:'https://app.test/api'};w.hsmEnsureStudentSession_=async()=>'test';w.hideAllStudentMainScreens_=()=>{};w.setInterval=()=>0;w.requestAnimationFrame=()=>1;w.Element.prototype.animate=()=>({cancel(){}});
+const source=readFileSync('public/battle-rooms.js','utf8').replace("if(document.readyState==='loading')", "window.testBattle={init,accept,reset,pollInterval,open:()=>root.classList.remove('hidden')};if(document.readyState==='loading')");
+w.eval(source);const api=w.testBattle;api.init();api.open();
+let state={id:'r',me:'me',host:'me',title:'대전',status:'playing',members:[{id:'me',name:'나',score:1,online:true},{id:'b',name:'친구',score:0,online:false},{id:'c',name:'친구2',score:0,online:true}],settings:{count:10,seconds:10,title:'중등',start:1,end:1},round:1,roundAt:new Date(clock-1000).toISOString(),deadline:new Date(clock+9000).toISOString(),question:{prompt:'test',mode:'engToKor',options:[{id:'a',text:'시험'},{id:'b',text:'테스트'}]},chat:[]};
+const accept=()=>{state.serverNow=new Date(clock).toISOString();api.accept(structuredClone(state));};
+accept();assert.match(d.querySelector('#brRecoveryTitle').textContent,/친구님 재접속 중/);assert.match(d.querySelector('#brRecoveryDetail').textContent,/대전은 계속/);assert(d.querySelector('[data-player="b"]').classList.contains('is-reconnecting'));assert(!d.querySelector('[data-br="answer"]').disabled);
+state.members[1].online=true;accept();assert(d.querySelector('#brRecovery').hidden);assert(!d.querySelector('[data-player="b"]').classList.contains('is-reconnecting'));
+state.members[1].left=true;state.members[1].connectionLost=true;state.members[2].left=true;state.preparing=true;state.roundAt=null;state.question=null;state.soloWaitUntil=new Date(clock+30000).toISOString();accept();assert(d.querySelector('#brSoloActions').hidden);assert.match(d.querySelector('#brRecoveryDetail').textContent,/30초/);assert.equal(api.pollInterval(),1200);
+clock+=31000;state.canChooseSolo=true;accept();assert(!d.querySelector('#brSoloActions').hidden);
+w.fetch=async(_,opts)=>{sent.push(JSON.parse(opts.body));state.soloMode=true;state.canChooseSolo=false;state.soloWaitUntil=null;state.preparing=false;state.roundAt=new Date(clock-1000).toISOString();state.question={prompt:'test',mode:'engToKor',options:[{id:'a',text:'시험'}],correctId:'a'};state.choice='a';state.revealUntil=new Date(clock+1000).toISOString();state.serverNow=new Date(clock).toISOString();return {ok:true,json:async()=>({success:true,result:structuredClone(state)})};};
+d.querySelector('[data-br="continueSolo"]').click();await new Promise(r=>setTimeout(r,0));assert.equal(sent.at(-1).action,'roomContinueSolo');assert(d.querySelector('#brSoloActions').hidden);assert.match(d.querySelector('.br-answer-note').textContent,/정답 · 연습/);assert.match(d.querySelector('#brRecoveryTitle').textContent,/연습/);
+// Connection ended remains an explicit state with disabled answers.
+state.soloMode=false;state.members[0].left=true;state.members[0].connectionLost=true;accept();assert(d.querySelector('[data-br="answer"]').disabled);assert.match(d.querySelector('#brRecoveryTitle').textContent,/내 연결이 종료/);
+api.reset();dom.window.close();console.log('PASS: peer reconnection badges, uninterrupted answers, solo wait/actions/API, practice feedback, expired self state.');

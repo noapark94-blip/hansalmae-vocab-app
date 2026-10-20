@@ -44,7 +44,7 @@ begin
  perform battle_room_play(a,'poll',rid,jsonb_build_object('readyRound',0,'syncToken',t));
  if exists(select 1 from battle_room_members where room_id=rid and ready_round=1) then raise exception 'Stale acknowledgement accepted';end if;
  update battle_rooms set prepare_at=clock_timestamp()-interval '31 seconds' where id=rid;
- v:=battle_room_play(a,'poll',rid,'{}');if v->>'status'<>'closed' then raise exception 'Missing readiness timeout';end if;
+ v:=battle_room_play(a,'poll',rid,'{}');if v->>'status'<>'playing' or v->'soloWaitUntil'='null'::jsonb then raise exception 'Missing reconnect grace';end if;
  if exists(select 1 from battle_room_rewards where room_id=rid) then raise exception 'Timeout awarded rewards';end if;
 end;$test$;
 select 'PASS synchronized start, private answer, forged/stale ACK rejection, bounded grace, no duplicates, next-round barrier, timeout without rewards' as result;
