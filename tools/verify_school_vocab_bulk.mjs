@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+const dom=new JSDOM('<div id="hsmSchoolVocabTeacherPanel"></div>',{url:'https://example.test/teacher.html',runScripts:'outside-only'});
+const w=dom.window,d=w.document;
+let confirmed=true, calls=[],fail='',pending;
+w.HANSALMAE_CONFIG={apiUrl:'https://example.test/api'};
+w.HSMDialog={confirm:async()=>confirmed,alert:async()=>{}};
+w.fetch=async(url,opts)=>{const req=JSON.parse(opts.body);calls.push(req);if(pending)await pending;if(req.payload.bookId===fail)throw Error('network');return {ok:true,json:async()=>({success:true,result:{}})};};
+let src=fs.readFileSync('public/school-vocab.js','utf8');
+src=src.replace("  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();",'window.testBooks={state,renderTeacherPanel,deleteTeacherBooks};');
+w.eval(src);
+const t=w.testBooks;
+function setup(){t.state.teacher.setup={students:[],books:['a','b','c'].map(bookId=>({bookId,title:'Book '+bookId,wordCount:10,studentCount:2}))};t.state.teacher.selectedBooks.clear();t.state.teacher.selectingBooks=false;t.renderTeacherPanel();calls=[];}
+const click=a=>d.querySelector('[data-book-action="'+a+'"]').click();
+setup();d.querySelector('#hsmSvTitle').value='unsaved';click('toggle');click('all');assert.equal(t.state.teacher.selectedBooks.size,3);click('clear');assert.equal(t.state.teacher.selectedBooks.size,0);assert.ok(d.querySelector('[data-book-action=delete]').disabled);click('all');
+confirmed=false;await t.deleteTeacherBooks(['a','b','c']);assert.equal(calls.length,0);assert.equal(t.state.teacher.setup.books.length,3);assert.equal(d.querySelector('#hsmSvTitle').value,'unsaved');
+confirmed=true;fail='b';await t.deleteTeacherBooks(['a','b','c']);assert.deepEqual(calls.map(x=>x.payload.bookId),['a','b']);assert.deepEqual(Array.from(t.state.teacher.setup.books,x=>x.bookId),['b','c']);assert.equal(t.state.teacher.selectedBooks.size,2);assert.equal(d.querySelector('#hsmSvTitle').value,'unsaved');
+fail='';d.querySelector('#hsmSchoolVocabTeacherPanel').dataset.hsmEditingBookId='b';await t.deleteTeacherBooks(['b','c']);assert.equal(d.querySelector('#hsmSvTitle').value,'');assert.equal(d.querySelector('#hsmSchoolVocabTeacherPanel').dataset.hsmEditingBookId,undefined);assert.equal(t.state.teacher.setup.books.length,0);assert.match(d.querySelector('#hsmSvBookList').textContent,/등록된 단어장/);
+setup();let release;pending=new Promise(r=>release=r);let first=t.deleteTeacherBooks(['a']);await new Promise(r=>setTimeout(r,0));await t.deleteTeacherBooks(['b']);assert.equal(calls.length,1);assert.ok(d.querySelector('[data-book-action=toggle]').disabled);release();await first;pending=null;assert.equal(t.state.teacher.setup.books.length,2);
+dom.window.close();console.log('PASS school vocabulary bulk selection, cancel, partial failure, empty state, draft preservation and duplicate guard');

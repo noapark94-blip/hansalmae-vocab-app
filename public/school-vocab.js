@@ -5,7 +5,7 @@
   window.__HSM_SCHOOL_VOCAB_INSTALLED__ = true;
 
   var state = {
-    teacher: { setup: null, editingBookId: '', selectedStudents: new Set() },
+    teacher: { setup: null, editingBookId: '', selectedStudents: new Set(), selectedBooks: new Set(), selectingBooks: false, deletingBooks: false },
     student: { books: [], currentBook: null, test: null }
   };
 
@@ -49,6 +49,7 @@
     var style = document.createElement('style');
     style.id = 'hsmSchoolVocabStyle';
     style.textContent = [
+      '#hsmSvBookManager .hsm-sv-library-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}#hsmSvBookManager h2{margin:0;font-size:18px}#hsmSvBookManager h2 small{font-size:13px;color:#8a7686;margin-left:6px;font-weight:500}#hsmSvBookManager .hsm-sv-library-head button,#hsmSvBookManager .hsm-sv-library-tools button{width:auto;margin:0;padding:9px 12px;min-height:40px;border:0;background:#f7f3f6;color:#805370;border-radius:10px;box-shadow:none;font-size:13px}#hsmSvBookManager .hsm-sv-library-tools{display:flex;gap:8px;margin-bottom:12px}#hsmSvBookManager .hsm-sv-book{padding:18px;border:1px solid #eee7ed;border-radius:14px;box-shadow:none}#hsmSvBookManager .hsm-sv-book.is-selected{background:#fcf6fa;border-color:#bc7aa4}#hsmSvBookManager .hsm-sv-book-heading{display:flex;gap:12px;align-items:center}#hsmSvBookManager .hsm-sv-book-heading>div{min-width:0}#hsmSvBookManager .hsm-sv-book-title{font-size:15px;line-height:1.5;font-weight:750;overflow-wrap:anywhere}#hsmSvBookManager input[type=checkbox]{width:20px;height:20px;flex:0 0 20px;accent-color:#92145f;margin:0}#hsmSvBookManager .hsm-sv-book-stats{display:flex;gap:16px;font-size:12px;color:#8b7c87;margin-top:12px}#hsmSvBookManager .hsm-sv-book-stats strong{color:#55424f;font-weight:600}#hsmSvBookManager .hsm-sv-actions{margin-top:14px;padding-top:12px;border-top:1px solid #f3edf1;gap:6px}#hsmSvBookManager .hsm-sv-actions button{padding:7px 10px;min-height:38px;background:#faf7fa;color:#79536d;border:0;box-shadow:none;font-size:12px}#hsmSvBookManager .hsm-sv-actions .danger-btn{margin-left:auto;background:transparent;color:#b35264}#hsmSvBookManager .hsm-sv-library-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;margin-top:14px;border-top:1px solid #eee7ed;font-size:13px;color:#776272}#hsmSvBookManager .hsm-sv-library-footer button{width:auto;margin:0;padding:11px 18px;border-radius:11px;background:#a74056;color:white;border:0;box-shadow:none;font-size:13px}#hsmSvBookManager button:disabled{opacity:.4;cursor:default}#hsmSvBookManager button:focus-visible,#hsmSvBookManager input:focus-visible{outline:2px solid #92145f;outline-offset:3px}',
       '.hsm-sv-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:20px;align-items:start}',
       '.hsm-sv-card{background:#fff;border:1px solid #e8e7ef;border-radius:18px;padding:20px;box-shadow:0 10px 28px rgba(43,35,91,.06)}',
       '.hsm-sv-card h2,.hsm-sv-card h3{margin:0 0 14px;text-align:left}',
@@ -111,15 +112,83 @@
   }
 
   function teacherBooksHtml() {
-    var books = (state.teacher.setup && state.teacher.setup.books) || [];
-    if (!books.length) return '<div class="hsm-sv-empty">아직 만든 수행평가 단어장이 없습니다.</div>';
+    var t = state.teacher, books = (t.setup && t.setup.books) || [];
+    if (!books.length) return '<div class="hsm-sv-empty">등록된 단어장이 없습니다.</div>';
     return books.map(function (b) {
-      return '<div class="hsm-sv-book"><div class="hsm-sv-book-title">' + esc(b.title) + '</div>' +
-        '<div class="hsm-sv-meta">' + esc([b.schoolName, b.gradeLabel].filter(Boolean).join(' · ')) + '<br>단어 ' + Number(b.wordCount || 0) + '개 · 배정 학생 ' + Number(b.studentCount || 0) + '명</div>' +
-        '<div class="hsm-sv-actions"><button type="button" class="outline-btn" data-hsm-sv-edit="' + esc(b.bookId) + '">수정</button>' +
-        '<button type="button" class="primary-btn" data-hsm-sv-exam="' + esc(b.bookId) + '">공식시험 출제</button>' +
-        '<button type="button" class="danger-btn" data-hsm-sv-delete="' + esc(b.bookId) + '">삭제</button></div></div>';
+      var checked = t.selectedBooks.has(b.bookId);
+      return '<article class="hsm-sv-book' + (checked ? ' is-selected' : '') + '">' +
+        '<div class="hsm-sv-book-heading">' + (t.selectingBooks ? '<input type="checkbox" data-hsm-sv-book-select="' + esc(b.bookId) + '" aria-label="' + esc(b.title) + ' 선택"' + (checked ? ' checked' : '') + (t.deletingBooks ? ' disabled' : '') + '>' : '') +
+        '<div><div class="hsm-sv-book-title">' + esc(b.title) + '</div><div class="hsm-sv-meta">' + esc([b.schoolName, b.gradeLabel].filter(Boolean).join(' · ')) + '</div></div></div>' +
+        '<div class="hsm-sv-book-stats"><span>단어 <strong>' + Number(b.wordCount || 0) + '</strong></span><span>배정 <strong>' + Number(b.studentCount || 0) + '명</strong></span></div>' +
+        (t.selectingBooks ? '' : '<div class="hsm-sv-actions"><button type="button" class="outline-btn" data-hsm-sv-edit="' + esc(b.bookId) + '">수정</button><button type="button" class="outline-btn" data-hsm-sv-exam="' + esc(b.bookId) + '">공식시험 출제</button><button type="button" class="danger-btn" data-hsm-sv-delete="' + esc(b.bookId) + '">삭제</button></div>') + '</article>';
     }).join('');
+  }
+
+  function refreshTeacherBooks() {
+    var root = document.getElementById('hsmSvBookManager');
+    if (!root) return;
+    var t = state.teacher, books = (t.setup && t.setup.books) || [];
+    var available = new Set(books.map(function(b) { return b.bookId; }));
+    t.selectedBooks.forEach(function(id) { if (!available.has(id)) t.selectedBooks.delete(id); });
+    if (!books.length) t.selectingBooks = false;
+    root.innerHTML = '<div class="hsm-sv-library-head"><h2 data-hsm-icon-ready="1">만든 단어장 <small>' + books.length + '</small></h2><button type="button" data-hsm-icon-ready="1" data-book-action="toggle"' + (!books.length || t.deletingBooks ? ' disabled' : '') + '>' + (t.selectingBooks ? '완료' : '선택') + '</button></div>' +
+      (t.selectingBooks ? '<div class="hsm-sv-library-tools"><button type="button" data-book-action="all">전체 선택</button><button type="button" data-book-action="clear">선택 해제</button></div>' : '') +
+      '<div id="hsmSvBookList" class="hsm-sv-list">' + teacherBooksHtml() + '</div>' +
+      (t.selectingBooks ? '<div class="hsm-sv-library-footer"><span role="status">' + (t.deletingBooks ? '삭제 중…' : '<strong>' + t.selectedBooks.size + '</strong>개 선택') + '</span><button type="button" data-hsm-icon-ready="1" data-book-action="delete"' + (!t.selectedBooks.size || t.deletingBooks ? ' disabled' : '') + '>선택 삭제</button></div>' : '');
+    root.setAttribute('aria-busy', String(t.deletingBooks));
+    if (t.deletingBooks) root.querySelectorAll('button,input').forEach(function(el) { el.disabled = true; });
+    root.onclick = function(e) {
+      if (t.deletingBooks) return;
+      var btn = e.target.closest('[data-book-action]');
+      if (btn) {
+        var action = btn.dataset.bookAction;
+        if (action === 'toggle') { t.selectingBooks = !t.selectingBooks; t.selectedBooks.clear(); }
+        if (action === 'all') books.forEach(function(b) { t.selectedBooks.add(b.bookId); });
+        if (action === 'clear') t.selectedBooks.clear();
+        if (action === 'delete') { deleteTeacherBooks(Array.from(t.selectedBooks)); return; }
+        refreshTeacherBooks(); return;
+      }
+      var edit = e.target.closest('[data-hsm-sv-edit]'), del = e.target.closest('[data-hsm-sv-delete]'), exam = e.target.closest('[data-hsm-sv-exam]');
+      if (edit) editTeacherBook(edit.getAttribute('data-hsm-sv-edit'));
+      if (del) deleteTeacherBooks([del.getAttribute('data-hsm-sv-delete')]);
+      if (exam) openTeacherExamDialog(exam.getAttribute('data-hsm-sv-exam'));
+    };
+    root.onchange = function(e) {
+      var input = e.target.closest('[data-hsm-sv-book-select]');
+      if (!input || t.deletingBooks) return;
+      var id = input.getAttribute('data-hsm-sv-book-select');
+      if (input.checked) t.selectedBooks.add(id); else t.selectedBooks.delete(id);
+      var scroll = root.querySelector('#hsmSvBookList').scrollTop;
+      refreshTeacherBooks();
+      root.querySelector('#hsmSvBookList').scrollTop = scroll;
+      Array.from(root.querySelectorAll('[data-hsm-sv-book-select]')).find(function(el) { return el.getAttribute('data-hsm-sv-book-select') === id; }).focus({preventScroll:true});
+    };
+  }
+
+  async function deleteTeacherBooks(ids) {
+    var t = state.teacher;
+    if (t.deletingBooks || !ids.length) return;
+    t.deletingBooks = true; refreshTeacherBooks();
+    var deleted = 0;
+    try {
+      if (!(await HSMDialog.confirm({title: '단어장 ' + ids.length + '개를 삭제할까요?', message: '선택한 단어장과 배정이 학생 화면에서도 사라집니다. 삭제 후 되돌릴 수 없습니다.', action: ids.length + '개 삭제', danger: true}))) return;
+      // Reuse the authenticated deletion endpoint; stop on failure so unprocessed items remain.
+      for (var id of ids) {
+        await call('teacherDeleteBook', teacherToken(), {bookId: id});
+        t.setup.books = t.setup.books.filter(function(b) { return b.bookId !== id; });
+        t.selectedBooks.delete(id); deleted++;
+        var panel = document.getElementById('hsmSchoolVocabTeacherPanel');
+        if (t.editingBookId === id || (panel && panel.dataset.hsmEditingBookId === id)) {
+          resetTeacherForm();
+          if (panel) { delete panel.dataset.hsmEditingBookId; delete panel.dataset.hsmUpdatedAt; }
+          var save = document.getElementById('hsmSvSave'); if (save) save.textContent = '단어장 저장';
+        }
+        refreshTeacherBooks();
+      }
+      t.selectingBooks = false;
+    } catch (e) {
+      await HSMDialog.alert(deleted + '개 삭제 완료. 나머지 항목은 목록에 남겨두었습니다.\n' + e.message);
+    } finally { t.deletingBooks = false; refreshTeacherBooks(); }
   }
 
   function renderTeacherPanel() {
@@ -134,7 +203,7 @@
       '<div class="hsm-sv-help">엑셀에서 <strong>영단어 · 뜻 · 예문 · 해석</strong> 열을 그대로 복사해서 붙여넣을 수 있습니다. 예문/해석은 없어도 됩니다.</div></div>' +
       '<div class="hsm-sv-field"><label>배정 학생</label><div class="hsm-sv-actions"><button type="button" class="outline-btn" id="hsmSvSelectAll">전체 선택</button><button type="button" class="outline-btn" id="hsmSvClearAll">전체 해제</button></div><div id="hsmSvStudents" class="hsm-sv-students">' + teacherStudentsHtml() + '</div></div>' +
       '<div class="hsm-sv-actions"><button type="button" class="primary-btn" id="hsmSvSave">단어장 저장</button><button type="button" class="outline-btn" id="hsmSvNew">새 단어장</button></div></div>' +
-      '<div class="hsm-sv-card"><h2>만든 수행평가 단어장</h2><div id="hsmSvBookList" class="hsm-sv-list">' + teacherBooksHtml() + '</div></div></div>';
+      '<div class="hsm-sv-card" id="hsmSvBookManager"></div></div>';
 
     panel.querySelector('#hsmSvStudents').addEventListener('change', function (e) {
       var input = e.target.closest('[data-hsm-sv-student]');
@@ -151,14 +220,7 @@
     };
     panel.querySelector('#hsmSvSave').onclick = saveTeacherBook;
     panel.querySelector('#hsmSvNew').onclick = resetTeacherForm;
-    panel.querySelector('#hsmSvBookList').onclick = function (e) {
-      var edit = e.target.closest('[data-hsm-sv-edit]');
-      var del = e.target.closest('[data-hsm-sv-delete]');
-      var exam = e.target.closest('[data-hsm-sv-exam]');
-      if (edit) editTeacherBook(edit.getAttribute('data-hsm-sv-edit'));
-      if (del) deleteTeacherBook(del.getAttribute('data-hsm-sv-delete'));
-      if (exam) openTeacherExamDialog(exam.getAttribute('data-hsm-sv-exam'));
-    };
+    refreshTeacherBooks();
   }
 
   async function loadTeacherSetup() {
@@ -212,12 +274,6 @@
       state.teacher.selectedStudents.clear();
       await loadTeacherSetup();
     } catch (e) { HSMDialog.alert(e.message); } finally { button.disabled = false; }
-  }
-
-  async function deleteTeacherBook(id) {
-    if (!(await HSMDialog.confirm('이 수행평가 단어장을 삭제할까요?\n학생에게서도 함께 사라집니다.'))) return;
-    try { await call('teacherDeleteBook', teacherToken(), { bookId: id }); await loadTeacherSetup(); }
-    catch (e) { HSMDialog.alert(e.message); }
   }
 
   async function openTeacherExamDialog(bookId) {
