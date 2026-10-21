@@ -4,7 +4,7 @@ import {JSDOM} from 'jsdom';
 const dom=new JSDOM('<div id="hsmSchoolContentTeacherPanel"></div>',{url:'https://example.test/teacher.html',runScripts:'outside-only'});
 const w=dom.window,d=w.document;
 const source=fs.readFileSync('public/school-content-teacher.js','utf8');
-w.eval(source.replace("  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(install,250);},{once:true});else setTimeout(install,250);",'window.importTest={parseBulkSentences,renderPanel,state};'));
+w.eval(source.replace("  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(install,250);},{once:true});else setTimeout(install,250);",'window.importTest={parseBulkSentences,renderPanel,state,smartChunks};'));
 const api=w.importTest,parse=api.parseBulkSentences;
 const sample=`1. People in Western cultures are beginning to tell and act from a new earth story.
 서구 문화권 사람들이 새로운 지구 이야기에서 비롯된 말과 행동을 하기 시작하고 있다.
@@ -24,6 +24,12 @@ const sample=`1. People in Western cultures are beginning to tell and act from a
 과수원은 마치 격년으로 휴식이 필요한 것처럼 한 해에는 열매가 많이 맺히고 다음 해에는 열매가 적게 맺힐 것이다.
 9. We are still learning how forest systems work.
 우리는 여전히 숲 시스템이 어떻게 작동하는지 배우고 있다.`;
+const chunks=api.smartChunks;
+assert.equal(Array.from(chunks('People in Western cultures are beginning to tell and act from a new earth story.')).join(' / '),'People in Western cultures / are beginning / to tell and act / from a new earth story.');
+assert.equal(chunks('In The Hidden Life of Trees, author Peter Wohlleben explains how forests work.')[0],'In The Hidden Life of Trees,');
+assert.deepEqual(Array.from(chunks('I / love / English.')),['I','love','English.']);
+assert.deepEqual(Array.from(chunks('Hello there.')),['Hello there.']);
+for(const text of ['She has been working with her friends.','The plants, trees, and flowers grow in the garden.','They look for an answer.']) assert.equal(chunks(text).join(' '),text);
 const rows=parse(sample);assert.equal(rows.length,9);
 const lines=sample.split('\n');rows.forEach((row,i)=>{assert.equal(row.chunks.map(c=>c.text).join(' '),lines[i*2].replace(/^\d+\. /,''));assert.equal(row.translation,lines[i*2+1]);});
 assert.equal(parse(sample.replace(/^\d+\. /gm,'').replace(/\n/g,'\r\n\r\n')).length,9);

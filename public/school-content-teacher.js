@@ -35,14 +35,57 @@
     `;document.head.appendChild(s);
   }
 
+  // Conservative, local phrase boundaries. Explicit slashes always take priority.
+  // This is a rule-based suggestion, not a full grammatical parser.
   function smartChunks(text) {
-    text=String(text||'').trim();if(!text)return[];
-    if(text.indexOf('/')>=0)return text.split('/').map(function(x){return x.trim();}).filter(Boolean);
-    var words=text.split(/\s+/);if(words.length<2)return[text];
-    var size=Math.max(2,Math.ceil(words.length/Math.min(4,Math.ceil(words.length/3))));var out=[];
-    for(var i=0;i<words.length;i+=size)out.push(words.slice(i,i+size).join(' '));
-    if(out.length<2){var mid=Math.ceil(words.length/2);out=[words.slice(0,mid).join(' '),words.slice(mid).join(' ')];}
-    return out.filter(Boolean);
+    text = String(text || '').trim();
+    if (!text) return [];
+    if (text.indexOf('/') >= 0) return text.split('/').map(function(x) { return x.trim(); }).filter(Boolean);
+    var words = text.split(/\s+/), lower = words.map(function(w) { return w.toLowerCase().replace(/^[^a-z]+|[^a-z]+$/g, ''); });
+    if (words.length < 4) return [text];
+    var auxiliaries = new Set('am is are was were be been being have has had do does did can could will would shall should may might must'.split(' '));
+    var verbs = new Set(('begin begins began beginning tell tells act acts explain explains explained work works worked working support supports supported need needs needed emit emits emitted attract attracts attracted coordinate coordinates coordinated benefit benefits benefited fruit fruits learn learns learned learning think thinks thought thinking know knows knew believe believes believed show shows showed make makes made take takes took give gives gave find finds found become becomes became use uses used live lives lived communicate communicates communicated produce produces produced invent invents invented spread spreads multiplied multiply multiplies help helps helped play plays played feel feels felt report reports reported reduce reduces reduced provide provides provided lead leads led endure endures endured investigate investigates investigated focus focuses focused forget forgets forgot remember remembers remembered want wants wanted see sees saw understand understands understood develop develops developed grow grows grew change changes changed').split(' '));
+    var preps = new Set('in on at from through with without about into toward towards by for during after before across between among under over beyond of'.split(' '));
+    var clause = new Set('when while because although though unless until whether how why where which who whose that'.split(' '));
+    var starts = new Set('a an the this these those we they he she it you i some many most all nearby various our their his her its author researcher scientists researchers'.split(' '));
+    var cuts = new Set([0]), predicateSeen = false;
+    for (var i = 1; i < words.length; i++) {
+      var word = lower[i], prev = lower[i - 1], next = lower[i + 1] || '';
+      // Keep coordinated noun lists together: microbial, plant, and animal life.
+      if (/[,;:]$/.test(words[i - 1]) && (starts.has(word) || clause.has(word) || /^[A-Z]/.test(words[i]) || /[;:]$/.test(words[i - 1]))) {
+        cuts.add(i); predicateSeen = false;
+      }
+      // A preposition + relative pronoun belongs together (in which, of whom).
+      if (clause.has(word) && !preps.has(prev) && prev !== 'as' && !(word === 'that' && !predicateSeen)) {
+        cuts.add(i); predicateSeen = false;
+      }
+      if (word === 'as' && (next === 'if' || next === 'though')) { cuts.add(i); predicateSeen = false; }
+      // Do not separate auxiliary chains, passive forms, or coordinated verbs.
+      if (!predicateSeen && (auxiliaries.has(word) || verbs.has(word)) && !auxiliaries.has(prev) && prev !== 'to' && prev !== 'and' && prev !== 'or' && !preps.has(prev)) {
+        cuts.add(i); predicateSeen = true;
+      }
+      if (preps.has(word)) {
+        // Keep common verb complements together.
+        var joined = (word === 'of' && /^[A-Z]/.test(words[i - 1]) && /^[A-Z]/.test(words[i + 1] || '')) || (word === 'of' && /^(one|some|most|all|lot|lots|kind|kinds|sort|sorts|instead|because|out)$/.test(prev)) ||
+          (word === 'on' && /^(depend|depends|based|rely|relies)$/.test(prev)) ||
+          (word === 'for' && /^(look|looks|looking|wait|waits|waiting)$/.test(prev)) ||
+          (word === 'in' && /^(interested|believe|believes)$/.test(prev));
+        if (!joined) cuts.add(i);
+      }
+      if (word === 'to' && (verbs.has(next) || auxiliaries.has(next))) cuts.add(i);
+    }
+    // Avoid isolated function words and tiny fragments; never truncate long clauses.
+    var positions = Array.from(cuts).sort(function(a,b) { return a-b; }), out = [], start = 0;
+    for (var j = 1; j < positions.length; j++) {
+      var end = positions[j];
+      if (words.length - end < 2) continue;
+      if (end - start < 2 && !verbs.has(lower[start]) && !/^(we|they|he|she|it|you|i)$/.test(lower[start])) continue;
+      var last = lower[end - 1];
+      if (preps.has(last) || auxiliaries.has(last) || /^(a|an|the|and|or|to|as)$/.test(last)) continue;
+      out.push(words.slice(start,end).join(' ')); start = end;
+    }
+    out.push(words.slice(start).join(' '));
+    return out;
   }
   function parseBulkSentences(value) {
     var rows = [], pending = null;
@@ -77,7 +120,7 @@
   function morphHtml(m,s,c,index){return'<div class="hsm-sc-morph" data-s="'+s+'" data-c="'+c+'" data-m="'+index+'"><label>정답 부분<input type="text" data-mf="answerText" value="'+esc(m.answerText||'')+'" placeholder="Having surveyed"></label><label>학생 제시어<input type="text" data-mf="prompt" value="'+esc(m.prompt||'')+'" placeholder="survey"></label><label>복수 정답 (; 구분)<input type="text" data-mf="answers" value="'+esc((m.answers||[]).filter(function(x){return x&&x!==m.answerText;}).join('; '))+'" placeholder="다른 허용 정답"></label><label>힌트<input type="text" data-mf="hint" value="'+esc(m.hint||'')+'" placeholder="분사구문"></label><label class="hsm-sc-case"><input type="checkbox" data-mf="caseSensitive"'+(m.caseSensitive?' checked':'')+'>대소문자</label><button type="button" class="small-btn" data-sc-remove-morph="1">삭제</button></div>';}
   function sentencesHtml(){return state.sentences.map(function(sentence,si){return'<div class="hsm-sc-sentence" data-sc-sentence="'+si+'"><div class="hsm-sc-sentence-head"><span class="hsm-sc-sentence-num">문장 '+(si+1)+'</span><div class="hsm-sc-actions"><button type="button" class="small-btn" data-sc-up="1">↑</button><button type="button" class="small-btn" data-sc-down="1">↓</button><button type="button" class="danger-btn" data-sc-remove-sentence="1">삭제</button></div></div><div class="hsm-sc-field"><label>해석</label><input data-sc-translation="1" value="'+esc(sentence.translation||'')+'" placeholder="문장 해석"></div><div class="hsm-sc-field"><label>청크 구분 <span class="hsm-sc-help">/ 기호로 나눠 수정한 뒤 적용</span></label><textarea class="hsm-sc-chunk-line" data-sc-chunk-line="1">'+esc(sentenceText(sentence))+'</textarea></div><div class="hsm-sc-actions"><button type="button" class="outline-btn" data-sc-apply-chunks="1">청크 적용</button><span class="hsm-sc-badge">'+sentence.chunks.length+'개 청크</span></div><div class="hsm-sc-chunks">'+sentence.chunks.map(function(chunk,ci){return'<div class="hsm-sc-chunk" data-sc-chunk="'+ci+'"><div class="hsm-sc-chunk-top"><input data-sc-chunk-text="1" value="'+esc(chunk.text)+'" aria-label="청크 내용"><button type="button" class="outline-btn" data-sc-add-morph="1">+ 어형 지정</button></div>'+(chunk.morphs||[]).map(function(m,mi){return morphHtml(m,si,ci,mi);}).join('')+'</div>';}).join('')+'</div></div>';}).join('')||'<div class="hsm-sc-empty">위 입력 칸에 본문을 붙여넣어 문장을 만들어주세요.</div>';}
 
-  function renderPanel(){var p=document.getElementById('hsmSchoolContentTeacherPanel');if(!p)return;p.innerHTML='<div class="hsm-sc-grid"><div class="hsm-sc-card"><h2>학교 내신 본문 · 청크 배열</h2><div class="hsm-sc-row"><div class="hsm-sc-field"><label>본문 이름</label><input id="hsmScTitle" placeholder="예: 배곧고 1학기 중간 3과"></div><div class="hsm-sc-field"><label>학교명</label><input id="hsmScSchool" placeholder="예: 배곧고"></div></div><div class="hsm-sc-row"><div class="hsm-sc-field"><label>학년</label><input id="hsmScGrade" placeholder="예: 고1"></div><div class="hsm-sc-field"><label>교과서</label><input id="hsmScTextbook" placeholder="예: 능률 김성곤"></div></div><div class="hsm-sc-row"><div class="hsm-sc-field"><label>단원</label><input id="hsmScUnit" placeholder="예: Lesson 3"></div><div class="hsm-sc-field"><label>설명</label><input id="hsmScDescription" placeholder="선택 입력"></div></div><div class="hsm-sc-builder"><div class="hsm-sc-field"><label>본문 문장 한꺼번에 추가</label><textarea id="hsmScBulk" placeholder="1. People / learn from their mistakes.\n사람들은 자신의 실수에서 배운다.\n\n2. This story / is about nature.\n이 이야기는 자연에 관한 것이다."></textarea><div class="hsm-sc-help">영어 한 줄, 해석 한 줄로 붙여넣으세요. 문장 번호는 자동으로 제거됩니다. 엑셀의 영어·해석 두 열도 지원합니다. /를 넣으면 원하는 위치에서 청크가 나뉩니다.</div></div><div class="hsm-sc-actions"><button type="button" class="primary-btn" id="hsmScBuild">입력한 문장 추가</button><button type="button" class="outline-btn" id="hsmScAddSentence">빈 문장 추가</button></div></div><div id="hsmScImportStatus" class="hsm-sc-help" role="status" aria-live="polite"></div><div id="hsmScSentences">'+sentencesHtml()+'</div></div><aside class="hsm-sc-sticky"><div class="hsm-sc-card"><h3>배정 학생 <span id="hsmScSelectedCount" class="hsm-sc-badge">'+state.selected.size+'명 선택</span></h3><div class="hsm-sc-field"><input id="hsmScStudentSearch" type="search" placeholder="학생 이름·아이디 검색" value="'+esc(state.search)+'"></div><div class="hsm-sc-actions" style="margin-bottom:8px"><button type="button" class="outline-btn" id="hsmScSelectAll">전체 선택</button><button type="button" class="outline-btn" id="hsmScClearAll">전체 해제</button></div><div id="hsmScStudents" class="hsm-sc-students">'+studentsHtml()+'</div><div class="hsm-sc-actions" style="margin-top:14px"><button type="button" class="primary-btn" id="hsmScSave">본문 저장</button><button type="button" class="outline-btn" id="hsmScNew">새 본문</button></div></div><div class="hsm-sc-card" style="margin-top:14px"><h3>등록한 본문</h3><div id="hsmScBooks">'+booksHtml()+'</div></div></aside></div>';bindPanel(p);}
+  function renderPanel(){var p=document.getElementById('hsmSchoolContentTeacherPanel');if(!p)return;p.innerHTML='<div class="hsm-sc-grid"><div class="hsm-sc-card"><h2>학교 내신 본문 · 청크 배열</h2><div class="hsm-sc-row"><div class="hsm-sc-field"><label>본문 이름</label><input id="hsmScTitle" placeholder="예: 배곧고 1학기 중간 3과"></div><div class="hsm-sc-field"><label>학교명</label><input id="hsmScSchool" placeholder="예: 배곧고"></div></div><div class="hsm-sc-row"><div class="hsm-sc-field"><label>학년</label><input id="hsmScGrade" placeholder="예: 고1"></div><div class="hsm-sc-field"><label>교과서</label><input id="hsmScTextbook" placeholder="예: 능률 김성곤"></div></div><div class="hsm-sc-row"><div class="hsm-sc-field"><label>단원</label><input id="hsmScUnit" placeholder="예: Lesson 3"></div><div class="hsm-sc-field"><label>설명</label><input id="hsmScDescription" placeholder="선택 입력"></div></div><div class="hsm-sc-builder"><div class="hsm-sc-field"><label>본문 문장 한꺼번에 추가</label><textarea id="hsmScBulk" placeholder="1. People / learn from their mistakes.\n사람들은 자신의 실수에서 배운다.\n\n2. This story / is about nature.\n이 이야기는 자연에 관한 것이다."></textarea><div class="hsm-sc-help">영어 한 줄, 해석 한 줄로 붙여넣으세요. 문장 번호는 자동으로 제거됩니다. 엑셀의 영어·해석 두 열도 지원합니다. 청크는 문장 구조를 기준으로 자동 제안됩니다. 추가 후 확인·수정할 수 있으며, /로 직접 나눌 수도 있습니다.</div></div><div class="hsm-sc-actions"><button type="button" class="primary-btn" id="hsmScBuild">입력한 문장 추가</button><button type="button" class="outline-btn" id="hsmScAddSentence">빈 문장 추가</button></div></div><div id="hsmScImportStatus" class="hsm-sc-help" role="status" aria-live="polite"></div><div id="hsmScSentences">'+sentencesHtml()+'</div></div><aside class="hsm-sc-sticky"><div class="hsm-sc-card"><h3>배정 학생 <span id="hsmScSelectedCount" class="hsm-sc-badge">'+state.selected.size+'명 선택</span></h3><div class="hsm-sc-field"><input id="hsmScStudentSearch" type="search" placeholder="학생 이름·아이디 검색" value="'+esc(state.search)+'"></div><div class="hsm-sc-actions" style="margin-bottom:8px"><button type="button" class="outline-btn" id="hsmScSelectAll">전체 선택</button><button type="button" class="outline-btn" id="hsmScClearAll">전체 해제</button></div><div id="hsmScStudents" class="hsm-sc-students">'+studentsHtml()+'</div><div class="hsm-sc-actions" style="margin-top:14px"><button type="button" class="primary-btn" id="hsmScSave">본문 저장</button><button type="button" class="outline-btn" id="hsmScNew">새 본문</button></div></div><div class="hsm-sc-card" style="margin-top:14px"><h3>등록한 본문</h3><div id="hsmScBooks">'+booksHtml()+'</div></div></aside></div>';bindPanel(p);}
 
   function bindPanel(p){
     p.querySelector('#hsmScBuild').onclick=function(){var value=p.querySelector('#hsmScBulk').value;try{var added=parseBulkSentences(value);if(!added.length)return;state.sentences=state.sentences.concat(added);p.querySelector('#hsmScBulk').value='';p.querySelector('#hsmScSentences').innerHTML=sentencesHtml();var missing=added.filter(function(s){return !s.translation;}).length;p.querySelector('#hsmScImportStatus').textContent=added.length+'개 문장 추가'+(missing?' · 해석 없는 문장 '+missing+'개를 확인해주세요.':' · 영어와 해석을 연결했습니다.');}catch(e){p.querySelector('#hsmScImportStatus').textContent=e.message;}};
