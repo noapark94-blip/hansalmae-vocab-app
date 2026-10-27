@@ -1,4 +1,4 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20261027-225';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20261027-226';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
@@ -73,12 +73,7 @@ const REQUIRED_ASSETS = [
   versioned('./school-vocab-shortcut-status.js'),
   versioned('./word-cover.js'),
   versioned('./school-content-student.js'),
-  './icon.svg',
-  './icon-180.png',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-maskable-512.png',
-  './images/hsm-ball.png'
+  './icon-chick-512.png'
 ];
 
 const OPTIONAL_ASSETS = [
@@ -136,7 +131,7 @@ self.addEventListener('push', function (event) {
   event.waitUntil(self.registration.showNotification(data.title || '한살매 보카', {
     body: data.body || '새로운 알림이 도착했습니다.',
     icon: './icon-chick-192.png',
-    badge: './icon-192.png',
+    badge: './icon-chick-192.png',
     tag: data.tag || 'hansalmae-notification',
     renotify: true,
     vibrate: [180, 80, 180],

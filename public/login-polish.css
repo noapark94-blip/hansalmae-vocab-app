@@ -36,3 +36,7 @@
 @media(max-width:480px){#loginScreen.login-card{margin:12px auto;padding:22px 20px 12px!important;border-radius:22px}}
 @media(max-width:350px){#loginScreen.login-card{padding-left:16px!important;padding-right:16px!important}#loginScreen .hsm-login-options .hsm-remember-id,#loginScreen .hsm-login-options button{font-size:11px}}
 @media(prefers-reduced-motion:reduce){#loginScreen #studentId,#loginScreen #studentPassword{transition:none}}
+
+/* Keep the chick facing forward instead of rotating the former logo ball. */
+#loginScreen .login-ball-animation img{animation:none;border-radius:16px}
+#loginScreen .login-ball-animation::before{display:none}
