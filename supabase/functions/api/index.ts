@@ -295,6 +295,34 @@ async function backupAllRows(
   return rows;
 }
 
+async function readSignupCode() {
+  const { data, error } = await admin.from("signup_code_settings")
+    .select("code, revision, updated_at").eq("id", true).maybeSingle();
+  if (error) throw new Error("가입코드 설정을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
+  return data;
+}
+
+async function signupCodeSettings(args: unknown[], update: boolean) {
+  await requireStaff(args[0]);
+  if (!update) {
+    const row = await readSignupCode();
+    return { code: row?.code ?? str(Deno.env.get("SIGNUP_CODE")),
+      revision: row?.revision ?? null, updatedAt: row?.updated_at ?? null };
+  }
+  const input = (args[1] ?? {}) as Json;
+  const code = str(input.code).toUpperCase();
+  if (!/^[A-Z0-9]{6,8}$/.test(code)) throw new Error("가입코드는 영문과 숫자 6~8자로 입력해주세요.");
+  const revision = str(input.revision);
+  if (revision && !/^[0-9a-f-]{36}$/.test(revision)) throw new Error("설정을 다시 열어주세요.");
+  const value = { code, revision: crypto.randomUUID(), updated_at: new Date().toISOString() };
+  const query = revision
+    ? admin.from("signup_code_settings").update(value).eq("id", true).eq("revision", revision)
+    : admin.from("signup_code_settings").insert({ id: true, ...value });
+  const { data, error } = await query.select("revision, updated_at").maybeSingle();
+  if (error || !data) throw new Error("변경을 완료하지 못했습니다. 설정을 다시 열어 최신 코드를 확인해주세요.");
+  return { code, revision: data.revision, updatedAt: data.updated_at };
+}
+
 async function signupStudent(args: unknown[]) {
   const input = (args[0] ?? {}) as Json;
   const id = str(input.studentId ?? args[0]).toLowerCase();
@@ -308,10 +336,11 @@ async function signupStudent(args: unknown[]) {
   }
   if (password.length < 6) throw new Error("비밀번호는 6자 이상 입력해주세요.");
   if (!name) throw new Error("학생 이름을 입력해주세요.");
-  if (
-    !Deno.env.get("SIGNUP_CODE") ||
-    signupCode !== str(Deno.env.get("SIGNUP_CODE"))
-  ) return { success: false, message: "가입코드가 올바르지 않습니다." };
+  const codeSetting = await readSignupCode();
+  const expectedCode = codeSetting?.code ?? str(Deno.env.get("SIGNUP_CODE"));
+  const suppliedCode = codeSetting ? signupCode.toUpperCase() : signupCode;
+  if (!expectedCode || suppliedCode !== expectedCode)
+    return { success: false, message: "가입코드가 올바르지 않습니다." };
   const { data: exists } = await admin.from("profiles").select("id").eq(
     "student_id",
     id,
@@ -986,6 +1015,8 @@ async function dispatch(
   context: { clientKey?: string } = {},
 ) {
   switch (name) {
+    case "teacherGetSignupCode": return signupCodeSettings(args, false);
+    case "teacherUpdateSignupCode": return signupCodeSettings(args, true);
     case "signupStudent":
       return signupStudent(args);
     case "checkStudentIdDuplicate": {

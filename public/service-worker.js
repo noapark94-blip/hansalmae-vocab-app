@@ -1,4 +1,4 @@
-const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20261021-224';
+const BUILD_VERSION = new URL(self.location.href).searchParams.get('v') || '20261027-225';
 const CACHE_NAME = 'hansalmae-supabase-build-' + BUILD_VERSION;
 const versioned = function (path) {
   return path + '?v=' + encodeURIComponent(BUILD_VERSION);
@@ -89,6 +89,8 @@ const OPTIONAL_ASSETS = [
   versioned('./teacher-school-vocab-edit-fix.js'),
   versioned('./teacher-school-vocab-exam-polish.js'),
   versioned('./school-content-teacher.js'),
+  versioned('./teacher-settings.js'),
+  versioned('./teacher-settings.css'),
   './images/emblems/title-chick.png',
   './images/emblems/title-collector.png',
   './images/emblems/title-predator.png',
